@@ -11,6 +11,11 @@
 
     <!-- CTA Section -->
     <CTASection />
+
+  <UChip>
+    <UButton icon="i-lucide-mail" color="neutral" variant="subtle" />
+  </UChip>
+
   </div>
 </template>
 

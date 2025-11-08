@@ -12,7 +12,9 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "clean": "nuxt cleanup",
-    "typecheck": "nuxt typecheck"
+    "typecheck": "nuxt typecheck",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
   },
   "dependencies": {
     "@nuxt/ui": "^4.1.0",
@@ -25,7 +27,9 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^6.2.0",
     "@iconify-json/heroicons": "^1.2.3",
-    "@types/node": "^24.10.0"
+    "@types/node": "^24.10.0",
+    "eslint": "^9.39.1"
   }
 }
