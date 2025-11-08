@@ -32,7 +32,9 @@
 
           <!-- Quick Links -->
           <div>
-            <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+            <h3 class="text-lg font-semibold mb-4">
+              Quick Links
+            </h3>
             <ul class="space-y-3">
               <li>
                 <NuxtLink
@@ -71,17 +73,27 @@
 
           <!-- Programs -->
           <div>
-            <h3 class="text-lg font-semibold mb-4">Programs</h3>
+            <h3 class="text-lg font-semibold mb-4">
+              Programs
+            </h3>
             <ul class="space-y-3">
-              <li class="text-gray-400">Computer Science</li>
-              <li class="text-gray-400">Information Technology</li>
-              <li class="text-gray-400">Digital Innovation</li>
-              <li class="text-gray-400">Data Science</li>
+              <li class="text-gray-400">
+                Computer Science
+              </li>
+              <li class="text-gray-400">
+                Information Technology
+              </li>
+              <li class="text-gray-400">
+                Digital Innovation
+              </li>
+              <li class="text-gray-400">
+                Data Science
+              </li>
             </ul>
           </div>
         </div>
 
-        <div class="border-t border-gray-700 my-8"></div>
+        <div class="border-t border-gray-700 my-8" />
 
         <div class="flex flex-col md:flex-row justify-between items-center">
           <p class="text-gray-400 text-sm">

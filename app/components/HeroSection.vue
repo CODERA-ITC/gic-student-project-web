@@ -6,13 +6,13 @@
     <div class="absolute inset-0 -z-10 overflow-hidden">
       <div
         class="absolute -top-40 -right-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"
-      ></div>
+      />
       <div
         class="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"
-      ></div>
+      />
       <div
         class="absolute top-1/2 left-1/2 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"
-      ></div>
+      />
     </div>
 
     <UContainer class="relative z-10">
@@ -27,9 +27,7 @@
                 name="i-heroicons-star"
                 class="w-4 h-4 text-blue-600 mr-2"
               />
-              <span class="text-sm font-semibold text-blue-600"
-                >Discover Exceptional Student Work</span
-              >
+              <span class="text-sm font-semibold text-blue-600">Discover Exceptional Student Work</span>
             </div>
             <h1
               class="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent leading-tight"
@@ -67,16 +65,28 @@
           <!-- Stats Preview -->
           <div class="grid grid-cols-3 gap-4 pt-8 border-t border-gray-200">
             <div>
-              <div class="text-3xl font-bold text-blue-600">247+</div>
-              <p class="text-sm text-gray-600">Projects</p>
+              <div class="text-3xl font-bold text-blue-600">
+                247+
+              </div>
+              <p class="text-sm text-gray-600">
+                Projects
+              </p>
             </div>
             <div>
-              <div class="text-3xl font-bold text-purple-600">156+</div>
-              <p class="text-sm text-gray-600">Students</p>
+              <div class="text-3xl font-bold text-purple-600">
+                156+
+              </div>
+              <p class="text-sm text-gray-600">
+                Students
+              </p>
             </div>
             <div>
-              <div class="text-3xl font-bold text-pink-600">8</div>
-              <p class="text-sm text-gray-600">Semesters</p>
+              <div class="text-3xl font-bold text-pink-600">
+                8
+              </div>
+              <p class="text-sm text-gray-600">
+                Semesters
+              </p>
             </div>
           </div>
         </div>
@@ -87,19 +97,19 @@
             class="relative w-full aspect-square rounded-2xl bg-gradient-to-br from-blue-400 to-purple-600 shadow-2xl overflow-hidden"
           >
             <!-- Grid pattern -->
-            <div class="absolute inset-0 bg-grid-pattern opacity-10"></div>
+            <div class="absolute inset-0 bg-grid-pattern opacity-10" />
 
             <!-- Animated circles -->
             <div
               class="absolute top-12 left-12 w-24 h-24 bg-white rounded-full opacity-20 animate-pulse"
-            ></div>
+            />
             <div
               class="absolute bottom-20 right-8 w-32 h-32 border-2 border-white rounded-full opacity-10 animate-spin"
               style="animation-duration: 20s"
-            ></div>
+            />
             <div
               class="absolute top-1/3 right-1/4 w-16 h-16 bg-yellow-300 rounded-full opacity-30 blur-xl"
-            ></div>
+            />
 
             <!-- Icon showcase -->
             <div class="absolute inset-0 flex items-center justify-center">
