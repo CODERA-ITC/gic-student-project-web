@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
-  srcDir: "app",
+  // srcDir: "app",
   devtools: { enabled: true },
   modules: [
     "@nuxt/ui",
@@ -67,16 +67,16 @@ export default defineNuxtConfig({
   },
 
   // Component auto-discovery
-  components: [
-    {
-      path: "~/components",
-      pathPrefix: false,
-    },
-    {
-      path: "~/app/components",
-      // pathPrefix: false,
-    },
-  ],
+  // components: [
+  //   {
+  //     path: "~/components",
+  //     pathPrefix: false,
+  //   },
+  //   {
+  //     path: "~/app/components",
+  //     // pathPrefix: false,
+  //   },
+  // ],
 
   ui: {},
 });

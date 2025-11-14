@@ -2,125 +2,45 @@
 @import "@nuxt/ui";
 
 @theme {
-  --font-sans: "Roboto", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-sans: 'Public Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+@theme {
+
+  /* Override default nuxt styling */
+
+  /* Define new custom color */
+  --color-brand-50: #d4d6db;
+  --color-brand-100: #7d8394;
+  --color-brand-200: #676e82;
+  --color-brand-300: #515971;
+  --color-brand-400: #3c455f;
+  --color-brand-500: #26304d; 
+  --color-brand-600: #222b45;
+  --color-brand-700: #1e263e;
+  --color-brand-800: #1b2236;
+  --color-brand-950: #171d2e;
 }
 
 :root {
-  --primary-50: #f0f2f8;
-  --primary-100: #e1e6f1;
-  --primary-500: #26304d;
-  --primary-600: #1e273d;
-  --primary-700: #1a2237;
-  --primary-800: #161e2f;
-  --primary-900: #0f1419;
+  /* --ui-primary: var(--color-brand-500); */
+  --ui-secondary: var(--ui-color-secondary-500);
+  --ui-success: var(--ui-color-success-500);
+  --ui-info: var(--ui-color-info-500);
+  --ui-warning: var(--ui-color-warning-500);
+  --ui-error: var(--ui-color-error-500);
+
+  --ui-text-dimmed: var(--ui-color-neutral-400);
+  --ui-text-muted: var(--ui-color-neutral-500);
+  --ui-text-toned: var(--ui-color-neutral-600);
+  --ui-text: var(--ui-color-brand-600);
+  --ui-text-highlighted: var(--ui-color-brand-850);
+  --ui-text-inverted: var(--ui-color-brand-600);
+
+  /* --ui-bg: var(--color-brand-500); */
 }
 
-body {
-  font-family: "Epilogue", "Roboto", system-ui, -apple-system,
-    BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-/* Custom component styles */
-.primary-bg {
-  background-color: #26304d;
-}
-
-.primary-text {
-  color: #26304d;
-}
-
-/* Animations */
-@keyframes blob {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
-  }
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-}
-
-/* Node.js Style Hero Background */
-.hero-nodes {
-  background: linear-gradient(135deg, #0f1419 0%, #1a2237 50%, #0f1419 100%);
-  position: relative;
-  overflow: hidden;
-}
-
-.hero-nodes::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: radial-gradient(
-      circle at 20% 50%,
-      rgba(59, 130, 246, 0.15) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 80% 80%,
-      rgba(139, 92, 246, 0.15) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 40% 20%,
-      rgba(59, 130, 246, 0.1) 0%,
-      transparent 50%
-    );
-  animation: float 20s ease-in-out infinite;
-}
-
-.hero-nodes::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23374151" fill-opacity="0.1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
-  animation: float 25s ease-in-out infinite reverse;
-}
-
-.hero-nodes > * {
-  position: relative;
-  z-index: 1;
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-  50% {
-    transform: translate(30px, 20px);
-  }
-}
-
-/* Animated connection lines */
-.node-connection {
-  position: absolute;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(59, 130, 246, 0.5),
-    transparent
-  );
-  height: 1px;
-  animation: pulse 3s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 0.3;
-  }
-  50% {
-    opacity: 0.8;
-  }
+.dark {
+  --ui-primary: var(--ui-color-primary-200);
 }

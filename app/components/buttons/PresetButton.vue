@@ -1,5 +1,5 @@
 <template>
-  <AppButton
+  <ButtonsAppButton
     :label="buttonConfig.label"
     :icon="buttonConfig.icon"
     :color="buttonConfig.color"

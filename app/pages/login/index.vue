@@ -117,7 +117,7 @@
           </div>
 
           <!-- Login Button -->
-          <PresetButton
+          <ButtonsPresetButton
             preset="signin"
             type="submit"
             :class="['w-full', { 'opacity-50 cursor-not-allowed': isLoading }]"
@@ -130,7 +130,7 @@
               />
             </template>
             {{ isLoading ? "Signing in..." : "Sign In" }}
-          </PresetButton>
+          </ButtonsPresetButton>
 
           <!-- Error Message -->
           <div
