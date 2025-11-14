@@ -149,13 +149,13 @@
             </button>
           </template>
           <template v-else>
-            <PresetButton
+            <ButtonsPresetButton
               preset="signin"
               to="/login"
               class="w-full"
               @click="mobileMenuOpen = false"
             />
-            <PresetButton
+            <ButtonsPresetButton
               preset="signup"
               to="/signup"
               class="w-full"

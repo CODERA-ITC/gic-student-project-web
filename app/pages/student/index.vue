@@ -11,7 +11,7 @@
             </h1>
             <p class="text-gray-300">Track and manage your projects</p>
           </div>
-          <PresetButton preset="createProject" to="/projects/create" />
+          <ButtonsPresetButton preset="createProject" to="/projects/create" />
         </div>
       </UContainer>
     </div>

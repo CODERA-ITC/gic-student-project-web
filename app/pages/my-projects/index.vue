@@ -12,7 +12,7 @@
               Manage and track your project submissions
             </p>
           </div>
-          <PresetButton preset="createProject" to="/projects/create" />
+          <ButtonsPresetButton preset="createProject" to="/projects/create" />
         </div>
       </UContainer>
     </div>
@@ -161,7 +161,7 @@
               : `No ${activeTab} projects`
           }}
         </p>
-        <PresetButton preset="createProject" to="/projects/create" />
+        <ButtonsPresetButton preset="createProject" to="/projects/create" />
       </div>
     </UContainer>
   </div>

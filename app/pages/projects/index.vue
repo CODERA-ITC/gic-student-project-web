@@ -20,9 +20,9 @@
           <div
             class="flex flex-col sm:flex-row gap-3 justify-center items-center flex-wrap"
           >
-            <PresetButton preset="createProject" to="/projects/create" />
+            <ButtonsPresetButton preset="createProject" to="/projects/create" />
 
-            <PresetButton preset="viewBySemester" to="/projects/semester" />
+            <ButtonsPresetButton preset="viewBySemester" to="/projects/semester" />
           </div>
         </div>
       </UContainer>

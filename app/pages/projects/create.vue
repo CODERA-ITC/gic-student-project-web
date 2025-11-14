@@ -3,7 +3,7 @@
     <UContainer>
       <!-- Back Button -->
       <div class="mb-8">
-        <PresetButton
+        <ButtonsPresetButton
           preset="back"
           to="/projects"
           @click="mobileMenuOpen = false"
@@ -440,14 +440,14 @@
 
           <!-- Navigation Buttons -->
           <div class="flex justify-between pt-8 border-t border-slate-700">
-            <PresetButton
+            <ButtonsPresetButton
               v-if="currentStep > 0"
               preset="back"
               @click="currentStep--"
             />
 
             <div class="ml-auto flex gap-3">
-              <PresetButton
+              <ButtonsPresetButton
                 v-if="currentStep < steps.length - 1"
                 :label="`Next`"
                 :icon="`i-heroicons-arrow-right`"
@@ -457,7 +457,7 @@
                 @click="currentStep++"
               />
 
-              <PresetButton
+              <ButtonsPresetButton
                 v-if="currentStep === steps.length - 1"
                 preset="submit"
                 :disabled="!agreedToTerms"
