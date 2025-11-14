@@ -64,7 +64,7 @@
           </div>
 
           <!-- Divider -->
-          <UDivider />
+          <hr class="border-gray-200" />
 
           <!-- Student Menu Items -->
           <template v-if="isStudent">
@@ -140,7 +140,7 @@
           </template>
 
           <!-- Common Menu Items -->
-          <UDivider />
+          <hr class="border-gray-200" />
           <NuxtLink
             to="/profile"
             class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
@@ -159,7 +159,7 @@
           </NuxtLink>
 
           <!-- Sign Out -->
-          <UDivider />
+          <hr class="border-gray-200" />
           <button
             class="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
             @click="handleLogout"

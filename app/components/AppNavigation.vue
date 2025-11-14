@@ -86,7 +86,7 @@
           />
 
           <!-- Divider -->
-          <UDivider class="my-4" />
+          <hr class="my-4 border-gray-200" />
 
           <!-- Mobile User Actions -->
           <template v-if="isAuthenticated">
@@ -131,7 +131,7 @@
             </template>
 
             <!-- Common Links -->
-            <UDivider class="my-2" />
+            <hr class="my-2 border-gray-200" />
             <NuxtLink
               to="/profile"
               class="flex items-center gap-2 px-4 py-3 rounded-lg hover:bg-gray-100 transition-colors"

@@ -121,7 +121,7 @@
                   >{{ teacher.avgGrade }}%</span
                 >
               </div>
-              <UDivider />
+              <hr class="border-gray-200" />
               <p class="text-sm text-gray-400">
                 Next class:
                 <span class="text-white font-semibold">{{
