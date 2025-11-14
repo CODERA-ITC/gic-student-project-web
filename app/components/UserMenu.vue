@@ -180,8 +180,8 @@
     <!-- Guest Sign In/Up -->
     <template v-else>
       <div class="flex items-center gap-3">
-        <PresetButton preset="signin" to="/login" />
-        <PresetButton preset="signup" to="/signup" />
+        <ButtonsPresetButton preset="signin" to="/login" />
+        <ButtonsPresetButton preset="signup" to="/signup" />
       </div>
     </template>
   </div>

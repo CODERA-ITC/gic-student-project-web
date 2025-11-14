@@ -31,8 +31,8 @@
 
           <!-- CTA Buttons -->
           <div class="flex flex-col sm:flex-row gap-4 pt-4">
-            <PresetButton preset="exploreProjects" to="/projects" />
-            <PresetButton preset="learnMore" to="/about" />
+            <ButtonsPresetButton preset="exploreProjects" to="/projects" />
+            <ButtonsPresetButton preset="learnMore" to="/about" />
           </div>
 
           <!-- Stats Preview -->

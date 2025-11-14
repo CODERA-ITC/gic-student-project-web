@@ -105,8 +105,18 @@
             </button>
           </template>
           <template v-else>
-            <PresetButton preset="signin" to="/login" class="w-full" @click="mobileMenuOpen = false" />
-            <PresetButton preset="signup" to="/signup" class="w-full" @click="mobileMenuOpen = false" />
+            <ButtonsPresetButton
+              preset="signin"
+              to="/login"
+              class="w-full"
+              @click="mobileMenuOpen = false"
+            />
+            <ButtonsPresetButton
+              preset="signup"
+              to="/signup"
+              class="w-full"
+              @click="mobileMenuOpen = false"
+            />
           </template>
         </div>
       </div>
