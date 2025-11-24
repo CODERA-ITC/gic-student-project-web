@@ -79,7 +79,7 @@ const php = useHeroRotation({
       <h2 class="text-2xl font">for students by students. ₍^. ̫.^₎</h2>
     </div> -->
 
-    <div class="relative top-20 w-40 right-20 md:h-300 lg:h-200">
+    <div class="relative top-20 w-40 right-20 h-max">
       <div class="relative top-28 left-12">
         <img src="/images/tech/blackhole.png" width="120" alt="" />
       </div>
