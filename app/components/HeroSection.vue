@@ -1,6 +1,6 @@
 <template>
   <section
-    class="relative overflow-hidden pt-20 pb-32 lg:pb-40 px-4 sm:px-6 lg:px-8 bg-slate-900"
+    class="relative overflow-hidden pt-10 pb-10 lg:pb-40 px-4 sm:px-6 lg:px-8 bg-slate-900"
   >
     <!-- Animated background elements -->
     <div class="absolute inset-0 -z-10 overflow-hidden">
@@ -16,9 +16,9 @@
     </div>
 
     <UContainer class="relative z-10">
-      <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <div class="grid lg:grid-cols-2 gap-12 items-start">
         <!-- Content -->
-        <div class="space-y-8">
+        <div class="space-y-8 pt-8">
           <div class="space-y-4">
             <div
               class="inline-flex items-center px-4 py-2 rounded-full bg-blue-950 border border-blue-800"
@@ -27,17 +27,15 @@
                 name="i-heroicons-star"
                 class="w-4 h-4 text-blue-400 mr-2"
               />
-              <span class="text-sm font-semibold text-blue-400"
+              <span class="text-sm font-semibold text-blue-400 "
                 >Discover Exceptional Student Work</span
               >
             </div>
-            <h1 class="text-5xl lg:text-6xl font-bold text-white leading-tight">
+            <h1 class="text-5xl lg:text-6xl font-bold text-white leading-tight ">
               Showcase Your Innovation
             </h1>
-            <p class="text-xl text-gray-300 leading-relaxed max-w-lg">
-              Join thousands of talented students showcasing their amazing
-              projects. From AI innovations to mobile apps, discover the future
-              of technology created by GIC students.
+            <p class="text-xl text-gray-300 leading-relaxed max-w-lg typewriter">
+              {{ subtitle }}
             </p>
           </div>
 
@@ -75,9 +73,19 @@
 
 <script setup>
 import AppHero from "~/components/app/Hero.vue";
+import { tokenize } from 'khmertokenizer';
+
+
+const subtitle ="បង្កើតដោយនិស្សិត សម្រាប់និស្សិត ₍^.  ̫.^₎"
+const typeWriterChars = computed(() => tokenize(subtitle).length)
+const typeWriterSpeed = '4s'
+
 </script>
 
 <style scoped>
+
+
+
 /* Animations */
 @keyframes blob {
   0%,
@@ -131,5 +139,45 @@ import AppHero from "~/components/app/Hero.vue";
       transparent
     );
   background-size: 50px 50px;
+}
+
+
+.typewriter {
+  position: relative;
+  width: max-content;
+}
+
+.typewriter::before,
+.typewriter::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.typewriter::before {
+  background: var(--color-slate-900);
+  animation: 
+    typing v-bind('typeWriterSpeed') steps(v-bind('typeWriterChars')) forwards;
+}
+
+.typewriter::after {
+  width: 0.125em;
+  background: white;
+  animation: 
+    typing v-bind('typeWriterSpeed') steps(v-bind('typeWriterChars')) forwards,
+    blink 1s steps(v-bind('typeWriterChars')) infinite;
+
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  to { background: transparent;}
+}
+
+@keyframes typing {
+  to {left: 100%;}
 }
 </style>
