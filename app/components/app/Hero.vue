@@ -1,4 +1,5 @@
 <script setup>
+<<<<<<< HEAD
 import { motion, useTime, useTransform } from "motion-v";
 import { useHeroRotation } from "~/composables/rotation-cordonate";
 
