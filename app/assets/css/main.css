@@ -2,18 +2,24 @@
 @import "@nuxt/ui";
 
 @theme {
-  --font-sans: 'Public Sans', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: "Poppins", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 }
 
 @theme {
+<<<<<<< HEAD
   /* Define custom brand colors */
+=======
+  /* Override default nuxt styling */
+
+  /* Define new custom color */
+>>>>>>> 27e23ed (update font to poppins)
   --color-brand-50: #d4d6db;
   --color-brand-100: #7d8394;
   --color-brand-200: #676e82;
   --color-brand-300: #515971;
   --color-brand-400: #3c455f;
-  --color-brand-500: #26304d; 
+  --color-brand-500: #26304d;
   --color-brand-600: #222b45;
   --color-brand-700: #1e263e;
   --color-brand-800: #1b2236;
@@ -47,6 +53,7 @@
 }
 
 .dark {
+<<<<<<< HEAD
   /* Dark mode colors */
   --ui-primary: var(--ui-color-primary-400);
   --ui-secondary: var(--ui-color-secondary-400);
@@ -126,3 +133,7 @@ body {
 .dark * {
   scrollbar-color: theme('colors.neutral.600') theme('colors.neutral.800');
 }
+=======
+  --ui-primary: var(--ui-color-primary-200);
+}
+>>>>>>> 27e23ed (update font to poppins)
