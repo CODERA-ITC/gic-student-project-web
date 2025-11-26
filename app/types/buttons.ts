@@ -47,7 +47,7 @@ export interface ButtonConfig {
  */
 export const BUTTON_COLORS = {
   primary: {
-    solid: "bg-blue-600 hover:bg-blue-700 hover:cursor-pointer text-white",
+    solid: "bg-blue-900/90 hover:bg-blue-800 hover:cursor-pointer text-white ",
     outline:
       "border-2 border-blue-600 text-blue-600 hover:bg-blue-50 hover:cursor-pointer",
     ghost: "text-blue-600 hover:bg-blue-100 hover:cursor-pointer",
@@ -64,12 +64,12 @@ export const BUTTON_COLORS = {
   },
   success: {
     solid:
-      "bg-emerald-600 hover:bg-emerald-700 hover:cursor-pointer text-white",
+      "bg-gray-600/90 hover:bg-gray-700 hover:cursor-pointer text-white",
     outline:
-      "border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-50 hover:cursor-pointer",
-    ghost: "text-emerald-600 hover:bg-emerald-100 hover:cursor-pointer",
+      "border-2 border-gray-600 text-gray-600 hover:bg-gray-50 hover:cursor-pointer",
+    ghost: "text-gray-600 hover:bg-gray-100 hover:cursor-pointer",
     gradient:
-      "bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:shadow-lg hover:shadow-emerald-500/50 hover:cursor-pointer",
+      "bg-gradient-to-r from-gray-600 to-gray-600 text-white hover:shadow-lg hover:shadow-gray-500/50 hover:cursor-pointer",
   },
   danger: {
     solid: "bg-red-600 hover:bg-red-700 hover:cursor-pointer text-white",
@@ -322,10 +322,18 @@ export const BUTTON_PRESETS = {
   reset: {
     label: "Reset",
     icon: "i-heroicons-arrow-path",
-    color: "secondary",
+    color: "warning",
     variant: "ghost",
     size: "md",
   },
+  viewDetails:{
+    label: "View Details",
+    icon: null,
+    color: "primary",
+    variant: "solid",
+    text: "text-white",
+    size: "md",
+  }
 };
 
 /**

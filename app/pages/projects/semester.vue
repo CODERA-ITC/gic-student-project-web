@@ -3,6 +3,7 @@
     <!-- Header Section -->
     <div class="hero-nodes py-20 border-b border-blue-800/30">
       <UContainer>
+        <!--   All content inside this div will be centered and have a max-width   -->
         <div class="text-center space-y-4 max-w-2xl mx-auto">
           <h1 class="text-5xl lg:text-6xl font-black text-white leading-tight">
             Projects by Semester

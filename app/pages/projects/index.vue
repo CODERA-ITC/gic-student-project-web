@@ -1,16 +1,16 @@
 <template>
-  <div class="min-h-screen bg-slate-900">
+  <div class="min-h-screen bg-white">
     <!-- Header Section -->
     <div class="hero-nodes py-20 border-b border-blue-800/30">
       <UContainer>
         <div class="space-y-6">
           <div class="text-center space-y-4 max-w-2xl mx-auto">
             <h1
-              class="text-5xl lg:text-6xl font-black text-white leading-tight"
+              class="text-4xl lg:text-6xl font-bold tracking-tight leading-tight text-blue-900"
             >
               Explore All Projects
             </h1>
-            <p class="text-xl text-gray-300">
+            <p class="text-xl text-blue-900/80">
               Discover amazing projects built by GIC students across all
               semesters and categories
             </p>
@@ -22,14 +22,17 @@
           >
             <ButtonsPresetButton preset="createProject" to="/projects/create" />
 
-            <ButtonsPresetButton preset="viewBySemester" to="/projects/semester" />
+            <ButtonsPresetButton
+              preset="viewBySemester"
+              to="/projects/semester"
+            />
           </div>
         </div>
       </UContainer>
     </div>
 
     <!-- Filters and Projects -->
-    <UContainer class="py-16">
+    <UContainer class="py-16 bg-blue-900/70">
       <div class="grid lg:grid-cols-4 gap-8">
         <!-- Sidebar Filters -->
         <div class="lg:col-span-1">
@@ -108,21 +111,6 @@
                 </label>
               </div>
             </div>
-
-            <!-- Sort -->
-            <div
-              class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-xl p-6 space-y-4"
-            >
-              <h3 class="font-bold text-white text-lg">Sort By</h3>
-              <select
-                v-model="sortBy"
-                class="w-full bg-slate-700 border border-slate-600 text-white rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="recent">Most Recent</option>
-                <option value="popular">Most Popular</option>
-                <option value="trending">Trending</option>
-              </select>
-            </div>
           </div>
         </div>
 
@@ -133,24 +121,23 @@
             <div class="flex justify-between items-center">
               <p class="text-gray-400">
                 Showing
-                <span class="text-blue-400 font-semibold">{{
+                <span class="text-blue-700/80 font-semibold">{{
                   filteredProjects.length
                 }}</span>
                 projects
               </p>
-              <UButton
+
+              <!-- Sort -->
+
+              <ButtonsPresetButton
                 v-if="
                   selectedCategories.length > 0 ||
                   selectedYears.length > 0 ||
                   selectedSemesters.length > 0
                 "
-                variant="ghost"
-                size="sm"
-                color="error"
+                preset="reset"
                 @click="clearFilters"
-              >
-                Clear Filters
-              </UButton>
+              />
             </div>
 
             <!-- Projects Cards -->
@@ -192,7 +179,8 @@ const selectedYears = ref([]);
 const selectedSemesters = ref([]);
 const sortBy = ref("recent");
 const likedProjects = ref(new Set());
-
+//. create a set to store liked project IDs
+/// move it to store later
 const categories = [
   "AI/ML",
   "Mobile",
@@ -202,6 +190,7 @@ const categories = [
   "Data Science",
 ];
 
+// Years and Semesters
 const years = [
   { label: "2024", value: "2024" },
   { label: "2023", value: "2023" },
@@ -214,6 +203,8 @@ const semestersByYear = {
   2022: ["Semester 1", "Semester 2"],
 };
 
+// Sample Projects Data - Updated for FancyProjectCard
+// Sample Projects Data - Updated for FancyProjectCard
 const projects = [
   {
     id: 1,
@@ -225,21 +216,35 @@ const projects = [
     semester: "Semester 2",
     emoji: "🤖",
     gradient: "bg-gradient-to-br from-purple-500 to-indigo-600",
-    author: "Sarah Chen",
-    skills: ["Python", "GPT-3", "NLP", "React"],
-    members: ["Sarah Chen", "Alex Park", "Jordan Lee", "Emma Davis"],
-    views: "2.5K",
-    likes: "342",
-    rating: "4.8",
-    course: "Advanced AI & Machine Learning",
-    roadmap: [
-      "Phase 1: GPT-3 Integration",
-      "Phase 2: Conversation History",
-      "Phase 3: Multi-language Support",
-      "Phase 4: Production Deployment",
+    images: [
+      "https://images.unsplash.com/photo-1763182198113-a9a8d0fe3144?w=900&auto=format&fit=crop&q=60",
+      "https://images.unsplash.com/photo-1763669029223-74f911a9e08b?w=900&auto=format&fit=crop&q=60",
+      "https://plus.unsplash.com/premium_photo-1731286446855-c0bd3d23af46?w=900&auto=format&fit=crop&q=60",
     ],
-    duration: "3 months",
+    members: [
+      {
+        name: "Sarah Chen",
+        image: "https://randomuser.me/api/portraits/women/11.jpg",
+      },
+      {
+        name: "Alex Park",
+        image: "https://randomuser.me/api/portraits/men/32.jpg",
+      },
+      {
+        name: "Jordan Lee",
+        image: "https://randomuser.me/api/portraits/men/54.jpg",
+      },
+      {
+        name: "Emma Davis",
+        image: "https://randomuser.me/api/portraits/women/78.jpg",
+      },
+    ],
+    views: 2500,
+    likes: 342,
+    featured: true,
+    course: "Advanced AI & Machine Learning",
   },
+
   {
     id: 2,
     title: "Mobile Fitness App",
@@ -249,21 +254,31 @@ const projects = [
     semester: "Semester 1",
     emoji: "💪",
     gradient: "bg-gradient-to-br from-green-500 to-emerald-600",
-    author: "Alex Rodriguez",
-    skills: ["React Native", "Firebase", "UI/UX", "TypeScript"],
-    members: ["Alex Rodriguez", "Maria Garcia", "Sam Wilson"],
-    views: "1.8K",
-    likes: "256",
-    rating: "4.6",
-    course: "Mobile App Development",
-    roadmap: [
-      "MVP: Basic Tracking",
-      "Add Social Features",
-      "Implement AI Recommendations",
-      "Launch on App Stores",
+    images: [
+      "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=500&fit=crop",
+      "https://images.unsplash.com/photo-1763854492937-fb7ae2f601f3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyMXx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1763667309360-30d7e3779382?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0MHx8fGVufDB8fHx8fA%3D%3D",
     ],
-    duration: "4 months",
+    members: [
+      {
+        name: "Alex Rodriguez",
+        image: "https://randomuser.me/api/portraits/men/21.jpg",
+      },
+      {
+        name: "Maria Garcia",
+        image: "https://randomuser.me/api/portraits/women/45.jpg",
+      },
+      {
+        name: "Sam Wilson",
+        image: "https://randomuser.me/api/portraits/men/67.jpg",
+      },
+    ],
+    views: 1800,
+    likes: 256,
+    featured: false,
+    course: "Mobile App Development",
   },
+
   {
     id: 3,
     title: "E-Commerce Platform",
@@ -274,28 +289,39 @@ const projects = [
     semester: "Semester 2",
     emoji: "🛍️",
     gradient: "bg-gradient-to-br from-blue-500 to-cyan-600",
-    author: "Priya Patel",
-    skills: ["Node.js", "Vue.js", "MongoDB", "Stripe"],
+    images: [
+      "https://images.unsplash.com/photo-1557821552-17105176677c?w=500&fit=crop",
+      "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&fit=crop",
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&fit=crop",
+    ],
     members: [
-      "Priya Patel",
-      "David Chen",
-      "Lisa Brown",
-      "Tom Anderson",
-      "Sarah White",
+      {
+        name: "Priya Patel",
+        image: "https://randomuser.me/api/portraits/women/90.jpg",
+      },
+      {
+        name: "David Chen",
+        image: "https://randomuser.me/api/portraits/men/34.jpg",
+      },
+      {
+        name: "Lisa Brown",
+        image: "https://randomuser.me/api/portraits/women/23.jpg",
+      },
+      {
+        name: "Tom Anderson",
+        image: "https://randomuser.me/api/portraits/men/56.jpg",
+      },
+      {
+        name: "Sarah White",
+        image: "https://randomuser.me/api/portraits/women/12.jpg",
+      },
     ],
-    views: "3.2K",
-    likes: "489",
-    rating: "4.9",
+    views: 3200,
+    likes: 489,
+    featured: true,
     course: "Full Stack Web Development",
-    roadmap: [
-      "Backend Setup",
-      "Frontend Development",
-      "Payment Integration",
-      "Analytics Dashboard",
-      "Deployment",
-    ],
-    duration: "5 months",
   },
+
   {
     id: 4,
     title: "Climate Monitoring IoT",
@@ -305,21 +331,31 @@ const projects = [
     semester: "Semester 2",
     emoji: "🌍",
     gradient: "bg-gradient-to-br from-teal-500 to-green-600",
-    author: "Jordan Kim",
-    skills: ["Arduino", "Python", "IoT", "Grafana"],
-    members: ["Jordan Kim", "Nina Patel", "Chris Lee"],
-    views: "1.2K",
-    likes: "178",
-    rating: "4.7",
-    course: "IoT & Environmental Tech",
-    roadmap: [
-      "Sensor Setup",
-      "Data Collection",
-      "Dashboard Development",
-      "Analysis & Reporting",
+    images: [
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&fit=crop",
+      "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=500&fit=crop",
+      "https://images.unsplash.com/photo-1615906655593-ad0386982a0f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWVjaGFuaWNzfGVufDB8fDB8fHww",
     ],
-    duration: "3 months",
+    members: [
+      {
+        name: "Jordan Kim",
+        image: "https://randomuser.me/api/portraits/men/88.jpg",
+      },
+      {
+        name: "Nina Patel",
+        image: "https://randomuser.me/api/portraits/women/41.jpg",
+      },
+      {
+        name: "Chris Lee",
+        image: "https://randomuser.me/api/portraits/men/25.jpg",
+      },
+    ],
+    views: 1200,
+    likes: 178,
+    featured: false,
+    course: "IoT & Environmental Tech",
   },
+
   {
     id: 5,
     title: "Machine Learning Pipeline",
@@ -329,21 +365,35 @@ const projects = [
     semester: "Semester 1",
     emoji: "🧠",
     gradient: "bg-gradient-to-br from-pink-500 to-rose-600",
-    author: "Emma Watson",
-    skills: ["TensorFlow", "Python", "Scikit-learn", "Docker"],
-    members: ["Emma Watson", "Robert Chang", "Maya Singh", "James Miller"],
-    views: "2.1K",
-    likes: "312",
-    rating: "4.5",
-    course: "Machine Learning Systems",
-    roadmap: [
-      "Data Pipeline",
-      "Model Development",
-      "Training Optimization",
-      "Containerization",
+    images: [
+      "https://plus.unsplash.com/premium_photo-1664701474750-e3b51072957e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FtYXJhJTIwbWFufGVufDB8fDB8fHww",
+      "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=500&fit=crop",
+      "https://images.unsplash.com/photo-1577918248023-62b9a2748a22?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2FtYXJhJTIwbWFufGVufDB8fDB8fHww",
     ],
-    duration: "4 months",
+    members: [
+      {
+        name: "Emma Watson",
+        image: "https://randomuser.me/api/portraits/women/16.jpg",
+      },
+      {
+        name: "Robert Chang",
+        image: "https://randomuser.me/api/portraits/men/52.jpg",
+      },
+      {
+        name: "Maya Singh",
+        image: "https://randomuser.me/api/portraits/women/33.jpg",
+      },
+      {
+        name: "James Miller",
+        image: "https://randomuser.me/api/portraits/men/44.jpg",
+      },
+    ],
+    views: 2100,
+    likes: 312,
+    featured: false,
+    course: "Machine Learning Systems",
   },
+
   {
     id: 6,
     title: "Social Media Dashboard",
@@ -353,16 +403,31 @@ const projects = [
     semester: "Semester 1",
     emoji: "📊",
     gradient: "bg-gradient-to-br from-orange-500 to-red-600",
-    author: "Mike Johnson",
-    skills: ["React", "Next.js", "PostgreSQL", "API Design"],
-    members: ["Mike Johnson", "Jessica Lee", "Kevin Chen"],
-    views: "890",
-    likes: "142",
-    rating: "4.4",
+    images: [
+      "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&fit=crop",
+      "https://plus.unsplash.com/premium_photo-1661764256397-af154e87b1b3?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    ],
+    members: [
+      {
+        name: "Mike Johnson",
+        image: "https://randomuser.me/api/portraits/men/11.jpg",
+      },
+      {
+        name: "Jessica Lee",
+        image: "https://randomuser.me/api/portraits/women/29.jpg",
+      },
+      {
+        name: "Kevin Chen",
+        image: "https://randomuser.me/api/portraits/men/75.jpg",
+      },
+    ],
+    views: 890,
+    likes: 142,
+    featured: false,
     course: "Advanced Web Applications",
-    roadmap: ["UI Design", "Backend API", "Social Integration", "Analytics"],
-    duration: "3 months",
   },
+
   {
     id: 7,
     title: "Data Analytics Platform",
@@ -372,20 +437,33 @@ const projects = [
     semester: "Semester 2",
     emoji: "📈",
     gradient: "bg-gradient-to-br from-blue-400 to-cyan-500",
-    author: "Lisa Wong",
-    skills: ["Tableau", "Python", "SQL", "D3.js"],
-    members: ["Lisa Wong", "Marcus Johnson", "Patricia Green", "Daniel White"],
-    views: "1.5K",
-    likes: "201",
-    rating: "4.3",
-    course: "Data Visualization & Analytics",
-    roadmap: [
-      "Database Design",
-      "ETL Pipeline",
-      "Dashboard Creation",
-      "Real-time Updates",
+    images: [
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&fit=crop",
+      "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGJ1c2luZXNzfGVufDB8fDB8fHww",
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJ1c2luZXNzfGVufDB8fDB8fHww",
     ],
-    duration: "4 months",
+    members: [
+      {
+        name: "Lisa Wong",
+        image: "https://randomuser.me/api/portraits/women/18.jpg",
+      },
+      {
+        name: "Marcus Johnson",
+        image: "https://randomuser.me/api/portraits/men/24.jpg",
+      },
+      {
+        name: "Patricia Green",
+        image: "https://randomuser.me/api/portraits/women/53.jpg",
+      },
+      {
+        name: "Daniel White",
+        image: "https://randomuser.me/api/portraits/men/36.jpg",
+      },
+    ],
+    views: 1500,
+    likes: 201,
+    featured: false,
+    course: "Data Visualization & Analytics",
   },
 ];
 
