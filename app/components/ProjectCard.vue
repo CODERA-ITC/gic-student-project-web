@@ -23,7 +23,7 @@
           <span
             class="absolute z-20 floating-text top-2 left-2 text-white px-2 py-1 rounded-md text-xs backdrop-blur-sm"
           >
-            {{ project.category }} &middot; {{ project.year }} -
+            {{ project.category }}  {{ project.year }} -
             {{ project.semester }}
           </span>
 
