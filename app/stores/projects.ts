@@ -23,23 +23,13 @@ export interface Project {
   views: number;
   demoUrl: string;
   githubUrl: string;
-  thumbnail: string;
+  images: string[];
   createdAt: string;
   tags: string[];
-  members?: string[];
+  members?: { name: string; image: string }[];
   roadmap?: string[];
   duration?: string;
   course?: string;
-  rating?: string;
-  gradient?: string;
-  emoji?: string;
-}
-
-export interface ProjectFilters {
-  category: string;
-  semester: string;
-  search: string;
-  sortBy: "newest" | "oldest" | "popular" | "views" | "alphabetical";
 }
 
 export interface ProjectStats {
@@ -53,8 +43,6 @@ export interface ProjectStats {
 export interface ProjectState {
   projects: Project[];
   categories: string[];
-  semesters: string[];
-  filters: ProjectFilters;
   loading: boolean;
 }
 
@@ -82,11 +70,31 @@ export const useProjectStore = defineStore("projects", {
         views: 1842,
         demoUrl: "https://ai-study-assistant.demo.com",
         githubUrl: "https://github.com/sarahchen/ai-study-assistant",
-        thumbnail:
-          "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=250&fit=crop",
+        images: [
+          "https://images.unsplash.com/photo-1763182198113-a9a8d0fe3144?w=900&auto=format&fit=crop&q=60",
+          "https://images.unsplash.com/photo-1763669029223-74f911a9e08b?w=900&auto=format&fit=crop&q=60",
+          "https://plus.unsplash.com/premium_photo-1731286446855-c0bd3d23af46?w=900&auto=format&fit=crop&q=60",
+        ],
         createdAt: "2024-10-15",
         tags: ["machine-learning", "education", "productivity"],
-        members: ["Sarah Chen", "Alex Park", "Jordan Lee", "Emma Davis"],
+        members: [
+          {
+            name: "Sarah Chen",
+            image: "https://randomuser.me/api/portraits/women/11.jpg",
+          },
+          {
+            name: "Alex Park",
+            image: "https://randomuser.me/api/portraits/men/32.jpg",
+          },
+          {
+            name: "Jordan Lee",
+            image: "https://randomuser.me/api/portraits/men/54.jpg",
+          },
+          {
+            name: "Emma Davis",
+            image: "https://randomuser.me/api/portraits/women/78.jpg",
+          },
+        ],
         roadmap: [
           "Phase 1: GPT-3 Integration",
           "Phase 2: Conversation History",
@@ -95,9 +103,6 @@ export const useProjectStore = defineStore("projects", {
         ],
         duration: "3 months",
         course: "Advanced AI & Machine Learning",
-        rating: "4.8",
-        emoji: "🤖",
-        gradient: "bg-gradient-to-br from-purple-500 to-indigo-600",
       },
       {
         id: 2,
@@ -120,13 +125,35 @@ export const useProjectStore = defineStore("projects", {
         views: 1337,
         demoUrl: "https://campus-navigator.demo.com",
         githubUrl: "https://github.com/mjohnson/campus-navigator",
-        thumbnail:
-          "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=250&fit=crop",
+        images: [
+          "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=500&fit=crop",
+          "https://images.unsplash.com/photo-1763854492937-fb7ae2f601f3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyMXx8fGVufDB8fHx8fA%3D%3D",
+          "https://images.unsplash.com/photo-1763667309360-30d7e3779382?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0MHx8fGVufDB8fHx8fA%3D%3D",
+        ],
         createdAt: "2024-09-22",
         tags: ["augmented-reality", "navigation", "mobile"],
-        members: ["Marcus Johnson", "Maria Garcia", "Sam Wilson"],
-        emoji: "💪",
-        gradient: "bg-gradient-to-br from-green-500 to-emerald-600",
+        members: [
+          {
+            name: "Marcus Johnson",
+            image: "https://randomuser.me/api/portraits/men/21.jpg",
+          },
+          {
+            name: "Maria Garcia",
+            image: "https://randomuser.me/api/portraits/women/45.jpg",
+          },
+          {
+            name: "Sam Wilson",
+            image: "https://randomuser.me/api/portraits/men/67.jpg",
+          },
+        ],
+        roadmap: [
+          "Phase 1: AR Core Integration",
+          "Phase 2: Real-time Navigation",
+          "Phase 3: Points of Interest",
+          "Phase 4: Production Deployment",
+        ],
+        duration: "4 months",
+        course: "Mobile App Development",
       },
       {
         id: 3,
@@ -155,12 +182,35 @@ export const useProjectStore = defineStore("projects", {
         views: 892,
         demoUrl: "https://sustainability-tracker.demo.com",
         githubUrl: "https://github.com/erodriguez/sustainability-tracker",
-        thumbnail:
-          "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=250&fit=crop",
+        images: [
+          "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&fit=crop",
+          "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=500&fit=crop",
+          "https://images.unsplash.com/photo-1615906655593-ad0386982a0f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWVjaGFuaWNzfGVufDB8fDB8fHww",
+        ],
         createdAt: "2024-08-10",
         tags: ["sustainability", "environment", "data-visualization"],
-        emoji: "🌍",
-        gradient: "bg-gradient-to-br from-teal-500 to-green-600",
+        members: [
+          {
+            name: "Emily Rodriguez",
+            image: "https://randomuser.me/api/portraits/women/41.jpg",
+          },
+          {
+            name: "Jordan Kim",
+            image: "https://randomuser.me/api/portraits/men/88.jpg",
+          },
+          {
+            name: "Nina Patel",
+            image: "https://randomuser.me/api/portraits/women/42.jpg",
+          },
+        ],
+        roadmap: [
+          "Phase 1: IoT Sensor Integration",
+          "Phase 2: Data Collection System",
+          "Phase 3: Analytics Dashboard",
+          "Phase 4: Reporting & Insights",
+        ],
+        duration: "5 months",
+        course: "IoT & Environmental Tech",
       },
       {
         id: 4,
@@ -189,12 +239,35 @@ export const useProjectStore = defineStore("projects", {
         views: 1456,
         demoUrl: "https://smart-library.demo.com",
         githubUrl: "https://github.com/dkim/smart-library",
-        thumbnail:
-          "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=250&fit=crop",
+        images: [
+          "https://images.unsplash.com/photo-1557821552-17105176677c?w=500&fit=crop",
+          "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&fit=crop",
+          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&fit=crop",
+        ],
         createdAt: "2024-05-20",
         tags: ["library", "ai-recommendations", "management-system"],
-        emoji: "📚",
-        gradient: "bg-gradient-to-br from-blue-500 to-cyan-600",
+        members: [
+          {
+            name: "David Kim",
+            image: "https://randomuser.me/api/portraits/men/34.jpg",
+          },
+          {
+            name: "Priya Patel",
+            image: "https://randomuser.me/api/portraits/women/90.jpg",
+          },
+          {
+            name: "Lisa Brown",
+            image: "https://randomuser.me/api/portraits/women/23.jpg",
+          },
+        ],
+        roadmap: [
+          "Phase 1: AI Recommendation Engine",
+          "Phase 2: Inventory Management",
+          "Phase 3: User Interface",
+          "Phase 4: Testing & Launch",
+        ],
+        duration: "4 months",
+        course: "Information Systems Management",
       },
       {
         id: 5,
@@ -223,12 +296,39 @@ export const useProjectStore = defineStore("projects", {
         views: 2156,
         demoUrl: "https://wellness-dashboard.demo.com",
         githubUrl: "https://github.com/apatel/wellness-dashboard",
-        thumbnail:
-          "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop",
+        images: [
+          "https://plus.unsplash.com/premium_photo-1664701474750-e3b51072957e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FtYXJhJTIwbWFufGVufDB8fDB8fHww",
+          "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=500&fit=crop",
+          "https://images.unsplash.com/photo-1577918248023-62b9a2748a22?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2FtYXJhJTIwbWFufGVufDB8fDB8fHww",
+        ],
         createdAt: "2024-04-15",
         tags: ["health", "wellness", "community", "mental-health"],
-        emoji: "💚",
-        gradient: "bg-gradient-to-br from-pink-500 to-rose-600",
+        members: [
+          {
+            name: "Aisha Patel",
+            image: "https://randomuser.me/api/portraits/women/16.jpg",
+          },
+          {
+            name: "Robert Chang",
+            image: "https://randomuser.me/api/portraits/men/52.jpg",
+          },
+          {
+            name: "Maya Singh",
+            image: "https://randomuser.me/api/portraits/women/33.jpg",
+          },
+          {
+            name: "James Miller",
+            image: "https://randomuser.me/api/portraits/men/44.jpg",
+          },
+        ],
+        roadmap: [
+          "Phase 1: Mental Health Resources",
+          "Phase 2: Fitness Tracking",
+          "Phase 3: Community Features",
+          "Phase 4: Integration & Launch",
+        ],
+        duration: "6 months",
+        course: "Health Informatics",
       },
       {
         id: 6,
@@ -251,12 +351,35 @@ export const useProjectStore = defineStore("projects", {
         views: 1234,
         demoUrl: "https://blockchain-voting.demo.com",
         githubUrl: "https://github.com/athompson/blockchain-voting",
-        thumbnail:
-          "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=400&h=250&fit=crop",
+        images: [
+          "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&fit=crop",
+          "https://plus.unsplash.com/premium_photo-1661764256397-af154e87b1b3?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        ],
         createdAt: "2023-11-08",
         tags: ["blockchain", "voting", "security", "ethereum"],
-        emoji: "⛓️",
-        gradient: "bg-gradient-to-br from-orange-500 to-red-600",
+        members: [
+          {
+            name: "Alex Thompson",
+            image: "https://randomuser.me/api/portraits/men/11.jpg",
+          },
+          {
+            name: "Jessica Lee",
+            image: "https://randomuser.me/api/portraits/women/29.jpg",
+          },
+          {
+            name: "Kevin Chen",
+            image: "https://randomuser.me/api/portraits/men/75.jpg",
+          },
+        ],
+        roadmap: [
+          "Phase 1: Smart Contract Development",
+          "Phase 2: Web3 Integration",
+          "Phase 3: Security Audit",
+          "Phase 4: Deployment & Testing",
+        ],
+        duration: "5 months",
+        course: "Blockchain & Cybersecurity",
       },
     ],
     categories: [
@@ -270,84 +393,10 @@ export const useProjectStore = defineStore("projects", {
       "Web Development",
       "Data Science",
     ],
-    semesters: [
-      "All",
-      "Fall 2024",
-      "Summer 2024",
-      "Spring 2024",
-      "Fall 2023",
-      "Summer 2023",
-    ],
-    filters: {
-      category: "All",
-      semester: "All",
-      search: "",
-      sortBy: "newest",
-    },
     loading: false,
   }),
 
   getters: {
-    filteredProjects(): Project[] {
-      let filtered = [...this.projects];
-
-      // Apply category filter
-      if (this.filters.category !== "All") {
-        filtered = filtered.filter(
-          (project) => project.category === this.filters.category
-        );
-      }
-
-      // Apply semester filter
-      if (this.filters.semester !== "All") {
-        filtered = filtered.filter(
-          (project) => project.semester === this.filters.semester
-        );
-      }
-
-      // Apply search filter
-      if (this.filters.search) {
-        const searchTerm = this.filters.search.toLowerCase();
-        filtered = filtered.filter(
-          (project) =>
-            project.title.toLowerCase().includes(searchTerm) ||
-            project.description.toLowerCase().includes(searchTerm) ||
-            project.author.name.toLowerCase().includes(searchTerm) ||
-            project.technologies.some((tech) =>
-              tech.toLowerCase().includes(searchTerm)
-            ) ||
-            project.tags.some((tag) => tag.toLowerCase().includes(searchTerm))
-        );
-      }
-
-      // Apply sorting
-      switch (this.filters.sortBy) {
-        case "newest":
-          filtered.sort(
-            (a, b) =>
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
-          break;
-        case "oldest":
-          filtered.sort(
-            (a, b) =>
-              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          );
-          break;
-        case "popular":
-          filtered.sort((a, b) => b.likes - a.likes);
-          break;
-        case "views":
-          filtered.sort((a, b) => b.views - a.views);
-          break;
-        case "alphabetical":
-          filtered.sort((a, b) => a.title.localeCompare(b.title));
-          break;
-      }
-
-      return filtered;
-    },
-
     featuredProjects(): Project[] {
       return this.projects.filter((project) => project.featured);
     },
@@ -376,17 +425,447 @@ export const useProjectStore = defineStore("projects", {
   },
 
   actions: {
-    setFilter(filterType: keyof ProjectFilters, value: string | number): void {
-      this.filters[filterType] = value as never;
+    // Simulate fetch project state
+    // In real application, this would involve API calls
+    // 1. fetch Category data from server
+    async fetchCategories(): Promise<string[]> {
+      this.loading = true;
+      try {
+        // simulate network delay
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        // return current categories (in a real app this would come from an API)
+
+        const categories = [
+          "All",
+          "Artificial Intelligence",
+          "Mobile Development",
+          "Environmental Tech",
+          "Information Systems",
+          "Health Tech",
+          "Blockchain",
+          "Web Development",
+          "Data Science",
+        ];
+        return (this.categories = categories);
+      } finally {
+        this.loading = false;
+      }
     },
 
-    clearFilters(): void {
-      this.filters = {
-        category: "All",
-        semester: "All",
-        search: "",
-        sortBy: "newest",
-      };
+    // 2. fetch Projects data from server
+
+    async fetchProjects(): Promise<Project[]> {
+      this.loading = true;
+      try {
+        // simulate network delay
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        // return current projects (in a real app this would come from an API)
+
+        const projects: Project[] = [
+          {
+            id: 1,
+            title: "AI Chat Assistant",
+            description:
+              "An intelligent chatbot powered by GPT-3 for customer support.",
+            semester: "Fall 2024",
+            author: {
+              name: "Sarah Chen",
+              avatar: "https://randomuser.me/api/portraits/women/11.jpg",
+              program: "Computer Science",
+              year: "4th Year",
+            },
+            technologies: ["Python", "GPT-3", "React", "Node.js", "MongoDB"],
+            category: "Artificial Intelligence",
+            status: "Completed",
+            featured: true,
+            likes: 342,
+            views: 2500,
+            demoUrl: "https://ai-chat-assistant.demo.com",
+            githubUrl: "https://github.com/sarahchen/ai-chat-assistant",
+            images: [
+              "https://images.unsplash.com/photo-1763182198113-a9a8d0fe3144?w=900&auto=format&fit=crop&q=60",
+              "https://images.unsplash.com/photo-1763669029223-74f911a9e08b?w=900&auto=format&fit=crop&q=60",
+              "https://plus.unsplash.com/premium_photo-1731286446855-c0bd3d23af46?w=900&auto=format&fit=crop&q=60",
+            ],
+            createdAt: "2024-10-15",
+            tags: ["ai", "chatbot", "customer-support"],
+            members: [
+              {
+                name: "Sarah Chen",
+                image: "https://randomuser.me/api/portraits/women/11.jpg",
+              },
+              {
+                name: "Alex Park",
+                image: "https://randomuser.me/api/portraits/men/32.jpg",
+              },
+              {
+                name: "Jordan Lee",
+                image: "https://randomuser.me/api/portraits/men/54.jpg",
+              },
+              {
+                name: "Emma Davis",
+                image: "https://randomuser.me/api/portraits/women/78.jpg",
+              },
+            ],
+            roadmap: [
+              "Phase 1: GPT-3 Integration",
+              "Phase 2: Conversation History",
+              "Phase 3: Multi-language Support",
+              "Phase 4: Production Deployment",
+            ],
+            duration: "3 months",
+            course: "Advanced AI & Machine Learning",
+          },
+
+          {
+            id: 2,
+            title: "Mobile Fitness App",
+            description:
+              "Track workouts, nutrition, and health metrics on the go.",
+            semester: "Fall 2024",
+            author: {
+              name: "Alex Rodriguez",
+              avatar: "https://randomuser.me/api/portraits/men/21.jpg",
+              program: "Mobile Development",
+              year: "3rd Year",
+            },
+            technologies: ["React Native", "Firebase", "Redux", "HealthKit"],
+            category: "Mobile Development",
+            status: "In Progress",
+            featured: false,
+            likes: 256,
+            views: 1800,
+            demoUrl: "https://fitness-app.demo.com",
+            githubUrl: "https://github.com/arodriguez/fitness-app",
+            images: [
+              "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=500&fit=crop",
+              "https://images.unsplash.com/photo-1763854492937-fb7ae2f601f3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyMXx8fGVufDB8fHx8fA%3D%3D",
+              "https://images.unsplash.com/photo-1763667309360-30d7e3779382?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0MHx8fGVufDB8fHx8fA%3D%3D",
+            ],
+            createdAt: "2024-09-22",
+            tags: ["fitness", "mobile", "health"],
+            members: [
+              {
+                name: "Alex Rodriguez",
+                image: "https://randomuser.me/api/portraits/men/21.jpg",
+              },
+              {
+                name: "Maria Garcia",
+                image: "https://randomuser.me/api/portraits/women/45.jpg",
+              },
+              {
+                name: "Sam Wilson",
+                image: "https://randomuser.me/api/portraits/men/67.jpg",
+              },
+            ],
+            roadmap: [
+              "Phase 1: Core Features",
+              "Phase 2: Social Integration",
+              "Phase 3: Wearable Sync",
+              "Phase 4: Launch",
+            ],
+            duration: "4 months",
+            course: "Mobile App Development",
+          },
+
+          {
+            id: 3,
+            title: "E-Commerce Platform",
+            description:
+              "Full-stack online store with payment integration and analytics.",
+            semester: "Summer 2024",
+            author: {
+              name: "Priya Patel",
+              avatar: "https://randomuser.me/api/portraits/women/90.jpg",
+              program: "Web Development",
+              year: "4th Year",
+            },
+            technologies: [
+              "Next.js",
+              "Stripe",
+              "PostgreSQL",
+              "Tailwind",
+              "Vercel",
+            ],
+            category: "Web Development",
+            status: "Completed",
+            featured: true,
+            likes: 489,
+            views: 3200,
+            demoUrl: "https://ecommerce-platform.demo.com",
+            githubUrl: "https://github.com/ppatel/ecommerce-platform",
+            images: [
+              "https://images.unsplash.com/photo-1557821552-17105176677c?w=500&fit=crop",
+              "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&fit=crop",
+              "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&fit=crop",
+            ],
+            createdAt: "2024-08-10",
+            tags: ["ecommerce", "payment", "analytics"],
+            members: [
+              {
+                name: "Priya Patel",
+                image: "https://randomuser.me/api/portraits/women/90.jpg",
+              },
+              {
+                name: "David Chen",
+                image: "https://randomuser.me/api/portraits/men/34.jpg",
+              },
+              {
+                name: "Lisa Brown",
+                image: "https://randomuser.me/api/portraits/women/23.jpg",
+              },
+              {
+                name: "Tom Anderson",
+                image: "https://randomuser.me/api/portraits/men/56.jpg",
+              },
+              {
+                name: "Sarah White",
+                image: "https://randomuser.me/api/portraits/women/12.jpg",
+              },
+            ],
+            roadmap: [
+              "Phase 1: Product Catalog",
+              "Phase 2: Payment Integration",
+              "Phase 3: Analytics Dashboard",
+              "Phase 4: Production Launch",
+            ],
+            duration: "6 months",
+            course: "Full Stack Web Development",
+          },
+
+          {
+            id: 4,
+            title: "Climate Monitoring IoT",
+            description:
+              "IoT sensors and dashboard for environmental monitoring.",
+            semester: "Spring 2024",
+            author: {
+              name: "Jordan Kim",
+              avatar: "https://randomuser.me/api/portraits/men/88.jpg",
+              program: "Environmental Science",
+              year: "4th Year",
+            },
+            technologies: [
+              "Arduino",
+              "Node.js",
+              "MQTT",
+              "Chart.js",
+              "Raspberry Pi",
+            ],
+            category: "Environmental Tech",
+            status: "Completed",
+            featured: false,
+            likes: 178,
+            views: 1200,
+            demoUrl: "https://climate-iot.demo.com",
+            githubUrl: "https://github.com/jkim/climate-iot",
+            images: [
+              "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&fit=crop",
+              "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=500&fit=crop",
+              "https://images.unsplash.com/photo-1615906655593-ad0386982a0f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWVjaGFuaWNzfGVufDB8fDB8fHww",
+            ],
+            createdAt: "2024-05-20",
+            tags: ["iot", "environment", "sensors"],
+            members: [
+              {
+                name: "Jordan Kim",
+                image: "https://randomuser.me/api/portraits/men/88.jpg",
+              },
+              {
+                name: "Nina Patel",
+                image: "https://randomuser.me/api/portraits/women/41.jpg",
+              },
+              {
+                name: "Chris Lee",
+                image: "https://randomuser.me/api/portraits/men/25.jpg",
+              },
+            ],
+            roadmap: [
+              "Phase 1: Sensor Setup",
+              "Phase 2: Data Collection",
+              "Phase 3: Dashboard",
+              "Phase 4: Deployment",
+            ],
+            duration: "5 months",
+            course: "IoT & Environmental Tech",
+          },
+
+          {
+            id: 5,
+            title: "Machine Learning Pipeline",
+            description:
+              "Automated data processing and model training framework.",
+            semester: "Spring 2024",
+            author: {
+              name: "Emma Watson",
+              avatar: "https://randomuser.me/api/portraits/women/16.jpg",
+              program: "Data Science",
+              year: "4th Year",
+            },
+            technologies: [
+              "Python",
+              "TensorFlow",
+              "Docker",
+              "Airflow",
+              "MLflow",
+            ],
+            category: "Artificial Intelligence",
+            status: "Completed",
+            featured: false,
+            likes: 312,
+            views: 2100,
+            demoUrl: "https://ml-pipeline.demo.com",
+            githubUrl: "https://github.com/ewatson/ml-pipeline",
+            images: [
+              "https://plus.unsplash.com/premium_photo-1664701474750-e3b51072957e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FtYXJhJTIwbWFufGVufDB8fDB8fHww",
+              "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=500&fit=crop",
+              "https://images.unsplash.com/photo-1577918248023-62b9a2748a22?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2FtYXJhJTIwbWFufGVufDB8fDB8fHww",
+            ],
+            createdAt: "2024-04-15",
+            tags: ["machine-learning", "automation", "data-processing"],
+            members: [
+              {
+                name: "Emma Watson",
+                image: "https://randomuser.me/api/portraits/women/16.jpg",
+              },
+              {
+                name: "Robert Chang",
+                image: "https://randomuser.me/api/portraits/men/52.jpg",
+              },
+              {
+                name: "Maya Singh",
+                image: "https://randomuser.me/api/portraits/women/33.jpg",
+              },
+              {
+                name: "James Miller",
+                image: "https://randomuser.me/api/portraits/men/44.jpg",
+              },
+            ],
+            roadmap: [
+              "Phase 1: Pipeline Architecture",
+              "Phase 2: Data Processing",
+              "Phase 3: Model Training",
+              "Phase 4: Deployment",
+            ],
+            duration: "5 months",
+            course: "Machine Learning Systems",
+          },
+
+          {
+            id: 6,
+            title: "Social Media Dashboard",
+            description:
+              "Manage and monitor multiple social accounts in one place.",
+            semester: "Fall 2023",
+            author: {
+              name: "Mike Johnson",
+              avatar: "https://randomuser.me/api/portraits/men/11.jpg",
+              program: "Web Development",
+              year: "3rd Year",
+            },
+            technologies: [
+              "Vue.js",
+              "Express",
+              "OAuth",
+              "MongoDB",
+              "Socket.io",
+            ],
+            category: "Web Development",
+            status: "Completed",
+            featured: false,
+            likes: 142,
+            views: 890,
+            demoUrl: "https://social-dashboard.demo.com",
+            githubUrl: "https://github.com/mjohnson/social-dashboard",
+            images: [
+              "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+              "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&fit=crop",
+              "https://plus.unsplash.com/premium_photo-1661764256397-af154e87b1b3?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            ],
+            createdAt: "2023-11-08",
+            tags: ["social-media", "dashboard", "analytics"],
+            members: [
+              {
+                name: "Mike Johnson",
+                image: "https://randomuser.me/api/portraits/men/11.jpg",
+              },
+              {
+                name: "Jessica Lee",
+                image: "https://randomuser.me/api/portraits/women/29.jpg",
+              },
+              {
+                name: "Kevin Chen",
+                image: "https://randomuser.me/api/portraits/men/75.jpg",
+              },
+            ],
+            roadmap: [
+              "Phase 1: OAuth Integration",
+              "Phase 2: Multi-platform Support",
+              "Phase 3: Analytics",
+              "Phase 4: Launch",
+            ],
+            duration: "4 months",
+            course: "Advanced Web Applications",
+          },
+
+          {
+            id: 7,
+            title: "Data Analytics Platform",
+            description: "Real-time data visualization and reporting tool.",
+            semester: "Summer 2023",
+            author: {
+              name: "Lisa Wong",
+              avatar: "https://randomuser.me/api/portraits/women/18.jpg",
+              program: "Data Science",
+              year: "4th Year",
+            },
+            technologies: ["D3.js", "React", "Python", "Pandas", "PostgreSQL"],
+            category: "Data Science",
+            status: "Completed",
+            featured: false,
+            likes: 201,
+            views: 1500,
+            demoUrl: "https://analytics-platform.demo.com",
+            githubUrl: "https://github.com/lwong/analytics-platform",
+            images: [
+              "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&fit=crop",
+              "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGJ1c2luZXNzfGVufDB8fDB8fHww",
+              "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJ1c2luZXNzfGVufDB8fDB8fHww",
+            ],
+            createdAt: "2023-08-15",
+            tags: ["data-viz", "analytics", "reporting"],
+            members: [
+              {
+                name: "Lisa Wong",
+                image: "https://randomuser.me/api/portraits/women/18.jpg",
+              },
+              {
+                name: "Marcus Johnson",
+                image: "https://randomuser.me/api/portraits/men/24.jpg",
+              },
+              {
+                name: "Patricia Green",
+                image: "https://randomuser.me/api/portraits/women/53.jpg",
+              },
+              {
+                name: "Daniel White",
+                image: "https://randomuser.me/api/portraits/men/36.jpg",
+              },
+            ],
+            roadmap: [
+              "Phase 1: Data Connectors",
+              "Phase 2: Visualization Engine",
+              "Phase 3: Report Builder",
+              "Phase 4: Production",
+            ],
+            duration: "5 months",
+            course: "Data Visualization & Analytics",
+          },
+        ];
+        return (this.projects = projects);
+      } finally {
+        this.loading = false;
+      }
     },
 
     async likeProject(projectId: number): Promise<void> {
@@ -403,7 +882,11 @@ export const useProjectStore = defineStore("projects", {
       }
     },
 
-    getProject(id: number | string): Project | undefined {
+    async getProject(id: number | string): Promise<Project | undefined> {
+
+      // fetch project by id from API or local store
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      
       return this.projects.find(
         (project) => project.id === Number.parseInt(id.toString())
       );

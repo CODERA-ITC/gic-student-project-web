@@ -13,20 +13,65 @@
 
     <!-- Project Details -->
     <UContainer class="py-12">
-      <div class="grid lg:grid-cols-3 gap-8">
+      <div v-if="project" class="grid lg:grid-cols-3 gap-8">
         <!-- Main Content -->
         <div class="lg:col-span-2 space-y-8">
-          <!-- Project Header -->
-          <div
-            :class="[
-              'rounded-2xl h-64 flex items-center justify-center text-7xl relative overflow-hidden',
-              project.gradient,
-            ]"
-          >
+          <!-- Project Header - Image Carousel -->
+          <div class="rounded-2xl h-64 relative overflow-hidden bg-slate-800">
+            <div class="relative w-full h-full">
+              <!-- Current Image -->
+              <img
+                v-if="project.images && project.images[currentImageIndex]"
+                :src="project.images[currentImageIndex]"
+                :alt="`${project.title} - Image ${currentImageIndex + 1}`"
+                class="w-full h-full object-cover"
+              />
+
+              <!-- Navigation Buttons -->
+              <button
+                v-if="project.images && project.images.length > 1"
+                @click="previousImage"
+                class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-all backdrop-blur-sm z-10"
+              >
+                <UIcon
+                  name="i-heroicons-chevron-left"
+                  class="w-6 h-6 text-white"
+                />
+              </button>
+
+              <button
+                v-if="project.images && project.images.length > 1"
+                @click="nextImage"
+                class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-all backdrop-blur-sm z-10"
+              >
+                <UIcon
+                  name="i-heroicons-chevron-right"
+                  class="w-6 h-6 text-white"
+                />
+              </button>
+
+              <!-- Image Indicators -->
+              <div
+                v-if="project.images && project.images.length > 1"
+                class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10"
+              >
+                <button
+                  v-for="(img, idx) in project.images"
+                  :key="idx"
+                  @click="currentImageIndex = idx"
+                  :class="[
+                    'w-2 h-2 rounded-full transition-all',
+                    currentImageIndex === idx
+                      ? 'bg-white w-6'
+                      : 'bg-white/50 hover:bg-white/75',
+                  ]"
+                ></button>
+              </div>
+            </div>
+
             <div
-              class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"
+              class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none"
             ></div>
-            <span class="relative z-10">{{ project.emoji }}</span>
           </div>
 
           <!-- Project Title and Badges -->
@@ -36,10 +81,10 @@
                 {{ project.category }}
               </UBadge>
               <UBadge color="info" variant="soft" size="md">
-                {{ project.year }}
+                {{ project.semester }}
               </UBadge>
               <UBadge color="success" variant="soft" size="md">
-                {{ project.semester }}
+                {{ project.status }}
               </UBadge>
             </div>
             <h1 class="text-4xl lg:text-5xl font-black text-white">
@@ -138,13 +183,13 @@
                     :key="idx"
                     class="flex items-center gap-3 p-3 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition-colors"
                   >
-                    <div
-                      class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
-                    >
-                      {{ member.charAt(0) }}
-                    </div>
+                    <img
+                      :src="member.image"
+                      :alt="member.name"
+                      class="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                    />
                     <p class="text-gray-200 font-medium truncate">
-                      {{ member }}
+                      {{ member.name }}
                     </p>
                   </div>
                 </div>
@@ -167,7 +212,7 @@
                 </h3>
                 <div class="flex gap-2 flex-wrap">
                   <span
-                    v-for="skill in project.skills"
+                    v-for="skill in project.technologies"
                     :key="skill"
                     class="px-3 py-2 rounded-full bg-blue-500/20 text-blue-300 text-sm font-medium border border-blue-500/30 hover:bg-blue-500/30 transition-colors"
                   >
@@ -203,46 +248,32 @@
               class="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg"
             >
               <div class="flex items-center gap-2">
-                <UIcon
-                  name="i-heroicons-hand-thumb-up"
-                  class="w-5 h-5 text-blue-400"
-                />
+                <UIcon name="i-heroicons-heart" class="w-5 h-5 text-red-400" />
                 <span class="text-gray-300">Likes</span>
               </div>
               <span class="text-white font-semibold">{{ project.likes }}</span>
-            </div>
-
-            <!-- Rating -->
-            <div
-              class="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg"
-            >
-              <div class="flex items-center gap-2">
-                <UIcon
-                  name="i-heroicons-star"
-                  class="w-5 h-5 text-yellow-400"
-                />
-                <span class="text-gray-300">Rating</span>
-              </div>
-              <span class="text-yellow-300 font-semibold"
-                >{{ project.rating }} / 5</span
-              >
             </div>
           </div>
 
           <!-- Lead Developer -->
           <div
+            v-if="project.author"
             class="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-6 space-y-4"
           >
             <h3 class="text-lg font-semibold text-white">Lead Developer</h3>
             <div class="flex items-center gap-4">
-              <div
-                class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-lg font-bold"
-              >
-                {{ project.author.charAt(0) }}
-              </div>
+              <img
+                :src="project.author.avatar"
+                :alt="project.author.name"
+                class="w-14 h-14 rounded-full object-cover"
+              />
               <div>
-                <p class="text-white font-semibold">{{ project.author }}</p>
-                <p class="text-gray-400 text-sm">Project Lead</p>
+                <p class="text-white font-semibold">
+                  {{ project.author.name }}
+                </p>
+                <p class="text-gray-400 text-sm">
+                  {{ project.author.program }} - {{ project.author.year }}
+                </p>
               </div>
             </div>
           </div>
@@ -255,15 +286,13 @@
               :class="[
                 'w-full py-3 px-4 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2',
                 isLiked
-                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/50'
-                  : 'bg-slate-700 text-gray-300 hover:bg-slate-600 border border-slate-600 hover:border-blue-500/50',
+                  ? 'bg-gradient-to-r from-pink-500 to-red-500 text-white shadow-lg shadow-pink-500/50'
+                  : 'bg-slate-700 text-gray-300 hover:bg-slate-600 border border-slate-600 hover:border-pink-500/50',
               ]"
             >
               <UIcon
                 :name="
-                  isLiked
-                    ? 'i-heroicons-hand-thumb-up-solid'
-                    : 'i-heroicons-hand-thumb-up'
+                  isLiked ? 'i-heroicons-heart-solid' : 'i-heroicons-heart'
                 "
                 class="w-5 h-5"
               />
@@ -288,210 +317,94 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import { useProjectStore } from "~/stores/projects";
 
 const route = useRoute();
+const projectStore = useProjectStore();
 const projectId = parseInt(route.params.id);
 
-// Mock data - in real app, fetch from API or pass from parent
-const projects = [
-  {
-    id: 1,
-    title: "AI Chat Assistant",
-    description:
-      "An intelligent chatbot powered by GPT-3 for customer support.",
-    category: "AI/ML",
-    year: "2024",
-    semester: "Semester 2",
-    emoji: "🤖",
-    gradient: "bg-gradient-to-br from-purple-500 to-indigo-600",
-    author: "Sarah Chen",
-    skills: ["Python", "GPT-3", "NLP", "React"],
-    members: ["Sarah Chen", "Alex Park", "Jordan Lee", "Emma Davis"],
-    views: "2.5K",
-    likes: "342",
-    rating: "4.8",
-    course: "Advanced AI & Machine Learning",
-    roadmap: [
-      "Phase 1: GPT-3 Integration",
-      "Phase 2: Conversation History",
-      "Phase 3: Multi-language Support",
-      "Phase 4: Production Deployment",
-    ],
-    duration: "3 months",
-  },
-  {
-    id: 2,
-    title: "Mobile Fitness App",
-    description: "Track workouts, nutrition, and health metrics on the go.",
-    category: "Mobile",
-    year: "2024",
-    semester: "Semester 1",
-    emoji: "💪",
-    gradient: "bg-gradient-to-br from-green-500 to-emerald-600",
-    author: "Alex Rodriguez",
-    skills: ["React Native", "Firebase", "UI/UX", "TypeScript"],
-    members: ["Alex Rodriguez", "Maria Garcia", "Sam Wilson"],
-    views: "1.8K",
-    likes: "256",
-    rating: "4.6",
-    course: "Mobile App Development",
-    roadmap: [
-      "MVP: Basic Tracking",
-      "Add Social Features",
-      "Implement AI Recommendations",
-      "Launch on App Stores",
-    ],
-    duration: "4 months",
-  },
-  {
-    id: 3,
-    title: "E-Commerce Platform",
-    description:
-      "Full-stack online store with payment integration and analytics.",
-    category: "Web",
-    year: "2024",
-    semester: "Semester 2",
-    emoji: "🛍️",
-    gradient: "bg-gradient-to-br from-blue-500 to-cyan-600",
-    author: "Priya Patel",
-    skills: ["Node.js", "Vue.js", "MongoDB", "Stripe"],
-    members: [
-      "Priya Patel",
-      "David Chen",
-      "Lisa Brown",
-      "Tom Anderson",
-      "Sarah White",
-    ],
-    views: "3.2K",
-    likes: "489",
-    rating: "4.9",
-    course: "Full Stack Web Development",
-    roadmap: [
-      "Backend Setup",
-      "Frontend Development",
-      "Payment Integration",
-      "Analytics Dashboard",
-      "Deployment",
-    ],
-    duration: "5 months",
-  },
-  {
-    id: 4,
-    title: "Climate Monitoring IoT",
-    description: "IoT sensors and dashboard for environmental monitoring.",
-    category: "Sustainability",
-    year: "2023",
-    semester: "Semester 2",
-    emoji: "🌍",
-    gradient: "bg-gradient-to-br from-teal-500 to-green-600",
-    author: "Jordan Kim",
-    skills: ["Arduino", "Python", "IoT", "Grafana"],
-    members: ["Jordan Kim", "Nina Patel", "Chris Lee"],
-    views: "1.2K",
-    likes: "178",
-    rating: "4.7",
-    course: "IoT & Environmental Tech",
-    roadmap: [
-      "Sensor Setup",
-      "Data Collection",
-      "Dashboard Development",
-      "Analysis & Reporting",
-    ],
-    duration: "3 months",
-  },
-  {
-    id: 5,
-    title: "Machine Learning Pipeline",
-    description: "Automated data processing and model training framework.",
-    category: "AI/ML",
-    year: "2023",
-    semester: "Semester 1",
-    emoji: "🧠",
-    gradient: "bg-gradient-to-br from-pink-500 to-rose-600",
-    author: "Emma Watson",
-    skills: ["TensorFlow", "Python", "Scikit-learn", "Docker"],
-    members: ["Emma Watson", "Robert Chang", "Maya Singh", "James Miller"],
-    views: "2.1K",
-    likes: "312",
-    rating: "4.5",
-    course: "Machine Learning Systems",
-    roadmap: [
-      "Data Pipeline",
-      "Model Development",
-      "Training Optimization",
-      "Containerization",
-    ],
-    duration: "4 months",
-  },
-  {
-    id: 6,
-    title: "Social Media Dashboard",
-    description: "Manage and monitor multiple social accounts in one place.",
-    category: "Web",
-    year: "2022",
-    semester: "Semester 1",
-    emoji: "📊",
-    gradient: "bg-gradient-to-br from-orange-500 to-red-600",
-    author: "Mike Johnson",
-    skills: ["React", "Next.js", "PostgreSQL", "API Design"],
-    members: ["Mike Johnson", "Jessica Lee", "Kevin Chen"],
-    views: "890",
-    likes: "142",
-    rating: "4.4",
-    course: "Advanced Web Applications",
-    roadmap: ["UI Design", "Backend API", "Social Integration", "Analytics"],
-    duration: "3 months",
-  },
-  {
-    id: 7,
-    title: "Data Analytics Platform",
-    description: "Real-time data visualization and reporting tool.",
-    category: "Data Science",
-    year: "2022",
-    semester: "Semester 2",
-    emoji: "📈",
-    gradient: "bg-gradient-to-br from-blue-400 to-cyan-500",
-    author: "Lisa Wong",
-    skills: ["Tableau", "Python", "SQL", "D3.js"],
-    members: ["Lisa Wong", "Marcus Johnson", "Patricia Green", "Daniel White"],
-    views: "1.5K",
-    likes: "201",
-    rating: "4.3",
-    course: "Data Visualization & Analytics",
-    roadmap: [
-      "Database Design",
-      "ETL Pipeline",
-      "Dashboard Creation",
-      "Real-time Updates",
-    ],
-    duration: "4 months",
-  },
-];
+// Get project from store
+const project = ref(null);
 
-const project = computed(() => {
-  return projects.find((p) => p.id === projectId) || projects[0];
-});
+// Load project data
+const loadProject = async () => {
+  const projectData = await projectStore.getProject(projectId);
+  if (!projectData) {
+    navigateTo("/projects");
+    return;
+  }
+  project.value = projectData;
+};
 
-const likedProjects = ref(new Set());
+await loadProject();
+
+// Image carousel
+const currentImageIndex = ref(0);
+
+const nextImage = () => {
+  if (project.value?.images) {
+    currentImageIndex.value =
+      (currentImageIndex.value + 1) % project.value.images.length;
+  }
+};
+
+const previousImage = () => {
+  if (project.value?.images) {
+    currentImageIndex.value =
+      currentImageIndex.value === 0
+        ? project.value.images.length - 1
+        : currentImageIndex.value - 1;
+  }
+};
+
+// Like functionality - persist in localStorage to prevent duplicate likes
+const LIKED_PROJECTS_KEY = "likedProjects";
+
+// Initialize liked projects from localStorage
+const getLikedProjectsFromStorage = () => {
+  if (typeof window !== "undefined") {
+    const stored = localStorage.getItem(LIKED_PROJECTS_KEY);
+    return stored ? new Set(JSON.parse(stored)) : new Set();
+  }
+  return new Set();
+};
+
+const likedProjects = ref(getLikedProjectsFromStorage());
 
 const isLiked = computed(() => {
-  return likedProjects.value.has(project.value.id);
+  return likedProjects.value.has(project.value?.id);
 });
 
 const toggleLike = () => {
+  if (!project.value) return;
+
   if (likedProjects.value.has(project.value.id)) {
+    // Unlike: decrement count and remove from liked
+    if (project.value.likes > 0) {
+      project.value.likes--;
+    }
     likedProjects.value.delete(project.value.id);
   } else {
+    // Like: increment count and add to liked
+    projectStore.likeProject(project.value.id);
     likedProjects.value.add(project.value.id);
+  }
+
+  // Persist to localStorage
+  if (typeof window !== "undefined") {
+    localStorage.setItem(
+      LIKED_PROJECTS_KEY,
+      JSON.stringify([...likedProjects.value])
+    );
   }
 };
 
 useHead({
-  title: `${project.value.title} - Project Details`,
+  title: `${project.value?.title || "Project"} - Project Details`,
   meta: [
     {
       name: "description",
-      content: project.value.description,
+      content: project.value?.description || "Student project details",
     },
   ],
 });
