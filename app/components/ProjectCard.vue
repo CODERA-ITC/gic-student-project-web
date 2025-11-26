@@ -202,7 +202,7 @@ const props = defineProps({
     },
   },
   likedProjects: {
-    type: Set,
+    type: Object,
     required: true,
   },
 });
@@ -213,7 +213,7 @@ const currentImageIndex = ref(0);
 let autoPlayInterval = null;
 
 const isLiked = computed(() => {
-  return props.likedProjects.has(props.project.id);
+  return !!props.likedProjects[props.project.id];
 });
 
 const toggleLikeHandler = () => {

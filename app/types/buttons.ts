@@ -63,8 +63,7 @@ export const BUTTON_COLORS = {
       "bg-gradient-to-r from-indigo-600 to-blue-600 text-white hover:shadow-lg hover:shadow-indigo-500/50 hover:cursor-pointer",
   },
   success: {
-    solid:
-      "bg-gray-600/90 hover:bg-gray-700 hover:cursor-pointer text-white",
+    solid: "bg-gray-600/90 hover:bg-gray-700 hover:cursor-pointer text-white",
     outline:
       "border-2 border-gray-600 text-gray-600 hover:bg-gray-50 hover:cursor-pointer",
     ghost: "text-gray-600 hover:bg-gray-100 hover:cursor-pointer",
@@ -326,14 +325,21 @@ export const BUTTON_PRESETS = {
     variant: "ghost",
     size: "md",
   },
-  viewDetails:{
+  viewDetails: {
     label: "View Details",
     icon: null,
     color: "primary",
     variant: "solid",
     text: "text-white",
     size: "md",
-  }
+  },
+  clearFilters: {
+    label: "Clear Filters",
+    icon: "i-heroicons-trash",
+    color: "danger",
+    variant: "solid",
+    size: "md",
+  },
 };
 
 /**

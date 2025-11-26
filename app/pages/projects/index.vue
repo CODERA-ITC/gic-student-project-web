@@ -119,9 +119,9 @@
           <div class="space-y-6">
             <!-- Results Count -->
             <div class="flex justify-between items-center">
-              <p class="text-gray-400">
+              <p class="text-white">
                 Showing
-                <span class="text-blue-700/80 font-semibold">{{
+                <span class="text-white font-bold">{{
                   filteredProjects.length
                 }}</span>
                 projects
@@ -135,7 +135,7 @@
                   selectedYears.length > 0 ||
                   selectedSemesters.length > 0
                 "
-                preset="reset"
+                preset="clearFilters"
                 @click="clearFilters"
               />
             </div>
@@ -177,10 +177,10 @@ const router = useRouter();
 const selectedCategories = ref([]);
 const selectedYears = ref([]);
 const selectedSemesters = ref([]);
-const sortBy = ref("recent");
-const likedProjects = ref(new Set());
-//. create a set to store liked project IDs
-/// move it to store later
+
+const likedProjects = ref({});
+// Simple object to track like counts for each project
+// Will be moved to store later
 const categories = [
   "AI/ML",
   "Mobile",
@@ -497,33 +497,28 @@ const filteredProjects = computed(() => {
     );
   }
 
-  return filtered.sort((a, b) => {
-    if (sortBy.value === "popular") {
-      return parseInt(b.likes) - parseInt(a.likes);
-    } else if (sortBy.value === "trending") {
-      return parseInt(b.views) - parseInt(a.views);
-    }
-    return 0;
-  });
+  return filtered;
 });
 
 const clearFilters = () => {
   selectedCategories.value = [];
   selectedYears.value = [];
   selectedSemesters.value = [];
-  sortBy.value = "recent";
-};
-
-// Like functionality
-const isLiked = (projectId) => {
-  return likedProjects.value.has(projectId);
 };
 
 const toggleLike = (projectId) => {
-  if (likedProjects.value.has(projectId)) {
-    likedProjects.value.delete(projectId);
+  // Find the project and increment/decrement its like count
+  const project = projects.find((p) => p.id === projectId);
+  if (!project) return;
+
+  if (likedProjects.value[projectId]) {
+    // Unlike: decrement count and remove from liked
+    project.likes--;
+    delete likedProjects.value[projectId];
   } else {
-    likedProjects.value.add(projectId);
+    // Like: increment count and add to liked
+    project.likes++;
+    likedProjects.value[projectId] = true;
   }
 };
 
