@@ -18,17 +18,17 @@
         <!-- Images Carousel -->
         <div
           v-if="project.images && project.images.length > 0"
-          class="relative w-full h-full rounded-lg overflow-hidden"
+          class="relative w-full h-full rounded-lg overflow-hidden hover:shadow-xl"
         >
           <span
-            class="absolute z-20 floating-text top-2 left-2 text-white px-2 py-1 rounded-md text-xs backdrop-blur-sm"
+            class="absolute z-20 floating-text top-2 left-2 text-white px-2 py-1 rounded-md text-xs mix-blend-difference"
           >
-            {{ project.category }}  {{ project.year }} -
+            {{ project.category }} {{ project.year }} -
             {{ project.semester }}
           </span>
 
           <div
-            class="absolute z-20 top-2 right-2 text-white px-2 py-1 rounded-md text-xs backdrop-blur-sm flex items-center gap-1"
+            class="absolute z-20 top-2 right-2 text-white px-2 py-1 rounded-md text-xs flex items-center gap-1 mix-blend-difference"
           >
             <UIcon
               name="i-heroicons-eye"

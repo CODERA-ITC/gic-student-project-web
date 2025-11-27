@@ -7,13 +7,9 @@
 }
 
 @theme {
-<<<<<<< HEAD
-  /* Define custom brand colors */
-=======
   /* Override default nuxt styling */
 
   /* Define new custom color */
->>>>>>> 27e23ed (update font to poppins)
   --color-brand-50: #d4d6db;
   --color-brand-100: #7d8394;
   --color-brand-200: #676e82;
@@ -53,87 +49,5 @@
 }
 
 .dark {
-<<<<<<< HEAD
-  /* Dark mode colors */
-  --ui-primary: var(--ui-color-primary-400);
-  --ui-secondary: var(--ui-color-secondary-400);
-  --ui-success: var(--ui-color-success-400);
-  --ui-info: var(--ui-color-info-400);
-  --ui-warning: var(--ui-color-warning-400);
-  --ui-error: var(--ui-color-error-400);
-
-  /* Dark mode text colors */
-  --ui-text-dimmed: var(--ui-color-neutral-600);
-  --ui-text-muted: var(--ui-color-neutral-500);
-  --ui-text-toned: var(--ui-color-neutral-400);
-  --ui-text: var(--ui-color-neutral-100);
-  --ui-text-highlighted: var(--ui-color-neutral-50);
-  
-  /* Dark mode backgrounds */
-  --ui-bg: var(--ui-color-neutral-900);
-  --ui-bg-elevated: var(--ui-color-neutral-800);
-  --ui-bg-muted: var(--ui-color-neutral-850);
-  
-  /* Dark mode borders */
-  --ui-border: var(--ui-color-neutral-700);
-  --ui-border-muted: var(--ui-color-neutral-800);
-}
-
-/* Smooth transitions for theme changes */
-:root {
-  color-scheme: light;
-}
-
-.dark {
-  color-scheme: dark;
-}
-
-* {
-  transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-              border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
-              color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Prevent transitions on page load */
-.no-transition,
-.no-transition * {
-  transition: none !important;
-}
-
-/* Base body styles */
-body {
-  @apply bg-neutral-50 dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100;
-}
-
-/* Scrollbar styles for both modes */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-::-webkit-scrollbar-track {
-  @apply bg-neutral-100 dark:bg-neutral-800;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-neutral-300 dark:bg-neutral-600 rounded;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-neutral-400 dark:bg-neutral-500;
-}
-
-/* Firefox scrollbar */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: theme('colors.neutral.300') theme('colors.neutral.100');
-}
-
-.dark * {
-  scrollbar-color: theme('colors.neutral.600') theme('colors.neutral.800');
-}
-=======
   --ui-primary: var(--ui-color-primary-200);
 }
->>>>>>> 27e23ed (update font to poppins)
