@@ -8,6 +8,7 @@
         'opacity-50 cursor-not-allowed': disabled || loading,
         relative: loading,
         'pointer-events-none': disabled || loading,
+        
       },
     ]"
     @click="handleClick"

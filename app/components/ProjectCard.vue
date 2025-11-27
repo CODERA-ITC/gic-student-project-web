@@ -11,41 +11,35 @@
         'w-full max-w-lg mx-auto',
       ]"
     >
+      <!-- Circular featured badge -->
+      <template v-if="isFeatured">
+        <div class="absolute top-3 left-3 z-50 animate-pulse">
+          <UBadge
+            icon="i-lucide-rocket"
+            size="md"
+            color="error"
+            variant="solid"
+          >
+            Featured
+          </UBadge>
+        </div>
+      </template>
+
       <!-- Project Header Image Carousel -->
       <div
-        class="relative h-64 flex items-center justify-center overflow-hidden bg-slate-900 rounded-lg group"
+        class="relative h-70 flex items-center justify-center overflow-hidden rounded-lg group"
       >
         <!-- Images Carousel -->
         <div
-          v-if="project.images && project.images.length > 0"
-          class="relative w-full h-full rounded-lg overflow-hidden hover:shadow-xl"
+          v-if="project?.images && project.images.length > 0"
+          class="relative w-full h-full rounded-lg overflow-hidden hover:shadow-xl p-1"
         >
-          <span
-            class="absolute z-20 floating-text top-2 left-2 text-white px-2 py-1 rounded-md text-xs mix-blend-difference"
-          >
-            {{ project.category }} {{ project.year }} -
-            {{ project.semester }}
-          </span>
-
-          <div
-            class="absolute z-20 top-2 right-2 text-white px-2 py-1 rounded-md text-xs flex items-center gap-1 mix-blend-difference"
-          >
-            <UIcon
-              name="i-heroicons-eye"
-              class="w-4 h-4 text-white/80 transition-colors"
-            />
-
-            <span class="text-xs text-white/80 font-medium transition-colors">
-              {{ formatNumber(project.views) }}
-            </span>
-          </div>
-
           <!-- Views -->
 
           <img
             :src="project.images[currentImageIndex]"
             :alt="project.title"
-            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 rounded-lg"
           />
 
           <!-- Animated overlay on hover -->
@@ -71,58 +65,60 @@
             />
           </div>
         </div>
-
-        <!-- Fallback: Emoji display if no images -->
-        <div v-else :class="['absolute inset-0', project.gradient]">
-          <div class="w-full h-full flex items-center justify-center text-6xl">
-            <span
-              class="group-hover:scale-110 transition-transform duration-300"
-            >
-              {{ project.emoji }}
-            </span>
-          </div>
-        </div>
       </div>
 
       <!-- Project Content -->
-      <div class="p-5 space-y-4">
+      <div class="p-5 space-y-4 flex flex-col gap-2">
         <!-- Title and Meta Info -->
-        <div class="flex items-center justify-between mb-2">
-          <h3
-            class="text-lg font-simi text-black transition-colors line-clamp-2 mb-1"
-          >
-            {{ project.title }}
-          </h3>
-          <div>
-            <button
-              @click.prevent.stop="toggleLikeHandler"
-              :class="[
-                'flex items-center gap-1.5 transition-all duration-300 cursor-pointer',
-
-                'text-gray-700 ',
-              ]"
-              :title="isLiked ? 'Remove favorite' : 'Add favorite'"
-              type="button"
+        <div class="flex flex-col ">
+          <div class="flex items-center justify-between mb-1">
+            <h3
+              class="text-lg font-semibold text-black transition-colors line-clamp-2 mb-1"
             >
-              <UIcon
-                :name="
-                  isLiked ? 'i-heroicons-heart-solid' : 'i-heroicons-heart'
-                "
-                :class="[
-                  'w-5 h-5 transition-transform duration-300',
-                  isLiked ? 'scale-125' : 'group-hover:scale-110',
-                ]"
-              />
-              <span
-                :class="[
-                  'text-xs font-medium transition-colors duration-300',
+              {{ project.title }}
+            </h3>
 
-                  'text-gray-700',
+            <!-- Insert the Category and view here -->
+
+            <div class="flex flex-col gap-3 items-end">
+              <button
+                @click.prevent.stop="toggleLikeHandler"
+                :class="[
+                  'flex items-center gap-1.5 transition-all duration-300 cursor-pointer',
+
+                  'text-gray-700 ',
                 ]"
+                :title="isLiked ? 'Remove favorite' : 'Add favorite'"
+                type="button"
               >
-                {{ formatNumber(project.likes) }}
-              </span>
-            </button>
+                <UIcon
+                  :name="
+                    isLiked ? 'i-heroicons-heart-solid' : 'i-heroicons-heart'
+                  "
+                  :class="[
+                    'w-5 h-5 transition-transform duration-300',
+                    isLiked ? 'scale-125' : 'group-hover:scale-110',
+                  ]"
+                />
+                <span
+                  :class="[
+                    'text-xs font-medium transition-colors duration-300',
+
+                    'text-gray-700',
+                  ]"
+                >
+                  {{ formatNumber(project.likes) }}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex text-xs items-center gap-1">
+            {{ project.category }} • {{ formatNumber(project.views) }}
+            <UIcon
+              name="i-heroicons-eye"
+              class="w-4 h-4 text-black/80 transition-colors"
+            />
           </div>
         </div>
 
@@ -169,6 +165,7 @@
           <span>
             <ButtonsPresetButton
               preset="viewDetails"
+              size="sm"
               :to="`/projects/${project.id}`"
             />
           </span>
@@ -180,8 +177,13 @@
 
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from "vue";
+import { boolean } from "zod";
 
 const props = defineProps({
+  isFeatured: {
+    type: Boolean,
+    default: false,
+  },
   project: {
     type: Object,
     required: true,
@@ -191,13 +193,12 @@ const props = defineProps({
         obj.title &&
         obj.description &&
         obj.category &&
-        obj.year &&
         obj.semester &&
-        (obj.images || obj.emoji) &&
-        obj.views &&
-        obj.likes &&
-        Array.isArray(obj.members) &&
-        obj.members.every((m) => m && m.name)
+        (obj.images || obj.emoji || obj.gradient) &&
+        obj.views !== undefined &&
+        obj.likes !== undefined &&
+        (!obj.members ||
+          (Array.isArray(obj.members) && obj.members.every((m) => m && m.name)))
       );
     },
   },
@@ -213,7 +214,7 @@ const currentImageIndex = ref(0);
 let autoPlayInterval = null;
 
 const isLiked = computed(() => {
-  return !!props.likedProjects[props.project.id];
+  return !!props.likedProjects?.[props.project?.id];
 });
 
 const toggleLikeHandler = () => {
@@ -226,7 +227,12 @@ const formatNumber = (num) => {
 };
 
 const startAutoPlay = () => {
-  if (props.project.images && props.project.images.length > 1) {
+  // Only run on client side
+  if (
+    process.client &&
+    props.project?.images &&
+    props.project.images.length > 1
+  ) {
     autoPlayInterval = setInterval(() => {
       currentImageIndex.value =
         (currentImageIndex.value + 1) % props.project.images.length;
@@ -241,13 +247,16 @@ const stopAutoPlay = () => {
   }
 };
 
-onMounted(() => {
-  startAutoPlay();
-});
+// Only mount on client side
+if (process.client) {
+  onMounted(() => {
+    startAutoPlay();
+  });
 
-onUnmounted(() => {
-  stopAutoPlay();
-});
+  onUnmounted(() => {
+    stopAutoPlay();
+  });
+}
 </script>
 
 <style scoped>
