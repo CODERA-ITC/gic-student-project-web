@@ -8,6 +8,7 @@ dist
 .azure
 # Node dependencies
 node_modules
+notes/
 
 # Logs
 logs
@@ -22,3 +23,4 @@ logs
 .env
 .env.*
 !.env.example
+wrangler.json

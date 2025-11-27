@@ -20,11 +20,16 @@
           <div
             class="flex flex-col sm:flex-row gap-3 justify-center items-center flex-wrap"
           >
-            <ButtonsPresetButton preset="createProject" to="/projects/create" />
+            <ButtonsPresetButton
+              preset="createProject"
+              to="/projects/create"
+              size="md"
+            />
 
             <ButtonsPresetButton
               preset="viewBySemester"
               to="/projects/semester"
+              size="md"
             />
           </div>
         </div>
@@ -32,7 +37,9 @@
     </div>
 
     <!-- Filters and Projects -->
-    <UContainer class="py-16 bg-blue-900/70">
+    <UContainer
+      class="py-16 bg-gradient-to-b via-gray-50 to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
+    >
       <div class="grid lg:grid-cols-4 gap-8">
         <!-- Sidebar Filters -->
         <div class="lg:col-span-1">

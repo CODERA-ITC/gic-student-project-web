@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import type { ComputedRef } from "vue";
+import { ca } from "zod/locales";
 
 // Types
 export interface ProjectAuthor {
@@ -398,7 +399,7 @@ export const useProjectStore = defineStore("projects", {
 
   getters: {
     featuredProjects(): Project[] {
-      return this.projects.filter((project) => project.featured);
+      return this.projects.filter((project) => project.featured).slice(0, 3);
     },
 
     projectsByCategory(): Record<string, Project[]> {
@@ -428,6 +429,123 @@ export const useProjectStore = defineStore("projects", {
     // Simulate fetch project state
     // In real application, this would involve API calls
     // 1. fetch Category data from server
+
+    async fetchFeaturedProjects(): Promise<Project[]> {
+      this.loading = true;
+      try {
+        // simulate network delay for 1 s
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        const featuredProjects: Project[] = [
+          {
+            id: 1,
+            title: "AI Chat Assistant",
+            description:
+              "An intelligent chatbot powered by GPT-3 for customer support. This project aims to enhance user experience by providing instant and accurate responses to common inquiries.",
+            semester: "Fall 2024",
+            author: {
+              name: "Sarah Chen",
+              avatar: "https://randomuser.me/api/portraits/women/11.jpg",
+              program: "Computer Science",
+              year: "4th Year",
+            },
+            technologies: ["Python", "GPT-3", "React", "Node.js", "MongoDB"],
+            category: "Artificial Intelligence",
+            status: "Completed",
+            featured: true,
+            likes: 342,
+            views: 2500,
+            demoUrl: "https://ai-chat-assistant.demo.com",
+            githubUrl: "https://github.com/sarahchen/ai-chat-assistant",
+            images: [
+              "https://images.unsplash.com/photo-1763182198113-a9a8d0fe3144?w=900&auto=format&fit=crop&q=60",
+              "https://images.unsplash.com/photo-1763669029223-74f911a9e08b?w=900&auto=format&fit=crop&q=60",
+              "https://plus.unsplash.com/premium_photo-1731286446855-c0bd3d23af46?w=900&auto=format&fit=crop&q=60",
+            ],
+            createdAt: "2024-10-15",
+            tags: ["ai", "chatbot", "customer-support"],
+            duration: "3 months",
+            course: "Advanced AI & Machine Learning",
+          },
+
+          {
+            id: 2,
+            title: "Mobile Fitness App",
+            description:
+              "Track workouts, nutrition, and health metrics on the go.",
+            semester: "Fall 2024",
+            author: {
+              name: "Alex Rodriguez",
+              avatar: "https://randomuser.me/api/portraits/men/21.jpg",
+              program: "Mobile Development",
+              year: "3rd Year",
+            },
+            technologies: ["React Native", "Firebase", "Redux", "HealthKit"],
+            category: "Mobile Development",
+            status: "In Progress",
+            featured: false,
+            likes: 256,
+            views: 1800,
+            demoUrl: "https://fitness-app.demo.com",
+            githubUrl: "https://github.com/arodriguez/fitness-app",
+            images: [
+              "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=500&fit=crop",
+              "https://images.unsplash.com/photo-1763854492937-fb7ae2f601f3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyMXx8fGVufDB8fHx8fA%3D%3D",
+              "https://images.unsplash.com/photo-1763667309360-30d7e3779382?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0MHx8fGVufDB8fHx8fA%3D%3D",
+            ],
+            createdAt: "2024-09-22",
+            tags: ["fitness", "mobile", "health"],
+
+            duration: "4 months",
+            course: "Mobile App Development",
+          },
+
+          {
+            id: 3,
+            title: "E-Commerce Platform",
+            description:
+              "Full-stack online store with payment integration and analytics.",
+            semester: "Summer 2024",
+            author: {
+              name: "Priya Patel",
+              avatar: "https://randomuser.me/api/portraits/women/90.jpg",
+              program: "Web Development",
+              year: "4th Year",
+            },
+            technologies: [
+              "Next.js",
+              "Stripe",
+              "PostgreSQL",
+              "Tailwind",
+              "Vercel",
+            ],
+            category: "Web Development",
+            status: "Completed",
+            featured: true,
+            likes: 489,
+            views: 3200,
+            demoUrl: "https://ecommerce-platform.demo.com",
+            githubUrl: "https://github.com/ppatel/ecommerce-platform",
+            images: [
+              "https://images.unsplash.com/photo-1557821552-17105176677c?w=500&fit=crop",
+              "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&fit=crop",
+              "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&fit=crop",
+            ],
+            createdAt: "2024-08-10",
+            tags: ["ecommerce", "payment", "analytics"],
+            duration: "6 months",
+            course: "Full Stack Web Development",
+          },
+        ];
+        // Return the featured projects
+        return featuredProjects;
+      } catch (error) {
+        return [];
+      } finally {
+        this.loading = false;
+      }
+    },
+
     async fetchCategories(): Promise<string[]> {
       this.loading = true;
       try {
@@ -895,6 +1013,79 @@ export const useProjectStore = defineStore("projects", {
       return this.projects.filter((project) =>
         project.author.name.toLowerCase().includes(authorName.toLowerCase())
       );
+    },
+
+    searchProjects(query: string) {
+      if (!query.trim()) return [];
+
+      const searchTerm = query.toLowerCase();
+      const results: Array<{
+        type: "category" | "title" | "description";
+        icon: string;
+        value: string;
+        label: string;
+        subtitle: string;
+        count?: number;
+        category?: string;
+      }> = [];
+      const addedItems = new Set<string>();
+
+      // Search categories
+      this.categories.forEach((category) => {
+        if (category.toLowerCase().includes(searchTerm) && category !== "All") {
+          const key = `category-${category}`;
+          if (!addedItems.has(key)) {
+            addedItems.add(key);
+            results.push({
+              type: "category",
+              icon: "i-heroicons-folder-20-solid",
+              value: category,
+              label: category,
+              subtitle: "Category",
+              count: this.projects.filter((p) => p.category === category)
+                .length,
+            });
+          }
+        }
+      });
+
+      // Search project titles
+      this.projects.forEach((project) => {
+        if (project.title.toLowerCase().includes(searchTerm)) {
+          const key = `title-${project.title}`;
+          if (!addedItems.has(key) && results.length < 10) {
+            addedItems.add(key);
+            results.push({
+              type: "title",
+              icon: "i-heroicons-document-text-20-solid",
+              value: project.title,
+              label: project.title,
+              subtitle: "Project Title",
+              category: project.category,
+            });
+          }
+        }
+      });
+
+      // Search project descriptions
+      this.projects.forEach((project) => {
+        if (project.description.toLowerCase().includes(searchTerm)) {
+          const key = `desc-${project.title}`;
+          if (!addedItems.has(key) && results.length < 10) {
+            addedItems.add(key);
+            results.push({
+              type: "description",
+              icon: "i-heroicons-chat-bubble-left-right-20-solid",
+              value: project.title,
+              label: project.title,
+              subtitle: `"${project.description.substring(0, 50)}..."`,
+              category: project.category,
+            });
+          }
+        }
+      });
+
+      return results.slice(0, 8);
     },
   },
 });

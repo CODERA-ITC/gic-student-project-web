@@ -1,7 +1,7 @@
 <template>
   <div>
     <HeroSection />
-    <FeaturesSection />
+
     <FeaturedProjectsSection />
     <CTASection />
   </div>

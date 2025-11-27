@@ -396,5 +396,81 @@ export const useStudentStore = defineStore("students", {
           )
       );
     },
+
+    // Search with structured results for search dropdown
+    searchStudentsWithResults(query: string) {
+      if (!query.trim()) return [];
+
+      const searchTerm = query.toLowerCase();
+      const results: Array<{
+        type: "category" | "title" | "description";
+        icon: string;
+        value: string;
+        label: string;
+        subtitle: string;
+        count?: number;
+        category?: string;
+      }> = [];
+      const addedItems = new Set<string>();
+
+      // Search by program
+      this.programs.forEach((program) => {
+        if (program.toLowerCase().includes(searchTerm) && program !== "All") {
+          const key = `program-${program}`;
+          if (!addedItems.has(key)) {
+            addedItems.add(key);
+            results.push({
+              type: "category",
+              icon: "i-heroicons-academic-cap-20-solid",
+              value: program,
+              label: program,
+              subtitle: "Program",
+              count: this.students.filter((s) => s.program === program).length,
+            });
+          }
+        }
+      });
+
+      // Search by student name
+      this.students.forEach((student) => {
+        if (student.name.toLowerCase().includes(searchTerm)) {
+          const key = `name-${student.name}`;
+          if (!addedItems.has(key) && results.length < 10) {
+            addedItems.add(key);
+            results.push({
+              type: "title",
+              icon: "i-heroicons-user-20-solid",
+              value: student.name,
+              label: student.name,
+              subtitle: "Student Name",
+              category: student.program,
+            });
+          }
+        }
+      });
+
+      // Search by skills
+      this.students.forEach((student) => {
+        const matchingSkills = student.skills.filter((skill) =>
+          skill.toLowerCase().includes(searchTerm)
+        );
+        if (matchingSkills.length > 0) {
+          const key = `skill-${student.name}`;
+          if (!addedItems.has(key) && results.length < 10) {
+            addedItems.add(key);
+            results.push({
+              type: "description",
+              icon: "i-heroicons-code-bracket-20-solid",
+              value: student.name,
+              label: student.name,
+              subtitle: `Skills: ${matchingSkills.join(", ")}`,
+              category: student.program,
+            });
+          }
+        }
+      });
+
+      return results.slice(0, 8);
+    },
   },
 });

@@ -149,7 +149,7 @@ export const BUTTON_BASE =
 export function getButtonClasses(
   color: ButtonColor,
   variant: ButtonVariant = "solid",
-  size: ButtonSize = "md"
+  size: ButtonSize = "sm" //default size of buttons
 ): string {
   const colorClasses =
     BUTTON_COLORS[color]?.[variant] || BUTTON_COLORS.primary.solid;
@@ -239,6 +239,13 @@ export const BUTTON_PRESETS = {
     variant: "solid",
     size: "lg",
   },
+  viewAll: {
+    label: "View All",
+    icon: "i-heroicons-arrow-right-20-solid",
+    color: "primary",
+    variant: "outline",
+    size: "sm",
+  },
 
   // Common Buttons
   save: {
@@ -279,7 +286,7 @@ export const BUTTON_PRESETS = {
   signin: {
     label: "Sign In",
     icon: "i-heroicons-arrow-right-on-rectangle-20-solid",
-    color: "success",
+    color: "primary",
     variant: "solid",
     size: "md",
   },

@@ -75,7 +75,7 @@
             <ul class="space-y-3">
               <li>
                 <NuxtLink
-                  to="/programs/cs"
+                  to="/students?program=Computer%20Science"
                   class="text-gray-400 hover:text-blue-900/90 transition-colors"
                 >
                   Computer Science
@@ -84,7 +84,7 @@
 
               <li>
                 <NuxtLink
-                  to="/programs/it"
+                  to="/students?program=Information%20Systems"
                   class="text-gray-400 hover:text-blue-900/90 transition-colors"
                 >
                   Information Technology
@@ -92,7 +92,7 @@
               </li>
               <li>
                 <NuxtLink
-                  to="/programs/ds"
+                  to="/students?program=Data%20Science"
                   class="text-gray-400 hover:text-blue-900/90 transition-colors"
                 >
                   Data Science
@@ -100,10 +100,10 @@
               </li>
               <li>
                 <NuxtLink
-                  to="/programs/it"
+                  to="/students?program=Software%20Engineering"
                   class="text-gray-400 hover:text-blue-900/90 transition-colors"
                 >
-                  System Adiministration
+                  System Administration
                 </NuxtLink>
               </li>
             </ul>
@@ -114,7 +114,7 @@
 
         <div class="flex flex-col md:flex-row justify-between items-center">
           <p class="text-gray-600 dark:text-gray-400 text-sm">
-            &copy; 2025 GIC Student Portal. All rights reserved.
+            &copy; {{ currentYear }} GIC Student Portal. All rights reserved.
           </p>
           <div class="flex space-x-6 mt-4 md:mt-0">
             <NuxtLink
@@ -135,3 +135,8 @@
     </UContainer>
   </footer>
 </template>
+
+<script setup lang="ts">
+// get current year for dynamic display
+const currentYear = new Date().getFullYear();
+</script>
