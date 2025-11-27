@@ -466,7 +466,7 @@ export const useProjectStore = defineStore("projects", {
             id: 1,
             title: "AI Chat Assistant",
             description:
-              "An intelligent chatbot powered by GPT-3 for customer support.",
+              "An intelligent chatbot powered by GPT-3 for customer support. This project aims to enhance user experience by providing instant and accurate responses to common inquiries.",
             semester: "Fall 2024",
             author: {
               name: "Sarah Chen",
@@ -883,10 +883,9 @@ export const useProjectStore = defineStore("projects", {
     },
 
     async getProject(id: number | string): Promise<Project | undefined> {
-
       // fetch project by id from API or local store
       await new Promise((resolve) => setTimeout(resolve, 50));
-      
+
       return this.projects.find(
         (project) => project.id === Number.parseInt(id.toString())
       );

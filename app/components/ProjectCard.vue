@@ -134,11 +134,11 @@
         <!-- Team Members -->
         <div class="flex content-center items-center justify-between">
           <div v-if="project.members && project.members.length > 0">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1">
               <div
                 v-for="(member, idx) in project.members.slice(0, 3)"
                 :key="idx"
-                class="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-slate-700/70 text-white text-xs font-bold cursor-pointer transition-transform hover:scale-110"
+                class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-slate-700/70 text-white text-xs font-bold cursor-pointer transition-transform hover:scale-110"
                 :title="member.name"
               >
                 <!-- Profile photo available -->
