@@ -55,9 +55,7 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    public: {
-      apiBase: "http://localhost:3017", // Backend API base URL
-    },
+    apiBase: "http://localhost:3017", // Backend API base URL
   },
 
   // Auto-import configuration

@@ -572,415 +572,426 @@ export const useProjectStore = defineStore("projects", {
 
     // 2. fetch Projects data from server
 
-    async fetchProjects(): Promise<Project[]> {
+    async fetchProjects(): Promise<any[]> {
       this.loading = true;
       try {
         // simulate network delay
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        // await new Promise((resolve) => setTimeout(resolve, 100));
         // return current projects (in a real app this would come from an API)
 
-        const projects: Project[] = [
-          {
-            id: 1,
-            title: "AI Chat Assistant",
-            description:
-              "An intelligent chatbot powered by GPT-3 for customer support. This project aims to enhance user experience by providing instant and accurate responses to common inquiries.",
-            semester: "Fall 2024",
-            author: {
-              name: "Sarah Chen",
-              avatar: "https://randomuser.me/api/portraits/women/11.jpg",
-              program: "Computer Science",
-              year: "4th Year",
-            },
-            technologies: ["Python", "GPT-3", "React", "Node.js", "MongoDB"],
-            category: "Artificial Intelligence",
-            status: "Completed",
-            featured: true,
-            likes: 342,
-            views: 2500,
-            demoUrl: "https://ai-chat-assistant.demo.com",
-            githubUrl: "https://github.com/sarahchen/ai-chat-assistant",
-            images: [
-              "https://images.unsplash.com/photo-1763182198113-a9a8d0fe3144?w=900&auto=format&fit=crop&q=60",
-              "https://images.unsplash.com/photo-1763669029223-74f911a9e08b?w=900&auto=format&fit=crop&q=60",
-              "https://plus.unsplash.com/premium_photo-1731286446855-c0bd3d23af46?w=900&auto=format&fit=crop&q=60",
-            ],
-            createdAt: "2024-10-15",
-            tags: ["ai", "chatbot", "customer-support"],
-            members: [
-              {
-                name: "Sarah Chen",
-                image: "https://randomuser.me/api/portraits/women/11.jpg",
-              },
-              {
-                name: "Alex Park",
-                image: "https://randomuser.me/api/portraits/men/32.jpg",
-              },
-              {
-                name: "Jordan Lee",
-                image: "https://randomuser.me/api/portraits/men/54.jpg",
-              },
-              {
-                name: "Emma Davis",
-                image: "https://randomuser.me/api/portraits/women/78.jpg",
-              },
-            ],
-            roadmap: [
-              "Phase 1: GPT-3 Integration",
-              "Phase 2: Conversation History",
-              "Phase 3: Multi-language Support",
-              "Phase 4: Production Deployment",
-            ],
-            duration: "3 months",
-            course: "Advanced AI & Machine Learning",
-          },
+        // const projects: Project[] = [
+        //   {
+        //     id: 1,
+        //     title: "AI Chat Assistant",
+        //     description:
+        //       "An intelligent chatbot powered by GPT-3 for customer support. This project aims to enhance user experience by providing instant and accurate responses to common inquiries.",
+        //     semester: "Fall 2024",
+        //     author: {
+        //       name: "Sarah Chen",
+        //       avatar: "https://randomuser.me/api/portraits/women/11.jpg",
+        //       program: "Computer Science",
+        //       year: "4th Year",
+        //     },
+        //     technologies: ["Python", "GPT-3", "React", "Node.js", "MongoDB"],
+        //     category: "Artificial Intelligence",
+        //     status: "Completed",
+        //     featured: true,
+        //     likes: 342,
+        //     views: 2500,
+        //     demoUrl: "https://ai-chat-assistant.demo.com",
+        //     githubUrl: "https://github.com/sarahchen/ai-chat-assistant",
+        //     images: [
+        //       "https://images.unsplash.com/photo-1763182198113-a9a8d0fe3144?w=900&auto=format&fit=crop&q=60",
+        //       "https://images.unsplash.com/photo-1763669029223-74f911a9e08b?w=900&auto=format&fit=crop&q=60",
+        //       "https://plus.unsplash.com/premium_photo-1731286446855-c0bd3d23af46?w=900&auto=format&fit=crop&q=60",
+        //     ],
+        //     createdAt: "2024-10-15",
+        //     tags: ["ai", "chatbot", "customer-support"],
+        //     members: [
+        //       {
+        //         name: "Sarah Chen",
+        //         image: "https://randomuser.me/api/portraits/women/11.jpg",
+        //       },
+        //       {
+        //         name: "Alex Park",
+        //         image: "https://randomuser.me/api/portraits/men/32.jpg",
+        //       },
+        //       {
+        //         name: "Jordan Lee",
+        //         image: "https://randomuser.me/api/portraits/men/54.jpg",
+        //       },
+        //       {
+        //         name: "Emma Davis",
+        //         image: "https://randomuser.me/api/portraits/women/78.jpg",
+        //       },
+        //     ],
+        //     roadmap: [
+        //       "Phase 1: GPT-3 Integration",
+        //       "Phase 2: Conversation History",
+        //       "Phase 3: Multi-language Support",
+        //       "Phase 4: Production Deployment",
+        //     ],
+        //     duration: "3 months",
+        //     course: "Advanced AI & Machine Learning",
+        //   },
 
-          {
-            id: 2,
-            title: "Mobile Fitness App",
-            description:
-              "Track workouts, nutrition, and health metrics on the go.",
-            semester: "Fall 2024",
-            author: {
-              name: "Alex Rodriguez",
-              avatar: "https://randomuser.me/api/portraits/men/21.jpg",
-              program: "Mobile Development",
-              year: "3rd Year",
-            },
-            technologies: ["React Native", "Firebase", "Redux", "HealthKit"],
-            category: "Mobile Development",
-            status: "In Progress",
-            featured: false,
-            likes: 256,
-            views: 1800,
-            demoUrl: "https://fitness-app.demo.com",
-            githubUrl: "https://github.com/arodriguez/fitness-app",
-            images: [
-              "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=500&fit=crop",
-              "https://images.unsplash.com/photo-1763854492937-fb7ae2f601f3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyMXx8fGVufDB8fHx8fA%3D%3D",
-              "https://images.unsplash.com/photo-1763667309360-30d7e3779382?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0MHx8fGVufDB8fHx8fA%3D%3D",
-            ],
-            createdAt: "2024-09-22",
-            tags: ["fitness", "mobile", "health"],
-            members: [
-              {
-                name: "Alex Rodriguez",
-                image: "https://randomuser.me/api/portraits/men/21.jpg",
-              },
-              {
-                name: "Maria Garcia",
-                image: "https://randomuser.me/api/portraits/women/45.jpg",
-              },
-              {
-                name: "Sam Wilson",
-                image: "https://randomuser.me/api/portraits/men/67.jpg",
-              },
-            ],
-            roadmap: [
-              "Phase 1: Core Features",
-              "Phase 2: Social Integration",
-              "Phase 3: Wearable Sync",
-              "Phase 4: Launch",
-            ],
-            duration: "4 months",
-            course: "Mobile App Development",
-          },
+        //   {
+        //     id: 2,
+        //     title: "Mobile Fitness App",
+        //     description:
+        //       "Track workouts, nutrition, and health metrics on the go.",
+        //     semester: "Fall 2024",
+        //     author: {
+        //       name: "Alex Rodriguez",
+        //       avatar: "https://randomuser.me/api/portraits/men/21.jpg",
+        //       program: "Mobile Development",
+        //       year: "3rd Year",
+        //     },
+        //     technologies: ["React Native", "Firebase", "Redux", "HealthKit"],
+        //     category: "Mobile Development",
+        //     status: "In Progress",
+        //     featured: false,
+        //     likes: 256,
+        //     views: 1800,
+        //     demoUrl: "https://fitness-app.demo.com",
+        //     githubUrl: "https://github.com/arodriguez/fitness-app",
+        //     images: [
+        //       "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=500&fit=crop",
+        //       "https://images.unsplash.com/photo-1763854492937-fb7ae2f601f3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyMXx8fGVufDB8fHx8fA%3D%3D",
+        //       "https://images.unsplash.com/photo-1763667309360-30d7e3779382?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0MHx8fGVufDB8fHx8fA%3D%3D",
+        //     ],
+        //     createdAt: "2024-09-22",
+        //     tags: ["fitness", "mobile", "health"],
+        //     members: [
+        //       {
+        //         name: "Alex Rodriguez",
+        //         image: "https://randomuser.me/api/portraits/men/21.jpg",
+        //       },
+        //       {
+        //         name: "Maria Garcia",
+        //         image: "https://randomuser.me/api/portraits/women/45.jpg",
+        //       },
+        //       {
+        //         name: "Sam Wilson",
+        //         image: "https://randomuser.me/api/portraits/men/67.jpg",
+        //       },
+        //     ],
+        //     roadmap: [
+        //       "Phase 1: Core Features",
+        //       "Phase 2: Social Integration",
+        //       "Phase 3: Wearable Sync",
+        //       "Phase 4: Launch",
+        //     ],
+        //     duration: "4 months",
+        //     course: "Mobile App Development",
+        //   },
 
-          {
-            id: 3,
-            title: "E-Commerce Platform",
-            description:
-              "Full-stack online store with payment integration and analytics.",
-            semester: "Summer 2024",
-            author: {
-              name: "Priya Patel",
-              avatar: "https://randomuser.me/api/portraits/women/90.jpg",
-              program: "Web Development",
-              year: "4th Year",
-            },
-            technologies: [
-              "Next.js",
-              "Stripe",
-              "PostgreSQL",
-              "Tailwind",
-              "Vercel",
-            ],
-            category: "Web Development",
-            status: "Completed",
-            featured: true,
-            likes: 489,
-            views: 3200,
-            demoUrl: "https://ecommerce-platform.demo.com",
-            githubUrl: "https://github.com/ppatel/ecommerce-platform",
-            images: [
-              "https://images.unsplash.com/photo-1557821552-17105176677c?w=500&fit=crop",
-              "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&fit=crop",
-              "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&fit=crop",
-            ],
-            createdAt: "2024-08-10",
-            tags: ["ecommerce", "payment", "analytics"],
-            members: [
-              {
-                name: "Priya Patel",
-                image: "https://randomuser.me/api/portraits/women/90.jpg",
-              },
-              {
-                name: "David Chen",
-                image: "https://randomuser.me/api/portraits/men/34.jpg",
-              },
-              {
-                name: "Lisa Brown",
-                image: "https://randomuser.me/api/portraits/women/23.jpg",
-              },
-              {
-                name: "Tom Anderson",
-                image: "https://randomuser.me/api/portraits/men/56.jpg",
-              },
-              {
-                name: "Sarah White",
-                image: "https://randomuser.me/api/portraits/women/12.jpg",
-              },
-            ],
-            roadmap: [
-              "Phase 1: Product Catalog",
-              "Phase 2: Payment Integration",
-              "Phase 3: Analytics Dashboard",
-              "Phase 4: Production Launch",
-            ],
-            duration: "6 months",
-            course: "Full Stack Web Development",
-          },
+        //   {
+        //     id: 3,
+        //     title: "E-Commerce Platform",
+        //     description:
+        //       "Full-stack online store with payment integration and analytics.",
+        //     semester: "Summer 2024",
+        //     author: {
+        //       name: "Priya Patel",
+        //       avatar: "https://randomuser.me/api/portraits/women/90.jpg",
+        //       program: "Web Development",
+        //       year: "4th Year",
+        //     },
+        //     technologies: [
+        //       "Next.js",
+        //       "Stripe",
+        //       "PostgreSQL",
+        //       "Tailwind",
+        //       "Vercel",
+        //     ],
+        //     category: "Web Development",
+        //     status: "Completed",
+        //     featured: true,
+        //     likes: 489,
+        //     views: 3200,
+        //     demoUrl: "https://ecommerce-platform.demo.com",
+        //     githubUrl: "https://github.com/ppatel/ecommerce-platform",
+        //     images: [
+        //       "https://images.unsplash.com/photo-1557821552-17105176677c?w=500&fit=crop",
+        //       "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&fit=crop",
+        //       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&fit=crop",
+        //     ],
+        //     createdAt: "2024-08-10",
+        //     tags: ["ecommerce", "payment", "analytics"],
+        //     members: [
+        //       {
+        //         name: "Priya Patel",
+        //         image: "https://randomuser.me/api/portraits/women/90.jpg",
+        //       },
+        //       {
+        //         name: "David Chen",
+        //         image: "https://randomuser.me/api/portraits/men/34.jpg",
+        //       },
+        //       {
+        //         name: "Lisa Brown",
+        //         image: "https://randomuser.me/api/portraits/women/23.jpg",
+        //       },
+        //       {
+        //         name: "Tom Anderson",
+        //         image: "https://randomuser.me/api/portraits/men/56.jpg",
+        //       },
+        //       {
+        //         name: "Sarah White",
+        //         image: "https://randomuser.me/api/portraits/women/12.jpg",
+        //       },
+        //     ],
+        //     roadmap: [
+        //       "Phase 1: Product Catalog",
+        //       "Phase 2: Payment Integration",
+        //       "Phase 3: Analytics Dashboard",
+        //       "Phase 4: Production Launch",
+        //     ],
+        //     duration: "6 months",
+        //     course: "Full Stack Web Development",
+        //   },
 
-          {
-            id: 4,
-            title: "Climate Monitoring IoT",
-            description:
-              "IoT sensors and dashboard for environmental monitoring.",
-            semester: "Spring 2024",
-            author: {
-              name: "Jordan Kim",
-              avatar: "https://randomuser.me/api/portraits/men/88.jpg",
-              program: "Environmental Science",
-              year: "4th Year",
-            },
-            technologies: [
-              "Arduino",
-              "Node.js",
-              "MQTT",
-              "Chart.js",
-              "Raspberry Pi",
-            ],
-            category: "Environmental Tech",
-            status: "Completed",
-            featured: false,
-            likes: 178,
-            views: 1200,
-            demoUrl: "https://climate-iot.demo.com",
-            githubUrl: "https://github.com/jkim/climate-iot",
-            images: [
-              "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&fit=crop",
-              "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=500&fit=crop",
-              "https://images.unsplash.com/photo-1615906655593-ad0386982a0f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWVjaGFuaWNzfGVufDB8fDB8fHww",
-            ],
-            createdAt: "2024-05-20",
-            tags: ["iot", "environment", "sensors"],
-            members: [
-              {
-                name: "Jordan Kim",
-                image: "https://randomuser.me/api/portraits/men/88.jpg",
-              },
-              {
-                name: "Nina Patel",
-                image: "https://randomuser.me/api/portraits/women/41.jpg",
-              },
-              {
-                name: "Chris Lee",
-                image: "https://randomuser.me/api/portraits/men/25.jpg",
-              },
-            ],
-            roadmap: [
-              "Phase 1: Sensor Setup",
-              "Phase 2: Data Collection",
-              "Phase 3: Dashboard",
-              "Phase 4: Deployment",
-            ],
-            duration: "5 months",
-            course: "IoT & Environmental Tech",
-          },
+        //   {
+        //     id: 4,
+        //     title: "Climate Monitoring IoT",
+        //     description:
+        //       "IoT sensors and dashboard for environmental monitoring.",
+        //     semester: "Spring 2024",
+        //     author: {
+        //       name: "Jordan Kim",
+        //       avatar: "https://randomuser.me/api/portraits/men/88.jpg",
+        //       program: "Environmental Science",
+        //       year: "4th Year",
+        //     },
+        //     technologies: [
+        //       "Arduino",
+        //       "Node.js",
+        //       "MQTT",
+        //       "Chart.js",
+        //       "Raspberry Pi",
+        //     ],
+        //     category: "Environmental Tech",
+        //     status: "Completed",
+        //     featured: false,
+        //     likes: 178,
+        //     views: 1200,
+        //     demoUrl: "https://climate-iot.demo.com",
+        //     githubUrl: "https://github.com/jkim/climate-iot",
+        //     images: [
+        //       "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&fit=crop",
+        //       "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=500&fit=crop",
+        //       "https://images.unsplash.com/photo-1615906655593-ad0386982a0f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWVjaGFuaWNzfGVufDB8fDB8fHww",
+        //     ],
+        //     createdAt: "2024-05-20",
+        //     tags: ["iot", "environment", "sensors"],
+        //     members: [
+        //       {
+        //         name: "Jordan Kim",
+        //         image: "https://randomuser.me/api/portraits/men/88.jpg",
+        //       },
+        //       {
+        //         name: "Nina Patel",
+        //         image: "https://randomuser.me/api/portraits/women/41.jpg",
+        //       },
+        //       {
+        //         name: "Chris Lee",
+        //         image: "https://randomuser.me/api/portraits/men/25.jpg",
+        //       },
+        //     ],
+        //     roadmap: [
+        //       "Phase 1: Sensor Setup",
+        //       "Phase 2: Data Collection",
+        //       "Phase 3: Dashboard",
+        //       "Phase 4: Deployment",
+        //     ],
+        //     duration: "5 months",
+        //     course: "IoT & Environmental Tech",
+        //   },
 
-          {
-            id: 5,
-            title: "Machine Learning Pipeline",
-            description:
-              "Automated data processing and model training framework.",
-            semester: "Spring 2024",
-            author: {
-              name: "Emma Watson",
-              avatar: "https://randomuser.me/api/portraits/women/16.jpg",
-              program: "Data Science",
-              year: "4th Year",
-            },
-            technologies: [
-              "Python",
-              "TensorFlow",
-              "Docker",
-              "Airflow",
-              "MLflow",
-            ],
-            category: "Artificial Intelligence",
-            status: "Completed",
-            featured: false,
-            likes: 312,
-            views: 2100,
-            demoUrl: "https://ml-pipeline.demo.com",
-            githubUrl: "https://github.com/ewatson/ml-pipeline",
-            images: [
-              "https://plus.unsplash.com/premium_photo-1664701474750-e3b51072957e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FtYXJhJTIwbWFufGVufDB8fDB8fHww",
-              "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=500&fit=crop",
-              "https://images.unsplash.com/photo-1577918248023-62b9a2748a22?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2FtYXJhJTIwbWFufGVufDB8fDB8fHww",
-            ],
-            createdAt: "2024-04-15",
-            tags: ["machine-learning", "automation", "data-processing"],
-            members: [
-              {
-                name: "Emma Watson",
-                image: "https://randomuser.me/api/portraits/women/16.jpg",
-              },
-              {
-                name: "Robert Chang",
-                image: "https://randomuser.me/api/portraits/men/52.jpg",
-              },
-              {
-                name: "Maya Singh",
-                image: "https://randomuser.me/api/portraits/women/33.jpg",
-              },
-              {
-                name: "James Miller",
-                image: "https://randomuser.me/api/portraits/men/44.jpg",
-              },
-            ],
-            roadmap: [
-              "Phase 1: Pipeline Architecture",
-              "Phase 2: Data Processing",
-              "Phase 3: Model Training",
-              "Phase 4: Deployment",
-            ],
-            duration: "5 months",
-            course: "Machine Learning Systems",
-          },
+        //   {
+        //     id: 5,
+        //     title: "Machine Learning Pipeline",
+        //     description:
+        //       "Automated data processing and model training framework.",
+        //     semester: "Spring 2024",
+        //     author: {
+        //       name: "Emma Watson",
+        //       avatar: "https://randomuser.me/api/portraits/women/16.jpg",
+        //       program: "Data Science",
+        //       year: "4th Year",
+        //     },
+        //     technologies: [
+        //       "Python",
+        //       "TensorFlow",
+        //       "Docker",
+        //       "Airflow",
+        //       "MLflow",
+        //     ],
+        //     category: "Artificial Intelligence",
+        //     status: "Completed",
+        //     featured: false,
+        //     likes: 312,
+        //     views: 2100,
+        //     demoUrl: "https://ml-pipeline.demo.com",
+        //     githubUrl: "https://github.com/ewatson/ml-pipeline",
+        //     images: [
+        //       "https://plus.unsplash.com/premium_photo-1664701474750-e3b51072957e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FtYXJhJTIwbWFufGVufDB8fDB8fHww",
+        //       "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=500&fit=crop",
+        //       "https://images.unsplash.com/photo-1577918248023-62b9a2748a22?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2FtYXJhJTIwbWFufGVufDB8fDB8fHww",
+        //     ],
+        //     createdAt: "2024-04-15",
+        //     tags: ["machine-learning", "automation", "data-processing"],
+        //     members: [
+        //       {
+        //         name: "Emma Watson",
+        //         image: "https://randomuser.me/api/portraits/women/16.jpg",
+        //       },
+        //       {
+        //         name: "Robert Chang",
+        //         image: "https://randomuser.me/api/portraits/men/52.jpg",
+        //       },
+        //       {
+        //         name: "Maya Singh",
+        //         image: "https://randomuser.me/api/portraits/women/33.jpg",
+        //       },
+        //       {
+        //         name: "James Miller",
+        //         image: "https://randomuser.me/api/portraits/men/44.jpg",
+        //       },
+        //     ],
+        //     roadmap: [
+        //       "Phase 1: Pipeline Architecture",
+        //       "Phase 2: Data Processing",
+        //       "Phase 3: Model Training",
+        //       "Phase 4: Deployment",
+        //     ],
+        //     duration: "5 months",
+        //     course: "Machine Learning Systems",
+        //   },
 
-          {
-            id: 6,
-            title: "Social Media Dashboard",
-            description:
-              "Manage and monitor multiple social accounts in one place.",
-            semester: "Fall 2023",
-            author: {
-              name: "Mike Johnson",
-              avatar: "https://randomuser.me/api/portraits/men/11.jpg",
-              program: "Web Development",
-              year: "3rd Year",
-            },
-            technologies: [
-              "Vue.js",
-              "Express",
-              "OAuth",
-              "MongoDB",
-              "Socket.io",
-            ],
-            category: "Web Development",
-            status: "Completed",
-            featured: false,
-            likes: 142,
-            views: 890,
-            demoUrl: "https://social-dashboard.demo.com",
-            githubUrl: "https://github.com/mjohnson/social-dashboard",
-            images: [
-              "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-              "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&fit=crop",
-              "https://plus.unsplash.com/premium_photo-1661764256397-af154e87b1b3?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            ],
-            createdAt: "2023-11-08",
-            tags: ["social-media", "dashboard", "analytics"],
-            members: [
-              {
-                name: "Mike Johnson",
-                image: "https://randomuser.me/api/portraits/men/11.jpg",
-              },
-              {
-                name: "Jessica Lee",
-                image: "https://randomuser.me/api/portraits/women/29.jpg",
-              },
-              {
-                name: "Kevin Chen",
-                image: "https://randomuser.me/api/portraits/men/75.jpg",
-              },
-            ],
-            roadmap: [
-              "Phase 1: OAuth Integration",
-              "Phase 2: Multi-platform Support",
-              "Phase 3: Analytics",
-              "Phase 4: Launch",
-            ],
-            duration: "4 months",
-            course: "Advanced Web Applications",
-          },
+        //   {
+        //     id: 6,
+        //     title: "Social Media Dashboard",
+        //     description:
+        //       "Manage and monitor multiple social accounts in one place.",
+        //     semester: "Fall 2023",
+        //     author: {
+        //       name: "Mike Johnson",
+        //       avatar: "https://randomuser.me/api/portraits/men/11.jpg",
+        //       program: "Web Development",
+        //       year: "3rd Year",
+        //     },
+        //     technologies: [
+        //       "Vue.js",
+        //       "Express",
+        //       "OAuth",
+        //       "MongoDB",
+        //       "Socket.io",
+        //     ],
+        //     category: "Web Development",
+        //     status: "Completed",
+        //     featured: false,
+        //     likes: 142,
+        //     views: 890,
+        //     demoUrl: "https://social-dashboard.demo.com",
+        //     githubUrl: "https://github.com/mjohnson/social-dashboard",
+        //     images: [
+        //       "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        //       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&fit=crop",
+        //       "https://plus.unsplash.com/premium_photo-1661764256397-af154e87b1b3?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        //     ],
+        //     createdAt: "2023-11-08",
+        //     tags: ["social-media", "dashboard", "analytics"],
+        //     members: [
+        //       {
+        //         name: "Mike Johnson",
+        //         image: "https://randomuser.me/api/portraits/men/11.jpg",
+        //       },
+        //       {
+        //         name: "Jessica Lee",
+        //         image: "https://randomuser.me/api/portraits/women/29.jpg",
+        //       },
+        //       {
+        //         name: "Kevin Chen",
+        //         image: "https://randomuser.me/api/portraits/men/75.jpg",
+        //       },
+        //     ],
+        //     roadmap: [
+        //       "Phase 1: OAuth Integration",
+        //       "Phase 2: Multi-platform Support",
+        //       "Phase 3: Analytics",
+        //       "Phase 4: Launch",
+        //     ],
+        //     duration: "4 months",
+        //     course: "Advanced Web Applications",
+        //   },
 
-          {
-            id: 7,
-            title: "Data Analytics Platform",
-            description: "Real-time data visualization and reporting tool.",
-            semester: "Summer 2023",
-            author: {
-              name: "Lisa Wong",
-              avatar: "https://randomuser.me/api/portraits/women/18.jpg",
-              program: "Data Science",
-              year: "4th Year",
-            },
-            technologies: ["D3.js", "React", "Python", "Pandas", "PostgreSQL"],
-            category: "Data Science",
-            status: "Completed",
-            featured: false,
-            likes: 201,
-            views: 1500,
-            demoUrl: "https://analytics-platform.demo.com",
-            githubUrl: "https://github.com/lwong/analytics-platform",
-            images: [
-              "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&fit=crop",
-              "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGJ1c2luZXNzfGVufDB8fDB8fHww",
-              "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJ1c2luZXNzfGVufDB8fDB8fHww",
-            ],
-            createdAt: "2023-08-15",
-            tags: ["data-viz", "analytics", "reporting"],
-            members: [
-              {
-                name: "Lisa Wong",
-                image: "https://randomuser.me/api/portraits/women/18.jpg",
-              },
-              {
-                name: "Marcus Johnson",
-                image: "https://randomuser.me/api/portraits/men/24.jpg",
-              },
-              {
-                name: "Patricia Green",
-                image: "https://randomuser.me/api/portraits/women/53.jpg",
-              },
-              {
-                name: "Daniel White",
-                image: "https://randomuser.me/api/portraits/men/36.jpg",
-              },
-            ],
-            roadmap: [
-              "Phase 1: Data Connectors",
-              "Phase 2: Visualization Engine",
-              "Phase 3: Report Builder",
-              "Phase 4: Production",
-            ],
-            duration: "5 months",
-            course: "Data Visualization & Analytics",
-          },
-        ];
-        return (this.projects = projects);
+        //   {
+        //     id: 7,
+        //     title: "Data Analytics Platform",
+        //     description: "Real-time data visualization and reporting tool.",
+        //     semester: "Summer 2023",
+        //     author: {
+        //       name: "Lisa Wong",
+        //       avatar: "https://randomuser.me/api/portraits/women/18.jpg",
+        //       program: "Data Science",
+        //       year: "4th Year",
+        //     },
+        //     technologies: ["D3.js", "React", "Python", "Pandas", "PostgreSQL"],
+        //     category: "Data Science",
+        //     status: "Completed",
+        //     featured: false,
+        //     likes: 201,
+        //     views: 1500,
+        //     demoUrl: "https://analytics-platform.demo.com",
+        //     githubUrl: "https://github.com/lwong/analytics-platform",
+        //     images: [
+        //       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&fit=crop",
+        //       "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGJ1c2luZXNzfGVufDB8fDB8fHww",
+        //       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJ1c2luZXNzfGVufDB8fDB8fHww",
+        //     ],
+        //     createdAt: "2023-08-15",
+        //     tags: ["data-viz", "analytics", "reporting"],
+        //     members: [
+        //       {
+        //         name: "Lisa Wong",
+        //         image: "https://randomuser.me/api/portraits/women/18.jpg",
+        //       },
+        //       {
+        //         name: "Marcus Johnson",
+        //         image: "https://randomuser.me/api/portraits/men/24.jpg",
+        //       },
+        //       {
+        //         name: "Patricia Green",
+        //         image: "https://randomuser.me/api/portraits/women/53.jpg",
+        //       },
+        //       {
+        //         name: "Daniel White",
+        //         image: "https://randomuser.me/api/portraits/men/36.jpg",
+        //       },
+        //     ],
+        //     roadmap: [
+        //       "Phase 1: Data Connectors",
+        //       "Phase 2: Visualization Engine",
+        //       "Phase 3: Report Builder",
+        //       "Phase 4: Production",
+        //     ],
+        //     duration: "5 months",
+        //     course: "Data Visualization & Analytics",
+        //   },
+        // ];
+
+        // test proxy api call
+        // const response = await useFetch<Project[]>("/api/projects", {
+        //   method: "GET",
+        // });
+        const response = await $fetch<Project[]>(
+          "http://localhost:3017/projects"
+        );
+        // useFetch returns a Ref for data; unwrap with .value and fallback to an empty array
+        this.projects = response ?? [];
+
+        return this.projects;
       } finally {
         this.loading = false;
       }
