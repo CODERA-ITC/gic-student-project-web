@@ -1,26 +1,6 @@
 <template>
   <div class="min-h-screen flex">
-    <!-- Left Side - Hero Image -->
-    <div
-      class="hidden lg:block lg:w-1/2 relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
-      <div class="absolute inset-0 bg-cover bg-center opacity-30"
-        style="background-image: url('/images/ITCcampus.png'); background-size: 160%;"></div>
-
-      <!-- Overlay Content -->
-      <div class="relative h-full flex flex-col justify-between p-12 text-white">
-        <!-- Logo -->
-        <div class="flex items-center gap-3">
-          <div class="w-24 h-24 rounded-lg flex items-center justify-center">
-            <NuxtImg src="/images/itc-logo.png" alt="ITC Logo" class="w-24 h-24 object-contain ml-12 mr-4" />
-            <NuxtImg src="/images/gic-logo-small.png" alt="GIC Logo" class="w-24 h-24 object-contain" />
-          </div>
-        </div>
-      </div>
-
-      <!-- Decorative Elements -->
-      <div class="absolute top-20 right-20 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl"></div>
-      <div class="absolute bottom-20 left-20 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
-    </div>
+    <AuthHero />
 
     <!-- Right Side - Login Form -->
     <div class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-neutral-900">
@@ -94,9 +74,10 @@
         <!-- Social Login -->
         <div class="grid place-items-center">
           <button type="button"
-            class="py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group">
-            <UIcon name="i-heroicons-globe-alt"
-              class="w-5 h-5 text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors" />
+            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group">
+            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
+              <NuxtImg src="/images/google.png" alt="Google" class="w-full h-full object-contain" />
+            </div>
             <span
               class="text-sm text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors">GOOGLE</span>
           </button>
