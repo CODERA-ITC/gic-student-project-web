@@ -17,33 +17,6 @@
 
     <!-- Search and Filter -->
     <UContainer class="py-12">
-      <div class="grid md:grid-cols-3 gap-4 mb-12">
-        <div class="md:col-span-2">
-          <div class="relative">
-            <UIcon
-              name="i-heroicons-magnifying-glass"
-              class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"
-            />
-            <input
-              v-model="searchQuery"
-              type="text"
-              placeholder="Search students by name or skills..."
-              class="w-full pl-12 pr-4 py-3 bg-slate-800 border border-slate-700 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-            />
-          </div>
-        </div>
-
-        <select
-          v-model="selectedSemester"
-          class="bg-slate-800 border border-slate-700 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">All Semesters</option>
-          <option v-for="sem in semesters" :key="sem" :value="sem">
-            {{ sem }}
-          </option>
-        </select>
-      </div>
-
       <!-- Students Grid -->
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <NuxtLink

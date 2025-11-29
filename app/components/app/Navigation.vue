@@ -17,7 +17,9 @@
       </NuxtLink>
 
       <!-- Desktop Navigation -->
-      <div class="hidden lg:flex items-center space-x-1 flex-1 mx-8">
+      <div
+        class="hidden lg:flex items-center justify-center space-x-1 flex-1 mx-8"
+      >
         <NavLink
           v-for="item in navigationItems"
           :key="item.to"
@@ -211,7 +213,6 @@ const navigationItems = [
   { label: "Home", to: "/" },
   { label: "Projects", to: "/projects" },
   { label: "Students", to: "/students" },
-  { label: "Semesters", to: "/semesters" },
   { label: "About", to: "/about" },
 ];
 
