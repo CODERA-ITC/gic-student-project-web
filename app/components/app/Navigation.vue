@@ -29,8 +29,11 @@
         />
       </div>
 
-      <!-- Right Section: Theme Toggle & User Menu -->
+      <!-- Right Section: Language Switcher, Theme Toggle & User Menu -->
       <div class="flex items-center gap-2">
+        <!-- Language Switcher -->
+        <LanguageToggle @switch-locale="switchLocale" />
+
         <!-- Theme Toggle -->
         <ThemeToggle />
 
@@ -189,6 +192,8 @@ import { useRoute } from "vue-router";
 import { useAuthStore } from "~/stores/auth";
 import { useUiStore } from "~/stores/ui";
 
+const { t, setLocale } = useI18n();
+
 // State
 const mobileMenuOpen = ref(false);
 
@@ -209,12 +214,12 @@ const searchContext = computed(() => {
 });
 
 // Navigation items
-const navigationItems = [
-  { label: "Home", to: "/" },
-  { label: "Projects", to: "/projects" },
-  { label: "Students", to: "/students" },
-  { label: "About", to: "/about" },
-];
+const navigationItems = computed(() => [
+  { label: t("home"), to: "/" },
+  { label: t("projects"), to: "/projects" },
+  { label: t("students"), to: "/students" },
+  { label: t("about"), to: "/about" },
+]);
 
 // Methods
 const isActiveRoute = (path) => {
@@ -241,5 +246,9 @@ const handleLogout = async () => {
   await authStore.logout();
   mobileMenuOpen.value = false;
   navigateTo("/");
+};
+
+const switchLocale = (locale) => {
+  setLocale(locale);
 };
 </script>

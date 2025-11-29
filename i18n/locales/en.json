@@ -1,0 +1,19 @@
+{
+  "welcome": "Welcome",
+  "home": "Home",
+  "about": "About",
+  "projects": "Projects",
+  "students": "Students",
+  "hero": {
+    "title": "Showcase Your Innovation",
+    "subtitle": "Created by students for students",
+    "discoverWork": "Discover Exceptional Student Work",
+    "exploreProjects": "Explore Projects",
+    "learnMore": "Learn More"
+  },
+  "stats": {
+    "projects": "Projects",
+    "students": "Students",
+    "semesters": "Semesters"
+  }
+}
