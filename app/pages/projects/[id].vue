@@ -7,13 +7,25 @@
       class="sticky top-20 z-40 bg-slate-800/80 backdrop-blur border-b border-slate-700"
     >
       <UContainer class="py-4">
-        <PresetButton preset="back" to="/projects" />
+        <ButtonsPresetButton preset="back" to="/projects" />
       </UContainer>
     </div>
 
     <!-- Project Details -->
     <UContainer class="py-12">
-      <div v-if="project" class="grid lg:grid-cols-3 gap-8">
+      <div
+        v-if="isLoading"
+        class="flex items-center justify-center min-h-[400px]"
+      >
+        <div class="text-center">
+          <UIcon
+            name="i-heroicons-arrow-path"
+            class="w-8 h-8 text-blue-400 animate-spin mx-auto mb-4"
+          />
+          <p class="text-gray-300">Loading project...</p>
+        </div>
+      </div>
+      <div v-else-if="project && project.id" class="grid lg:grid-cols-3 gap-8">
         <!-- Main Content -->
         <div class="lg:col-span-2 space-y-8">
           <!-- Project Header - Image Carousel -->
@@ -56,7 +68,7 @@
                 class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10"
               >
                 <button
-                  v-for="(img, idx) in project.images"
+                  v-for="(img, idx) in project.images || []"
                   :key="idx"
                   @click="currentImageIndex = idx"
                   :class="[
@@ -146,7 +158,7 @@
                 </h3>
                 <div class="space-y-3">
                   <div
-                    v-for="(phase, idx) in project.roadmap"
+                    v-for="(phase, idx) in project.roadmap || []"
                     :key="idx"
                     class="flex items-start gap-3"
                   >
@@ -179,7 +191,7 @@
                 </h3>
                 <div class="grid sm:grid-cols-2 gap-4">
                   <div
-                    v-for="(member, idx) in project.members"
+                    v-for="(member, idx) in project.members || []"
                     :key="idx"
                     class="flex items-center gap-3 p-3 rounded-lg bg-slate-700/50 hover:bg-slate-700 transition-colors"
                   >
@@ -212,7 +224,7 @@
                 </h3>
                 <div class="flex gap-2 flex-wrap">
                   <span
-                    v-for="skill in project.technologies"
+                    v-for="skill in project.technologies || []"
                     :key="skill"
                     class="px-3 py-2 rounded-full bg-blue-500/20 text-blue-300 text-sm font-medium border border-blue-500/30 hover:bg-blue-500/30 transition-colors"
                   >
@@ -325,18 +337,22 @@ const projectId = parseInt(route.params.id);
 
 // Get project from store
 const project = ref(null);
+const isLoading = ref(true);
 
-// Load project data
-const loadProject = async () => {
-  const projectData = await projectStore.getProject(projectId);
-  if (!projectData) {
-    navigateTo("/projects");
-    return;
-  }
-  project.value = projectData;
-};
+// Load project data - ensure projects are fetched first
+if (projectStore.projects.length === 0) {
+  await projectStore.fetchProjects();
+}
 
-await loadProject();
+const projectData = await projectStore.getProject(projectId);
+if (!projectData) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: "Project not found",
+  });
+}
+project.value = projectData;
+isLoading.value = false;
 
 // Image carousel
 const currentImageIndex = ref(0);
