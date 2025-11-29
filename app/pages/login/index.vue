@@ -79,7 +79,8 @@
               <NuxtImg src="/images/google.png" alt="Google" class="w-full h-full object-contain" />
             </div>
             <span
-              class="text-sm text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors">GOOGLE</span>
+              class="text-sm text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors">SIGN
+              IN WITH GOOGLE</span>
           </button>
         </div>
 
