@@ -9,7 +9,17 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@vueuse/nuxt",
     "@nuxt/eslint",
+    "@nuxtjs/i18n",
   ],
+  i18n: {
+    defaultLocale: "en",
+    strategy: "no_prefix",
+    langDir: "locales/",
+    locales: [
+      { code: "en", name: "English", file: "en.json" },
+      { code: "kh", name: "Khmer", file: "kh.json" },
+    ],
+  },
   css: ["~/assets/css/main.css"],
 
   // Add Google Fonts
