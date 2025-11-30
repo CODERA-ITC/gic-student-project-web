@@ -1,294 +1,380 @@
 <script setup>
-import { motion, useAnimationFrame, useMotionValue, useTime, useTransform } from 'motion-v'
+import { motion, useTime, useTransform } from "motion-v";
+import { useHeroRotation } from "~/composables/rotation-cordonate";
 
-const duration = 5 // 2 sec
-const distance = 180
-const origin = 20
+// Animation configuration
+const duration = 1; // Slow rotation for smooth effect
+const middleDuration = 2; // Slower for middle orbit
+const outerOrbitDuration = 3; // Slowest for outer orbit
 
-const isPaused = ref(false)
-const time = useTime()
-const pausedTime = useMotionValue(0)
-const pauseOffset = useMotionValue(0)
+const t1 = duration / 5; // 5 icons in inner orbit
+const t2 = middleDuration / 8; // 8 icons in middle orbit
+const t3 = outerOrbitDuration / 9; // 9 icons in outer orbit
 
-// Track paused time
-useAnimationFrame(() => {
-  if (isPaused.value) {
-    pauseOffset.set(time.get() - pausedTime.get())
-  }
-  else {
-    pausedTime.set(time.get() - pauseOffset.get())
-  }
-})
+const innerOrbit1 = useHeroRotation({
+  origin: 0,
+  distance: 140,
+  timeOffset: t1 * 0,
+  duration,
+});
+const innerOrbit2 = useHeroRotation({
+  origin: 0,
+  distance: 140,
+  timeOffset: t1 * 1,
+  duration,
+});
+const innerOrbit3 = useHeroRotation({
+  origin: 0,
+  distance: 140,
+  timeOffset: t1 * 2,
+  duration,
+});
+const innerOrbit4 = useHeroRotation({
+  origin: 0,
+  distance: 140,
+  timeOffset: t1 * 3,
+  duration,
+});
+const innerOrbit5 = useHeroRotation({
+  origin: 0,
+  distance: 140,
+  timeOffset: t1 * 4,
+  duration,
+});
 
-function togglePause() {
-  isPaused.value = !isPaused.value
-}
+// Middle orbit (215px radius) - 8 icons
+const middleOrbit1 = useHeroRotation({
+  origin: 0,
+  distance: 215,
+  timeOffset: t2 * 5,
+  duration: middleDuration,
+});
+const middleOrbit2 = useHeroRotation({
+  origin: 0,
+  distance: 215,
+  timeOffset: t2 * 6,
+  duration: middleDuration,
+});
+const middleOrbit3 = useHeroRotation({
+  origin: 0,
+  distance: 215,
+  timeOffset: t2 * 7,
+  duration: middleDuration,
+});
+const middleOrbit4 = useHeroRotation({
+  origin: 0,
+  distance: 215,
+  timeOffset: t2 * 8,
+  duration: middleDuration,
+});
+const middleOrbit5 = useHeroRotation({
+  origin: 0,
+  distance: 215,
+  timeOffset: t2 * 9,
+  duration: middleDuration,
+});
+const middleOrbit6 = useHeroRotation({
+  origin: 0,
+  distance: 215,
+  timeOffset: t2 * 10,
+  duration: middleDuration,
+});
+const middleOrbit7 = useHeroRotation({
+  origin: 0,
+  distance: 215,
+  timeOffset: t2 * 11,
+  duration: middleDuration,
+});
+const middleOrbit8 = useHeroRotation({
+  origin: 0,
+  distance: 215,
+  timeOffset: t2 * 12,
+  duration: middleDuration,
+});
 
-const count = 7
-const multiplier = Array.from({ length: count }, (_, i) => i * 850)
-const pos = Array.from({ length: count }, (_, i) => {
-  const timeOffset = multiplier[i] * duration
-
-  return {
-    x: useTransform(() =>
-      Math.cos((pausedTime.get() + timeOffset) / 1000 / duration) * distance + origin,
-    ),
-    y: useTransform(() =>
-      Math.sin((pausedTime.get() + timeOffset) / 1000 / duration) * distance + origin,
-    ),
-  }
-})
-
-const techInfoShouldShow = ref([true, false])
-function handleTechMouseEnter(index) {
-  // togglePause()
-  techInfoShouldShow.value[index] = true
-  isPaused.value = true
-}
-function handleTechMouseLeave(index) {
-  // togglePause()
-  techInfoShouldShow.value[index] = false
-  isPaused.value = false
-}
-const techInfoData = ref(
-  [
-    {
-      title: 'Javascript',
-      content: 'Web Development',
-    },
-    {
-      title: 'VueJs',
-      content: 'Frontend Development',
-    },
-    {
-      title: 'o ro cute',
-      content: 'Frontend Development',
-    },
-  ],
-)
+// Outer orbit (300px radius) - 9 icons
+const outerOrbit1 = useHeroRotation({
+  origin: 0,
+  distance: 285,
+  timeOffset: t3 * 13,
+  duration: outerOrbitDuration,
+});
+const outerOrbit2 = useHeroRotation({
+  origin: 0,
+  distance: 285,
+  timeOffset: t3 * 14,
+  duration: outerOrbitDuration,
+});
+const outerOrbit3 = useHeroRotation({
+  origin: 0,
+  distance: 285,
+  timeOffset: t3 * 15,
+  duration: outerOrbitDuration,
+});
+const outerOrbit4 = useHeroRotation({
+  origin: 0,
+  distance: 285,
+  timeOffset: t3 * 16,
+  duration: outerOrbitDuration,
+});
+const outerOrbit5 = useHeroRotation({
+  origin: 0,
+  distance: 285,
+  timeOffset: t3 * 17,
+  duration: outerOrbitDuration,
+});
+const outerOrbit6 = useHeroRotation({
+  origin: 0,
+  distance: 285,
+  timeOffset: t3 * 18,
+  duration: outerOrbitDuration,
+});
+const outerOrbit7 = useHeroRotation({
+  origin: 0,
+  distance: 285,
+  timeOffset: t3 * 19,
+  duration: outerOrbitDuration,
+});
+const outerOrbit8 = useHeroRotation({
+  origin: 0,
+  distance: 285,
+  timeOffset: t3 * 20,
+  duration: outerOrbitDuration,
+});
+const outerOrbit9 = useHeroRotation({
+  origin: 0,
+  distance: 285,
+  timeOffset: t3 * 21,
+  duration: outerOrbitDuration,
+});
 </script>
 
 <template>
   <section
-    id="hero"
-    class="hero-section justify-center md:items-center lg:items-start md:justify-center lg:justify-around flex flex-row md:flex-col lg:flex-row"
+    class="hero-section flex items-center justify-center relative min-h-[700px]"
   >
-    <div class="relative top-20 w-40 right-20 h-max">
-      <div class="relative top-28 left-12">
-        <img src="/images/tech/blackhole.png" width="120" alt="">
-      </div>
-
-      <motion.div
-        class="relative left-10"
-        :style="pos[0]"
-      >
-        <div
-          class="relative"
-          @mouseenter="handleTechMouseEnter(0)"
-          @mouseleave="handleTechMouseLeave(0)"
-        >
-          <AppTechInfo
-            v-if="techInfoShouldShow[0]"
-            class="absolute z-100 t"
-            :tech-info="techInfoData[2]"
-          />
-          <img
-            class="absolute"
-            src="/images/tech/javascript-logo.jpg"
-            width="60"
-            alt=""
-          >
-        </div>
-
-        <div
-          class="relative"
-          @mouseenter="handleTechMouseEnter(1)"
-          @mouseleave="handleTechMouseLeave(1)"
-        >
-          <AppTechInfo
-            v-if="techInfoShouldShow[1]"
-            class="absolute left-20 top-10 z-100"
-            :tech-info="techInfoData[1]"
-          />
-          <img
-            class="absolute left-15"
-            src="/images/tech/vue-logo.png"
-            width="60"
-            alt=""
-          >
-        </div>
-        <img
-          class="absolute left-10 top-10"
-          src="/images/tech/react-logo.png"
-          width="60"
-          alt=""
-        >
-      </motion.div>
-
-      <motion.div
-        class="relative left-8"
-        :style="pos[1]"
-      >
-        <img
-          class="absolute"
-          src="/images/tech/python-logo.png"
-          width="60"
-          alt=""
-          @mouseenter="handleTechMouseEnter(3)"
-          @mouseleave="handleTechMouseLeave(3)"
-        >
-        <img
-          class="absolute left-15"
-          src="/images/tech/tensorflow-logo.png"
-          width="60"
-          alt=""
-          @mouseenter="handleTechMouseEnter(3)"
-          @mouseleave="togglePause(3)"
-        >
-        <img
-          class="absolute left-10 top-10"
-          src="/images/tech/torch-logo.png"
-          width="60"
-          alt=""
-          @mouseenter="handleTechMouseEnter(3)"
-          @mouseleave="togglePause(3)"
-        >
-      </motion.div>
-
-      <motion.div
-        class="relative left-8"
-        :style="pos[2]"
-        @mouseenter="togglePause()"
-        @mouseleave="togglePause()"
-      >
-        <img
-          class="absolute"
-          src="/images/tech/mysql-logo.png"
-          width="60"
-          alt=""
-          @mouseenter="togglePause()"
-          @mouseleave="togglePause()"
-        >
-        <img
-          class="absolute left-15"
-          src="/images/tech/postgres-logo.png"
-          width="60"
-          alt=""
-        >
-        <img
-          class="absolute left-10 top-10"
-          src="/images/tech/mongo-logo.png"
-          width="60"
-          alt=""
-        >
-      </motion.div>
-
-      <motion.div
-        class="relative left-8"
-        :style="pos[3]" @mouseenter="togglePause()"
-        @mouseleave="togglePause()"
-      >
-        <img
-          class="absolute"
-          src="/images/tech/docker-logo.png"
-          width="60"
-          alt=""
-        >
-        <img
-          class="absolute left-15"
-          src="/images/tech/kubernetes-logo.png"
-          width="60"
-          alt=""
-        >
-        <img
-          class="absolute left-10 top-10"
-          src="/images/tech/vmware-logo.png"
-          width="60"
-          alt=""
-        >
-      </motion.div>
-
-      <motion.div
-        class="relative left-8"
-        :style="pos[4]" @mouseenter="togglePause()"
-        @mouseleave="togglePause()"
-      >
-        <img
-          class="absolute"
-          src="/images/tech/linux-logo.png"
-          width="60"
-          alt=""
-        >
-        <img
-          class="absolute left-12"
-          src="/images/tech/cisco-pt-logo.png"
-          width="60"
-          alt=""
-        >
-      </motion.div>
-
-      <motion.div
-        class="relative left-8"
-        :style="pos[5]" @mouseenter="togglePause()"
-        @mouseleave="togglePause()"
-      >
-        <img
-          class="absolute left-4"
-          src="/images/tech/go-logo.png"
-          width="60"
-          alt=""
-        >
-        <img
-          class="absolute left-18"
-          src="/images/tech/c-logo.png"
-          width="60"
-          alt=""
-        >
-        <img
-          class="absolute left-2 top-12"
-          src="/images/tech/unity-logo.png"
-          width="60"
-          alt=""
-        >
-        <img
-          class="absolute left-15 top-16"
-          src="/images/tech/elixir-logo.png"
-          width="60"
-          alt=""
-        >
-      </motion.div>
-
-      <motion.div
-        class="relative left-8"
-        :style="pos[6]" @mouseenter="togglePause()"
-        @mouseleave="togglePause()"
-      >
-        <img
-          class="absolute left-4"
-          src="/images/tech/java-logo.png"
-          width="60"
-          alt=""
-        >
-        <img
-          class="absolute left-18"
-          src="/images/tech/spring-logo.png"
-          width="60"
-          alt=""
-        >
-        <img
-          class="absolute left-2 top-14"
-          src="/images/tech/php-logo.png"
-          width="60"
-          alt=""
-        >
-        <img
-          class="absolute left-16 top-14"
-          src="/images/tech/laravel-logo.png"
-          width="60"
-          alt=""
-        >
-      </motion.div>
+    <!-- Central content -->
+    <div class="relative z-10 text-center">
+      <h1 class="text-4xl mb-2 font-bold text-slate-100">TechHub</h1>
+      <p class="text-xl text-slate-200">
+        Showcasing student <br />tech brilliance
+      </p>
     </div>
+
+    <!-- Decorative circles for visual orbit effect -->
+    <div
+      class="orbit-circle outer absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[570px] h-[570px] rounded-full border-2 border-gray-400/20"
+    ></div>
+    <div
+      class="orbit-circle middle absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[430px] h-[430px] rounded-full border-2 border-gray-400/30"
+    ></div>
+    <div
+      class="orbit-circle inner absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] rounded-full border-2 border-gray-400/40"
+    ></div>
+
+    <!-- Inner orbit icons -->
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="innerOrbit1"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img
+          src="/images/tech/javascript-logo.jpg"
+          class="w-full h-full object-contain rounded-lg"
+        />
+      </div>
+    </motion.div>
+
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="{ ...innerOrbit2, zIndex: 3 }"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/vue-logo.png" alt="Vue" />
+      </div>
+    </motion.div>
+
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="{ ...innerOrbit3, zIndex: 2 }"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/react-logo.png" alt="React" />
+      </div>
+    </motion.div>
+
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="innerOrbit4"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/linux-logo.png" alt="Linux" />
+      </div>
+    </motion.div>
+
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="innerOrbit5"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/cisco-pt-logo.png" alt="Cisco Packet Tracer" />
+      </div>
+    </motion.div>
+
+    <!-- Middle orbit icons -->
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="{ ...middleOrbit1, zIndex: 1 }"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/php-logo.png" alt="PHP" />
+      </div>
+    </motion.div>
+
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="middleOrbit2"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/laravel-logo.png" alt="Laravel" />
+      </div>
+    </motion.div>
+
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="middleOrbit3"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/java-logo.png" alt="Java" />
+      </div>
+    </motion.div>
+
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="middleOrbit4"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/spring-logo.png" alt="Spring" />
+      </div>
+    </motion.div>
+
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="middleOrbit5"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/go-logo.png" alt="Go" />
+      </div>
+    </motion.div>
+
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="middleOrbit6"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/c-logo.png" alt="C" />
+      </div>
+    </motion.div>
+
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="middleOrbit7"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/unity-logo.png" alt="Unity" />
+      </div>
+    </motion.div>
+
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="middleOrbit8"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/elixir-logo.png" alt="Elixir" />
+      </div>
+    </motion.div>
+
+    <!-- Outer orbit icons -->
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="outerOrbit1"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/docker-logo.png" alt="Docker" />
+      </div>
+    </motion.div>
+
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="outerOrbit2"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/kubernetes-logo.png" alt="Kubernetes" />
+      </div>
+    </motion.div>
+
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="outerOrbit3"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/vmware-logo.png" alt="VMware" />
+      </div>
+    </motion.div>
+
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="outerOrbit4"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/python-logo.png" alt="Python" />
+      </div>
+    </motion.div>
+
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="outerOrbit5"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/tensorflow-logo.png" alt="TensorFlow" />
+      </div>
+    </motion.div>
+
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="outerOrbit6"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/torch-logo.png" alt="PyTorch" />
+      </div>
+    </motion.div>
+
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="outerOrbit7"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/mysql-logo.png" alt="MySQL" />
+      </div>
+    </motion.div>
+
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="outerOrbit8"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/postgres-logo.png" alt="PostgreSQL" />
+      </div>
+    </motion.div>
+
+    <motion.div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+      :style="outerOrbit9"
+    >
+      <div class="w-16 h-16 rounded-2xl p-3 shadow-lg">
+        <img src="/images/tech/mongo-logo.png" alt="MongoDB" />
+      </div>
+    </motion.div>
   </section>
 </template>
 
@@ -320,5 +406,31 @@ const techInfoData = ref(
 #react {
   top: 40px;
   left: 40px;
+}
+
+.orbit-circle {
+  transition: all 0.3s ease;
+}
+
+.orbit-circle.outer {
+  animation: glow 4s ease-in-out infinite;
+}
+
+.orbit-circle.middle {
+  animation: glow 3s ease-in-out infinite;
+}
+
+.orbit-circle.inner {
+  animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(156, 163, 175, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(156, 163, 175, 0.4);
+  }
 }
 </style>

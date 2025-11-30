@@ -166,6 +166,12 @@
               class="w-full"
               @click="mobileMenuOpen = false"
             />
+            <ButtonsPresetButton
+              preset="signup"
+              to="/signup"
+              class="w-full"
+              @click="mobileMenuOpen = false"
+            />
           </template>
         </div>
 
