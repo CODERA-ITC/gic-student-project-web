@@ -33,18 +33,17 @@
 </template>
 
 <script setup lang="ts">
-import { useThemeStore } from '~/stores/theme'
-
-const themeStore = useThemeStore()
-const isDark = computed(() => themeStore.isDark)
+const themeStore = ref()
+const isDark = computed(() => themeStore.value?.isDark || false)
 
 const toggleTheme = () => {
-    themeStore.toggle()
+  themeStore.value?.toggle()
 }
 
 // Initialize theme on component mount
 onMounted(() => {
-    themeStore.initialize()
+  themeStore.value = useThemeStore()
+  themeStore.value.initialize()
 })
 </script>
 
