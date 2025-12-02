@@ -39,17 +39,45 @@ export interface ProjectStats {
   totalViews: number;
 }
 
+export interface PaginationState {
+  currentPage: number;
+  itemsPerPage: number;
+  totalItems: number;
+  totalPages: number;
+}
+
 export interface ProjectState {
   projects: Project[];
   categories: string[];
   loading: boolean;
+  pagination: PaginationState;
+  filters: {
+    category: string;
+    search: string;
+    tags: string[];
+    year: string;
+    sort: string;
+  };
 }
 
 export const useProjectStore = defineStore("projects", {
   state: (): ProjectState => ({
-    projects : [],
+    projects: [],
     categories: [],
     loading: false,
+    pagination: {
+      currentPage: 1,
+      itemsPerPage: 9,
+      totalItems: 0,
+      totalPages: 0,
+    },
+    filters: {
+      category: "All",
+      search: "",
+      tags: [],
+      year: "",
+      sort: "recent",
+    },
   }),
 
   getters: {
@@ -89,7 +117,6 @@ export const useProjectStore = defineStore("projects", {
       this.loading = true;
       try {
         // simulate network delay for 1 s
-        await new Promise((resolve) => setTimeout(resolve, 100));
 
         const featuredProjects: Project[] = [
           {
@@ -154,7 +181,6 @@ export const useProjectStore = defineStore("projects", {
             duration: "4 months",
             course: "Mobile App Development",
           },
-
           {
             id: 3,
             title: "E-Commerce Platform",
@@ -212,11 +238,8 @@ export const useProjectStore = defineStore("projects", {
           "All",
           "Artificial Intelligence",
           "Mobile Development",
-          "Environmental Tech",
-          "Information Systems",
-          "Health Tech",
-          "Blockchain",
           "Web Development",
+          "Health Tech",
           "Data Science",
         ];
         return (this.categories = categories);
@@ -634,7 +657,460 @@ export const useProjectStore = defineStore("projects", {
             duration: "5 months",
             course: "Data Visualization & Analytics",
           },
+
+          // Additional projects for pagination testing
+          {
+            id: 8,
+            title: "IoT Home Automation",
+            description:
+              "Smart home system controlling lights, temperature, and security using IoT sensors and mobile app integration.",
+            semester: "Spring 2024",
+            author: {
+              name: "David Park",
+              avatar: "https://randomuser.me/api/portraits/men/41.jpg",
+              program: "Electrical Engineering",
+              year: "4th Year",
+            },
+            technologies: [
+              "Arduino",
+              "React Native",
+              "Node.js",
+              "MQTT",
+              "Firebase",
+            ],
+            category: "IoT",
+            status: "Completed",
+            featured: true,
+            likes: 198,
+            views: 1650,
+            demoUrl: "https://iot-home.demo.com",
+            githubUrl: "https://github.com/dpark/iot-home",
+            images: [
+              "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&auto=format&fit=crop&q=60",
+              "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=500&auto=format&fit=crop&q=60",
+            ],
+            createdAt: "2024-05-20",
+            tags: ["iot", "automation", "smart-home"],
+            members: [
+              {
+                name: "David Park",
+                image: "https://randomuser.me/api/portraits/men/41.jpg",
+              },
+              {
+                name: "Sophie Chen",
+                image: "https://randomuser.me/api/portraits/women/33.jpg",
+              },
+            ],
+            duration: "4 months",
+            course: "IoT Systems Design",
+          },
+
+          {
+            id: 9,
+            title: "Blockchain Voting System",
+            description:
+              "Secure and transparent voting platform built on Ethereum blockchain ensuring vote integrity and anonymity.",
+            semester: "Fall 2023",
+            author: {
+              name: "Michael Torres",
+              avatar: "https://randomuser.me/api/portraits/men/55.jpg",
+              program: "Computer Science",
+              year: "4th Year",
+            },
+            technologies: ["Solidity", "Web3.js", "React", "Ethereum", "IPFS"],
+            category: "Blockchain",
+            status: "Completed",
+            featured: false,
+            likes: 287,
+            views: 2100,
+            demoUrl: "https://blockchain-voting.demo.com",
+            githubUrl: "https://github.com/mtorres/blockchain-voting",
+            images: [
+              "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60",
+              "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=500&auto=format&fit=crop&q=60",
+            ],
+            createdAt: "2023-12-10",
+            tags: ["blockchain", "voting", "ethereum"],
+            members: [
+              {
+                name: "Michael Torres",
+                image: "https://randomuser.me/api/portraits/men/55.jpg",
+              },
+              {
+                name: "Anna Kim",
+                image: "https://randomuser.me/api/portraits/women/45.jpg",
+              },
+              {
+                name: "James Wilson",
+                image: "https://randomuser.me/api/portraits/men/29.jpg",
+              },
+            ],
+            duration: "6 months",
+            course: "Distributed Systems",
+          },
+
+          {
+            id: 10,
+            title: "AR Shopping Experience",
+            description:
+              "Augmented reality mobile app allowing users to virtually try products before purchasing online.",
+            semester: "Spring 2024",
+            author: {
+              name: "Rachel Green",
+              avatar: "https://randomuser.me/api/portraits/women/67.jpg",
+              program: "Interactive Media",
+              year: "3rd Year",
+            },
+            technologies: ["Unity", "ARCore", "C#", "Firebase", "Blender"],
+            category: "Augmented Reality",
+            status: "In Progress",
+            featured: true,
+            likes: 234,
+            views: 1890,
+            demoUrl: "https://ar-shopping.demo.com",
+            githubUrl: "https://github.com/rgreen/ar-shopping",
+            images: [
+              "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=500&auto=format&fit=crop&q=60",
+              "https://images.unsplash.com/photo-1633356122102-3fe601e05bd2?w=500&auto=format&fit=crop&q=60",
+            ],
+            createdAt: "2024-03-15",
+            tags: ["ar", "shopping", "mobile"],
+            members: [
+              {
+                name: "Rachel Green",
+                image: "https://randomuser.me/api/portraits/women/67.jpg",
+              },
+              {
+                name: "Oliver Brown",
+                image: "https://randomuser.me/api/portraits/men/38.jpg",
+              },
+            ],
+            duration: "5 months",
+            course: "AR/VR Development",
+          },
+
+          {
+            id: 11,
+            title: "Machine Learning Stock Predictor",
+            description:
+              "AI-powered platform that analyzes market trends and predicts stock prices using multiple ML algorithms.",
+            semester: "Fall 2024",
+            author: {
+              name: "Kevin Liu",
+              avatar: "https://randomuser.me/api/portraits/men/72.jpg",
+              program: "Data Science",
+              year: "4th Year",
+            },
+            technologies: [
+              "Python",
+              "TensorFlow",
+              "Pandas",
+              "Django",
+              "PostgreSQL",
+            ],
+            category: "Machine Learning",
+            status: "Completed",
+            featured: false,
+            likes: 412,
+            views: 3200,
+            demoUrl: "https://ml-stocks.demo.com",
+            githubUrl: "https://github.com/kliu/ml-stock-predictor",
+            images: [
+              "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=500&auto=format&fit=crop&q=60",
+              "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=500&auto=format&fit=crop&q=60",
+            ],
+            createdAt: "2024-11-05",
+            tags: ["ml", "stocks", "prediction"],
+            members: [
+              {
+                name: "Kevin Liu",
+                image: "https://randomuser.me/api/portraits/men/72.jpg",
+              },
+              {
+                name: "Isabella Garcia",
+                image: "https://randomuser.me/api/portraits/women/28.jpg",
+              },
+              {
+                name: "Thomas Anderson",
+                image: "https://randomuser.me/api/portraits/men/47.jpg",
+              },
+            ],
+            duration: "4 months",
+            course: "Advanced Machine Learning",
+          },
+
+          {
+            id: 12,
+            title: "Social Media Analytics Dashboard",
+            description:
+              "Comprehensive dashboard analyzing social media engagement across multiple platforms with real-time insights.",
+            semester: "Spring 2024",
+            author: {
+              name: "Amanda Johnson",
+              avatar: "https://randomuser.me/api/portraits/women/89.jpg",
+              program: "Marketing Technology",
+              year: "3rd Year",
+            },
+            technologies: ["Vue.js", "D3.js", "Node.js", "MongoDB", "Redis"],
+            category: "Data Analytics",
+            status: "Completed",
+            featured: false,
+            likes: 178,
+            views: 1420,
+            demoUrl: "https://social-analytics.demo.com",
+            githubUrl: "https://github.com/ajohnson/social-analytics",
+            images: [
+              "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=500&auto=format&fit=crop&q=60",
+              "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&auto=format&fit=crop&q=60",
+            ],
+            createdAt: "2024-06-12",
+            tags: ["analytics", "social-media", "dashboard"],
+            members: [
+              {
+                name: "Amanda Johnson",
+                image: "https://randomuser.me/api/portraits/women/89.jpg",
+              },
+              {
+                name: "Ryan Murphy",
+                image: "https://randomuser.me/api/portraits/men/63.jpg",
+              },
+            ],
+            duration: "3 months",
+            course: "Digital Marketing Analytics",
+          },
+
+          {
+            id: 13,
+            title: "Virtual Classroom Platform",
+            description:
+              "Interactive online learning platform with video conferencing, whiteboard, and collaborative tools for remote education.",
+            semester: "Fall 2024",
+            author: {
+              name: "Jennifer Walsh",
+              avatar: "https://randomuser.me/api/portraits/women/42.jpg",
+              program: "Educational Technology",
+              year: "4th Year",
+            },
+            technologies: ["React", "WebRTC", "Socket.io", "Express", "AWS"],
+            category: "EdTech",
+            status: "In Progress",
+            featured: true,
+            likes: 298,
+            views: 2350,
+            demoUrl: "https://virtual-classroom.demo.com",
+            githubUrl: "https://github.com/jwalsh/virtual-classroom",
+            images: [
+              "https://images.unsplash.com/photo-1588072432836-e10032774350?w=500&auto=format&fit=crop&q=60",
+              "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500&auto=format&fit=crop&q=60",
+            ],
+            createdAt: "2024-09-18",
+            tags: ["education", "video-conference", "collaboration"],
+            members: [
+              {
+                name: "Jennifer Walsh",
+                image: "https://randomuser.me/api/portraits/women/42.jpg",
+              },
+              {
+                name: "Carlos Mendez",
+                image: "https://randomuser.me/api/portraits/men/51.jpg",
+              },
+              {
+                name: "Grace Taylor",
+                image: "https://randomuser.me/api/portraits/women/76.jpg",
+              },
+            ],
+            duration: "6 months",
+            course: "Educational Technology Design",
+          },
+
+          {
+            id: 14,
+            title: "Cryptocurrency Trading Bot",
+            description:
+              "Automated trading bot using technical analysis indicators and risk management strategies for cryptocurrency markets.",
+            semester: "Spring 2024",
+            author: {
+              name: "Brian Cooper",
+              avatar: "https://randomuser.me/api/portraits/men/84.jpg",
+              program: "Financial Engineering",
+              year: "4th Year",
+            },
+            technologies: [
+              "Python",
+              "Pandas",
+              "Binance API",
+              "PostgreSQL",
+              "Docker",
+            ],
+            category: "FinTech",
+            status: "Completed",
+            featured: false,
+            likes: 356,
+            views: 2780,
+            demoUrl: "https://crypto-bot.demo.com",
+            githubUrl: "https://github.com/bcooper/crypto-trading-bot",
+            images: [
+              "https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=500&auto=format&fit=crop&q=60",
+              "https://images.unsplash.com/photo-1640340434855-6084b1f4901c?w=500&auto=format&fit=crop&q=60",
+            ],
+            createdAt: "2024-04-22",
+            tags: ["crypto", "trading", "automation"],
+            members: [
+              {
+                name: "Brian Cooper",
+                image: "https://randomuser.me/api/portraits/men/84.jpg",
+              },
+              {
+                name: "Maya Patel",
+                image: "https://randomuser.me/api/portraits/women/91.jpg",
+              },
+            ],
+            duration: "3 months",
+            course: "Algorithmic Trading",
+          },
+
+          {
+            id: 15,
+            title: "Weather Prediction API",
+            description:
+              "RESTful API service providing accurate weather forecasts using machine learning models trained on historical data.",
+            semester: "Fall 2023",
+            author: {
+              name: "Nicole Zhang",
+              avatar: "https://randomuser.me/api/portraits/women/15.jpg",
+              program: "Meteorology & CS",
+              year: "4th Year",
+            },
+            technologies: [
+              "Python",
+              "FastAPI",
+              "Scikit-learn",
+              "Redis",
+              "Docker",
+            ],
+            category: "APIs",
+            status: "Completed",
+            featured: false,
+            likes: 145,
+            views: 1230,
+            demoUrl: "https://weather-api.demo.com",
+            githubUrl: "https://github.com/nzhang/weather-prediction-api",
+            images: [
+              "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=500&auto=format&fit=crop&q=60",
+              "https://images.unsplash.com/photo-1601134467661-3d775b999c8b?w=500&auto=format&fit=crop&q=60",
+            ],
+            createdAt: "2023-11-28",
+            tags: ["api", "weather", "prediction"],
+            members: [
+              {
+                name: "Nicole Zhang",
+                image: "https://randomuser.me/api/portraits/women/15.jpg",
+              },
+              {
+                name: "Eric Kim",
+                image: "https://randomuser.me/api/portraits/men/27.jpg",
+              },
+            ],
+            duration: "4 months",
+            course: "Applied Meteorology",
+          },
+
+          {
+            id: 16,
+            title: "VR Museum Experience",
+            description:
+              "Immersive virtual reality application allowing users to explore historical artifacts and art collections from around the world.",
+            semester: "Spring 2024",
+            author: {
+              name: "Marco Silva",
+              avatar: "https://randomuser.me/api/portraits/men/19.jpg",
+              program: "Digital Arts",
+              year: "3rd Year",
+            },
+            technologies: ["Unity", "C#", "Oculus SDK", "Photon", "Blender"],
+            category: "Virtual Reality",
+            status: "In Progress",
+            featured: true,
+            likes: 267,
+            views: 1950,
+            demoUrl: "https://vr-museum.demo.com",
+            githubUrl: "https://github.com/msilva/vr-museum",
+            images: [
+              "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500&auto=format&fit=crop&q=60",
+              "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=500&auto=format&fit=crop&q=60",
+            ],
+            createdAt: "2024-02-14",
+            tags: ["vr", "museum", "education"],
+            members: [
+              {
+                name: "Marco Silva",
+                image: "https://randomuser.me/api/portraits/men/19.jpg",
+              },
+              {
+                name: "Luna Rodriguez",
+                image: "https://randomuser.me/api/portraits/women/56.jpg",
+              },
+              {
+                name: "Alex Thompson",
+                image: "https://randomuser.me/api/portraits/men/31.jpg",
+              },
+            ],
+            duration: "5 months",
+            course: "Immersive Media Design",
+          },
+
+          {
+            id: 17,
+            title: "Smart Parking System",
+            description:
+              "IoT-based parking management system with real-time space detection, mobile app booking, and payment integration.",
+            semester: "Fall 2024",
+            author: {
+              name: "Samantha Lee",
+              avatar: "https://randomuser.me/api/portraits/women/23.jpg",
+              program: "Urban Planning & Tech",
+              year: "4th Year",
+            },
+            technologies: [
+              "React Native",
+              "Node.js",
+              "IoT Sensors",
+              "MongoDB",
+              "Stripe",
+            ],
+            category: "Smart Cities",
+            status: "Completed",
+            featured: false,
+            likes: 189,
+            views: 1567,
+            demoUrl: "https://smart-parking.demo.com",
+            githubUrl: "https://github.com/slee/smart-parking",
+            images: [
+              "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&auto=format&fit=crop&q=60",
+              "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=500&auto=format&fit=crop&q=60",
+            ],
+            createdAt: "2024-10-30",
+            tags: ["iot", "parking", "smart-city"],
+            members: [
+              {
+                name: "Samantha Lee",
+                image: "https://randomuser.me/api/portraits/women/23.jpg",
+              },
+              {
+                name: "Diego Martinez",
+                image: "https://randomuser.me/api/portraits/men/66.jpg",
+              },
+            ],
+            duration: "4 months",
+            course: "Smart Cities Technology",
+          },
         ];
+
+        // Update pagination state
+        this.pagination.totalItems = projects.length;
+        this.pagination.totalPages = Math.ceil(
+          projects.length / this.pagination.itemsPerPage
+        );
 
         return (this.projects = projects);
       } finally {
@@ -647,6 +1123,48 @@ export const useProjectStore = defineStore("projects", {
       if (project) {
         project.likes++;
       }
+    },
+
+    // Pagination methods
+    setCurrentPage(page: number): void {
+      if (page >= 1 && page <= this.pagination.totalPages) {
+        this.pagination.currentPage = page;
+      }
+    },
+
+    nextPage(): void {
+      if (this.pagination.currentPage < this.pagination.totalPages) {
+        this.pagination.currentPage++;
+      }
+    },
+
+    prevPage(): void {
+      if (this.pagination.currentPage > 1) {
+        this.pagination.currentPage--;
+      }
+    },
+
+    updatePaginationForFilteredProjects(filteredCount: number): void {
+      this.pagination.totalItems = filteredCount;
+      this.pagination.totalPages = Math.ceil(
+        filteredCount / this.pagination.itemsPerPage
+      );
+
+      // Reset to first page if current page is beyond available pages
+      if (this.pagination.currentPage > this.pagination.totalPages) {
+        this.pagination.currentPage = 1;
+      }
+    },
+
+    getPaginatedProjects(filteredProjects: Project[]): Project[] {
+      const start =
+        (this.pagination.currentPage - 1) * this.pagination.itemsPerPage;
+      const end = start + this.pagination.itemsPerPage;
+      return filteredProjects.slice(start, end);
+    },
+
+    resetPagination(): void {
+      this.pagination.currentPage = 1;
     },
 
     async incrementViews(projectId: number): Promise<void> {
@@ -742,6 +1260,98 @@ export const useProjectStore = defineStore("projects", {
       });
 
       return results.slice(0, 8);
+    },
+
+    // Filter management methods
+    setFilter(key: keyof ProjectState["filters"], value: any): void {
+      this.filters[key] = value;
+      this.pagination.currentPage = 1; // Reset to first page when filters change
+    },
+
+    clearFilters(): void {
+      this.filters = {
+        category: "All",
+        search: "",
+        tags: [],
+        year: "",
+        sort: "recent",
+      };
+      this.resetPagination();
+    },
+
+    getFilteredProjects(): Project[] {
+      let filtered = [...this.projects];
+
+      // Filter by category
+      if (this.filters.category && this.filters.category !== "All") {
+        filtered = filtered.filter((p) => p.category === this.filters.category);
+      }
+
+      // Filter by search
+      if (this.filters.search.trim()) {
+        const search = this.filters.search.toLowerCase();
+        filtered = filtered.filter(
+          (p) =>
+            p.title.toLowerCase().includes(search) ||
+            p.description.toLowerCase().includes(search) ||
+            p.category.toLowerCase().includes(search)
+        );
+      }
+
+      // Filter by tags
+      if (this.filters.tags.length > 0) {
+        filtered = filtered.filter((p) =>
+          p.tags?.some((tag) => this.filters.tags.includes(tag))
+        );
+      }
+
+      // Filter by year
+      if (this.filters.year) {
+        filtered = filtered.filter((p) => {
+          const year = p.semester?.match(/\d{4}/)?.[0];
+          return year === this.filters.year;
+        });
+      }
+
+      // Apply sorting
+      return this.applySorting(filtered);
+    },
+
+    applySorting(projects: Project[]): Project[] {
+      const sorted = [...projects];
+
+      switch (this.filters.sort) {
+        case "oldest":
+          return sorted.sort(
+            (a, b) =>
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
+        case "liked":
+          return sorted.sort((a, b) => b.likes - a.likes);
+        case "viewed":
+          return sorted.sort((a, b) => b.views - a.views);
+        case "recent":
+        default:
+          return sorted.sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+      }
+    },
+
+    getPaginatedFilteredProjects(): Project[] {
+      const filtered = this.getFilteredProjects();
+      const start =
+        (this.pagination.currentPage - 1) * this.pagination.itemsPerPage;
+      const end = start + this.pagination.itemsPerPage;
+
+      // Update pagination totals
+      this.pagination.totalItems = filtered.length;
+      this.pagination.totalPages = Math.ceil(
+        filtered.length / this.pagination.itemsPerPage
+      );
+
+      return filtered.slice(start, end);
     },
   },
 });

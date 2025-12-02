@@ -16,22 +16,10 @@
     </div>
 
     <UContainer class="relative z-10">
-      <div class="grid lg:grid-cols-2 gap-40 items-center ">
+      <div class="grid lg:grid-cols-2 gap-40 items-center">
         <!-- Content -->
         <div class="space-y-8 pt-8">
           <div class="space-y-4">
-            <div
-              class="inline-flex items-center px-4 py-2 rounded-full bg-blue-950 dark:bg-blue-900 border border-blue-800 dark:border-blue-700"
-            >
-              <UIcon
-                name="i-heroicons-star"
-                class="w-4 h-4 text-blue-400 dark:text-blue-300 mr-2"
-              />
-              <span
-                class="text-sm font-semibold text-blue-400 dark:text-blue-300"
-                >Discover Exceptional Student Work</span
-              >
-            </div>
             <h1
               class="text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight"
             >

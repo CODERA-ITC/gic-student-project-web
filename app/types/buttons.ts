@@ -141,7 +141,7 @@ export const BUTTON_SIZES = {
  * Base button styles (always applied)
  */
 export const BUTTON_BASE =
-  "inline-flex items-center justify-center gap-2 font-semibold rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2";
+  "inline-flex items-center font-medium justify-center gap-2 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2";
 
 /**
  * Get button classes based on configuration
