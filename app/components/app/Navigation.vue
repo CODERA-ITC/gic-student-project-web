@@ -30,7 +30,9 @@
       <!-- Right Section: Theme Toggle & User Menu -->
       <div class="flex items-center gap-2">
         <!-- Theme Toggle -->
-        <ThemeToggle />
+        <ClientOnly>
+          <ThemeToggle />
+        </ClientOnly>
 
         <!-- User Menu (Desktop) -->
         <div class="hidden md:block">
