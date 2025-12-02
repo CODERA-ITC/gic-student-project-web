@@ -6,13 +6,21 @@
       class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full"
     >
       <!-- Logo Section -->
-      <NuxtLink to="/" class="flex items-center shrink-0">
+      <NuxtLink to="/" class="flex items-center shrink-0 space-x-2">
         <NuxtImg
-          src="/gic-logo.jpg"
+          src="/images/itc-logo.png"
+          alt="ITC Logo"
+          width="auto"
+          height="54"
+          class="object-contain hover:opacity-80 transition-opacity duration-200 rounded-xs"
+        />
+        <div class="w-px h-12 bg-gray-300 dark:bg-neutral-700 mr-3"></div>
+        <NuxtImg
+          src="/images/gic-logo-small.png"
           alt="GIC Student Portal"
-          width="150"
-          height="40"
-          class="object-contain hover:opacity-80 transition-opacity duration-200"
+          width="auto"
+          height="47"
+          class="object-contain hover:opacity-80 transition-opacity duration-200 rounded-xs"
         />
       </NuxtLink>
 

@@ -1,6 +1,6 @@
 <template>
   <section
-    class="relative overflow-hidden pt-10 pb-10 lg:pb-40 px-4 sm:px-6 lg:px-8 bg-white dark:bg-neutral-900"
+    class="relative overflow-hidden lg:pb-40 px-4 sm:px-6 lg:px-8 bg-white dark:bg-neutral-900"
   >
     <!-- Animated background elements -->
     <div class="absolute inset-0 -z-10 overflow-hidden">
@@ -16,7 +16,7 @@
     </div>
 
     <UContainer class="relative z-10">
-      <div class="grid lg:grid-cols-2 gap-12 items-start">
+      <div class="grid lg:grid-cols-2 gap-40 items-center ">
         <!-- Content -->
         <div class="space-y-8 pt-8">
           <div class="space-y-4">
