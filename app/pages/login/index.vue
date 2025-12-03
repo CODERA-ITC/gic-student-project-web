@@ -106,22 +106,24 @@
         </div>
 
         <!-- Social Login -->
-        <div class="grid place-items-center">
-          <button
-            type="button"
-            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group"
-          >
+        <div class="grid grid-cols-2 gap-3">
+          <button type="button"
+            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group">
             <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
-              <NuxtImg
-                src="/images/google.png"
-                alt="Google"
-                class="w-full h-full object-contain"
-              />
+              <UIcon name="i-logos-google-icon" class="w-6 h-6" />
             </div>
             <span
-              class="text-sm text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors"
-              >SIGN IN WITH GOOGLE</span
-            >
+              class="text-sm text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors">GOOGLE</span>
+          </button>
+
+          <button type="button"
+            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group">
+            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
+              <UIcon name="i-simple-icons-github"
+                class="w-6 h-6 text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors" />
+            </div>
+            <span
+              class="text-sm text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors">GITHUB</span>
           </button>
         </div>
 
