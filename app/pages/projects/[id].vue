@@ -324,11 +324,14 @@
         </div>
       </div>
     </UContainer>
+
+    <!-- Authentication Modal -->
+    <AuthModal v-model="showAuthModal" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useProjectStore } from "~/stores/projects";
 
 const route = useRoute();
@@ -373,46 +376,46 @@ const previousImage = () => {
   }
 };
 
-// Like functionality - persist in localStorage to prevent duplicate likes
-const LIKED_PROJECTS_KEY = "likedProjects";
+// Like functionality - using store with authentication
+import { useAuthStore } from "~/stores/auth";
 
-// Initialize liked projects from localStorage
-const getLikedProjectsFromStorage = () => {
-  if (typeof window !== "undefined") {
-    const stored = localStorage.getItem(LIKED_PROJECTS_KEY);
-    return stored ? new Set(JSON.parse(stored)) : new Set();
-  }
-  return new Set();
-};
+const authStore = useAuthStore();
+const showAuthModal = ref(false);
 
-const likedProjects = ref(getLikedProjectsFromStorage());
-
-const isLiked = computed(() => {
-  return likedProjects.value.has(project.value?.id);
+// Load user's liked projects when component mounts
+onMounted(async () => {
+  await projectStore.loadUserLikedProjects();
 });
 
-const toggleLike = () => {
+// Watch for auth changes and reload liked projects
+watch(
+  () => authStore.isAuthenticated,
+  async (isAuth) => {
+    if (isAuth) {
+      await projectStore.loadUserLikedProjects();
+    } else {
+      projectStore.clearUserLikedProjects();
+    }
+  }
+);
+
+const isLiked = computed(() => {
+  if (!project.value) return false;
+  return projectStore.isProjectLiked(project.value.id);
+});
+
+const toggleLike = async () => {
   if (!project.value) return;
 
-  if (likedProjects.value.has(project.value.id)) {
-    // Unlike: decrement count and remove from liked
-    if (project.value.likes > 0) {
-      project.value.likes--;
-    }
-    likedProjects.value.delete(project.value.id);
-  } else {
-    // Like: increment count and add to liked
-    projectStore.likeProject(project.value.id);
-    likedProjects.value.add(project.value.id);
+  if (!authStore.isAuthenticated) {
+    // Show authentication modal
+    showAuthModal.value = true;
+    return;
   }
 
-  // Persist to localStorage
-  if (typeof window !== "undefined") {
-    localStorage.setItem(
-      LIKED_PROJECTS_KEY,
-      JSON.stringify([...likedProjects.value])
-    );
-  }
+  const newLikedState = await projectStore.likeProject(project.value.id);
+  // Save the updated likes to persistence layer
+  await projectStore.saveUserLikedProjects();
 };
 
 useHead({

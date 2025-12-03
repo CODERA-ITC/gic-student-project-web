@@ -64,7 +64,10 @@
           <div class="flex-1">
             <div class="flex items-center justify-center gap-1 flex-wrap">
               <!-- Show loading state or actual categories -->
-              <template v-if="categories.length > 1">
+              <div
+                v-if="categories.length > 1"
+                class="hidden md:flex flex-wrap gap-2 justify-center"
+              >
                 <ButtonsPresetButton
                   v-for="cat in categories.slice(0, 6)"
                   :key="cat"
@@ -74,7 +77,31 @@
                   size="md"
                   @click="selectedCategory = cat"
                 />
-              </template>
+              </div>
+
+              <!-- use manual select menu instead -->
+              <div
+                v-if="categories.length > 1"
+                class="relative md:hidden w-full"
+              >
+                <select
+                  v-model="selectedCategory"
+                  class="appearance-none bg-white border border-gray-300 rounded-xl px-4 py-2 pr-8 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
+                >
+                  <option
+                    v-for="cat in categories.slice(0, 6)"
+                    :key="cat"
+                    :value="cat"
+                  >
+                    {{ cat }}
+                  </option>
+                </select>
+                <UIcon
+                  name="i-heroicons-chevron-down"
+                  class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none"
+                />
+              </div>
+
               <template v-else>
                 <div class="flex gap-1 animate-pulse gap-6">
                   <div class="h-8 w-16 bg-gray-200 rounded-lg"></div>
@@ -96,7 +123,7 @@
             :color="showFilters ? 'primary' : 'secondary'"
             :variant="showFilters ? 'solid' : 'outline'"
             size="md"
-            @click="showFilters = !showFilters"
+            @click="toggleFilters"
           />
         </div>
       </UContainer>
@@ -110,153 +137,137 @@
         <div class="sm:col-span-4">
           <div class="space-y-6">
             <!-- Filters -->
-            <div class="space-y-6">
-              <!-- Expandable Filter Panel -->
-              <Transition
-                enter-active-class="transition-all duration-300 ease-out"
-                enter-from-class="opacity-0 transform -translate-y-4 scale-95"
-                enter-to-class="opacity-100 transform translate-y-0 scale-100"
-                leave-active-class="transition-all duration-200 ease-in"
-                leave-from-class="opacity-100 transform translate-y-0 scale-100"
-                leave-to-class="opacity-0 transform -translate-y-4 scale-95"
-              >
-                <div
-                  v-if="showFilters"
-                  class="rounded-2xl p-6 border border-blue-200 bg-blue-50/30 backdrop-blur-sm space-y-4 shadow-lg"
-                >
-                  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Category Search with Autocomplete -->
-                    <div class="relative">
-                      <p class="text-lg font-semibold mb-1 text-blue-900">
-                        Categories
-                      </p>
-                      <div class="relative">
-                        <UInput
-                          v-model="categorySearchInput"
-                          placeholder="Type to search categories (e.g., AI, Web, Mobile)"
-                          icon="i-heroicons-magnifying-glass"
-                          class="w-full"
-                          :loading="isSearching"
-                          @focus="showCategorySuggestions = true"
-                          @keydown.escape="showCategorySuggestions = false"
-                        />
+            <div
+              v-if="showFilters"
+              class="rounded-2xl p-6 border border-blue-200 bg-blue-50/30 backdrop-blur-sm space-y-4 shadow-lg"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Category Search with Autocomplete -->
+                <div class="relative">
+                  <p class="text-lg font-semibold mb-2 text-blue-900">
+                    Categories
+                  </p>
+                  <div class="relative">
+                    <UInput
+                      v-model="categorySearchInput"
+                      placeholder="Type to search categories (e.g., AI, Web, Mobile)"
+                      icon="i-heroicons-magnifying-glass"
+                      class="w-full"
+                      :loading="isSearching"
+                      @focus="showCategorySuggestions = true"
+                      @keydown.escape="showCategorySuggestions = false"
+                    />
 
-                        <!-- Category Suggestions Dropdown -->
-                        <div
-                          v-if="
-                            showCategorySuggestions &&
-                            categorySuggestions.length > 0
-                          "
-                          class="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto"
-                        >
-                          <div
-                            v-for="suggestion in categorySuggestions"
-                            :key="suggestion.id"
-                            @click="selectCategorySuggestion(suggestion)"
-                            class="px-4 py-2 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
-                          >
-                            <div class="flex items-center justify-between">
-                              <span class="font-medium text-blue-900">{{
-                                suggestion.label
-                              }}</span>
-                              <span class="text-xs text-gray-500">{{
-                                suggestion.suffix
-                              }}</span>
-                            </div>
-                          </div>
+                    <!-- Category Suggestions Dropdown -->
+                    <div
+                      v-if="
+                        showCategorySuggestions &&
+                        categorySuggestions.length > 0
+                      "
+                      class="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto"
+                    >
+                      <div
+                        v-for="suggestion in categorySuggestions"
+                        :key="suggestion.id"
+                        @click="selectCategorySuggestion(suggestion)"
+                        class="px-4 py-2 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                      >
+                        <div class="flex items-center justify-between">
+                          <span class="font-medium text-blue-900">{{
+                            suggestion.label
+                          }}</span>
+                          <span class="text-xs text-gray-500">{{
+                            suggestion.suffix
+                          }}</span>
                         </div>
                       </div>
                     </div>
-
-                    <!-- Enhanced Tags Dropdown -->
-                    <div>
-                      <p class="text-lg font-semibold mb-2 text-blue-900">
-                        Tags
-                      </p>
-                      <USelectMenu
-                        v-model="selectedTags"
-                        :options="filteredTags"
-                        size="md"
-                        multiple
-                        searchable
-                        searchable-placeholder="Type to search tags (e.g., AI, Soft, Web)"
-                        placeholder="Click to select tags"
-                        class="w-full"
-                        :search-attributes="['label', 'value']"
-                      >
-                        <template #label>
-                          <span
-                            v-if="selectedTags.length === 0"
-                            class="text-gray-500"
-                          >
-                            Click to select tags
-                          </span>
-                          <span v-else class="flex items-center gap-1">
-                            <UBadge
-                              v-for="tag in selectedTags.slice(0, 2)"
-                              :key="tag"
-                              size="xs"
-                              color="blue"
-                              variant="soft"
-                            >
-                              {{
-                                tags.find((t) => t.value === tag)?.label || tag
-                              }}
-                            </UBadge>
-                            <span
-                              v-if="selectedTags.length > 2"
-                              class="text-xs text-gray-500"
-                            >
-                              +{{ selectedTags.length - 2 }} more
-                            </span>
-                          </span>
-                        </template>
-
-                        <template #option="{ option }">
-                          <div class="flex items-center justify-between w-full">
-                            <span class="font-medium">{{ option.label }}</span>
-                            <span
-                              class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full"
-                            >
-                              {{ option.value }}
-                            </span>
-                          </div>
-                        </template>
-                      </USelectMenu>
-                    </div>
-
-                    <!-- Years Dropdown -->
-                    <div>
-                      <p class="text-lg font-semibold mb-2 text-blue-900">
-                        Academic Years
-                      </p>
-                      <USelectMenu
-                        v-model="selectedYear"
-                        :options="years"
-                        size="md"
-                        placeholder="Click to select year"
-                        class="w-full"
-                      >
-                        <template #label>
-                          <span v-if="!selectedYear" class="text-gray-500">
-                            Click to select year
-                          </span>
-                          <span v-else class="flex items-center gap-2">
-                            <UIcon
-                              name="i-heroicons-calendar-days"
-                              class="w-4 h-4 text-blue-600"
-                            />
-                            {{
-                              years.find((y) => y.value === selectedYear)
-                                ?.label || selectedYear
-                            }}
-                          </span>
-                        </template>
-                      </USelectMenu>
-                    </div>
                   </div>
                 </div>
-              </Transition>
+
+                <!-- Enhanced Tags Dropdown -->
+                <div>
+                  <p class="text-lg font-semibold mb-2 text-blue-900">Tags</p>
+                  <USelectMenu
+                    v-model="selectedTags"
+                    :options="filteredTags"
+                    size="md"
+                    multiple
+                    searchable
+                    searchable-placeholder="Type to search tags (e.g., AI, Soft, Web)"
+                    placeholder="Click to select tags"
+                    class="w-full"
+                    :search-attributes="['label', 'value']"
+                  >
+                    <template #label>
+                      <span
+                        v-if="selectedTags.length === 0"
+                        class="text-gray-500"
+                      >
+                        Click to select tags
+                      </span>
+                      <span v-else class="flex items-center gap-1">
+                        <UBadge
+                          v-for="tag in selectedTags.slice(0, 2)"
+                          :key="tag"
+                          size="xs"
+                          color="blue"
+                          variant="soft"
+                        >
+                          {{ tags.find((t) => t.value === tag)?.label || tag }}
+                        </UBadge>
+                        <span
+                          v-if="selectedTags.length > 2"
+                          class="text-xs text-gray-500"
+                        >
+                          +{{ selectedTags.length - 2 }} more
+                        </span>
+                      </span>
+                    </template>
+
+                    <template #option="{ option }">
+                      <div class="flex items-center justify-between w-full">
+                        <span class="font-medium">{{ option.label }}</span>
+                        <span
+                          class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full"
+                        >
+                          {{ option.value }}
+                        </span>
+                      </div>
+                    </template>
+                  </USelectMenu>
+                </div>
+
+                <!-- Years Dropdown -->
+                <div>
+                  <p class="text-lg font-semibold mb-2 text-blue-900">
+                    Academic Years
+                  </p>
+                  <USelectMenu
+                    v-model="selectedYear"
+                    :options="years"
+                    size="md"
+                    placeholder="Click to select year"
+                    class="w-full"
+                  >
+                    <template #label>
+                      <span v-if="!selectedYear" class="text-gray-500">
+                        Click to select year
+                      </span>
+                      <span v-else class="flex items-center gap-2">
+                        <UIcon
+                          name="i-heroicons-calendar-days"
+                          class="w-4 h-4 text-blue-600"
+                        />
+                        {{
+                          years.find((y) => y.value === selectedYear)?.label ||
+                          selectedYear
+                        }}
+                      </span>
+                    </template>
+                  </USelectMenu>
+                </div>
+              </div>
             </div>
 
             <!-- Results and Active Filters -->
@@ -375,7 +386,7 @@
                 v-for="project in paginatedProjects"
                 :key="project.id"
                 :project="project"
-                :liked-projects="likedProjects"
+                :liked-projects="projectStore.likedProjects"
                 @toggle-like="toggleLike"
               />
             </div>
@@ -448,31 +459,47 @@ const projectStore = useProjectStore();
 
 // Initialize data on component mount
 onMounted(async () => {
-  try {
-    await Promise.all([
-      projectStore.fetchCategories(),
-      projectStore.fetchProjects(),
-    ]);
-  } catch (error) {
-    console.error("Error fetching data:", error);
+  if (!projectStore.projects.length) {
+    try {
+      await Promise.all([
+        projectStore.fetchCategories(),
+        projectStore.fetchTags(),
+        projectStore.fetchProjects(),
+        projectStore.loadUserLikedProjects(),
+      ]);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   }
 });
 
 // Store computed properties
-const categories = computed(() => projectStore.categories || ["All"]);
+const categories = computed(() => projectStore.availableCategories || ["All"]);
 const projects = computed(() => projectStore.projects || []);
 
 // Filter state - now using store
 const showFilters = ref(false);
 const isSearching = ref(false);
-const likedProjects = ref({});
 const showCategorySuggestions = ref(false);
 const categorySearchInput = ref("");
+const showAuthModal = ref(false);
+
+// Debug function for filter toggle
+const toggleFilters = () => {
+  showFilters.value = !showFilters.value;
+  console.log("Filters toggled:", showFilters.value);
+};
 
 // Store filter state as computed properties
 const selectedCategory = computed({
-  get: () => projectStore.filters.category,
-  set: (value) => projectStore.setFilter("category", value),
+  get: () => {
+    const cats = projectStore.filters.categories;
+    return cats.includes("All") ? "All" : cats[0] || "All";
+  },
+  set: (value) => {
+    const newCategories = value === "All" ? ["All"] : [value];
+    projectStore.setFilter("categories", newCategories);
+  },
 });
 
 const categorySearch = computed({
@@ -523,27 +550,8 @@ watch(categorySearchInput, (newValue) => {
   }, 200);
 });
 
-// Filter options
-const tags = [
-  { label: "Web Development", value: "web" },
-  { label: "Mobile App", value: "mobile" },
-  { label: "AI/ML", value: "ai" },
-  { label: "Data Science", value: "data" },
-  { label: "IoT", value: "iot" },
-  { label: "Blockchain", value: "blockchain" },
-  { label: "Machine Learning", value: "ml" },
-  { label: "Artificial Intelligence", value: "artificial-intelligence" },
-  { label: "Software Development", value: "software" },
-  { label: "Frontend", value: "frontend" },
-  { label: "Backend", value: "backend" },
-  { label: "Full Stack", value: "fullstack" },
-];
-
-const years = [
-  { label: "2024", value: "2024" },
-  { label: "2023", value: "2023" },
-  { label: "2022", value: "2022" },
-];
+// Filter options from store
+const tags = computed(() => projectStore.availableTags || []);
 
 // Autocomplete suggestions
 const categorySuggestions = computed(() => {
@@ -566,7 +574,8 @@ const categorySuggestions = computed(() => {
 
 const filteredTags = computed(() => {
   const selectedValues = selectedTags.value;
-  return tags.filter((tag) => !selectedValues.includes(tag.value));
+  const availableTags = tags.value || [];
+  return availableTags.filter((tag) => !selectedValues.includes(tag.value));
 });
 
 // Category suggestion methods
@@ -603,7 +612,9 @@ const totalPages = computed(() => projectStore.pagination.totalPages);
 const hasActiveFilters = computed(() => {
   const filters = projectStore.filters;
   return (
-    (filters.category && filters.category !== "All") ||
+    (filters.categories &&
+      !filters.categories.includes("All") &&
+      filters.categories.length > 0) ||
     filters.search.trim() ||
     filters.tags.length > 0 ||
     filters.year
@@ -619,20 +630,26 @@ const clearFilters = () => {
     clearTimeout(searchTimeout);
   }
   isSearching.value = false;
-}; // Like functionality
-const toggleLike = (projectId) => {
-  const isCurrentlyLiked = likedProjects.value[projectId];
+};
 
-  if (isCurrentlyLiked) {
-    // Unlike
-    const project = projects.value.find((p) => p.id === projectId);
-    if (project && project.likes > 0) project.likes--;
-    delete likedProjects.value[projectId];
-  } else {
-    // Like
-    projectStore.likeProject(projectId);
-    likedProjects.value[projectId] = true;
+// Like functionality - using store with authentication
+import { useAuthStore } from "~/stores/auth";
+const authStore = useAuthStore();
+
+const toggleLike = async (projectId) => {
+  if (!authStore.isAuthenticated) {
+    // Show authentication modal
+    showAuthModal.value = true;
+    return;
   }
+
+  await projectStore.likeProject(projectId);
+  await projectStore.saveUserLikedProjects();
+};
+
+// Helper to check if a project is liked
+const isProjectLiked = (projectId) => {
+  return projectStore.isProjectLiked(projectId);
 };
 
 useHead({
