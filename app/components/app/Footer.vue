@@ -9,16 +9,19 @@
               <UIcon name="i-heroicons-academic-cap" class="w-8 h-8 text-slate-900 dark:text-slate-100" />
               <span class="text-2xl font-bold">GIC Student Portal</span>
             </div>
-            <p class="text-gray-600 dark:text-gray-400 mb-6 max-w-md">
+            <p class="text-gray-600 dark:text-gray-400 mb-3 max-w-md">
               A showcase platform for student projects and achievements across
               semesters. Discover the amazing work done by GIC students
               throughout their academic journey.
             </p>
-            <div class="flex space-x-4">
-              <UButton variant="ghost" size="sm" color="secondary" icon="i-heroicons-envelope"
+            <div class="flex">
+              <!-- <UButton variant="ghost" size="sm" color="secondary" icon="i-heroicons-envelope"
                 to="mailto:contact@gic.edu">
                 Contact Us
-              </UButton>
+              </UButton> -->
+
+
+              <NuxtImg src="../public/images/PoweredbyCodera.svg" alt="Powered by Codera" width="150" height="150" />
             </div>
           </div>
 

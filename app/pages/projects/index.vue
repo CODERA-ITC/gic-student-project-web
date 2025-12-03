@@ -27,8 +27,8 @@
             />
 
             <ButtonsPresetButton
-              preset="viewBySemester"
-              to="/projects/semester"
+              preset="meetStudent"
+              to="/students"
               size="md"
             />
           </div>
@@ -45,18 +45,11 @@
         <div class="flex items-center justify-between w-full gap-2 py-4">
           <!-- Sort Dropdown -->
           <div class="relative">
-            <select
+            <USelectMenu
               v-model="selectedSort"
-              class="appearance-none bg-white border border-gray-300 rounded-xl px-4 py-2 pr-8 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="recent">Recently</option>
-              <option value="oldest">Oldest</option>
-              <option value="liked">Most Liked</option>
-              <option value="viewed">Most Viewed</option>
-            </select>
-            <UIcon
-              name="i-heroicons-chevron-down"
-              class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none"
+              size="xl"
+              :items="sortOptions"
+              class="w-35 rounded-xl"
             />
           </div>
 
@@ -69,50 +62,35 @@
                 class="hidden md:flex flex-wrap gap-2 justify-center"
               >
                 <ButtonsPresetButton
-                  v-for="cat in categories.slice(0, 6)"
-                  :key="cat"
-                  :label="cat"
-                  :color="selectedCategory === cat ? 'primary' : 'secondary'"
-                  :variant="selectedCategory === cat ? 'solid' : 'ghost'"
+                  v-for="cat in categoryOptions"
+                  :key="cat.value"
+                  :label="cat.label"
+                  :color="
+                    selectedCategory?.value === cat.value
+                      ? 'primary'
+                      : 'secondary'
+                  "
+                  :variant="
+                    selectedCategory?.value === cat.value ? 'solid' : 'ghost'
+                  "
                   size="md"
                   @click="selectedCategory = cat"
                 />
               </div>
 
-              <!-- use manual select menu instead -->
+              <!-- Mobile Category Select -->
               <div
                 v-if="categories.length > 1"
                 class="relative md:hidden w-full"
               >
-                <select
+                <USelectMenu
                   v-model="selectedCategory"
-                  class="appearance-none bg-white border border-gray-300 rounded-xl px-4 py-2 pr-8 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full"
-                >
-                  <option
-                    v-for="cat in categories.slice(0, 6)"
-                    :key="cat"
-                    :value="cat"
-                  >
-                    {{ cat }}
-                  </option>
-                </select>
-                <UIcon
-                  name="i-heroicons-chevron-down"
-                  class="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none"
+                  size="xl"
+                  :items="categoryOptions"
+                  placeholder="Select category"
+                  class="w-full rounded-xl"
                 />
               </div>
-
-              <template v-else>
-                <div class="flex gap-1 animate-pulse gap-6">
-                  <div class="h-8 w-16 bg-gray-200 rounded-lg"></div>
-                  <div class="h-8 w-20 bg-gray-200 rounded-lg"></div>
-                  <div class="h-8 w-18 bg-gray-200 rounded-lg"></div>
-                  <div class="h-8 w-18 bg-gray-200 rounded-lg"></div>
-                  <div class="h-8 w-18 bg-gray-200 rounded-lg"></div>
-                  <div class="h-8 w-18 bg-gray-200 rounded-lg"></div>
-                  <div class="h-8 w-18 bg-gray-200 rounded-lg"></div>
-                </div>
-              </template>
             </div>
           </div>
 
@@ -126,332 +104,326 @@
             @click="toggleFilters"
           />
         </div>
-      </UContainer>
-    </div>
 
-    <UContainer
-      class="py-9 bg-gradient-to-b via-gray-50 to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
-    >
-      <div class="grid lg:grid-cols-4 gap-8">
-        <!-- Projects Grid -->
-        <div class="sm:col-span-4">
-          <div class="space-y-6">
-            <!-- Filters -->
-            <div
-              v-if="showFilters"
-              class="rounded-2xl p-6 border border-blue-200 bg-blue-50/30 backdrop-blur-sm space-y-4 shadow-lg"
-            >
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Category Search with Autocomplete -->
+        <Transition
+          enter-active-class="transition-all duration-500 ease-out"
+          enter-from-class="opacity-0 -translate-y-3"
+          enter-to-class="opacity-100 translate-y-0"
+          leave-active-class="transition-all duration-200 ease-in"
+          leave-from-class="opacity-100 translate-y-0"
+          leave-to-class="opacity-0 -translate-y-3"
+        >
+          <div
+            v-if="showFilters"
+            class="rounded-2xl p-6 border border-blue-200 bg-blue-50/30 backdrop-blur-sm space-y-4 shadow-lg"
+          >
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <!-- Category Search with Autocomplete -->
+              <div class="relative">
+                <p class="text-lg font-semibold mb-2 text-blue-900">
+                  Categories
+                </p>
                 <div class="relative">
-                  <p class="text-lg font-semibold mb-2 text-blue-900">
-                    Categories
-                  </p>
-                  <div class="relative">
-                    <UInput
-                      v-model="categorySearchInput"
-                      placeholder="Type to search categories (e.g., AI, Web, Mobile)"
-                      icon="i-heroicons-magnifying-glass"
-                      class="w-full"
-                      :loading="isSearching"
-                      @focus="showCategorySuggestions = true"
-                      @keydown.escape="showCategorySuggestions = false"
-                    />
+                  <UInput
+                    v-model="categorySearchInput"
+                    placeholder="Type to search categories (e.g., AI, Web, Mobile)"
+                    icon="i-heroicons-magnifying-glass"
+                    class="w-full rounded-xl"
+                    size="xl"
+                    :loading="isSearching"
+                    @focus="showCategorySuggestions = true"
+                    @keydown.escape="showCategorySuggestions = false"
+                  />
 
-                    <!-- Category Suggestions Dropdown -->
+                  <!-- Category Suggestions Dropdown -->
+                  <div
+                    v-if="
+                      showCategorySuggestions && categorySuggestions.length > 0
+                    "
+                    class="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto"
+                  >
                     <div
-                      v-if="
-                        showCategorySuggestions &&
-                        categorySuggestions.length > 0
-                      "
-                      class="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto"
+                      v-for="suggestion in categorySuggestions"
+                      :key="suggestion.id"
+                      @click="selectCategorySuggestion(suggestion)"
+                      class="px-4 py-2 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
                     >
-                      <div
-                        v-for="suggestion in categorySuggestions"
-                        :key="suggestion.id"
-                        @click="selectCategorySuggestion(suggestion)"
-                        class="px-4 py-2 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
-                      >
-                        <div class="flex items-center justify-between">
-                          <span class="font-medium text-blue-900">{{
-                            suggestion.label
-                          }}</span>
-                          <span class="text-xs text-gray-500">{{
-                            suggestion.suffix
-                          }}</span>
-                        </div>
+                      <div class="flex items-center justify-between">
+                        <span class="font-medium text-blue-900">{{
+                          suggestion.label
+                        }}</span>
+                        <span class="text-xs text-gray-500">{{
+                          suggestion.suffix
+                        }}</span>
                       </div>
                     </div>
                   </div>
                 </div>
+              </div>
 
-                <!-- Enhanced Tags Dropdown -->
-                <div>
-                  <p class="text-lg font-semibold mb-2 text-blue-900">Tags</p>
-                  <USelectMenu
-                    v-model="selectedTags"
-                    :options="filteredTags"
-                    size="md"
-                    multiple
-                    searchable
-                    searchable-placeholder="Type to search tags (e.g., AI, Soft, Web)"
-                    placeholder="Click to select tags"
-                    class="w-full"
-                    :search-attributes="['label', 'value']"
-                  >
-                    <template #label>
-                      <span
-                        v-if="selectedTags.length === 0"
-                        class="text-gray-500"
-                      >
-                        Click to select tags
-                      </span>
-                      <span v-else class="flex items-center gap-1">
-                        <UBadge
-                          v-for="tag in selectedTags.slice(0, 2)"
-                          :key="tag"
-                          size="xs"
-                          color="blue"
-                          variant="soft"
-                        >
-                          {{ tags.find((t) => t.value === tag)?.label || tag }}
-                        </UBadge>
-                        <span
-                          v-if="selectedTags.length > 2"
-                          class="text-xs text-gray-500"
-                        >
-                          +{{ selectedTags.length - 2 }} more
-                        </span>
-                      </span>
-                    </template>
+              <!-- Enhanced Tags Dropdown -->
+              <div>
+                <p class="text-lg font-semibold mb-2 text-blue-900">Tags</p>
+                <USelectMenu
+                  v-model="selectedTags"
+                  size="xl"
+                  :items="filteredTags"
+                  multiple
+                  searchable
+                  searchable-placeholder="Type to search tags (e.g., AI, Soft, Web)"
+                  placeholder="Click to select tags"
+                  class="w-full rounded-xl"
+                  :search-attributes="['label', 'value']"
+                />
+              </div>
 
-                    <template #option="{ option }">
-                      <div class="flex items-center justify-between w-full">
-                        <span class="font-medium">{{ option.label }}</span>
-                        <span
-                          class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full"
-                        >
-                          {{ option.value }}
-                        </span>
-                      </div>
-                    </template>
-                  </USelectMenu>
-                </div>
-
-                <!-- Years Dropdown -->
-                <div>
-                  <p class="text-lg font-semibold mb-2 text-blue-900">
-                    Academic Years
-                  </p>
-                  <USelectMenu
-                    v-model="selectedYear"
-                    :options="years"
-                    size="md"
-                    placeholder="Click to select year"
-                    class="w-full"
-                  >
-                    <template #label>
-                      <span v-if="!selectedYear" class="text-gray-500">
-                        Click to select year
-                      </span>
-                      <span v-else class="flex items-center gap-2">
-                        <UIcon
-                          name="i-heroicons-calendar-days"
-                          class="w-4 h-4 text-blue-600"
-                        />
-                        {{
-                          years.find((y) => y.value === selectedYear)?.label ||
-                          selectedYear
-                        }}
-                      </span>
-                    </template>
-                  </USelectMenu>
-                </div>
+              <!-- Years Dropdown -->
+              <div>
+                <p class="text-lg font-semibold mb-2 text-blue-900">
+                  Academic Years
+                </p>
+                <USelectMenu
+                  v-model="selectedYear"
+                  size="xl"
+                  :items="years"
+                  placeholder="Click to select year"
+                  class="w-full rounded-xl"
+                />
               </div>
             </div>
+          </div>
+        </Transition>
+      </UContainer>
+    </div>
 
-            <!-- Results and Active Filters -->
-            <div class="flex items-center justify-between flex-wrap gap-4">
-              <!-- Results Count -->
-              <div class="flex items-center gap-4">
-                <p class="text-lg text-gray-700">
-                  <template v-if="totalPages > 1">
-                    Showing {{ paginatedProjects.length }} of
-                  </template>
-                  <span class="font-bold text-blue-900">{{
-                    filteredProjects.length
-                  }}</span>
-                  projects
-                  <template v-if="totalPages > 1">
-                    (Page {{ currentPage }} of {{ totalPages }})
-                  </template>
-                </p>
+    <Transition
+      enter-active-class="transition-all ease-out duration-700">
+      <UContainer
+        class="py-9 bg-gradient-to-b via-gray-50 to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
+      >
+        <div class="grid lg:grid-cols-4 gap-8">
+          <!-- Projects Grid -->
+          <div class="sm:col-span-4">
+            <div class="space-y-6">
+              <!-- Filters -->
 
-                <!-- Active Filters -->
-                <div v-if="hasActiveFilters" class="flex items-center gap-2">
-                  <span class="text-md text-gray-500">•</span>
-                  <div class="flex flex-wrap gap-1">
-                    <UBadge
-                      v-if="selectedCategory && selectedCategory !== 'All'"
-                      color="blue"
-                      variant="soft"
-                      size="md"
-                      class="flex items-center gap-1"
-                    >
-                      {{ selectedCategory }}
-                      <UButton
-                        @click="selectedCategory = 'All'"
-                        color="blue"
-                        variant="ghost"
-                        size="2xs"
-                        icon="i-heroicons-x-mark"
-                        :padded="false"
-                        class="ml-1"
-                      />
-                    </UBadge>
-                    <UBadge
-                      v-if="categorySearch"
-                      color="blue"
-                      variant="soft"
-                      size="sm"
-                      class="flex items-center gap-1"
-                    >
-                      Search: "{{ categorySearch }}"
-                      <UButton
-                        @click="categorySearchInput = ''"
-                        color="blue"
-                        variant="ghost"
-                        size="2xs"
-                        icon="i-heroicons-x-mark"
-                        :padded="false"
-                        class="ml-1"
-                      />
-                    </UBadge>
-                    <UBadge
-                      v-for="tag in selectedTags"
-                      :key="tag"
-                      color="blue"
-                      variant="soft"
-                      size="sm"
-                      class="flex items-center gap-1"
-                    >
-                      {{ tag }}
-                      <UButton
-                        @click="
-                          selectedTags = selectedTags.filter((t) => t !== tag)
+              <!-- Results and Active Filters -->
+              <div class="flex items-center justify-between flex-wrap gap-4">
+                <!-- Results Count -->
+                <div class="flex items-center gap-4">
+                  <p class="text-lg text-gray-700">
+                    <template v-if="totalPages > 1">
+                      Showing {{ paginatedProjects.length }} of
+                    </template>
+                    <span class="font-bold text-blue-900">{{
+                      filteredProjects.length
+                    }}</span>
+                    projects
+                    <template v-if="totalPages > 1">
+                      (Page {{ currentPage }} of {{ totalPages }})
+                    </template>
+                  </p>
+
+                  Active Filters
+                  <div v-if="hasActiveFilters" class="flex items-center gap-2">
+                    <span class="text-md text-gray-500">•</span>
+                    <div class="flex flex-wrap gap-1">
+                      <UBadge
+                        v-if="
+                          selectedCategory && selectedCategory.value !== 'All'
                         "
-                        color="blue"
-                        variant="ghost"
-                        size="2xs"
-                        icon="i-heroicons-x-mark"
-                        :padded="false"
-                        class="ml-1"
-                      />
-                    </UBadge>
-                    <UBadge
-                      v-if="selectedYear"
-                      color="blue"
-                      variant="soft"
-                      size="sm"
-                      class="flex items-center gap-1"
-                    >
-                      {{ selectedYear }}
-                      <UButton
-                        @click="selectedYear = ''"
-                        color="blue"
-                        variant="ghost"
-                        size="2xs"
-                        icon="i-heroicons-x-mark"
-                        :padded="false"
-                        class="ml-1"
-                      />
-                    </UBadge>
+                        variant="soft"
+                        size="md"
+                        class="flex items-center gap-1 text-blue-900"
+                      >
+                        {{ selectedCategory.label }}
+                        <UButton
+                          @click="
+                            selectedCategory = categoryOptions.find(
+                              (c) => c.value === 'All'
+                            )
+                          "
+                          color="primary"
+                          variant="ghost"
+                          size="xs"
+                          :padded="false"
+                          class="ml-1"
+                        />
+                      </UBadge>
+                      <UBadge
+                        v-if="categorySearch"
+                        color="primary"
+                        variant="soft"
+                        size="sm"
+                        class="flex items-center gap-1"
+                      >
+                        Search: "{{ categorySearch }}"
+                        <UButton
+                          @click="categorySearchInput = ''"
+                          color="primary"
+                          variant="ghost"
+                          size="xs"
+                          :padded="false"
+                          class="ml-1"
+                        />
+                      </UBadge>
+                      <UBadge
+                        v-for="tag in selectedTags"
+                        :key="tag.value"
+                        color="primary"
+                        variant="soft"
+                        size="sm"
+                        class="flex items-center gap-1"
+                      >
+                        {{ tag.label }}
+                        <UButton
+                          @click="
+                            selectedTags = selectedTags.filter(
+                              (t) => t.value !== tag.value
+                            )
+                          "
+                          color="primary"
+                          variant="ghost"
+                          size="xs"
+                          :padded="false"
+                          class="ml-1"
+                        />
+                      </UBadge>
+                      <UBadge
+                        v-if="selectedYear && selectedYear.value"
+                        color="primary"
+                        variant="soft"
+                        size="sm"
+                        class="flex items-center gap-1"
+                      >
+                        {{ selectedYear.label }}
+                        <UButton
+                          @click="
+                            selectedYear = years.find((y) => y.value === '')
+                          "
+                          color="primary"
+                          variant="ghost"
+                          size="xs"
+                          icon="i-heroicons-x-mark"
+                          :padded="false"
+                          class="ml-1"
+                        />
+                      </UBadge>
+                      <UBadge
+                        v-if="selectedSort && selectedSort.value !== 'recent'"
+                        color="primary"
+                        variant="soft"
+                        size="sm"
+                        class="flex items-center gap-1"
+                      >
+                        Sort: {{ selectedSort.label }}
+                        <UButton
+                          @click="
+                            selectedSort = sortOptions.find(
+                              (s) => s.value === 'recent'
+                            )
+                          "
+                          color="primary"
+                          variant="ghost"
+                          size="xs"
+                          icon="i-heroicons-x-mark"
+                          :padded="false"
+                          class="ml-1"
+                        />
+                      </UBadge>
+                    </div>
                   </div>
                 </div>
+
+                <!-- Clear All Filters Button -->
+                <ButtonsPresetButton
+                  v-if="hasActiveFilters"
+                  preset="clearFilters"
+                  @click="clearFilters"
+                />
               </div>
 
-              <!-- Clear All Filters Button -->
-              <ButtonsPresetButton
-                v-if="hasActiveFilters"
-                preset="clearFilters"
-                @click="clearFilters"
-              />
-            </div>
-
-            <!-- Projects Cards -->
-            <div
-              class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
-            >
-              <ProjectCard
-                v-for="project in paginatedProjects"
-                :key="project.id"
-                :project="project"
-                :liked-projects="projectStore.likedProjects"
-                @toggle-like="toggleLike"
-              />
-            </div>
-
-            <!-- Pagination -->
-            <div
-              v-if="totalPages > 1"
-              class="flex justify-center items-center gap-4 mt-8"
-            >
-              <ButtonsPresetButton
-                label="Previous"
-                icon="i-heroicons-arrow-left"
-                color="gray"
-                variant="outline"
-                size="md"
-                :disabled="currentPage === 1"
-                @click="currentPage = Math.max(1, currentPage - 1)"
-              />
-
-              <span
-                class="px-4 py-2 text-sm font-medium text-blue-900 bg-blue-50 rounded-lg"
+              <!-- Projects Cards -->
+              <div
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
               >
-                Page {{ currentPage }} of {{ totalPages }}
-              </span>
+                <ProjectCard
+                  v-for="project in paginatedProjects"
+                  :key="project.id"
+                  :project="project"
+                  :liked-projects="projectStore.likedProjects"
+                  @toggle-like="toggleLike"
+                />
+              </div>
 
-              <ButtonsPresetButton
-                label="Next"
-                trailing-icon="i-heroicons-arrow-right"
-                color="blue"
-                variant="solid"
-                size="md"
-                :disabled="currentPage === totalPages"
-                @click="currentPage = Math.min(totalPages, currentPage + 1)"
-              />
-            </div>
+              <!-- Pagination -->
+              <div
+                v-if="totalPages > 1"
+                class="flex justify-center items-center gap-4 mt-8"
+              >
+                <ButtonsPresetButton
+                  label="Previous"
+                  icon="i-heroicons-arrow-left"
+                  color="secondary"
+                  variant="outline"
+                  size="md"
+                  :disabled="currentPage === 1"
+                  @click="currentPage = Math.max(1, currentPage - 1)"
+                />
 
-            <!-- Pagination Info -->
-            <div v-if="filteredProjects.length > 0" class="text-center mt-6">
-              <p class="text-sm text-gray-600">
-                Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to
-                {{
-                  Math.min(currentPage * itemsPerPage, filteredProjects.length)
-                }}
-                of {{ filteredProjects.length }} projects
-              </p>
-            </div>
+                <span
+                  class="px-4 py-2 text-sm font-medium text-blue-900 bg-blue-50 rounded-lg"
+                >
+                  Page {{ currentPage }} of {{ totalPages }}
+                </span>
 
-            <!-- Empty State -->
-            <div v-if="filteredProjects.length === 0" class="text-center py-20">
-              <UIcon
-                name="i-heroicons-inbox"
-                class="w-16 h-16 text-gray-600 mx-auto mb-4"
-              />
-              <p class="text-gray-400 text-lg">
-                No projects found matching your filters
-              </p>
+                <ButtonsPresetButton
+                  label="Next"
+                  icon="i-heroicons-arrow-right"
+                  color="primary"
+                  variant="solid"
+                  size="md"
+                  :disabled="currentPage === totalPages"
+                  @click="currentPage = Math.min(totalPages, currentPage + 1)"
+                />
+              </div>
+
+              <!-- Pagination Info -->
+              <div v-if="filteredProjects.length > 0" class="text-center mt-6">
+                <p class="text-sm text-gray-600">
+                  Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to
+                  {{
+                    Math.min(
+                      currentPage * itemsPerPage,
+                      filteredProjects.length
+                    )
+                  }}
+                  of {{ filteredProjects.length }} projects
+                </p>
+              </div>
+
+              <!-- Empty State -->
+              <div
+                v-if="filteredProjects.length === 0"
+                class="text-center py-20"
+              >
+                <UIcon
+                  name="i-heroicons-inbox"
+                  class="w-16 h-16 text-gray-600 mx-auto mb-4"
+                />
+                <p class="text-gray-400 text-lg">
+                  No projects found matching your filters
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </UContainer>
+      </UContainer>
+    </Transition>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useProjectStore } from "~/stores/projects";
 
@@ -459,7 +431,7 @@ const projectStore = useProjectStore();
 
 // Initialize data on component mount
 onMounted(async () => {
-  if (!projectStore.projects.length) {
+  if (projectStore.projects.length === 0) {
     try {
       await Promise.all([
         projectStore.fetchCategories(),
@@ -474,7 +446,12 @@ onMounted(async () => {
 });
 
 // Store computed properties
-const categories = computed(() => projectStore.availableCategories || ["All"]);
+const categories = computed(() => {
+  const cats = projectStore.availableCategories || ["All"];
+  return cats.map((cat) => ({ label: cat, value: cat }));
+});
+
+const categoryOptions = computed(() => categories.value.slice(0, 6));
 const projects = computed(() => projectStore.projects || []);
 
 // Filter state - now using store
@@ -494,9 +471,14 @@ const toggleFilters = () => {
 const selectedCategory = computed({
   get: () => {
     const cats = projectStore.filters.categories;
-    return cats.includes("All") ? "All" : cats[0] || "All";
+    const value = cats.includes("All") ? "All" : cats[0] || "All";
+    return (
+      categoryOptions.value.find((cat) => cat.value === value) ||
+      categoryOptions.value[0]
+    );
   },
-  set: (value) => {
+  set: (selectedOption) => {
+    const value = selectedOption?.value || selectedOption;
     const newCategories = value === "All" ? ["All"] : [value];
     projectStore.setFilter("categories", newCategories);
   },
@@ -508,19 +490,88 @@ const categorySearch = computed({
 });
 
 const selectedTags = computed({
-  get: () => projectStore.filters.tags,
-  set: (value) => projectStore.setFilter("tags", value),
+  get: () => {
+    const tagValues = projectStore.filters.tags;
+    const availableTags = tags.value || [];
+    // Convert string values back to objects for USelectMenu
+    return tagValues
+      .map(
+        (tagValue) =>
+          availableTags.find((tag) => tag.value === tagValue) || {
+            label: tagValue,
+            value: tagValue,
+          }
+      )
+      .filter(Boolean);
+  },
+  set: (selectedOptions) => {
+    // Convert objects to string values for store
+    const tagValues = selectedOptions
+      .map((option) => option?.value || option)
+      .filter(Boolean);
+    projectStore.setFilter("tags", tagValues);
+  },
 });
 
 const selectedYear = computed({
-  get: () => projectStore.filters.year,
-  set: (value) => projectStore.setFilter("year", value),
+  get: () => {
+    const yearValue = projectStore.filters.year;
+    return (
+      years.value.find((year) => year.value === yearValue) || years.value[0]
+    );
+  },
+  set: (selectedOption) => {
+    const value = selectedOption?.value || selectedOption || "";
+    projectStore.setFilter("year", value);
+  },
 });
 
+// Sort dropdown items
+const sortOptions = ref([
+  {
+    label: "Recently",
+    value: "recent",
+    icon: "i-heroicons-clock",
+  },
+  {
+    label: "Oldest",
+    value: "oldest",
+    icon: "i-heroicons-calendar",
+  },
+  {
+    label: "Most Liked",
+    value: "liked",
+    icon: "i-heroicons-heart",
+  },
+  {
+    label: "Most Viewed",
+    value: "viewed",
+    icon: "i-heroicons-eye",
+  },
+]);
+
 const selectedSort = computed({
-  get: () => projectStore.filters.sort,
-  set: (value) => projectStore.setFilter("sort", value),
+  get: () => {
+    const currentSort = projectStore.filters.sort || "recent";
+    return (
+      sortOptions.value.find((option) => option.value === currentSort) ||
+      sortOptions.value[0]
+    );
+  },
+  set: (selectedOption) => {
+    const sortValue = selectedOption?.value || selectedOption || "recent";
+    projectStore.setFilter("sort", sortValue);
+  },
 });
+
+// Years options for filtering
+const years = computed(() => [
+  { label: "All Years", value: "" },
+  { label: "2024", value: "2024" },
+  { label: "2023", value: "2023" },
+  { label: "2022", value: "2022" },
+  { label: "2021", value: "2021" },
+]);
 
 // Pagination state
 const currentPage = computed({
@@ -531,6 +582,17 @@ const itemsPerPage = computed(() => projectStore.pagination.itemsPerPage);
 
 // Debounced search functionality
 let searchTimeout = null;
+
+// Watch for sort changes to apply sorting
+watch(
+  () => selectedSort.value,
+  (newSort) => {
+    if (newSort?.value) {
+      projectStore.setFilter("sort", newSort.value);
+    }
+  },
+  { immediate: true }
+);
 
 watch(categorySearchInput, (newValue) => {
   isSearching.value = true;
@@ -547,7 +609,7 @@ watch(categorySearchInput, (newValue) => {
   searchTimeout = setTimeout(() => {
     categorySearch.value = newValue;
     isSearching.value = false;
-  }, 200);
+  }, 2000);
 });
 
 // Filter options from store
@@ -573,7 +635,8 @@ const categorySuggestions = computed(() => {
 });
 
 const filteredTags = computed(() => {
-  const selectedValues = selectedTags.value;
+  const selectedTagObjects = selectedTags.value;
+  const selectedValues = selectedTagObjects.map((tag) => tag.value);
   const availableTags = tags.value || [];
   return availableTags.filter((tag) => !selectedValues.includes(tag.value));
 });
@@ -617,23 +680,35 @@ const hasActiveFilters = computed(() => {
       filters.categories.length > 0) ||
     filters.search.trim() ||
     filters.tags.length > 0 ||
-    filters.year
+    filters.year ||
+    (filters.sort && filters.sort !== "recent") // Include non-default sort
   );
 });
 
 // Filter management
 const clearFilters = () => {
+  // Clear store filters
   projectStore.clearFilters();
-  categorySearchInput.value = "";
 
+  // Reset sort to default
+  projectStore.setFilter("sort", "recent");
+
+  // Reset local UI states to defaults
+  categorySearchInput.value = "";
+  showCategorySuggestions.value = false;
+  isSearching.value = false;
+
+  // Clear search timeout
   if (searchTimeout) {
     clearTimeout(searchTimeout);
   }
-  isSearching.value = false;
+
+  // Reset pagination to first page
+  projectStore.setCurrentPage(1);
 };
 
 // Like functionality - using store with authentication
-import { useAuthStore } from "~/stores/auth";
+
 const authStore = useAuthStore();
 
 const toggleLike = async (projectId) => {

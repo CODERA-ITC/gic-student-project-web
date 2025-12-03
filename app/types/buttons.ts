@@ -49,18 +49,18 @@ export interface ButtonConfig {
  */
 export const BUTTON_COLORS = {
   primary: {
-    solid: "bg-blue-900/90 hover:bg-blue-800 hover:cursor-pointer text-white ",
+    solid: "bg-blue-900 hover:bg-blue-800 hover:cursor-pointer text-white t ",
     outline:
-      "border-2 border-blue-600 text-blue-600 hover:bg-blue-50 hover:cursor-pointer",
-    ghost: "text-blue-600 hover:bg-blue-100 hover:cursor-pointer",
+      "border-2 border-blue-900 text-blue-900 hover:bg-blue-50 hover:cursor-pointer",
+    ghost: "text-blue-900 hover:bg-blue-100 hover:cursor-pointer",
     gradient:
       "bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:shadow-lg hover:shadow-blue-500/50 hover:cursor-pointer",
   },
   secondary: {
-    solid: "bg-indigo-600 hover:bg-indigo-700 hover:cursor-pointer text-white",
+    solid: "bg-indigo-900 hover:bg-indigo-700 hover:cursor-pointer text-white",
     outline:
-      "border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50 hover:cursor-pointer",
-    ghost: "text-indigo-600 hover:bg-indigo-100 hover:cursor-pointer",
+      "border-2 border-indigo-900 text-indigo-900 hover:bg-indigo-50 hover:cursor-pointer",
+    ghost: "text-indigo-900 hover:bg-indigo-100 hover:cursor-pointer",
     gradient:
       "bg-gradient-to-r from-indigo-600 to-blue-600 text-white hover:shadow-lg hover:shadow-indigo-500/50 hover:cursor-pointer",
   },
@@ -196,9 +196,9 @@ export const BUTTON_PRESETS = {
   },
 
   // Secondary Action Buttons
-  viewBySemester: {
-    label: "View by Semester",
-    icon: "i-heroicons-calendar",
+  meetStudent: {
+    label: "Meet Our Student",
+    icon: "i-heroicons-user-group",
     color: "success",
     variant: "solid",
     size: "lg",

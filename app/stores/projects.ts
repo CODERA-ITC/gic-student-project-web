@@ -88,7 +88,7 @@ export const useProjectStore = defineStore("projects", {
   }),
 
   getters: {
-    featuredProjects(): Partial<Project[]> {
+    getFeaturedProjects(): Partial<Project[]> {
       return this.projects.filter((project) => project.featured).slice(0, 3);
     },
 
@@ -129,12 +129,12 @@ export const useProjectStore = defineStore("projects", {
     // In real application, this would involve API calls
     // 1. fetch Category data from server
 
-    async fetchFeaturedProjects(): Promise<Project[]> {
+    async fetchFeaturedProjects(): Promise<Partial<Project[]>> {
       this.loading = true;
       try {
         // simulate network delay for 1 s
 
-        const featuredProjects: Project[] = [
+        const featuredProjects: Partial<Project[]> = [
           {
             id: 1,
             title: "AI Chat Assistant",
