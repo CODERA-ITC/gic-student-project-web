@@ -43,7 +43,6 @@
 </template>
 
 <script setup lang="ts">
-import { useProjectStore } from "~/stores/projects";
 
 const projectStore = useProjectStore();
 
@@ -51,8 +50,8 @@ onMounted(async () => {
   await projectStore.fetchFeaturedProjects();
 });
 
-const featuredProjects = computed(() => projectStore.featuredProjects);
-
+const featuredProjects = computed(() => projectStore.getFeaturedProjects);
+  
 // Like functionality - persist in localStorage
 const LIKED_PROJECTS_KEY = "likedProjects";
 

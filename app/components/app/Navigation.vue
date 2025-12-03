@@ -64,21 +64,18 @@
 
       <!-- Mobile Menu Button -->
       <UButton
-        icon="i-heroicons-bars-3-20-solid"
+        :icon="
+          mobileMenuOpen
+            ? 'i-heroicons-x-mark-20-solid'
+            : 'i-heroicons-bars-3-20-solid'
+        "
         color="gray"
         variant="ghost"
         size="md"
         class="lg:hidden text-neutral-700 dark:text-neutral-200"
         :ui="{ rounded: 'rounded-lg' }"
         @click="mobileMenuOpen = !mobileMenuOpen"
-      >
-        <template v-if="mobileMenuOpen">
-          <UIcon
-            name="i-heroicons-x-mark-20-solid"
-            class="text-neutral-700 dark:text-neutral-200"
-          />
-        </template>
-      </UButton>
+      />
     </div>
 
     <!-- Mobile Menu -->
@@ -182,13 +179,13 @@
           </template>
         </div>
 
-        <div class="py-4 border-t border-gray-200 dark:border-neutral-800">
+        <!-- <div class="py-4 border-t border-gray-200 dark:border-neutral-800">
           <SearchBar
             :context="searchContext"
             @search="handleSearch"
             @clear="clearSearch"
           />
-        </div>
+        </div> -->
       </div>
     </Transition>
   </nav>
