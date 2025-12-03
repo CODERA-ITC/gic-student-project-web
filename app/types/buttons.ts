@@ -40,6 +40,7 @@ export interface ButtonConfig {
   onClick?: () => void;
   disabled?: boolean;
   loading?: boolean;
+  fullWidth?: boolean;
 }
 
 /**
@@ -149,13 +150,15 @@ export const BUTTON_BASE =
 export function getButtonClasses(
   color: ButtonColor,
   variant: ButtonVariant = "solid",
-  size: ButtonSize = "sm" //default size of buttons
+  size: ButtonSize = "sm", //default size of buttons
+  fullWidth: boolean = false
 ): string {
   const colorClasses =
     BUTTON_COLORS[color]?.[variant] || BUTTON_COLORS.primary.solid;
   const sizeClasses = BUTTON_SIZES[size];
+  const widthClasses = fullWidth ? "w-full" : "";
 
-  return `${BUTTON_BASE} ${colorClasses} ${sizeClasses}`;
+  return `${BUTTON_BASE} ${colorClasses} ${sizeClasses} ${widthClasses}`;
 }
 
 /**
@@ -216,7 +219,13 @@ export const BUTTON_PRESETS = {
     variant: "solid",
     size: "lg",
   },
-
+  viewProfileStudent: {
+    label: "View Profile",
+    color: "primary",
+    variant: "solid",
+    size: "lg",
+    fullWidth: true,
+  },
   // Admin/Teacher Buttons
   manageStudents: {
     label: "Manage Students",
