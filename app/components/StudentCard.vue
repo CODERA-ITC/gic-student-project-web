@@ -49,7 +49,7 @@
         <!-- Name and Main Skill -->
         <div class="text-left -mt-4">
           <h2
-            class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight leading-tight group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors duration-300"
+            class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight leading-tight group-hover:text-blue-800 dark:group-hover:text-blue-800 transition-colors duration-300"
           >
             {{ name }}
           </h2>
