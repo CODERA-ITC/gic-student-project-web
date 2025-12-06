@@ -4,9 +4,9 @@
     <div
       :class="[
         'relative h-full rounded-xl overflow-hidden transition-all duration-300',
-        'border-2 border-blue-600/20 hover:border-blue-600/40',
-        'bg-white backdrop-blur hover:bg-blue-50/50',
-        'shadow-lg hover:shadow-xl hover:shadow-blue-500/20',
+        'border-2 border-blue-600/20 hover:border-blue-600/40 dark:border-blue-400/20 dark:hover:border-blue-400/40',
+        'bg-white dark:bg-slate-800 backdrop-blur hover:bg-blue-50/50 dark:hover:bg-slate-700/50',
+        'shadow-lg hover:shadow-xl hover:shadow-blue-500/20 dark:hover:shadow-blue-400/20',
         'p-1',
         'w-full max-w-sm mx-auto',
         'hover:cursor-pointer',
@@ -74,7 +74,7 @@
         <div class="flex flex-col">
           <div class="flex items-center justify-between mb-1">
             <h3
-              class="text-lg font-semibold text-black transition-colors line-clamp-2 mb-1"
+              class="text-lg font-semibold text-black dark:text-white transition-colors line-clamp-2 mb-1"
             >
               {{ project.title }}
             </h3>
@@ -83,6 +83,7 @@
 
             <div class="flex flex-col gap-3 items-end">
               <button
+                v-if="showLikeButton"
                 @click.prevent.stop="toggleLikeHandler"
                 :class="[
                   'flex items-center gap-1.5 transition-all duration-300 cursor-pointer',
@@ -97,13 +98,13 @@
                   :class="[
                     'w-5 h-5 transition-transform duration-300',
                     isLiked
-                      ? 'text-red-600'
-                      : 'text-gray-600 hover:text-red-600',
+                      ? 'text-red-600 dark:text-red-500'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500',
                   ]"
                 />
                 <span
                   :class="[
-                    'text-xs font-medium transition-colors duration-300',
+                    'text-xs font-medium transition-colors duration-300 text-gray-700 dark:text-gray-300',
                   ]"
                 >
                   {{ formatNumber(project.likes) }}
@@ -112,18 +113,25 @@
             </div>
           </div>
 
-          <div class="flex text-xs items-center gap-1">
+          <div
+            class="flex text-xs items-center gap-1 text-gray-700 dark:text-gray-300"
+          >
             <span class="font-medium">{{ project.category }}</span>
             •
-            <span class="text-blue-900/70">{{
+            <span class="text-blue-900/70 dark:text-blue-400/70">{{
               formatNumber(project.views)
             }}</span>
-            <UIcon name="i-heroicons-eye" class="w-4 h-4 transition-colors" />
+            <UIcon
+              name="i-heroicons-eye"
+              class="w-4 h-4 transition-colors text-gray-600 dark:text-gray-400"
+            />
           </div>
         </div>
 
         <!-- Description -->
-        <p class="text-blue-900/70 text-sm leading-relaxed line-clamp-2">
+        <p
+          class="text-blue-900/70 dark:text-gray-300/70 text-sm leading-relaxed line-clamp-2"
+        >
           {{ project.description }}
         </p>
 
@@ -134,7 +142,7 @@
               <div
                 v-for="(member, idx) in project.members.slice(0, 3)"
                 :key="idx"
-                class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-blue-900/80 text-white text-xs font-bold cursor-pointer transition-transform hover:scale-110 hover:bg-blue-800"
+                class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-blue-900/80 dark:bg-blue-600/80 text-white text-xs font-bold cursor-pointer transition-transform hover:scale-110 hover:bg-blue-800 dark:hover:bg-blue-500"
                 :title="member.name"
               >
                 <!-- Profile photo available -->
@@ -154,21 +162,30 @@
               <!-- +X more -->
               <span
                 v-if="project.members.length > 3"
-                class="text-xs text-blue-900/60 ml-1"
+                class="text-xs text-blue-900/60 dark:text-blue-400/60 ml-1"
               >
                 +{{ project.members.length - 3 }}
               </span>
             </div>
           </div>
 
-          <!-- View button -->
-          <span>
+          <!-- Action buttons -->
+          <div class="flex gap-2">
+            <!-- Edit button (only for project authors) -->
+            <ButtonsPresetButton
+              v-if="isProjectAuthor"
+              preset="edit"
+              size="sm"
+              :to="`/projects/create?edit=${project.id}`"
+            />
+
+            <!-- View button -->
             <ButtonsPresetButton
               preset="viewDetails"
               size="sm"
-              :to="`/projects/${project.id}`"
+              :to="`${baseRoute}/${project.id}`"
             />
-          </span>
+          </div>
         </div>
       </div>
     </div>
@@ -177,11 +194,23 @@
 
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from "vue";
+import { useAuthStore } from "~/stores/auth";
+
+// Get auth store
+const authStore = useAuthStore();
 
 const props = defineProps({
   isFeatured: {
     type: Boolean,
     default: false,
+  },
+  baseRoute: {
+    type: String,
+    default: "/projects",
+  },
+  showLikeButton: {
+    type: Boolean,
+    default: true,
   },
   project: {
     type: Object,
@@ -203,7 +232,7 @@ const props = defineProps({
   },
   likedProjects: {
     type: Object,
-    required: true,
+    default: () => ({}),
   },
 });
 
@@ -214,6 +243,16 @@ let autoPlayInterval = null;
 
 const isLiked = computed(() => {
   return !!props.likedProjects?.[props.project?.id];
+});
+
+// Check if current user is the project author
+const isProjectAuthor = computed(() => {
+  if (!authStore.isAuthenticated || !authStore.user || !props.project?.author) {
+    return false;
+  }
+
+  // Compare by name (in a real app, you'd use user IDs)
+  return authStore.user.name === props.project.author.name;
 });
 
 const toggleLikeHandler = () => {

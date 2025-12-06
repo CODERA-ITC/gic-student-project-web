@@ -69,7 +69,7 @@
           <!-- Student Menu Items -->
           <template v-if="isStudent">
             <NuxtLink
-              to="/dashboard"
+              to="/student/dashboard"
               class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
               @click="closeMenu"
             >
@@ -80,7 +80,7 @@
               My Dashboard
             </NuxtLink>
             <NuxtLink
-              to="/my-projects"
+              to="/student/my-projects"
               class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
               @click="closeMenu"
             >
@@ -88,7 +88,7 @@
               My Projects
             </NuxtLink>
             <NuxtLink
-              to="/submissions"
+              to="/student/submissions"
               class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
               @click="closeMenu"
             >
@@ -100,7 +100,7 @@
           <!-- Teacher Menu Items -->
           <template v-if="isTeacher">
             <NuxtLink
-              to="/teacher"
+              to="/teacher/dashboard"
               class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
               @click="closeMenu"
             >
@@ -111,7 +111,7 @@
               Teacher Dashboard
             </NuxtLink>
             <NuxtLink
-              to="/manage-projects"
+              to="/teacher/manage-projects"
               class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
               @click="closeMenu"
             >
@@ -122,7 +122,7 @@
               Manage Projects
             </NuxtLink>
             <NuxtLink
-              to="/student-submissions"
+              to="/teacher/submissions"
               class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
               @click="closeMenu"
             >
@@ -130,7 +130,7 @@
               Review Submissions
             </NuxtLink>
             <NuxtLink
-              to="/analytics"
+              to="/teacher/analytics"
               class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
               @click="closeMenu"
             >
