@@ -24,3 +24,7 @@ logs
 .env.*
 !.env.example
 wrangler.json
+
+.localhost.key
+.localhost.crt
+.localhost.csr

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev --host 0.0.0.0",
+    "dev": "nuxt dev",
     "dev:watch": "nuxt dev --watch",
     "dev:force": "nuxt dev --force-restart",
     "dev:debug": "nuxt dev --inspect",
