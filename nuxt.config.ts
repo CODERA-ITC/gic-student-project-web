@@ -3,6 +3,12 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   // srcDir: "app",
   devtools: { enabled: true },
+  devServer: {
+    https: {
+      key: "./localhost.key",
+      cert: "./localhost.crt",
+    }
+  },
   modules: [
     "@nuxt/ui",
     "@nuxt/image",
@@ -43,15 +49,15 @@ export default defineNuxtConfig({
     },
   },
   // Vite configuration
-  vite: {
-    server: {
-      hmr: {
-        protocol: "ws",
-        host: "0.0.0.0",
-        port: 24678,
-      },
-    },
-  },
+  // vite: {
+  //   server: {
+  //     hmr: {
+  //       protocol: "ws",
+  //       host: "0.0.0.0",
+  //       port: 24678,
+  //     },
+  //   },
+  // },
 
   // Enable TypeScript checking in dev
   typescript: {

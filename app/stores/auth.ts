@@ -108,7 +108,7 @@ export const useAuthStore = defineStore("auth", {
 
         // Store tokens
         if (data.access_token) {
-          localStorage.setItem("auth_token", data.access_token);
+          localStorage.setItem("access_token", data.access_token);
         } else {
           throw new Error("No access token received from server");
         }
@@ -145,7 +145,7 @@ export const useAuthStore = defineStore("auth", {
         this.error = error instanceof Error ? error.message : "Login failed";
 
         // Clear any existing tokens
-        localStorage.removeItem("auth_token");
+        localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
 
         throw error;
@@ -262,7 +262,7 @@ export const useAuthStore = defineStore("auth", {
 
         // Store tokens
         if (data.access_token) {
-          localStorage.setItem("auth_token", data.access_token);
+          localStorage.setItem("access_token", data.access_token);
         }
 
         if (data.refresh_token) {
@@ -306,7 +306,7 @@ export const useAuthStore = defineStore("auth", {
      * Handle OAuth callback (Google/GitHub)
      * This should be called from your OAuth callback page
      */
-    async handleOAuthCallback(token: string): Promise<void> {
+    async handleOAuthCallback(token: string, refreshToken?: string): Promise<void> {
       this.isLoading = true;
       this.error = null;
 
@@ -316,7 +316,12 @@ export const useAuthStore = defineStore("auth", {
         }
 
         // Store the token
-        localStorage.setItem("auth_token", token);
+        localStorage.setItem("access_token", token);
+
+        // Store refresh token if provided
+        if (refreshToken) {
+          localStorage.setItem("refresh_token", refreshToken);
+        }
 
         // Decode JWT to get user info
         const tokenPayload = this.decodeJWT(token);
@@ -344,7 +349,7 @@ export const useAuthStore = defineStore("auth", {
         this.isAuthenticated = false;
         this.error = error instanceof Error ? error.message : "OAuth login failed";
 
-        localStorage.removeItem("auth_token");
+        localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
 
         throw error;
@@ -358,7 +363,7 @@ export const useAuthStore = defineStore("auth", {
      * Should be called on app initialization
      */
     async restoreAuth(): Promise<boolean> {
-      const token = localStorage.getItem("auth_token");
+      const token = localStorage.getItem("access_token");
 
       if (!token) {
         return false;
@@ -403,7 +408,7 @@ export const useAuthStore = defineStore("auth", {
       } catch (error) {
         // Silent fail - just clear the tokens
         console.error("Failed to restore auth:", error);
-        localStorage.removeItem("auth_token");
+        localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
         this.user = null;
         this.isAuthenticated = false;
@@ -445,7 +450,7 @@ export const useAuthStore = defineStore("auth", {
         }
 
         // Store new access token
-        localStorage.setItem("auth_token", responseData.data.access_token);
+        localStorage.setItem("access_token", responseData.data.access_token);
 
         // Update refresh token if provided
         if (responseData.data.refresh_token) {
@@ -544,7 +549,7 @@ export const useAuthStore = defineStore("auth", {
       this.error = null;
 
       // Clear stored tokens
-      localStorage.removeItem("auth_token");
+      localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
     },
 
@@ -559,7 +564,7 @@ export const useAuthStore = defineStore("auth", {
      * Get authentication token
      */
     getToken(): string | null {
-      return localStorage.getItem("auth_token");
+      return localStorage.getItem("access_token");
     },
 
     /**

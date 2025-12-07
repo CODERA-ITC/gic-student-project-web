@@ -45,6 +45,7 @@ onMounted(async () => {
     try {
         // Get token from URL query parameters
         const token = route.query.token;
+        const refreshToken = route.query.refresh_token;
         const errorParam = route.query.error;
 
         if (errorParam) {
@@ -56,7 +57,7 @@ onMounted(async () => {
         }
 
         // Handle OAuth callback with the token
-        await authStore.handleOAuthCallback(token);
+        await authStore.handleOAuthCallback(token, refreshToken);
 
         // Redirect based on user role
         await new Promise(resolve => setTimeout(resolve, 500)); // Small delay for UX
