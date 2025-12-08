@@ -196,3 +196,108 @@ useHead({
   ],
 });
 </script>
+
+<style scoped>
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUpDelayed {
+  0%,
+  20% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.6s ease-out forwards;
+}
+
+.animate-fade-in-up-delayed {
+  animation: fadeInUpDelayed 1.2s ease-out forwards;
+}
+
+/* Timeline specific animations */
+:deep(.timeline-item) {
+  transition: all 0.3s ease-in-out;
+}
+
+:deep(.timeline-item:hover) {
+  transform: translateX(5px);
+}
+
+/* Custom timeline styling with better animations */
+:deep(.timeline) {
+  position: relative;
+}
+
+:deep(.timeline::before) {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    rgb(147, 51, 234),
+    rgb(59, 130, 246),
+    rgb(34, 197, 94)
+  );
+  border-radius: 2px;
+  animation: lineGrow 2s ease-in-out;
+}
+
+@keyframes lineGrow {
+  from {
+    height: 0;
+  }
+  to {
+    height: 100%;
+  }
+}
+
+/* Staggered animation for timeline items */
+:deep(.timeline-item:nth-child(1)) {
+  animation-delay: 0.2s;
+}
+
+:deep(.timeline-item:nth-child(2)) {
+  animation-delay: 0.4s;
+}
+
+:deep(.timeline-item:nth-child(3)) {
+  animation-delay: 0.6s;
+}
+
+:deep(.timeline-item:nth-child(4)) {
+  animation-delay: 0.8s;
+}
+</style>
