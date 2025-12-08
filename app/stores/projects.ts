@@ -112,6 +112,7 @@ export const useProjectStore = defineStore("projects", {
     },
 
     projectsByCategory(): Record<string, Partial<Project>[]> {
+      // it will have a table that store all category
       const categoryMap: Record<string, Partial<Project>[]> = {};
       this.projects.forEach((project) => {
         if (!categoryMap[project.category]) {
@@ -295,6 +296,40 @@ export const useProjectStore = defineStore("projects", {
               "https://images.unsplash.com/photo-1557821552-17105176677c?w=500&fit=crop",
               "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&fit=crop",
               "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&fit=crop",
+            ],
+            features: [
+              {
+                date: "Aug 20, 2024",
+                title: "Core Features",
+                description:
+                  "Developed workout tracking, nutrition logging, and health metrics dashboard.",
+                icon: "i-lucide-activity",
+                status: "done",
+              },
+              {
+                date: "Sep 10, 2024",
+                title: "Social Integration",
+                description:
+                  "Added friend connections, workout sharing, and community challenges.",
+                icon: "i-lucide-users",
+                status: "done",
+              },
+              {
+                date: "Oct 5, 2024",
+                title: "Wearable Sync",
+                description:
+                  "Integrated with HealthKit and popular fitness wearables for automatic data sync.",
+                icon: "i-lucide-watch",
+                status: "ongoing",
+              },
+              {
+                date: "Nov 1, 2024",
+                title: "Launch",
+                description:
+                  "Final testing, app store submission, and public launch preparation.",
+                icon: "i-lucide-rocket",
+                status: "pending",
+              },
             ],
             createdAt: "2024-08-10",
             tags: ["ecommerce", "payment", "analytics"],

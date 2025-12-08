@@ -918,6 +918,40 @@ export const projectsData: Project[] = [
         image: "https://randomuser.me/api/portraits/men/63.jpg",
       },
     ],
+     features: [
+      {
+        date: "Aug 20, 2024",
+        title: "Core Features",
+        description:
+          "Developed workout tracking, nutrition logging, and health metrics dashboard.",
+        icon: "i-lucide-activity",
+        status: "done",
+      },
+      {
+        date: "Sep 10, 2024",
+        title: "Social Integration",
+        description:
+          "Added friend connections, workout sharing, and community challenges.",
+        icon: "i-lucide-users",
+        status: "done",
+      },
+      {
+        date: "Oct 5, 2024",
+        title: "Wearable Sync",
+        description:
+          "Integrated with HealthKit and popular fitness wearables for automatic data sync.",
+        icon: "i-lucide-watch",
+        status: "ongoing",
+      },
+      {
+        date: "Nov 1, 2024",
+        title: "Launch",
+        description:
+          "Final testing, app store submission, and public launch preparation.",
+        icon: "i-lucide-rocket",
+        status: "pending",
+      },
+    ],
     duration: "3 months",
     course: "Digital Marketing Analytics",
   },
@@ -962,6 +996,40 @@ export const projectsData: Project[] = [
         image: "https://randomuser.me/api/portraits/women/76.jpg",
       },
     ],
+     features: [
+      {
+        date: "Aug 20, 2024",
+        title: "Core Features",
+        description:
+          "Developed workout tracking, nutrition logging, and health metrics dashboard.",
+        icon: "i-lucide-activity",
+        status: "done",
+      },
+      {
+        date: "Sep 10, 2024",
+        title: "Social Integration",
+        description:
+          "Added friend connections, workout sharing, and community challenges.",
+        icon: "i-lucide-users",
+        status: "done",
+      },
+      {
+        date: "Oct 5, 2024",
+        title: "Wearable Sync",
+        description:
+          "Integrated with HealthKit and popular fitness wearables for automatic data sync.",
+        icon: "i-lucide-watch",
+        status: "ongoing",
+      },
+      {
+        date: "Nov 1, 2024",
+        title: "Launch",
+        description:
+          "Final testing, app store submission, and public launch preparation.",
+        icon: "i-lucide-rocket",
+        status: "pending",
+      },
+    ],
     duration: "6 months",
     course: "Educational Technology Design",
   },
@@ -1002,6 +1070,40 @@ export const projectsData: Project[] = [
         image: "https://randomuser.me/api/portraits/women/91.jpg",
       },
     ],
+     features: [
+      {
+        date: "Aug 20, 2024",
+        title: "Core Features",
+        description:
+          "Developed workout tracking, nutrition logging, and health metrics dashboard.",
+        icon: "i-lucide-activity",
+        status: "done",
+      },
+      {
+        date: "Sep 10, 2024",
+        title: "Social Integration",
+        description:
+          "Added friend connections, workout sharing, and community challenges.",
+        icon: "i-lucide-users",
+        status: "done",
+      },
+      {
+        date: "Oct 5, 2024",
+        title: "Wearable Sync",
+        description:
+          "Integrated with HealthKit and popular fitness wearables for automatic data sync.",
+        icon: "i-lucide-watch",
+        status: "ongoing",
+      },
+      {
+        date: "Nov 1, 2024",
+        title: "Launch",
+        description:
+          "Final testing, app store submission, and public launch preparation.",
+        icon: "i-lucide-rocket",
+        status: "pending",
+      },
+    ],
     duration: "3 months",
     course: "Algorithmic Trading",
   },
@@ -1040,6 +1142,40 @@ export const projectsData: Project[] = [
       {
         name: "Eric Kim",
         image: "https://randomuser.me/api/portraits/men/27.jpg",
+      },
+    ],
+     features: [
+      {
+        date: "Aug 20, 2024",
+        title: "Core Features",
+        description:
+          "Developed workout tracking, nutrition logging, and health metrics dashboard.",
+        icon: "i-lucide-activity",
+        status: "done",
+      },
+      {
+        date: "Sep 10, 2024",
+        title: "Social Integration",
+        description:
+          "Added friend connections, workout sharing, and community challenges.",
+        icon: "i-lucide-users",
+        status: "done",
+      },
+      {
+        date: "Oct 5, 2024",
+        title: "Wearable Sync",
+        description:
+          "Integrated with HealthKit and popular fitness wearables for automatic data sync.",
+        icon: "i-lucide-watch",
+        status: "ongoing",
+      },
+      {
+        date: "Nov 1, 2024",
+        title: "Launch",
+        description:
+          "Final testing, app store submission, and public launch preparation.",
+        icon: "i-lucide-rocket",
+        status: "pending",
       },
     ],
     duration: "4 months",
@@ -1180,6 +1316,40 @@ export const projectsData: Project[] = [
       {
         name: "Diego Martinez",
         image: "https://randomuser.me/api/portraits/men/66.jpg",
+      },
+    ],
+     features: [
+      {
+        date: "Aug 20, 2024",
+        title: "Core Features",
+        description:
+          "Developed workout tracking, nutrition logging, and health metrics dashboard.",
+        icon: "i-lucide-activity",
+        status: "done",
+      },
+      {
+        date: "Sep 10, 2024",
+        title: "Social Integration",
+        description:
+          "Added friend connections, workout sharing, and community challenges.",
+        icon: "i-lucide-users",
+        status: "done",
+      },
+      {
+        date: "Oct 5, 2024",
+        title: "Wearable Sync",
+        description:
+          "Integrated with HealthKit and popular fitness wearables for automatic data sync.",
+        icon: "i-lucide-watch",
+        status: "ongoing",
+      },
+      {
+        date: "Nov 1, 2024",
+        title: "Launch",
+        description:
+          "Final testing, app store submission, and public launch preparation.",
+        icon: "i-lucide-rocket",
+        status: "pending",
       },
     ],
     duration: "4 months",
