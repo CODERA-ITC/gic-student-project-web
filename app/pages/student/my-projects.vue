@@ -19,34 +19,6 @@
 
     <!-- Main Content -->
     <UContainer class="py-12">
-      <!-- Quick Stats -->
-      <div class="grid md:grid-cols-4 gap-6 mb-8">
-        <StatsCard
-          title="Total Projects"
-          :value="myProjects.length"
-          icon="i-heroicons-folder"
-          color="blue"
-        />
-        <StatsCard
-          title="Total Likes"
-          :value="totalLikes"
-          icon="i-heroicons-heart"
-          color="red"
-        />
-        <StatsCard
-          title="Total Views"
-          :value="totalViews"
-          icon="i-heroicons-eye"
-          color="green"
-        />
-        <StatsCard
-          title="Team Members"
-          :value="totalTeamMembers"
-          icon="i-heroicons-user-group"
-          color="purple"
-        />
-      </div>
-
       <!-- Filter and Search -->
       <div class="flex flex-col md:flex-row gap-4 mb-8">
         <div class="flex-1 relative">

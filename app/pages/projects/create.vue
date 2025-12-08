@@ -1154,7 +1154,6 @@ const availableIcons = ref([
   { name: "i-heroicons-lock-closed", label: "Auth" },
   { name: "i-heroicons-device-phone-mobile", label: "Mobile" },
   { name: "i-heroicons-globe-alt", label: "Web" },
-  { name: "i-heroicons-database", label: "Database" },
   { name: "i-heroicons-cloud", label: "Cloud" },
 ]);
 
