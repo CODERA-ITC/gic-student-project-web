@@ -14,11 +14,11 @@ export const useThemeStore = defineStore('theme', {
   actions: {
     initialize() {
       if (this.isInitialized) return
-      
+
       if (process.client) {
         // Prevent flash of wrong theme by adding no-transition class
         document.documentElement.classList.add('no-transition')
-        
+
         // Check localStorage first
         const stored = localStorage.getItem('theme')
         if (stored) {
@@ -27,9 +27,9 @@ export const useThemeStore = defineStore('theme', {
           // Fall back to system preference
           this.isDark = window.matchMedia('(prefers-color-scheme: dark)').matches
         }
-        
+
         this.applyTheme()
-        
+
         // Remove no-transition class after a brief delay
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
@@ -45,7 +45,7 @@ export const useThemeStore = defineStore('theme', {
       this.isDark = !this.isDark
       this.applyTheme()
       this.saveToStorage()
-      
+
       // Reset transition flag after animation completes
       setTimeout(() => {
         this.isTransitioning = false
@@ -54,12 +54,12 @@ export const useThemeStore = defineStore('theme', {
 
     setTheme(theme: 'dark' | 'light') {
       if (this.currentTheme === theme) return
-      
+
       this.isTransitioning = true
       this.isDark = theme === 'dark'
       this.applyTheme()
       this.saveToStorage()
-      
+
       setTimeout(() => {
         this.isTransitioning = false
       }, 300)
@@ -68,7 +68,7 @@ export const useThemeStore = defineStore('theme', {
     applyTheme() {
       if (process.client) {
         const html = document.documentElement
-        
+
         if (this.isDark) {
           html.classList.add('dark')
           html.style.colorScheme = 'dark'
