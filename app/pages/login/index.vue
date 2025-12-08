@@ -22,10 +22,20 @@
             >
               Email address
             </label>
-            <input v-model="email" type="email" placeholder="your.email@example.com" required autofocus
-              :disabled="authStore.isLoading" @blur="validateEmail"
-              class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed" />
-            <div v-if="emailError" class="text-xs text-red-600 dark:text-red-400 mt-1">
+            <input
+              v-model="email"
+              type="email"
+              placeholder="your.email@example.com"
+              required
+              autofocus
+              :disabled="authStore.isLoading"
+              @blur="validateEmail"
+              class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            />
+            <div
+              v-if="emailError"
+              class="text-xs text-red-600 dark:text-red-400 mt-1"
+            >
               {{ emailError }}
             </div>
           </div>
@@ -37,10 +47,19 @@
             >
               Password
             </label>
-            <input v-model="password" type="password" placeholder="••••••••" required :disabled="authStore.isLoading"
+            <input
+              v-model="password"
+              type="password"
+              placeholder="••••••••"
+              required
+              :disabled="authStore.isLoading"
               @blur="validatePassword"
-              class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed" />
-            <div v-if="passwordError" class="text-xs text-red-600 dark:text-red-400 mt-1">
+              class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            />
+            <div
+              v-if="passwordError"
+              class="text-xs text-red-600 dark:text-red-400 mt-1"
+            >
               {{ passwordError }}
             </div>
           </div>
@@ -48,10 +67,15 @@
           <!-- Remember & Forgot -->
           <div class="flex items-center justify-between text-sm">
             <label class="flex items-center gap-2 cursor-pointer group">
-              <input v-model="rememberMe" type="checkbox" :disabled="authStore.isLoading"
-                class="w-4 h-4 rounded border-slate-300 dark:border-neutral-600 text-blue-900 focus:ring-blue-900 focus:ring-offset-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" />
+              <input
+                v-model="rememberMe"
+                type="checkbox"
+                :disabled="authStore.isLoading"
+                class="w-4 h-4 rounded border-slate-300 dark:border-neutral-600 text-blue-900 focus:ring-blue-900 focus:ring-offset-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              />
               <span
-                class="text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors">
+                class="text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors"
+              >
                 Remember me
               </span>
             </label>
@@ -64,15 +88,29 @@
           </div>
 
           <!-- Error Message -->
-          <div v-if="authStore.error"
-            class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400">
+          <div
+            v-if="authStore.error"
+            class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400"
+          >
             {{ authStore.error }}
           </div>
 
           <!-- Login Button using PresetButton -->
-          <ButtonsPresetButton preset="primary" label="CONTINUE WITH EMAIL" :loading="authStore.isLoading"
-            :disabled="authStore.isLoading || !email || !password || !!emailError || !!passwordError" size="lg"
-            class="w-full" type="submit" />
+          <ButtonsPresetButton
+            preset="primary"
+            label="CONTINUE WITH EMAIL"
+            :loading="authStore.isLoading"
+            :disabled="
+              authStore.isLoading ||
+              !email ||
+              !password ||
+              !!emailError ||
+              !!passwordError
+            "
+            size="lg"
+            class="w-full"
+            type="submit"
+          />
         </form>
 
         <!-- Divider -->
@@ -92,25 +130,37 @@
 
         <!-- Social Login -->
         <div class="grid grid-cols-2 gap-3">
-          <button type="button" :disabled="authStore.isLoading" @click="handleGoogleLogin"
-            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+          <button
+            type="button"
+            :disabled="authStore.isLoading"
+            @click="handleGoogleLogin"
+            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
               <UIcon name="i-logos-google-icon" class="w-6 h-6" />
             </div>
             <span
-              class="text-sm text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors">
+              class="text-sm text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors"
+            >
               GOOGLE
             </span>
           </button>
 
-          <button type="button" :disabled="authStore.isLoading" @click="handleGithubLogin"
-            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+          <button
+            type="button"
+            :disabled="authStore.isLoading"
+            @click="handleGithubLogin"
+            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
-              <UIcon name="i-simple-icons-github"
-                class="w-6 h-6 text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors" />
+              <UIcon
+                name="i-simple-icons-github"
+                class="w-6 h-6 text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors"
+              />
             </div>
             <span
-              class="text-sm text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors">
+              class="text-sm text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors"
+            >
               GITHUB
             </span>
           </button>
@@ -204,23 +254,23 @@ const handleLogin = async () => {
 
     // Save email if remember me is checked
     if (rememberMe.value) {
-      localStorage.setItem('remembered_email', email.value);
+      localStorage.setItem("remembered_email", email.value);
     } else {
-      localStorage.removeItem('remembered_email');
+      localStorage.removeItem("remembered_email");
     }
 
     // Small delay for better UX
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
     // Check for redirect query parameter
     const redirectTo = route.query.redirect;
 
-    if (redirectTo && typeof redirectTo === 'string') {
+    if (redirectTo && typeof redirectTo === "string") {
       await router.push(redirectTo);
     } else if (authStore.isTeacher) {
       await router.push("/teacher/dashboard");
     } else {
-      await router.push("/dashboard");
+      await router.push("/student/dashboard");
     }
   } catch (err) {
     // Error is already set in the store
@@ -242,7 +292,7 @@ const handleGithubLogin = () => {
 
 // Restore remembered email on mount
 onMounted(() => {
-  const rememberedEmail = localStorage.getItem('remembered_email');
+  const rememberedEmail = localStorage.getItem("remembered_email");
   if (rememberedEmail) {
     email.value = rememberedEmail;
     rememberMe.value = true;

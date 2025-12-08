@@ -65,7 +65,7 @@ onMounted(async () => {
         if (authStore.isTeacher) {
             await router.push('/teacher/dashboard');
         } else {
-            await router.push('/dashboard');
+            await router.push('/student/dashboard');
         }
     } catch (err) {
         error.value = err.message || 'Authentication failed. Please try again.';
