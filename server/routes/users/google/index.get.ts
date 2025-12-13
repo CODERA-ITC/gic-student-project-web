@@ -7,7 +7,10 @@ export default defineEventHandler(async (event) => {
     const API_BASE_URL = 'https://gic-project.darororo.dev';
     const frontendUrl = getRequestURL(event).origin;
 
+    const redirectUrl = `${API_BASE_URL}/users/google?redirect_uri=${encodeURIComponent(frontendUrl + '/auth/callback')}`;
+    console.log('🟢 Initiating Google OAuth, redirecting to:', redirectUrl);
+
     // If the backend supports a redirect_uri parameter, use it
     // Otherwise, just redirect to backend (but this will show JSON)
-    return sendRedirect(event, `${API_BASE_URL}/users/google?redirect_uri=${encodeURIComponent(frontendUrl + '/auth/callback')}`, 302);
+    return sendRedirect(event, redirectUrl, 302);
 });

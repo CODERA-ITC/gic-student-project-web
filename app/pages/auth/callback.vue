@@ -1,5 +1,9 @@
 <template>
     <div class="min-h-screen flex items-center justify-center bg-white dark:bg-neutral-900">
+        <!-- Security Questions Modal -->
+        <SecurityQuestionsModal :is-open="showSecurityQuestions" :allow-close="false"
+            @submit="handleSecurityQuestionsSubmit" />
+
         <div class="text-center">
             <div v-if="isLoading" class="space-y-4">
                 <div class="w-16 h-16 border-4 border-blue-900 border-t-transparent rounded-full animate-spin mx-auto">
@@ -40,6 +44,27 @@ const route = useRoute();
 
 const isLoading = ref(true);
 const error = ref('');
+const showSecurityQuestions = ref(false);
+
+const handleSecurityQuestionsSubmit = async (answers) => {
+    try {
+        isLoading.value = true;
+        await authStore.submitSecurityQuestions(answers);
+
+        // After successfully saving security questions, redirect to dashboard
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        if (authStore.isTeacher) {
+            await router.push('/teacher/dashboard');
+        } else {
+            await router.push('/student/dashboard');
+        }
+    } catch (err) {
+        error.value = err.message || 'Failed to save security questions';
+        showSecurityQuestions.value = false;
+        isLoading.value = false;
+    }
+};
 
 onMounted(async () => {
     try {
@@ -47,6 +72,9 @@ onMounted(async () => {
         const token = route.query.token;
         const refreshToken = route.query.refresh_token;
         const errorParam = route.query.error;
+
+        console.log('OAuth Callback - Token:', token ? 'Present' : 'Missing');
+        console.log('OAuth Callback - Error Param:', errorParam);
 
         if (errorParam) {
             throw new Error(errorParam);
@@ -59,6 +87,17 @@ onMounted(async () => {
         // Handle OAuth callback with the token
         await authStore.handleOAuthCallback(token, refreshToken);
 
+        console.log('OAuth Callback - needsSecurityQuestions:', authStore.needsSecurityQuestions);
+
+        // Check if user needs to set up security questions
+        if (authStore.needsSecurityQuestions) {
+            console.log('Showing security questions modal');
+            showSecurityQuestions.value = true;
+            isLoading.value = false;
+            return;
+        }
+
+        console.log('Redirecting to dashboard...');
         // Redirect based on user role
         await new Promise(resolve => setTimeout(resolve, 500)); // Small delay for UX
 

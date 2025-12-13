@@ -22,6 +22,7 @@ export interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
+  needsSecurityQuestions: boolean;
 }
 
 const API_BASE_URL = "https://gic-project.darororo.dev";
@@ -32,6 +33,7 @@ export const useAuthStore = defineStore("auth", {
     isAuthenticated: false,
     isLoading: false,
     error: null,
+    needsSecurityQuestions: false,
   }),
 
   getters: {
@@ -338,6 +340,11 @@ export const useAuthStore = defineStore("auth", {
           throw new Error("Invalid token format");
         }
 
+        // Check if this is a new user (needs security questions)
+        // For now, always show security questions modal for OAuth logins (testing)
+        // TODO: Change to: this.needsSecurityQuestions = tokenPayload.isNewUser === true || tokenPayload.hasSecurityQuestions === false;
+        this.needsSecurityQuestions = true;
+
         // Map token payload to User interface
         this.user = {
           id: tokenPayload.id,
@@ -608,6 +615,67 @@ export const useAuthStore = defineStore("auth", {
     updateUser(updates: Partial<User>): void {
       if (this.user) {
         this.user = { ...this.user, ...updates };
+      }
+    },
+
+    /**
+     * Submit security question answers for new OAuth users
+     */
+    async submitSecurityQuestions(answers: {
+      question1: { question: string; answer: string };
+      question2: { question: string; answer: string };
+      question3: { question: string; answer: string };
+    }): Promise<void> {
+      this.isLoading = true;
+      this.error = null;
+
+      try {
+        const token = this.getToken();
+        if (!token) {
+          throw new Error("Not authenticated");
+        }
+
+        const response = await fetch(`${API_BASE_URL}/users/security-questions`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            securityQuestions: [
+              {
+                question: answers.question1.question,
+                answer: answers.question1.answer,
+              },
+              {
+                question: answers.question2.question,
+                answer: answers.question2.answer,
+              },
+              {
+                question: answers.question3.question,
+                answer: answers.question3.answer,
+              },
+            ],
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.message || "Failed to save security questions"
+          );
+        }
+
+        // Mark that security questions are now set
+        this.needsSecurityQuestions = false;
+      } catch (error) {
+        this.error =
+          error instanceof Error
+            ? error.message
+            : "Failed to save security questions";
+        throw error;
+      } finally {
+        this.isLoading = false;
       }
     },
   },
