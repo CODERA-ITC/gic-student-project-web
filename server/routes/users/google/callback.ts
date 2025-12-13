@@ -4,15 +4,21 @@ export default defineEventHandler(async (event) => {
         const query = getQuery(event);
         const code = query.code;
 
+        console.log('🔵 Google callback received, query params:', query);
+
         if (!code) {
+            console.log('❌ No code in query params');
             return sendRedirect(event, '/login?error=No authorization code received');
         }
 
         // Forward the request to the backend
         const API_BASE_URL = 'https://gic-project.darororo.dev';
+        console.log('🔵 Calling backend callback with code:', code);
         const response = await $fetch(`${API_BASE_URL}/users/google/callback?code=${code}`, {
             method: 'GET',
         });
+
+        console.log('🔵 Backend response:', response);
 
         // Extract tokens from the response
         // Handle structure: {success: true, tokens: {access_token, refresh_token}}
@@ -44,9 +50,15 @@ export default defineEventHandler(async (event) => {
 
             if (access_token) {
                 const redirectUrl = `/auth/callback?token=${access_token}${refresh_token ? `&refresh_token=${refresh_token}` : ''}`;
+                console.log('✅ Redirecting to:', redirectUrl);
                 return sendRedirect(event, redirectUrl);
+            } else {
+                console.log('❌ No access_token found in response');
             }
-        }        // If we couldn't find the tokens, redirect with error
+        }
+
+        // If we couldn't find the tokens, redirect with error
+        console.log('❌ Failed to extract tokens from response');
         return sendRedirect(event, '/login?error=Invalid response from authentication server');
     } catch (error) {
         console.error('Google OAuth callback error:', error);
