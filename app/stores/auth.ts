@@ -341,9 +341,21 @@ export const useAuthStore = defineStore("auth", {
         }
 
         // Check if this is a new user (needs security questions)
-        // For now, always show security questions modal for OAuth logins (testing)
-        // TODO: Change to: this.needsSecurityQuestions = tokenPayload.isNewUser === true || tokenPayload.hasSecurityQuestions === false;
-        this.needsSecurityQuestions = true;
+        // Backend should include hasSecurityQuestions or isNewUser in the JWT
+        console.log('OAuth Token Payload:', tokenPayload);
+
+        // Check multiple possible flags from the token
+        const needsQuestions =
+          tokenPayload.isNewUser === true ||
+          tokenPayload.hasSecurityQuestions === false ||
+          tokenPayload.needsSecurityQuestions === true;
+
+        // TEMPORARY: Always show for OAuth until backend implements the flag
+        // TODO: Remove this override once backend sends proper flag
+        this.needsSecurityQuestions = true; // Override for testing
+
+        console.log('Token says needs questions:', needsQuestions);
+        console.log('Actually showing modal:', this.needsSecurityQuestions);
 
         // Map token payload to User interface
         this.user = {

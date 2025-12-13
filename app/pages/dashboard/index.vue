@@ -1,5 +1,9 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-white dark:bg-neutral-900">
+    <!-- Security Questions Modal -->
+    <SecurityQuestionsModal :is-open="showSecurityQuestionsModal" :allow-close="false"
+      @submit="handleSecurityQuestionsSubmit" />
+
     <div class="text-center">
       <div v-if="isLoading" class="space-y-4">
         <div class="w-16 h-16 border-4 border-blue-900 border-t-transparent rounded-full animate-spin mx-auto">
@@ -37,6 +41,37 @@ const authStore = useAuthStore();
 const isLoading = ref(true);
 const error = ref('');
 const loadingMessage = ref('Processing authentication...');
+const showSecurityQuestionsModal = ref(false);
+
+// Handle security questions submission
+const handleSecurityQuestionsSubmit = async (answers) => {
+  try {
+    await authStore.submitSecurityQuestions(answers);
+    showSecurityQuestionsModal.value = false;
+
+    // Continue with redirect
+    redirectBasedOnRole();
+  } catch (err) {
+    console.error('Failed to submit security questions:', err);
+    error.value = 'Failed to save security questions. Please try again.';
+    isLoading.value = false;
+  }
+};
+
+// Redirect user based on their role
+const redirectBasedOnRole = async () => {
+  loadingMessage.value = 'Redirecting...';
+
+  if (!authStore.isAuthenticated) {
+    await router.push("/login");
+  } else if (authStore.isTeacher) {
+    await router.push("/teacher/dashboard");
+  } else if (authStore.isStudent) {
+    await router.push("/student");
+  } else {
+    await router.push("/login");
+  }
+};
 
 // Handle OAuth token from URL and redirect based on user role
 onMounted(async () => {
@@ -44,6 +79,8 @@ onMounted(async () => {
     // Check if there's a token in the URL (from OAuth callback)
     const token = route.query.token;
     const refreshToken = route.query.refresh_token;
+
+    console.log('Dashboard - OAuth Callback - Token:', token);
 
     if (token) {
       loadingMessage.value = 'Completing sign in...';
@@ -53,25 +90,25 @@ onMounted(async () => {
       const refreshTokenStr = refreshToken ? String(refreshToken) : undefined;
       await authStore.handleOAuthCallback(tokenStr, refreshTokenStr);
 
+      console.log('Dashboard - needsSecurityQuestions:', authStore.needsSecurityQuestions);
+
       // Remove token from URL
       await router.replace({ query: {} });
+
+      // Check if user needs to answer security questions
+      if (authStore.needsSecurityQuestions) {
+        console.log('Dashboard - Showing security questions modal');
+        isLoading.value = false;
+        showSecurityQuestionsModal.value = true;
+        return; // Don't redirect yet, wait for security questions
+      }
 
       // Small delay for better UX
       await new Promise(resolve => setTimeout(resolve, 500));
     }
 
-    loadingMessage.value = 'Redirecting...';
-
-    // Redirect based on authentication and user role
-    if (!authStore.isAuthenticated) {
-      await router.push("/login");
-    } else if (authStore.isTeacher) {
-      await router.push("/teacher/dashboard");
-    } else if (authStore.isStudent) {
-      await router.push("/student");
-    } else {
-      await router.push("/login");
-    }
+    // Redirect based on role
+    await redirectBasedOnRole();
   } catch (err) {
     console.error('Failed to process OAuth token:', err);
     error.value = err?.message || 'Authentication failed. Please try again.';
