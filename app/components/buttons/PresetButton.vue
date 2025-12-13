@@ -1,16 +1,7 @@
 <template>
-  <ButtonsAppButton
-    :label="buttonConfig.label"
-    :icon="buttonConfig.icon"
-    :color="buttonConfig.color"
-    :variant="buttonConfig.variant"
-    :size="buttonConfig.size"
-    :to="buttonConfig.to || props.to"
-    :disabled="disabled"
-    :loading="loading"
-    @click="emit('click', $event)"
-    v-bind="$attrs"
-  />
+  <ButtonsAppButton :label="buttonConfig.label" :icon="buttonConfig.icon" :color="buttonConfig.color"
+    :variant="buttonConfig.variant" :size="buttonConfig.size" :to="buttonConfig.to || props.to" :disabled="disabled"
+    :loading="loading" @click="emit('click', $event)" v-bind="$attrs" />
 </template>
 
 <script setup lang="ts">

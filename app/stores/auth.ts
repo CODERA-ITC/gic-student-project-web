@@ -626,40 +626,59 @@ export const useAuthStore = defineStore("auth", {
           throw new Error("Not authenticated");
         }
 
-        const response = await fetch(`${API_BASE_URL}/users/security-questions`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            securityQuestions: [
-              {
-                question: answers.question1.question,
-                answer: answers.question1.answer,
-              },
-              {
-                question: answers.question2.question,
-                answer: answers.question2.answer,
-              },
-              {
-                question: answers.question3.question,
-                answer: answers.question3.answer,
-              },
-            ],
-          }),
-        });
+        console.log('🔵 Submitting security questions...');
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(
-            errorData.message || "Failed to save security questions"
-          );
+        // TODO: Remove this mock when backend endpoint is ready
+        // For now, simulate successful submission for testing
+        const USE_MOCK = true; // Set to false when backend is ready
+
+        if (USE_MOCK) {
+          console.log('🔵 Using mock response (backend endpoint not ready)');
+          await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+          console.log('✅ Security questions saved successfully (mocked)');
+        } else {
+          const response = await fetch(`${API_BASE_URL}/users/security-questions`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              securityQuestions: [
+                {
+                  question: answers.question1.question,
+                  answer: answers.question1.answer,
+                },
+                {
+                  question: answers.question2.question,
+                  answer: answers.question2.answer,
+                },
+                {
+                  question: answers.question3.question,
+                  answer: answers.question3.answer,
+                },
+              ],
+            }),
+          });
+
+          console.log('🔵 Response status:', response.status);
+
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            console.log('❌ Error response:', errorData);
+            throw new Error(
+              errorData.message || "Failed to save security questions"
+            );
+          }
+
+          const responseData = await response.json().catch(() => ({}));
+          console.log('✅ Security questions saved successfully:', responseData);
         }
 
         // Mark that security questions are now set
         this.needsSecurityQuestions = false;
       } catch (error) {
+        console.error('❌ Failed to submit security questions:', error);
         this.error =
           error instanceof Error
             ? error.message
