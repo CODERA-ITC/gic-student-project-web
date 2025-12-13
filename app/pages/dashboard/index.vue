@@ -45,20 +45,20 @@ const showSecurityQuestionsModal = ref(false);
 
 // Handle security questions submission
 const handleSecurityQuestionsSubmit = async (answers) => {
+  console.log('🟢 Dashboard - Security questions submitted:', answers);
   try {
     await authStore.submitSecurityQuestions(answers);
+    console.log('✅ Dashboard - Questions saved, closing modal');
     showSecurityQuestionsModal.value = false;
 
     // Continue with redirect
-    redirectBasedOnRole();
+    await redirectBasedOnRole();
   } catch (err) {
-    console.error('Failed to submit security questions:', err);
+    console.error('❌ Dashboard - Failed to submit security questions:', err);
     error.value = 'Failed to save security questions. Please try again.';
     isLoading.value = false;
   }
-};
-
-// Redirect user based on their role
+};// Redirect user based on their role
 const redirectBasedOnRole = async () => {
   loadingMessage.value = 'Redirecting...';
 

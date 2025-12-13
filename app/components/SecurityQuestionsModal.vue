@@ -123,6 +123,10 @@ const isFormValid = computed(() => {
 });
 
 const handleSubmit = async () => {
+    console.log('🟡 SecurityQuestionsModal - handleSubmit called');
+    console.log('🟡 Answers:', answers.value);
+    console.log('🟡 isFormValid:', isFormValid.value);
+
     error.value = "";
 
     if (!isFormValid.value) {
@@ -141,10 +145,11 @@ const handleSubmit = async () => {
     }
 
     isLoading.value = true;
+    console.log('🟡 SecurityQuestionsModal - Emitting submit event');
 
     try {
-        // Emit the answers to parent component
-        await emit("submit", {
+        // Emit the answers to parent component (emits are not async in Vue 3)
+        const payload = {
             question1: {
                 question: "What is your mother's maiden name?",
                 answer: answers.value.question1.trim(),
@@ -157,10 +162,17 @@ const handleSubmit = async () => {
                 question: "What city were you born in?",
                 answer: answers.value.question3.trim(),
             },
-        });
+        };
+
+        console.log('🟡 SecurityQuestionsModal - Payload:', payload);
+        emit("submit", payload);
+        console.log('✅ SecurityQuestionsModal - Submit event emitted');
+
+        // Note: We don't reset loading here because the parent should close the modal
+        // The loading state will reset when modal is closed (watch on isOpen)
     } catch (err) {
+        console.error('❌ SecurityQuestionsModal - Error:', err);
         error.value = err.message || "Failed to save security questions";
-    } finally {
         isLoading.value = false;
     }
 };
