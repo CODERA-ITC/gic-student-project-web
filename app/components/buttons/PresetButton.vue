@@ -5,6 +5,7 @@
     :color="buttonConfig.color"
     :variant="buttonConfig.variant"
     :size="buttonConfig.size"
+    :textSize="buttonConfig.textSize"
     :to="buttonConfig.to || props.to"
     :disabled="disabled"
     :loading="loading"
@@ -29,12 +30,14 @@ interface Props {
   to?: string;
   disabled?: boolean;
   loading?: boolean;
+  active?: boolean;
   // Override properties
   label?: string;
   color?: ButtonColor;
   variant?: ButtonVariant;
   size?: ButtonSize;
   icon?: string;
+  textSize?: ButtonSize;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -42,6 +45,7 @@ const props = withDefaults(defineProps<Props>(), {
   roleAware: false,
   disabled: false,
   loading: false,
+  active: false,
 });
 
 const emit = defineEmits<{
@@ -65,6 +69,7 @@ const buttonConfig = computed<ButtonConfig>(() => {
       variant: props.variant || "solid",
       size: props.size || "md",
       icon: props.icon,
+      textSize: props.textSize,
     };
   }
 
@@ -74,6 +79,13 @@ const buttonConfig = computed<ButtonConfig>(() => {
   if (props.variant) config.variant = props.variant;
   if (props.size) config.size = props.size;
   if (props.icon) config.icon = props.icon;
+  if (props.textSize) config.textSize = props.textSize;
+
+  // Handle active state
+  if (props.active) {
+    config.color = "primary";
+    config.variant = "solid";
+  }
 
   return config;
 });

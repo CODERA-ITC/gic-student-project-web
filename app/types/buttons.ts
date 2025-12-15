@@ -18,6 +18,7 @@ export type ButtonColor =
   | "danger"
   | "warning"
   | "info"
+  | "blue"
   | "gradient-primary"
   | "gradient-success"
   | "gradient-danger";
@@ -36,6 +37,7 @@ export interface ButtonConfig {
   color: ButtonColor;
   variant: ButtonVariant;
   size: ButtonSize;
+  textSize?: ButtonSize;
   to?: string;
   onClick?: () => void;
   disabled?: boolean;
@@ -94,6 +96,14 @@ export const BUTTON_COLORS = {
     gradient:
       "bg-gradient-to-r from-cyan-600 to-blue-600 text-white hover:shadow-lg hover:shadow-cyan-500/50 hover:cursor-pointer",
   },
+  blue: {
+    solid: "bg-blue-600 hover:bg-blue-700 hover:cursor-pointer text-white",
+    outline:
+      "border-2 border-blue-600 text-blue-600 hover:bg-blue-50 hover:cursor-pointer",
+    ghost: "text-blue-600 hover:bg-blue-100 hover:cursor-pointer",
+    gradient:
+      "bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:shadow-lg hover:shadow-blue-500/50 hover:cursor-pointer",
+  },
   "gradient-primary": {
     solid:
       "bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 text-white hover:shadow-lg hover:shadow-blue-500/50 hover:cursor-pointer",
@@ -141,7 +151,7 @@ export const BUTTON_SIZES = {
  * Base button styles (always applied)
  */
 export const BUTTON_BASE =
-  "inline-flex items-center font-medium justify-center gap-2 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2";
+  "inline-flex items-center font-medium justify-center gap-2 rounded-md transition-all duration-300 focus:outline-none";
 
 /**
  * Get button classes based on configuration
@@ -346,6 +356,29 @@ export const BUTTON_PRESETS = {
     color: "danger",
     variant: "solid",
     size: "md",
+  },
+  // Filter buttons for teacher dashboard
+  // activeProjects: {
+  //   label: "Active Projects",
+  //   icon: null,
+  //   color: "blue",
+  //   variant: "ghost",
+  //   size: "md",
+  // },
+
+  activeProjects: {
+    label: "Active Project",
+    icon: "",
+    color: "primary",
+    variant: "solid",
+    size: "sm",
+  },
+  pendingReviews: {
+    label: "Pending Reviews",
+    icon: null,
+    color: "blue",
+    variant: "solid",
+    size: "sm",
   },
 };
 

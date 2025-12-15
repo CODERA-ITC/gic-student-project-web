@@ -1,5 +1,3 @@
-
-
 export const projectsData: Project[] = [
   {
     id: 1,
