@@ -1,16 +1,18 @@
 <template>
-  <div class="min-h-screen bg-white">
+  <div class="min-h-screen bg-white dark:bg-slate-900">
     <!-- Header Section -->
-    <div class="hero-nodes py-20 border-b border-blue-800/30">
+    <div
+      class="hero-nodes py-20 border-b border-blue-800/30 dark:border-slate-700"
+    >
       <UContainer>
         <div class="space-y-6">
           <div class="text-center space-y-4 max-w-2xl mx-auto">
             <h1
-              class="text-4xl lg:text-6xl font-bold tracking-tight leading-tight text-blue-900"
+              class="text-4xl lg:text-6xl font-bold tracking-tight leading-tight text-blue-900 dark:text-white"
             >
               Explore All Projects
             </h1>
-            <p class="text-xl text-blue-900/80">
+            <p class="text-xl text-blue-900/80 dark:text-gray-300">
               Discover amazing projects built by GIC students across all
               semesters and categories
             </p>
@@ -39,7 +41,7 @@
     <!-- Filters and Projects -->
     <!-- Sticky Top Bar -->
     <div
-      class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-200"
+      class="sticky top-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-sm border-b border-gray-200 dark:border-slate-700"
     >
       <UContainer>
         <div class="flex items-center justify-between w-full gap-2 py-4">
@@ -115,12 +117,14 @@
         >
           <div
             v-if="showFilters"
-            class="rounded-2xl p-6 border border-blue-200 bg-blue-50/30 backdrop-blur-sm space-y-4 shadow-lg"
+            class="rounded-2xl p-6 border border-blue-200 dark:border-slate-700 bg-blue-50/30 dark:bg-slate-800/50 backdrop-blur-sm space-y-4 shadow-lg"
           >
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
               <!-- Category Search with Autocomplete -->
               <div class="relative">
-                <p class="text-lg font-semibold mb-2 text-blue-900">
+                <p
+                  class="text-lg font-semibold mb-2 text-blue-900 dark:text-white"
+                >
                   Categories
                 </p>
                 <div class="relative">
@@ -140,21 +144,23 @@
                     v-if="
                       showCategorySuggestions && categorySuggestions.length > 0
                     "
-                    class="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto"
+                    class="absolute top-full left-0 right-0 z-50 mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg max-h-48 overflow-y-auto"
                   >
                     <div
                       v-for="suggestion in categorySuggestions"
                       :key="suggestion.id"
                       @click="selectCategorySuggestion(suggestion)"
-                      class="px-4 py-2 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                      class="px-4 py-2 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer border-b border-gray-100 dark:border-slate-700 last:border-b-0 transition-colors"
                     >
                       <div class="flex items-center justify-between">
-                        <span class="font-medium text-blue-900">{{
-                          suggestion.label
-                        }}</span>
-                        <span class="text-xs text-gray-500">{{
-                          suggestion.suffix
-                        }}</span>
+                        <span
+                          class="font-medium text-blue-900 dark:text-white"
+                          >{{ suggestion.label }}</span
+                        >
+                        <span
+                          class="text-xs text-gray-500 dark:text-gray-400"
+                          >{{ suggestion.suffix }}</span
+                        >
                       </div>
                     </div>
                   </div>
@@ -163,7 +169,11 @@
 
               <!-- Enhanced Tags Dropdown -->
               <div>
-                <p class="text-lg font-semibold mb-2 text-blue-900">Tags</p>
+                <p
+                  class="text-lg font-semibold mb-2 text-blue-900 dark:text-white"
+                >
+                  Tags
+                </p>
                 <USelectMenu
                   v-model="selectedTags"
                   size="xl"
@@ -179,7 +189,9 @@
 
               <!-- Years Dropdown -->
               <div>
-                <p class="text-lg font-semibold mb-2 text-blue-900">
+                <p
+                  class="text-lg font-semibold mb-2 text-blue-900 dark:text-white"
+                >
                   Academic Years
                 </p>
                 <USelectMenu
@@ -210,11 +222,11 @@
               <div class="flex items-center justify-between flex-wrap gap-4">
                 <!-- Results Count -->
                 <div class="flex items-center gap-4">
-                  <p class="text-lg text-gray-700">
+                  <p class="text-lg text-gray-700 dark:text-gray-300">
                     <template v-if="totalPages > 1">
                       Showing {{ paginatedProjects.length }} of
                     </template>
-                    <span class="font-bold text-blue-900">{{
+                    <span class="font-bold text-blue-900 dark:text-white">{{
                       filteredProjects.length
                     }}</span>
                     projects
@@ -225,7 +237,9 @@
 
                   Active Filters
                   <div v-if="hasActiveFilters" class="flex items-center gap-2">
-                    <span class="text-md text-gray-500">•</span>
+                    <span class="text-md text-gray-500 dark:text-gray-400"
+                      >•</span
+                    >
                     <div class="flex flex-wrap gap-1">
                       <UBadge
                         v-if="
@@ -371,7 +385,7 @@
                 />
 
                 <span
-                  class="px-4 py-2 text-sm font-medium text-blue-900 bg-blue-50 rounded-lg"
+                  class="px-4 py-2 text-sm font-medium text-blue-900 dark:text-white bg-blue-50 dark:bg-slate-800 rounded-lg"
                 >
                   Page {{ currentPage }} of {{ totalPages }}
                 </span>
@@ -389,7 +403,7 @@
 
               <!-- Pagination Info -->
               <div v-if="filteredProjects.length > 0" class="text-center mt-6">
-                <p class="text-sm text-gray-600">
+                <p class="text-sm text-gray-600 dark:text-gray-400">
                   Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to
                   {{
                     Math.min(
@@ -408,9 +422,9 @@
               >
                 <UIcon
                   name="i-heroicons-inbox"
-                  class="w-16 h-16 text-gray-600 mx-auto mb-4"
+                  class="w-16 h-16 text-gray-600 dark:text-gray-400 mx-auto mb-4"
                 />
-                <p class="text-gray-400 text-lg">
+                <p class="text-gray-400 dark:text-gray-500 text-lg">
                   No projects found matching your filters
                 </p>
               </div>
@@ -539,7 +553,6 @@
                 <ButtonsPresetButton
                   preset="signin"
                   size="md"
-
                   @click="
                     () => {
                       showAuthModal = false;

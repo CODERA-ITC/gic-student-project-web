@@ -61,7 +61,7 @@ export const projectsData: Project[] = [
         description:
           "Implemented conversation persistence and user session management with MongoDB.",
         icon: "i-lucide-message-circle",
-        status: "done",
+        status: "ongoing",
       },
       {
         date: "Oct 1, 2024",
@@ -69,7 +69,7 @@ export const projectsData: Project[] = [
         description:
           "Added support for multiple languages and improved response accuracy.",
         icon: "i-lucide-globe",
-        status: "done",
+        status: "pending",
       },
       {
         date: "Oct 15, 2024",
@@ -858,7 +858,7 @@ export const projectsData: Project[] = [
         description:
           "Developed LSTM and Random Forest models for price prediction analysis.",
         icon: "i-lucide-brain",
-        status: "done",
+        status: "ongoing",
       },
       {
         date: "Oct 20, 2024",
@@ -866,7 +866,7 @@ export const projectsData: Project[] = [
         description:
           "Trained models on historical data with hyperparameter optimization.",
         icon: "i-lucide-trending-up",
-        status: "done",
+        status: "pending",
       },
       {
         date: "Nov 5, 2024",
@@ -874,7 +874,7 @@ export const projectsData: Project[] = [
         description:
           "Deployed prediction dashboard with real-time market analysis.",
         icon: "i-lucide-monitor",
-        status: "done",
+        status: "pending",
       },
     ],
     duration: "4 months",
@@ -917,7 +917,7 @@ export const projectsData: Project[] = [
         image: "https://randomuser.me/api/portraits/men/63.jpg",
       },
     ],
-     features: [
+    features: [
       {
         date: "Aug 20, 2024",
         title: "Core Features",
@@ -995,7 +995,7 @@ export const projectsData: Project[] = [
         image: "https://randomuser.me/api/portraits/women/76.jpg",
       },
     ],
-     features: [
+    features: [
       {
         date: "Aug 20, 2024",
         title: "Core Features",
@@ -1069,7 +1069,7 @@ export const projectsData: Project[] = [
         image: "https://randomuser.me/api/portraits/women/91.jpg",
       },
     ],
-     features: [
+    features: [
       {
         date: "Aug 20, 2024",
         title: "Core Features",
@@ -1143,7 +1143,7 @@ export const projectsData: Project[] = [
         image: "https://randomuser.me/api/portraits/men/27.jpg",
       },
     ],
-     features: [
+    features: [
       {
         date: "Aug 20, 2024",
         title: "Core Features",
@@ -1317,7 +1317,7 @@ export const projectsData: Project[] = [
         image: "https://randomuser.me/api/portraits/men/66.jpg",
       },
     ],
-     features: [
+    features: [
       {
         date: "Aug 20, 2024",
         title: "Core Features",

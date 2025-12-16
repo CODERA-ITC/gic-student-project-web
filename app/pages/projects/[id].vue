@@ -41,7 +41,7 @@
     </UContainer>
 
     <!-- Authentication Modal -->
-    <AuthModal v-model="showAuthModal" />
+    <AuthModal v-model="showAuthModal" context="like" />
   </div>
 </template>
 
@@ -113,23 +113,42 @@ const toggleLike = async () => {
   await projectStore.saveUserLikedProjects();
 };
 
-const shareProject = () => {
+const shareProject = async () => {
   const url = window.location.href;
+  const toast = useToast();
 
-  if (navigator.share) {
-    navigator.share({
-      title: project.value.title,
-      text: project.value.description,
-      url: url,
-    });
-  } else {
-    navigator.clipboard.writeText(url);
-    const toast = useToast();
-    toast.add({
-      title: "Link copied!",
-      description: "Project link has been copied to clipboard",
-      color: "success",
-    });
+  try {
+    if (navigator.share) {
+      // Use native share API if available (mobile devices, some browsers)
+      await navigator.share({
+        title: project.value.title,
+        text: project.value.description,
+        url: url,
+      });
+      toast.add({
+        title: "Shared successfully!",
+        description: "Project link has been shared",
+        color: "success",
+      });
+    } else {
+      // Fallback to clipboard copy
+      await navigator.clipboard.writeText(url);
+      toast.add({
+        title: "Link copied!",
+        description: "Project link has been copied to clipboard",
+        color: "success",
+      });
+    }
+  } catch (error) {
+    // Handle errors (user cancelled share, clipboard permission denied, etc.)
+    if (error.name !== "AbortError") {
+      // Don't show error if user just cancelled the share dialog
+      toast.add({
+        title: "Share failed",
+        description: "Unable to share project link",
+        color: "error",
+      });
+    }
   }
 };
 

@@ -33,59 +33,42 @@
           v-for="project in featuredProjects"
           :key="project.id"
           :project="project"
-          :liked-projects="likedProjects"
+          :liked-projects="projectStore.likedProjects"
           :is-featured="true"
           @toggle-like="toggleLike"
         />
       </div>
     </UContainer>
+
+    <!-- Authentication Modal -->
+    <AuthModal v-model="showAuthModal" :context="authModalContext" />
   </section>
 </template>
 
 <script setup lang="ts">
-
 const projectStore = useProjectStore();
+const authStore = useAuthStore();
+
+const showAuthModal = ref(false);
+const authModalContext = ref("like"); // 'like' or 'create'
 
 onMounted(async () => {
   await projectStore.fetchFeaturedProjects();
+  await projectStore.loadUserLikedProjects();
 });
 
 const featuredProjects = computed(() => projectStore.getFeaturedProjects);
-  
-// Like functionality - persist in localStorage
-const LIKED_PROJECTS_KEY = "likedProjects";
 
-const getLikedProjectsFromStorage = () => {
-  if (typeof window !== "undefined") {
-    const stored = localStorage.getItem(LIKED_PROJECTS_KEY);
-    return stored ? JSON.parse(stored) : {};
-  }
-  return {};
-};
-
-const likedProjects = ref(getLikedProjectsFromStorage());
-
-const toggleLike = (projectId) => {
-  if (likedProjects.value[projectId]) {
-    // Unlike: decrement count and remove from liked
-    const project = featuredProjects.value.find((p) => p.id === projectId);
-    if (project && project.likes > 0) {
-      project.likes--;
-    }
-    delete likedProjects.value[projectId];
-  } else {
-    // Like: increment count and add to liked
-    projectStore.likeProject(projectId);
-    likedProjects.value[projectId] = true;
+const toggleLike = async (projectId) => {
+  if (!authStore.isAuthenticated) {
+    // Show authentication modal for like action
+    authModalContext.value = "like";
+    showAuthModal.value = true;
+    return;
   }
 
-  // Save to localStorage
-  if (typeof window !== "undefined") {
-    localStorage.setItem(
-      LIKED_PROJECTS_KEY,
-      JSON.stringify(likedProjects.value)
-    );
-  }
+  await projectStore.likeProject(projectId);
+  await projectStore.saveUserLikedProjects();
 };
 </script>
 

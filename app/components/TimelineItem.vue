@@ -127,7 +127,7 @@ const props = defineProps({
     type: String,
     required: true,
     validator: (value: string) =>
-      ["completed", "in-progress", "upcoming", "done"].includes(value),
+      ["done", "ongoing", "pending"].includes(value),
   },
   icon: {
     type: String,
@@ -139,99 +139,92 @@ const props = defineProps({
   },
 });
 
-// Normalize status (handle both 'done' and 'completed')
-const normalizedStatus = computed(() => {
-  return props.status === "" ? "completed" : props.status;
-});
-
 // Status text
 const statusText = computed(() => {
-  switch (normalizedStatus.value) {
-    case "completed":
-      return "Completed";
-    case "in-progress":
-      return "In Progress";
-    case "upcoming":
-      return "Upcoming";
+  switch (props.status) {
+    case "done":
+      return "Done";
+    case "ongoing":
+      return "Ongoing";
     default:
-      return "Unknown";
+      return "Pending";
   }
 });
 
 // Status-based styling
 const statusClasses = computed(() => {
-  switch (normalizedStatus.value) {
-    case "completed":
+  switch (props.status) {
+    case "done":
       return "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800";
-    case "in-progress":
+    case "ongoing":
       return "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800";
-    case "upcoming":
-      return "bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700";
+    case "pending":
+      return "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800";
     default:
       return "";
   }
 });
 
 const statusBadgeClasses = computed(() => {
-  switch (normalizedStatus.value) {
-    case "completed":
+  switch (props.status) {
+    case "done":
       return "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400";
-    case "in-progress":
+    case "ongoing":
       return "bg-blue-900 dark:bg-blue-800 text-white";
-    case "upcoming":
-      return "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300";
+    case "pending":
+      return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400";
     default:
       return "";
   }
 });
 
 const statusDotClasses = computed(() => {
-  switch (normalizedStatus.value) {
-    case "completed":
+  switch (props.status) {
+    case "done":
       return "bg-green-500 animate-pulse";
-    case "in-progress":
+    case "ongoing":
       return "bg-white animate-pulse";
-    case "upcoming":
-      return "bg-gray-400";
+    case "pending":
+      return "bg-yellow-500 animate-pulse";
     default:
       return "";
   }
 });
 
 const dotClasses = computed(() => {
-  switch (normalizedStatus.value) {
-    case "completed":
+  switch (props.status) {
+    case "done":
       return "bg-green-500";
-    case "in-progress":
+    case "ongoing":
       return "bg-blue-900";
-    case "upcoming":
-      return "bg-gray-300 dark:bg-gray-600";
+    case "pending":
+      return "bg-yellow-500";
     default:
       return "";
   }
 });
 
 const iconBgClasses = computed(() => {
-  switch (normalizedStatus.value) {
-    case "completed":
+  switch (props.status) {
+    case "done":
       return "bg-green-100 dark:bg-green-900/30";
-    case "in-progress":
+    case "ongoing":
       return "bg-blue-900/10 dark:bg-blue-800/20";
-    case "upcoming":
-      return "bg-gray-100 dark:bg-gray-700";
+    case "pending":
+      return "bg-yellow-100 dark:bg-yellow-900/30";
     default:
       return "";
   }
 });
 
 const iconColorClasses = computed(() => {
-  switch (normalizedStatus.value) {
-    case "completed":
+  switch (props.status) {
+    case "done":
       return "text-green-600 dark:text-green-400";
-    case "in-progress":
+    case "ongoing":
       return "text-blue-900 dark:text-blue-300";
-    case "upcoming":
-      return "text-gray-500 dark:text-gray-400";
+    case "pending":
+      return "text-yellow-600 dark:text-yellow-400";
     default:
       return "";
   }

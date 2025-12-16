@@ -4,24 +4,29 @@
     <div class="lg:col-span-2 space-y-8">
       <!-- Project Header - Image Carousel -->
       <div
-        class="rounded-2xl h-120 relative overflow-hidden bg-gray-200 dark:bg-slate-800"
+        class="rounded-2xl h-120 relative overflow-hidden bg-gray-200 dark:bg-slate-800 carousel"
       >
         <div class="relative w-full h-full">
-          <!-- Current Image -->
-          <img
-            v-if="project.images && project.images[currentImageIndex]"
-            :src="project.images[currentImageIndex]"
-            :alt="`${project.title} - Image ${currentImageIndex + 1}`"
-            class="w-full h-full object-cover"
-          />
+          <!-- Image Transition -->
+          <TransitionGroup name="carousel-fade" mode="out-in">
+            <!-- Current Image -->
+            <img
+              v-if="project.images && project.images[currentImageIndex]"
+              :key="currentImageIndex"
+              :src="project.images[currentImageIndex]"
+              :alt="`${project.title} - Image ${currentImageIndex + 1}`"
+              class="absolute inset-0 w-full h-full object-cover"
+            />
 
-          <!-- Fallback if no images -->
-          <div
-            v-else
-            class="w-full h-full flex items-center justify-center text-8xl bg-gray-100 dark:bg-slate-700"
-          >
-            {{ project.emoji || "📁" }}
-          </div>
+            <!-- Fallback if no images -->
+            <div
+              v-else
+              key="fallback"
+              class="absolute inset-0 w-full h-full flex items-center justify-center text-8xl bg-gray-100 dark:bg-slate-700"
+            >
+              {{ project.emoji || "📁" }}
+            </div>
+          </TransitionGroup>
 
           <!-- Navigation Buttons -->
           <button
@@ -636,5 +641,32 @@ onUnmounted(() => {
 
 :deep(.timeline-item:nth-child(4)) {
   animation-delay: 0.8s;
+}
+
+.carousel {
+  overflow: hidden;
+  width: 100%;
+}
+
+/* Smooth carousel transitions */
+.carousel-fade-enter-active,
+.carousel-fade-leave-active {
+  transition: all 0.5s ease-in-out;
+}
+
+.carousel-fade-enter-from {
+  opacity: 0;
+  transform: scale(1.05);
+}
+
+.carousel-fade-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.carousel-fade-enter-to,
+.carousel-fade-leave-from {
+  opacity: 1;
+  transform: scale(1);
 }
 </style>
