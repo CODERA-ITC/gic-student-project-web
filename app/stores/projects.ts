@@ -23,7 +23,7 @@ export interface Project {
   id: number;
   title: string;
   description: string;
-  semester: string;
+  academicYear?: string;
   author: ProjectAuthor;
   technologies: string[];
   category: string;
@@ -164,7 +164,7 @@ export const useProjectStore = defineStore("projects", {
             title: "AI Chat Assistant",
             description:
               "An intelligent chatbot powered by GPT-3 for customer support. This project aims to enhance user experience by providing instant and accurate responses to common inquiries.",
-            semester: "Fall 2024",
+            academicYear: "2024-2025",
             author: {
               name: "Sarah Chen",
               avatar: "https://randomuser.me/api/portraits/women/11.jpg",
@@ -218,7 +218,7 @@ export const useProjectStore = defineStore("projects", {
             title: "Mobile Fitness App",
             description:
               "Track workouts, nutrition, and health metrics on the go.",
-            semester: "Fall 2024",
+            academicYear: "2024-2025",
             author: {
               name: "Alex Rodriguez",
               avatar: "https://randomuser.me/api/portraits/men/21.jpg",
@@ -271,7 +271,7 @@ export const useProjectStore = defineStore("projects", {
             title: "E-Commerce Platform",
             description:
               "Full-stack online store with payment integration and analytics.",
-            semester: "Summer 2024",
+            academicYear: "2024-2025",
             author: {
               name: "Priya Patel",
               avatar: "https://randomuser.me/api/portraits/women/90.jpg",
@@ -719,7 +719,7 @@ export const useProjectStore = defineStore("projects", {
       // Filter by year
       if (this.filters.year) {
         filtered = filtered.filter((p) => {
-          const year = p.semester?.match(/\d{4}/)?.[0];
+          const year = p.academicYear?.match(/\d{4}/)?.[0];
           return year === this.filters.year;
         });
       }
@@ -822,7 +822,7 @@ export const useProjectStore = defineStore("projects", {
               description:
                 "A responsive portfolio website showcasing my projects and skills",
               category: "Web",
-              semester: "Semester 1, 2024",
+              academicYear: "2024-2025",
               status: "Completed" as const,
               featured: false,
               likes: 15,
@@ -873,7 +873,7 @@ export const useProjectStore = defineStore("projects", {
               description:
                 "A collaborative task management application with real-time updates",
               category: "Productivity",
-              semester: "Semester 2, 2024",
+              academicYear: "2024-2025",
               status: "In Progress" as const,
               featured: false,
               likes: 8,
@@ -981,6 +981,27 @@ export const useProjectStore = defineStore("projects", {
 
       // In real app, sync with backend
       // await api.updateProjectStatus(projectId, status);
+    },
+
+    // Update project visibility (for teachers)
+    async updateProjectVisibility(
+      projectId: number,
+      visibility: "public" | "private"
+    ): Promise<void> {
+      // Update in user projects
+      const userProject = this.userProjects.find((p) => p.id === projectId);
+      if (userProject) {
+        userProject.visibility = visibility;
+      }
+
+      // Update in all projects
+      const project = this.projects.find((p) => p.id === projectId);
+      if (project) {
+        project.visibility = visibility;
+      }
+
+      // In real app, sync with backend
+      // await api.updateProjectVisibility(projectId, visibility);
     },
 
     // Update project fields

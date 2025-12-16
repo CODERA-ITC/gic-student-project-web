@@ -6,7 +6,7 @@ export const projectsData: Project[] = [
     title: "AI Chat Assistant",
     description:
       "An intelligent chatbot powered by GPT-3 for customer support. This project aims to enhance user experience by providing instant and accurate responses to common inquiries.",
-    semester: "Fall 2024",
+    academicYear: "2024-2025",
     author: {
       name: "Sarah Chen",
       avatar: "https://randomuser.me/api/portraits/women/11.jpg",
@@ -84,12 +84,11 @@ export const projectsData: Project[] = [
     course: "Advanced AI & Machine Learning",
     visibility: "public",
   },
-
   {
     id: 2,
     title: "Mobile Fitness App",
     description: "Track workouts, nutrition, and health metrics on the go.",
-    semester: "Fall 2024",
+    academicYear: "2024-2025",
     author: {
       name: "Alex Rodriguez",
       avatar: "https://randomuser.me/api/portraits/men/21.jpg",
@@ -169,7 +168,7 @@ export const projectsData: Project[] = [
     title: "E-Commerce Platform",
     description:
       "Full-stack online store with payment integration and analytics.",
-    semester: "Summer 2024",
+    academicYear: "2024-2025",
     author: {
       name: "Priya Patel",
       avatar: "https://randomuser.me/api/portraits/women/90.jpg",
@@ -256,7 +255,7 @@ export const projectsData: Project[] = [
     id: 4,
     title: "Climate Monitoring IoT",
     description: "IoT sensors and dashboard for environmental monitoring.",
-    semester: "Spring 2024",
+    academicYear: "2024-2025",
     author: {
       name: "Jordan Kim",
       avatar: "https://randomuser.me/api/portraits/men/88.jpg",
@@ -335,7 +334,7 @@ export const projectsData: Project[] = [
     id: 5,
     title: "Machine Learning Pipeline",
     description: "Automated data processing and model training framework.",
-    semester: "Spring 2024",
+    academicYear: "2024-2025",
     author: {
       name: "Emma Watson",
       avatar: "https://randomuser.me/api/portraits/women/16.jpg",
@@ -417,7 +416,7 @@ export const projectsData: Project[] = [
     id: 6,
     title: "Social Media Dashboard",
     description: "Manage and monitor multiple social accounts in one place.",
-    semester: "Fall 2023",
+    academicYear: "2024-2025",
     author: {
       name: "Mike Johnson",
       avatar: "https://randomuser.me/api/portraits/men/11.jpg",
@@ -495,7 +494,7 @@ export const projectsData: Project[] = [
     id: 7,
     title: "Data Analytics Platform",
     description: "Real-time data visualization and reporting tool.",
-    semester: "Summer 2023",
+    academicYear: "2024-2025",
     author: {
       name: "Lisa Wong",
       avatar: "https://randomuser.me/api/portraits/women/18.jpg",
@@ -579,7 +578,7 @@ export const projectsData: Project[] = [
     title: "IoT Home Automation",
     description:
       "Smart home system controlling lights, temperature, and security using IoT sensors and mobile app integration.",
-    semester: "Spring 2024",
+    academicYear: "2024-2025",
     author: {
       name: "David Park",
       avatar: "https://randomuser.me/api/portraits/men/41.jpg",
@@ -653,7 +652,7 @@ export const projectsData: Project[] = [
     title: "Blockchain Voting System",
     description:
       "Secure and transparent voting platform built on Ethereum blockchain ensuring vote integrity and anonymity.",
-    semester: "Fall 2023",
+    academicYear: "2024-2025",
     author: {
       name: "Michael Torres",
       avatar: "https://randomuser.me/api/portraits/men/55.jpg",
@@ -731,7 +730,7 @@ export const projectsData: Project[] = [
     title: "AR Shopping Experience",
     description:
       "Augmented reality mobile app allowing users to virtually try products before purchasing online.",
-    semester: "Spring 2024",
+    academicYear: "2024-2025",
     author: {
       name: "Rachel Green",
       avatar: "https://randomuser.me/api/portraits/women/67.jpg",
@@ -809,7 +808,7 @@ export const projectsData: Project[] = [
     title: "Machine Learning Stock Predictor",
     description:
       "AI-powered platform that analyzes market trends and predicts stock prices using multiple ML algorithms.",
-    semester: "Fall 2024",
+    academicYear: "2024-2025",
     author: {
       name: "Kevin Liu",
       avatar: "https://randomuser.me/api/portraits/men/72.jpg",
@@ -887,7 +886,7 @@ export const projectsData: Project[] = [
     title: "Social Media Analytics Dashboard",
     description:
       "Comprehensive dashboard analyzing social media engagement across multiple platforms with real-time insights.",
-    semester: "Spring 2024",
+    academicYear: "2024-2025",
     author: {
       name: "Amanda Johnson",
       avatar: "https://randomuser.me/api/portraits/women/89.jpg",
@@ -961,7 +960,7 @@ export const projectsData: Project[] = [
     title: "Virtual Classroom Platform",
     description:
       "Interactive online learning platform with video conferencing, whiteboard, and collaborative tools for remote education.",
-    semester: "Fall 2024",
+    academicYear: "2024-2025",
     author: {
       name: "Jennifer Walsh",
       avatar: "https://randomuser.me/api/portraits/women/42.jpg",
@@ -1039,7 +1038,7 @@ export const projectsData: Project[] = [
     title: "Cryptocurrency Trading Bot",
     description:
       "Automated trading bot using technical analysis indicators and risk management strategies for cryptocurrency markets.",
-    semester: "Spring 2024",
+    academicYear: "2024-2025",
     author: {
       name: "Brian Cooper",
       avatar: "https://randomuser.me/api/portraits/men/84.jpg",
@@ -1113,7 +1112,7 @@ export const projectsData: Project[] = [
     title: "Weather Prediction API",
     description:
       "RESTful API service providing accurate weather forecasts using machine learning models trained on historical data.",
-    semester: "Fall 2023",
+    academicYear: "2024-2025",
     author: {
       name: "Nicole Zhang",
       avatar: "https://randomuser.me/api/portraits/women/15.jpg",
@@ -1187,7 +1186,7 @@ export const projectsData: Project[] = [
     title: "VR Museum Experience",
     description:
       "Immersive virtual reality application allowing users to explore historical artifacts and art collections from around the world.",
-    semester: "Spring 2024",
+    academicYear: "2024-2025",
     author: {
       name: "Marco Silva",
       avatar: "https://randomuser.me/api/portraits/men/19.jpg",
@@ -1281,7 +1280,7 @@ export const projectsData: Project[] = [
     title: "Smart Parking System",
     description:
       "IoT-based parking management system with real-time space detection, mobile app booking, and payment integration.",
-    semester: "Fall 2024",
+    academicYear: "2024-2025",
     author: {
       name: "Samantha Lee",
       avatar: "https://randomuser.me/api/portraits/women/23.jpg",
