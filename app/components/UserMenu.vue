@@ -18,7 +18,7 @@
       >
         <!-- Avatar -->
         <img
-          :src="user.avatar"
+          :src="user.avatar || '/default-avatar.png'"
           :alt="user.name"
           class="w-8 h-8 rounded-full object-cover border border-gray-300"
         />

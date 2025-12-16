@@ -128,11 +128,14 @@ export const useAuthStore = defineStore("auth", {
         this.user = {
           id: tokenPayload.id,
           email: tokenPayload.email,
-          name: `${tokenPayload.firstname || ""} ${tokenPayload.lastname || ""}`.trim(),
+          name: `${tokenPayload.firstname || ""} ${
+            tokenPayload.lastname || ""
+          }`.trim(),
           firstname: tokenPayload.firstname,
           lastname: tokenPayload.lastname,
           role: tokenPayload.role || "student", // Default to student if not provided
-          avatar: tokenPayload.avatar,
+          // avatar: tokenPayload.avatar || "/default-avatar.png",
+          avatar: "default-avatar.png",
           program: tokenPayload.program,
           year: tokenPayload.year,
         };
@@ -280,7 +283,9 @@ export const useAuthStore = defineStore("auth", {
         this.user = {
           id: tokenPayload.id,
           email: tokenPayload.email,
-          name: `${tokenPayload.firstname || ""} ${tokenPayload.lastname || ""}`.trim(),
+          name: `${tokenPayload.firstname || ""} ${
+            tokenPayload.lastname || ""
+          }`.trim(),
           firstname: tokenPayload.firstname,
           lastname: tokenPayload.lastname,
           role: tokenPayload.role || role,
@@ -306,7 +311,10 @@ export const useAuthStore = defineStore("auth", {
      * Handle OAuth callback (Google/GitHub)
      * This should be called from your OAuth callback page
      */
-    async handleOAuthCallback(token: string, refreshToken?: string): Promise<void> {
+    async handleOAuthCallback(
+      token: string,
+      refreshToken?: string
+    ): Promise<void> {
       this.isLoading = true;
       this.error = null;
 
@@ -334,7 +342,9 @@ export const useAuthStore = defineStore("auth", {
         this.user = {
           id: tokenPayload.id,
           email: tokenPayload.email,
-          name: `${tokenPayload.firstname || ""} ${tokenPayload.lastname || ""}`.trim(),
+          name: `${tokenPayload.firstname || ""} ${
+            tokenPayload.lastname || ""
+          }`.trim(),
           firstname: tokenPayload.firstname,
           lastname: tokenPayload.lastname,
           role: tokenPayload.role || "student",
@@ -347,7 +357,8 @@ export const useAuthStore = defineStore("auth", {
       } catch (error) {
         this.user = null;
         this.isAuthenticated = false;
-        this.error = error instanceof Error ? error.message : "OAuth login failed";
+        this.error =
+          error instanceof Error ? error.message : "OAuth login failed";
 
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
@@ -394,7 +405,9 @@ export const useAuthStore = defineStore("auth", {
         this.user = {
           id: tokenPayload.id,
           email: tokenPayload.email,
-          name: `${tokenPayload.firstname || ""} ${tokenPayload.lastname || ""}`.trim(),
+          name: `${tokenPayload.firstname || ""} ${
+            tokenPayload.lastname || ""
+          }`.trim(),
           firstname: tokenPayload.firstname,
           lastname: tokenPayload.lastname,
           role: tokenPayload.role || "student",
@@ -454,7 +467,10 @@ export const useAuthStore = defineStore("auth", {
 
         // Update refresh token if provided
         if (responseData.data.refresh_token) {
-          localStorage.setItem("refresh_token", responseData.data.refresh_token);
+          localStorage.setItem(
+            "refresh_token",
+            responseData.data.refresh_token
+          );
         }
 
         // Update user info from new token
@@ -463,7 +479,9 @@ export const useAuthStore = defineStore("auth", {
           this.user = {
             id: tokenPayload.id,
             email: tokenPayload.email,
-            name: `${tokenPayload.firstname || ""} ${tokenPayload.lastname || ""}`.trim(),
+            name: `${tokenPayload.firstname || ""} ${
+              tokenPayload.lastname || ""
+            }`.trim(),
             firstname: tokenPayload.firstname,
             lastname: tokenPayload.lastname,
             role: tokenPayload.role || "student",
@@ -498,7 +516,10 @@ export const useAuthStore = defineStore("auth", {
     /**
      * Make authenticated API request with auto-refresh
      */
-    async makeAuthRequest(url: string, options: RequestInit = {}): Promise<Response> {
+    async makeAuthRequest(
+      url: string,
+      options: RequestInit = {}
+    ): Promise<Response> {
       // Check if token is expired and refresh if needed
       if (this.isTokenExpired()) {
         const refreshed = await this.refreshAccessToken();

@@ -50,52 +50,64 @@ export interface ButtonConfig {
  */
 export const BUTTON_COLORS = {
   primary: {
-    solid: "bg-blue-900 hover:bg-blue-800 hover:cursor-pointer text-white t ",
+    solid:
+      "bg-blue-900 hover:bg-blue-800 hover:cursor-pointer dark:bg-blue-700 text-white dark:text-white",
     outline:
-      "border-2 border-blue-900 text-blue-900 hover:bg-blue-50 hover:cursor-pointer",
-    ghost: "text-blue-900 hover:bg-blue-100 hover:cursor-pointer",
+      "border-2 border-blue-900 text-blue-900 dark:border-blue-400 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:cursor-pointer",
+    ghost:
+      "text-blue-900 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/20 hover:cursor-pointer",
     gradient:
-      "bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:shadow-lg hover:shadow-blue-500/50 hover:cursor-pointer",
+      "bg-gradient-to-r from-blue-600 to-cyan-600 text-white dark:text-white hover:shadow-lg hover:shadow-blue-500/50 hover:cursor-pointer",
   },
   secondary: {
-    solid: "bg-indigo-900 hover:bg-indigo-700 hover:cursor-pointer text-white",
+    solid:
+      "bg-indigo-900 hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-600 hover:cursor-pointer text-white dark:text-white",
     outline:
-      "border-2 border-indigo-900 text-indigo-900 hover:bg-indigo-50 hover:cursor-pointer",
-    ghost: "text-indigo-900 hover:bg-indigo-100 hover:cursor-pointer",
+      "border-2 border-indigo-900 text-indigo-900 dark:border-indigo-400 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:cursor-pointer",
+    ghost:
+      "text-indigo-900 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/20 hover:cursor-pointer",
     gradient:
-      "bg-gradient-to-r from-indigo-600 to-blue-600 text-white hover:shadow-lg hover:shadow-indigo-500/50 hover:cursor-pointer",
+      "bg-gradient-to-r from-indigo-600 to-blue-600 text-white dark:text-white hover:shadow-lg hover:shadow-indigo-500/50 hover:cursor-pointer",
   },
   success: {
-    solid: "bg-gray-600/90 hover:bg-gray-700 hover:cursor-pointer text-white",
+    solid:
+      "bg-gray-600/90 hover:bg-gray-700 dark:bg-gray-600 dark:hover:bg-gray-500 hover:cursor-pointer text-white dark:text-white",
     outline:
-      "border-2 border-gray-600 text-gray-600 hover:bg-gray-50 hover:cursor-pointer",
-    ghost: "text-gray-600 hover:bg-gray-100 hover:cursor-pointer",
+      "border-2 border-gray-600 text-gray-600 dark:border-gray-400 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/20 hover:cursor-pointer",
+    ghost:
+      "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/20 hover:cursor-pointer",
     gradient:
-      "bg-gradient-to-r from-gray-600 to-gray-600 text-white hover:shadow-lg hover:shadow-gray-500/50 hover:cursor-pointer",
+      "bg-gradient-to-r from-gray-600 to-gray-600 text-white dark:text-white hover:shadow-lg hover:shadow-gray-500/50 hover:cursor-pointer",
   },
   danger: {
-    solid: "bg-red-600 hover:bg-red-700 hover:cursor-pointer text-white",
+    solid:
+      "bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500 hover:cursor-pointer text-white dark:text-white",
     outline:
-      "border-2 border-red-600 text-red-600 hover:bg-red-50 hover:cursor-pointer",
-    ghost: "text-red-600 hover:bg-red-100 hover:cursor-pointer",
+      "border-2 border-red-600 text-red-600 dark:border-red-400 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:cursor-pointer",
+    ghost:
+      "text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/20 hover:cursor-pointer",
     gradient:
-      "bg-gradient-to-r from-red-600 to-orange-600 text-white hover:shadow-lg hover:shadow-red-500/50 hover:cursor-pointer",
+      "bg-gradient-to-r from-red-600 to-orange-600 text-white dark:text-white hover:shadow-lg hover:shadow-red-500/50 hover:cursor-pointer",
   },
   warning: {
-    solid: "bg-amber-600 hover:bg-amber-700 hover:cursor-pointer text-white",
+    solid:
+      "bg-amber-600 hover:bg-amber-700 dark:bg-amber-600 dark:hover:bg-amber-500 hover:cursor-pointer text-white dark:text-white",
     outline:
-      "border-2 border-amber-600 text-amber-600 hover:bg-amber-50 hover:cursor-pointer",
-    ghost: "text-amber-600 hover:bg-amber-100 hover:cursor-pointer",
+      "border-2 border-amber-600 text-amber-600 dark:border-amber-400 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:cursor-pointer",
+    ghost:
+      "text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/20 hover:cursor-pointer",
     gradient:
-      "bg-gradient-to-r from-amber-600 to-orange-600 text-white hover:shadow-lg hover:shadow-amber-500/50 hover:cursor-pointer",
+      "bg-gradient-to-r from-amber-600 to-orange-600 text-white dark:text-white hover:shadow-lg hover:shadow-amber-500/50 hover:cursor-pointer",
   },
   info: {
-    solid: "bg-cyan-600 hover:bg-cyan-700 hover:cursor-pointer text-white",
+    solid:
+      "bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-500 hover:cursor-pointer text-white dark:text-white",
     outline:
-      "border-2 border-cyan-600 text-cyan-600 hover:bg-cyan-50 hover:cursor-pointer",
-    ghost: "text-cyan-600 hover:bg-cyan-100 hover:cursor-pointer",
+      "border-2 border-cyan-600 text-cyan-600 dark:border-cyan-400 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 hover:cursor-pointer",
+    ghost:
+      "text-cyan-600 dark:text-cyan-400 hover:bg-cyan-100 dark:hover:bg-cyan-900/20 hover:cursor-pointer",
     gradient:
-      "bg-gradient-to-r from-cyan-600 to-blue-600 text-white hover:shadow-lg hover:shadow-cyan-500/50 hover:cursor-pointer",
+      "bg-gradient-to-r from-cyan-600 to-blue-600 text-white dark:text-white hover:shadow-lg hover:shadow-cyan-500/50 hover:cursor-pointer",
   },
   blue: {
     solid: "bg-blue-600 hover:bg-blue-700 hover:cursor-pointer text-white",
