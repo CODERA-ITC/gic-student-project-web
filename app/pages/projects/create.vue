@@ -250,22 +250,20 @@
                   </select>
                 </div>
 
-                <!-- Semester -->
+                <!-- Academic Year -->
                 <div>
                   <label
                     class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2"
                   >
-                    Semester *
+                    Academic Year *
                   </label>
-                  <select
-                    v-model="form.semester"
+                  <input
+                    v-model="form.academicYear"
+                    type="text"
                     class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    placeholder="e.g., 2024-2025"
                     required
-                  >
-                    <option value="">Select semester</option>
-                    <option value="Semester 1, 2024">Semester 1, 2024</option>
-                    <option value="Semester 2, 2024">Semester 2, 2024</option>
-                  </select>
+                  />
                 </div>
               </div>
             </div>
@@ -808,7 +806,7 @@
                       {{ form.title }}
                     </h3>
                     <p class="text-gray-600 dark:text-gray-400">
-                      {{ form.category }} • {{ form.semester }}
+                      {{ form.category }} • {{ form.academicYear }}
                     </p>
                   </div>
                 </div>
@@ -1053,7 +1051,7 @@ const loadProjectForEditing = async (projectId) => {
         description: project.description || "",
         thumbnails: project.images || [],
         category: project.category || "",
-        semester: project.semester || "",
+        academicYear: project.academicYear || "",
         technologies: project.technologies || [],
         githubUrl: project.githubUrl || "",
         demoUrl: project.demoUrl || "",
@@ -1234,20 +1232,15 @@ const filteredIcons = computed(() => {
   );
 });
 
-// Current semester options
-const semesterOptions = [
-  "Fall 2024",
-  "Spring 2025",
-  "Summer 2025",
-  "Fall 2025",
-];
+// Current academic year options
+const academicYearOptions = ["2024-2025", "2025-2026", "2026-2027"];
 
 const form = ref({
   title: "",
   description: "",
   thumbnails: [], // Project preview images
   category: "",
-  semester: "Fall 2024",
+  academicYear: "2024-2025",
   technologies: [],
   githubUrl: "",
   demoUrl: "",
@@ -1438,11 +1431,15 @@ const submitForm = async () => {
       }
     }
 
+    console.log("=== PROJECT CREATION DEBUG ===");
+    console.log("Current user from auth store:", authStore.user);
+    console.log("User name:", authStore.user?.name);
+
     // Prepare project data according to Project interface
     const projectData = {
       title: form.value.title,
       description: form.value.description,
-      semester: form.value.semester,
+      academicYear: form.value.academicYear,
       author: {
         name: authStore.user?.name || "Current User",
         avatar:
@@ -1474,6 +1471,12 @@ const submitForm = async () => {
       course: form.value.course || "Project Development",
     };
 
+    console.log(
+      "Project data to be created:",
+      JSON.stringify(projectData, null, 2)
+    );
+    console.log("Author in project data:", projectData.author);
+
     let result;
     if (editMode.value) {
       // Update existing project
@@ -1483,13 +1486,60 @@ const submitForm = async () => {
       );
     } else {
       // Create new project
+      console.log("Creating project with data:", projectData);
+      console.log(
+        "Store projects before creation:",
+        projectStore.projects.length
+      );
+
       result = await projectStore.createProject(projectData);
+
+      console.log("Project created with result:", result);
+      console.log("Result ID:", result.id, "Type:", typeof result.id);
+
+      // Ensure the new project is in the store's arrays
+      // Add to projects array if not already there
+      const existsInProjects = projectStore.projects.find(
+        (p) => p.id === result.id
+      );
+      if (!existsInProjects) {
+        console.log("Adding project to projects array");
+        projectStore.projects.unshift(result);
+      }
+
+      // Add to userProjects array if not already there
+      const existsInUserProjects = projectStore.userProjects.find(
+        (p) => p.id === result.id
+      );
+      if (!existsInUserProjects) {
+        console.log("Adding project to userProjects array");
+        projectStore.userProjects.unshift(result);
+      }
+
+      console.log(
+        "Project added to store. Total projects:",
+        projectStore.projects.length,
+        "User projects:",
+        projectStore.userProjects.length
+      );
     }
 
     console.log(
       `Project ${editMode.value ? "updated" : "created"} successfully:`,
       result
     );
+
+    // Validate project ID before proceeding
+    if (!result.id || result.id === -Infinity || isNaN(result.id)) {
+      console.error("Invalid project ID:", result.id);
+      const toast = useToast();
+      toast.add({
+        title: "Error",
+        description: "Failed to generate valid project ID. Please try again.",
+        color: "red",
+      });
+      return;
+    }
 
     // Show success message with toast
     const toast = useToast();
@@ -1507,7 +1557,27 @@ const submitForm = async () => {
 
     // Navigate to the project details page
     const projectId = editMode.value ? editProjectId.value : result.id;
-    await navigateTo(`/student/projects/${projectId}`);
+    console.log(
+      "Navigating to project:",
+      projectId,
+      "Path:",
+      `/student/my-projects/${projectId}`
+    );
+
+    // Final validation before navigation
+    if (!projectId || projectId === -Infinity || isNaN(projectId)) {
+      console.error("Cannot navigate with invalid project ID:", projectId);
+      const errorToast = useToast();
+      errorToast.add({
+        title: "Navigation Error",
+        description: "Invalid project ID. Redirecting to projects list.",
+        color: "red",
+      });
+      await navigateTo("/student/my-projects");
+      return;
+    }
+
+    await navigateTo(`/student/my-projects/${projectId}`);
   } catch (error) {
     console.error(
       `Error ${editMode.value ? "updating" : "creating"} project:`,
@@ -1533,7 +1603,7 @@ const canProceedToNextStep = computed(() => {
         form.value.description &&
         form.value.thumbnails.length >= 1 &&
         form.value.category &&
-        form.value.semester
+        form.value.academicYear
       );
     case 1: // Technical
       return form.value.technologies.length > 0;

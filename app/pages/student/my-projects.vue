@@ -171,8 +171,34 @@ onMounted(async () => {
     return;
   }
 
+  console.log("=== MY-PROJECTS PAGE MOUNTED ===");
+  console.log("Projects in store before fetch:", {
+    totalProjects: projectStore.projects.length,
+    projectIds: projectStore.projects.map((p) => ({
+      id: p.id,
+      title: p.title,
+      author: p.author?.name,
+    })),
+    totalUserProjects: projectStore.userProjects.length,
+    userProjectIds: projectStore.userProjects.map((p) => ({
+      id: p.id,
+      title: p.title,
+      author: p.author?.name,
+    })),
+    currentUser: authStore.user?.name,
+  });
+
   // Load user's projects
   await projectStore.fetchUserProjects();
+
+  console.log("Projects in store after fetch:", {
+    totalUserProjects: projectStore.userProjects.length,
+    userProjectIds: projectStore.userProjects.map((p) => ({
+      id: p.id,
+      title: p.title,
+      author: p.author?.name,
+    })),
+  });
 
   // Load liked projects from localStorage
   if (process.client) {
@@ -456,7 +482,7 @@ const getStatusColor = (status) => {
 };
 
 const shareProject = (project) => {
-  const url = `${window.location.origin}/student/projects/${project.id}`;
+  const url = `${window.location.origin}/student/my-projects/${project.id}`;
 
   if (navigator.share) {
     navigator.share({

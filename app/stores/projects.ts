@@ -74,6 +74,7 @@ export interface ProjectState {
   likedProjects: Set<number>;
   loading: boolean;
   pagination: PaginationState;
+  nextProjectId: number; // Track next project ID independently
   filters: {
     categories: string[];
     search: string;
@@ -91,6 +92,7 @@ export const useProjectStore = defineStore("projects", {
     availableTags: [],
     likedProjects: new Set(),
     loading: false,
+    nextProjectId: 1000, // Start user-created projects from 1000 to avoid conflicts
     pagination: {
       currentPage: 1,
       itemsPerPage: 9,
@@ -407,15 +409,21 @@ export const useProjectStore = defineStore("projects", {
         // await new Promise((resolve) => setTimeout(resolve, 100));
         // return current projects (in a real app this would come from an API)
 
-        let projects: Project[] = projectsData;
+        // Only load from projectsData if projects array is empty (initial load)
+        if (this.projects.length === 0) {
+          let projects: Project[] = projectsData;
 
-        // Add default visibility to projects that don't have it
-        projects = projects.map((project) => ({
-          ...project,
-          visibility: project.visibility || "public", // Default to public if not set
-        }));
+          // Add default visibility to projects that don't have it
+          projects = projects.map((project) => ({
+            ...project,
+            visibility: project.visibility || "public", // Default to public if not set
+          }));
 
-        // Filter by visibility - only show public projects for general users
+          this.projects = projects;
+        }
+
+        // Filter by visibility for return value
+        let projects = [...this.projects]; // Create a copy to avoid mutating state
         if (!includePrivate) {
           projects = projects.filter(
             (project) => project.visibility !== "private"
@@ -428,7 +436,7 @@ export const useProjectStore = defineStore("projects", {
           projects.length / this.pagination.itemsPerPage
         );
 
-        return (this.projects = projects);
+        return projects;
       } finally {
         this.loading = false;
       }
@@ -769,8 +777,15 @@ export const useProjectStore = defineStore("projects", {
     async createProject(
       projectData: Omit<Project, "id" | "createdAt" | "likes" | "views">
     ): Promise<Project> {
-      // Generate new ID
-      const newId = Math.max(...this.projects.map((p) => p.id)) + 1;
+      // Generate new ID using independent counter (starts at 1000 to avoid conflicts with seed data)
+      const newId = this.nextProjectId++;
+
+      console.log("ID Generation Debug:", {
+        newId: newId,
+        nextProjectId: this.nextProjectId,
+        totalProjects: this.projects.length,
+        totalUserProjects: this.userProjects.length,
+      });
 
       // Create new project with defaults
       const newProject: Project = {
@@ -785,6 +800,13 @@ export const useProjectStore = defineStore("projects", {
       // Add to both projects arrays
       this.projects.unshift(newProject); // Add to beginning
       this.userProjects.unshift(newProject); // Add to user projects as well
+
+      console.log("After creation:", {
+        newProject: newProject,
+        totalProjects: this.projects.length,
+        totalUserProjects: this.userProjects.length,
+        userProjectIds: this.userProjects.map((p) => p.id),
+      });
 
       // Update pagination
       this.pagination.totalItems = this.projects.length;
@@ -808,138 +830,10 @@ export const useProjectStore = defineStore("projects", {
         }
 
         // In real app, this would be an API call
-        // For demo, filter existing projects by author
+        // Filter existing projects by author to show only user-created projects
         this.userProjects = this.projects.filter(
           (project) => project.author?.name === authStore.user?.name
         );
-
-        // Add some mock user projects if none exist
-        if (this.userProjects.length === 0) {
-          const mockUserProjects: Project[] = [
-            {
-              id: 1001,
-              title: "Personal Portfolio Website",
-              description:
-                "A responsive portfolio website showcasing my projects and skills",
-              category: "Web",
-              academicYear: "2024-2025",
-              status: "Completed" as const,
-              featured: false,
-              likes: 15,
-              views: 234,
-              demoUrl: "https://portfolio.demo.com",
-              githubUrl: "https://github.com/user/portfolio",
-              images: [
-                "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=500&auto=format&fit=crop&q=60",
-                "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&auto=format&fit=crop&q=60",
-              ],
-              createdAt: "2024-01-15",
-              tags: ["Vue.js", "Nuxt", "TailwindCSS"],
-              technologies: ["Vue.js", "Nuxt", "TailwindCSS", "TypeScript"],
-              author: {
-                name: authStore.user?.name || "Student",
-                avatar:
-                  authStore.user?.avatar ||
-                  "https://randomuser.me/api/portraits/men/1.jpg",
-                program: "Computer Science",
-                year: "2024",
-              },
-              duration: "3 months",
-              course: "Web Development",
-              progress: 100,
-              visibility: "public",
-              members: [
-                {
-                  name: "Alex Johnson",
-                  image: "https://randomuser.me/api/portraits/men/5.jpg",
-                },
-                {
-                  name: "Emily Davis",
-                  image: "https://randomuser.me/api/portraits/women/7.jpg",
-                },
-              ],
-              submissions: [
-                {
-                  id: 1,
-                  title: "Final Submission",
-                  date: "2024-01-15",
-                  status: "Approved",
-                },
-              ],
-            },
-            {
-              id: 1002,
-              title: "Task Management App",
-              description:
-                "A collaborative task management application with real-time updates",
-              category: "Productivity",
-              academicYear: "2024-2025",
-              status: "In Progress" as const,
-              featured: false,
-              likes: 8,
-              views: 127,
-              demoUrl: "https://taskapp.demo.com",
-              githubUrl: "https://github.com/user/task-manager",
-              images: [
-                "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=500&auto=format&fit=crop&q=60",
-              ],
-              createdAt: "2024-09-01",
-              tags: ["React", "Node.js", "MongoDB"],
-              technologies: ["React", "Node.js", "MongoDB", "Socket.io"],
-              author: {
-                name: authStore.user?.name || "Student",
-                avatar:
-                  authStore.user?.avatar ||
-                  "https://randomuser.me/api/portraits/men/1.jpg",
-                program: "Computer Science",
-                year: "2024",
-              },
-              duration: "4 months",
-              course: "Full Stack Development",
-              progress: 75,
-              visibility: "private",
-              members: [
-                {
-                  name: "Sarah Wilson",
-                  image: "https://randomuser.me/api/portraits/women/12.jpg",
-                },
-                {
-                  name: "Michael Brown",
-                  image: "https://randomuser.me/api/portraits/men/8.jpg",
-                },
-                {
-                  name: "Jessica Lee",
-                  image: "https://randomuser.me/api/portraits/women/15.jpg",
-                },
-              ],
-              features: [
-                {
-                  title: "User Authentication",
-                  description: "Secure login and registration system",
-                  date: "2024-09-15",
-                  icon: "i-heroicons-lock-closed",
-                  status: "done" as const,
-                },
-                {
-                  title: "Task Management",
-                  description: "Create, edit, and organize tasks",
-                  date: "2024-10-01",
-                  icon: "i-heroicons-clipboard-document-list",
-                  status: "ongoing" as const,
-                },
-                {
-                  title: "Real-time Collaboration",
-                  description: "Live updates for team members",
-                  date: "2024-11-01",
-                  icon: "i-heroicons-users",
-                  status: "pending" as const,
-                },
-              ],
-            },
-          ];
-
-          this.userProjects = mockUserProjects;
-        }
       } catch (error) {
         console.error("Failed to fetch user projects:", error);
       } finally {

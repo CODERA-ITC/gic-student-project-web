@@ -12,7 +12,7 @@
           </div>
           <ButtonsPresetButton
             preset="back"
-            :to="`/student/projects/${$route.params.id}`"
+            :to="`/student/my-projects/${$route.params.id}`"
           />
         </div>
       </UContainer>
@@ -382,7 +382,7 @@
             </UButton>
 
             <UButton
-              :to="`/student/projects/${project.id}`"
+              :to="`/student/my-projects/${project.id}`"
               color="gray"
               variant="outline"
               size="lg"

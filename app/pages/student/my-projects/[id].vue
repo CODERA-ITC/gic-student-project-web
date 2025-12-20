@@ -120,26 +120,62 @@ if (projectStore.projects.length === 0) {
   await projectStore.fetchProjects();
 }
 
-const projectData = await projectStore.getProjectById(projectId);
+let projectData = await projectStore.getProjectById(projectId);
+
+// If project not found initially, try refreshing the data
 if (!projectData) {
+  console.log("Project not found initially, refreshing...");
+  await projectStore.fetchProjects();
+  await projectStore.fetchUserProjects();
+  projectData = await projectStore.getProjectById(projectId);
+}
+
+if (!projectData) {
+  console.error("Project not found after refresh:", projectId);
   throw createError({
     statusCode: 404,
     statusMessage: "Project not found",
   });
 }
 
+project.value = projectData;
+
+// Debug: Log project data and user data
+console.log("=== OWNERSHIP CHECK DEBUG ===");
+console.log("Project ID:", projectId);
+console.log("Project data:", projectData);
+console.log("Project author:", projectData?.author);
+console.log("Current user:", authStore.user);
+console.log("Auth store user name:", authStore.user?.name);
+
 // Check if user owns this project
 const isOwner = computed(() => {
-  if (!projectData || !authStore.user) return false;
-  return projectData.author?.name === authStore.user.name;
+  if (!project.value || !authStore.user) {
+    console.log("Ownership check failed: missing project or user");
+    return false;
+  }
+  const owns = project.value.author?.name === authStore.user.name;
+  console.log("Ownership check result:", owns);
+  console.log(
+    "Comparing:",
+    project.value.author?.name,
+    "===",
+    authStore.user.name
+  );
+  return owns;
 });
+
+console.log("isOwner computed value:", isOwner.value);
 
 // If not owner, redirect to public view
 if (!isOwner.value) {
+  console.log("!!! REDIRECTING TO PUBLIC VIEW !!!");
+  console.log("Project author:", project.value?.author?.name);
+  console.log("Current user:", authStore.user?.name);
   await navigateTo(`/projects/${projectId}`);
 }
 
-project.value = projectData;
+console.log("User IS owner, staying on student page");
 isLoading.value = false;
 
 // Image carousel
