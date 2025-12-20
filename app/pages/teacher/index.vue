@@ -53,7 +53,7 @@
 
           <!-- Main Value and Graph Container with Border -->
           <div
-            class="border-l-2 border-gray-400 dark:border-gray-500 pl-8 relative before:content-[''] before:absolute before:top-0 before:left-0 before:w-2 before:h-1 before:border-t-2 before:border-gray-400 dark:before:border-gray-500 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-2 after:h-1 after:border-b-2 after:border-gray-400 dark:after:border-gray-500"
+            class="border-l border-gray-400 dark:border-gray-500 pl-8 relative before:content-[''] before:absolute before:top-0 before:left-0 before:w-2 before:h-1 before:border-t before:border-gray-400 dark:before:border-gray-500 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-2 after:h-1 after:border-b after:border-gray-400 dark:after:border-gray-500"
           >
             <!-- Value and Graph on same line -->
             <div class="flex items-start justify-between gap-4 mb-3">
@@ -70,7 +70,7 @@
                     stat.changeColor === 'positive'
                       ? '#3b82f6'
                       : stat.changeColor === 'negative'
-                      ? '#ef4444'
+                      ? '#f59e0b'
                       : '#3b82f6'
                   "
                   :stroke-width="2"
@@ -82,12 +82,16 @@
             <!-- Change Info below -->
             <div class="flex items-center gap-1">
               <UIcon
-                name="i-heroicons-arrow-trending-up"
+                :name="
+                  stat.changeColor === 'positive'
+                    ? 'i-heroicons-arrow-trending-up'
+                    : 'i-heroicons-arrow-trending-down'
+                "
                 :class="
                   stat.changeColor === 'positive'
                     ? 'text-blue-500'
                     : stat.changeColor === 'negative'
-                    ? 'text-red-500'
+                    ? 'text-amber-500'
                     : 'text-blue-500'
                 "
                 class="w-4 h-4"
@@ -140,11 +144,11 @@
                 <div class="flex gap-2">
                   <ButtonsPresetButton
                     preset="primary"
-                    label="Active Project"
+                    label="Completed Project"
                     icon="i-heroicons-check-circle"
                     size="sm"
-                    @click="setActiveFilter('active')"
-                    :class="{ 'bg-blue-800': activeFilter === 'active' }"
+                    @click="setActiveFilter('completed')"
+                    :class="{ 'bg-blue-800': activeFilter === 'completed' }"
                   />
                   <ButtonsPresetButton
                     preset="primary"
@@ -175,50 +179,52 @@
                   v-model="selectedGeneration"
                   class="w-full sm:w-auto px-3 py-1.5 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-md text-black dark:text-white text-sm min-w-40 focus:outline-none"
                 >
-                  <option value="">All Generations</option>
-                  <option value="gen-2024">Generation 2024</option>
-                  <option value="gen-2025">Generation 2025</option>
-                  <option value="gen-2026">Generation 2026</option>
+                  <option value="">All Years</option>
+                  <option value="gen-2024">2024</option>
+                  <option value="gen-2025">2025</option>
+                  <option value="gen-2026">2026</option>
                 </select>
               </div>
             </div>
             <table class="w-full border-collapse">
               <thead>
-                <th
-                  class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
-                >
-                  Student
-                </th>
-                <th
-                  class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
-                >
-                  Project Title
-                </th>
-                <th
-                  class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700 hidden md:table-cell"
-                >
-                  Category
-                </th>
-                <th
-                  class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700 hidden md:table-cell"
-                >
-                  Generation
-                </th>
-                <th
-                  class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
-                >
-                  Status
-                </th>
-                <th
-                  class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700 hidden md:table-cell"
-                >
-                  Submitted
-                </th>
-                <th
-                  class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
-                >
-                  Actions
-                </th>
+                <tr>
+                  <th
+                    class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
+                  >
+                    Student
+                  </th>
+                  <th
+                    class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
+                  >
+                    Project Title
+                  </th>
+                  <th
+                    class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700 hidden md:table-cell"
+                  >
+                    Category
+                  </th>
+                  <th
+                    class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700 hidden md:table-cell"
+                  >
+                    Year
+                  </th>
+                  <th
+                    class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
+                  >
+                    Status
+                  </th>
+                  <th
+                    class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700 hidden md:table-cell"
+                  >
+                    Submitted
+                  </th>
+                  <th
+                    class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
+                  >
+                    Actions
+                  </th>
+                </tr>
               </thead>
               <tbody>
                 <tr
@@ -273,13 +279,15 @@
                   <td class="p-3 text-slate-100 align-top text-xs">
                     <span
                       :class="
-                        project.status === 'active'
+                        project.status === 'completed'
                           ? 'bg-green-600 text-white'
                           : 'bg-yellow-600 text-white'
                       "
                       class="px-2 py-1 rounded text-xs font-semibold inline-block"
                     >
-                      {{ project.status === "active" ? "Active" : "Pending" }}
+                      {{
+                        project.status === "completed" ? "Completed" : "Pending"
+                      }}
                     </span>
                   </td>
                   <td
@@ -388,6 +396,7 @@ import { ref, computed } from "vue";
 import { useAuthStore } from "~/stores/auth";
 import { projectsData } from "~/constants/projects";
 import ButtonsPresetButton from "~/components/buttons/PresetButton.vue";
+import SparklineChart from "~/components/SparklineChart.vue";
 
 const authStore = useAuthStore();
 
@@ -433,15 +442,15 @@ const projects = computed(() => {
 
     // Map semester to generation
     const generationMapping = {
-      "Fall 2024": "Generation 2024",
-      "Spring 2025": "Generation 2025",
+      "Fall 2024": "2024",
+      "Spring 2025": "2025",
     };
 
-    const mappedGeneration =
-      generationMapping[project.semester] || "Generation 2024";
+    const mappedGeneration = generationMapping[project.semester] || "2024";
 
     // Map status
-    const mappedStatus = project.status === "Completed" ? "active" : "pending";
+    const mappedStatus =
+      project.status === "Completed" ? "completed" : "pending";
 
     // Calculate due date (add some days to createdAt)
     const createdDate = new Date(project.createdAt);
@@ -479,7 +488,7 @@ const stats = ref([
     icon: "i-heroicons-inbox-stack",
     change: "+12 this week",
     changeColor: "positive",
-    chartData: [110, 92, 88, 95, 102, 98, 110, 68, 108, 120, 118, 124],
+    chartData: [95, 102, 88, 110, 95, 108, 124],
   },
   {
     label: "Pending Review",
@@ -487,7 +496,7 @@ const stats = ref([
     icon: "i-heroicons-exclamation-circle",
     change: "3 overdue",
     changeColor: "negative",
-    chartData: [20, 15, 14, 18, 16, 20, 22, 19, 17, 21, 19, 18],
+    chartData: [20, 14, 25, 19, 17, 21, 18],
   },
   {
     label: "Average Score",
@@ -495,12 +504,12 @@ const stats = ref([
     icon: "i-heroicons-chart-bar-square",
     change: "+5% from last semester",
     changeColor: "positive",
-    chartData: [78, 72, 71, 73, 75, 74, 80, 77, 76, 78, 77, 78],
+    chartData: [76, 74, 80, 77, 79, 78, 78],
   },
 ]);
 
 // Filter and search state
-const activeFilter = ref("active");
+const activeFilter = ref("completed");
 const searchQuery = ref("");
 const selectedCategory = ref("");
 const selectedGeneration = ref("");
@@ -549,9 +558,9 @@ const filteredProjects = computed(() => {
     // Filter by generation
     if (selectedGeneration.value) {
       const generationMap = {
-        "gen-2024": "Generation 2024",
-        "gen-2025": "Generation 2025",
-        "gen-2026": "Generation 2026",
+        "gen-2024": "2024",
+        "gen-2025": "2025",
+        "gen-2026": "2026",
       };
       const expectedGeneration = generationMap[selectedGeneration.value];
       if (project.generation !== expectedGeneration) {
@@ -605,9 +614,9 @@ const totalFilteredProjects = computed(() => {
     // Filter by generation
     if (selectedGeneration.value) {
       const generationMap = {
-        "gen-2024": "Generation 2024",
-        "gen-2025": "Generation 2025",
-        "gen-2026": "Generation 2026",
+        "gen-2024": "2024",
+        "gen-2025": "2025",
+        "gen-2026": "2026",
       };
       const expectedGeneration = generationMap[selectedGeneration.value];
       if (project.generation !== expectedGeneration) {
