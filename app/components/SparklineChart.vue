@@ -1,28 +1,30 @@
 <template>
-  <svg
-    :width="width"
-    :height="height"
-    :viewBox="`0 0 ${width} ${height}`"
-    class="sparkline-chart"
-    preserveAspectRatio="none"
+  <div
+    class="sparkline-container"
+    :style="{ '--hover-color': color }"
+    ref="container"
+    @mouseenter="handleMouseEnter"
+    @mousemove="handleMouseMove"
   >
-    <!-- Area under the line -->
-    <path v-if="showArea" :d="areaPath" :fill="color" fill-opacity="0.2" />
-
-    <!-- The line itself -->
-    <path
-      :d="linePath"
-      :stroke="color"
-      :stroke-width="strokeWidth"
-      fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
-  </svg>
+    <sparklines>
+      <sparkline-line
+        :width="width"
+        :height="height"
+        :data="data"
+        :styles="{
+          stroke: color,
+          strokeWidth: strokeWidth,
+          fill: showArea ? color : 'none',
+          fillOpacity: showArea ? 0.2 : 0,
+        }"
+      />
+    </sparklines>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { Sparklines, SparklineLine } from "vue-sparklines";
+import { nextTick, onMounted, ref, watch } from "vue";
 
 interface Props {
   data: number[];
@@ -41,65 +43,65 @@ const props = withDefaults(defineProps<Props>(), {
   showArea: true,
 });
 
-// Find min and max values
-const minValue = computed(() => {
-  if (!props.data || props.data.length === 0) return 0;
-  return Math.min(...props.data);
-});
+const container = ref<HTMLElement>();
 
-const maxValue = computed(() => {
-  if (!props.data || props.data.length === 0) return 0;
-  return Math.max(...props.data);
-});
+const updateHoverColors = () => {
+  if (!container.value) return;
 
-// Convert data numbers to Y positions on the chart
-const yPositions = computed(() => {
-  if (!props.data || props.data.length === 0) return [];
-
-  const min = minValue.value;
-  const max = maxValue.value;
-  const range = max - min;
-
-  // If all values are the same, put line in the middle
-  if (range === 0) {
-    return props.data.map(() => props.height / 2);
+  // Update cursor line color
+  const cursorLine = container.value.querySelector(
+    'line[style*="stroke"]'
+  ) as SVGLineElement;
+  if (cursorLine) {
+    cursorLine.style.stroke = props.color;
   }
 
-  // Convert each value to a Y position (0 = top, height = bottom)
-  return props.data.map((value) => {
-    const percent = (value - min) / range; // 0 to 1
-    const y = props.height - percent * (props.height - 4) - 2; // Flip and add padding
-    return y;
+  // Update tooltip dot color
+  const tooltipSpan = container.value.querySelector(
+    ".sparkline__tooltip span"
+  ) as HTMLSpanElement;
+  if (tooltipSpan) {
+    tooltipSpan.style.color = props.color;
+  }
+};
+
+onMounted(() => {
+  nextTick(() => {
+    updateHoverColors();
   });
 });
 
-// Create the line path (like "M 0,10 L 20,15 L 40,8")
-const linePath = computed(() => {
-  if (!props.data || props.data.length === 0) return "";
+watch(
+  () => props.color,
+  () => {
+    nextTick(() => {
+      updateHoverColors();
+    });
+  }
+);
 
-  const xStep = props.width / (props.data.length - 1 || 1);
-  const points = yPositions.value.map((y, i) => `${i * xStep},${y}`);
+// Also update on mouse events to handle dynamic hover
+const handleMouseEnter = () => {
+  setTimeout(updateHoverColors, 10);
+};
 
-  return `M ${points.join(" L ")}`;
-});
-
-// Create the filled area path
-const areaPath = computed(() => {
-  if (!props.data || props.data.length === 0) return "";
-
-  const xStep = props.width / (props.data.length - 1 || 1);
-  const points = yPositions.value.map((y, i) => `${i * xStep},${y}`);
-  const lastX = (props.data.length - 1) * xStep;
-
-  // Start at line, go to bottom-right, bottom-left, then close
-  return `M ${points.join(" L ")} L ${lastX},${props.height} L 0,${
-    props.height
-  } Z`;
-});
+const handleMouseMove = () => {
+  setTimeout(updateHoverColors, 10);
+};
 </script>
 
 <style scoped>
-.sparkline-chart {
-  display: block;
+.sparkline-container :deep(.sparkline__cursor),
+.sparkline-container :deep(line[style*="stroke"]) {
+  stroke: var(--hover-color) !important;
+}
+
+.sparkline-container :deep(.sparkline__tooltip) {
+  background: rgba(0, 0, 0, 0.8) !important;
+}
+
+.sparkline-container :deep(.sparkline__tooltip span),
+.sparkline-container :deep(.sparkline__tooltip span[style*="color"]) {
+  color: var(--hover-color) !important;
 }
 </style>
