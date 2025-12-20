@@ -205,6 +205,8 @@ const handleLogin = async () => {
 
     if (redirectTo && typeof redirectTo === "string") {
       await router.push(redirectTo);
+
+      console.log("Redirecting to:", redirectTo);
     } else if (authStore.isTeacher) {
       await router.push("/teacher/dashboard");
     } else {
