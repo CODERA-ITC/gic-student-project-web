@@ -1,16 +1,16 @@
 export default defineEventHandler(async (event) => {
-    // This endpoint initiates Google OAuth
-    // We need to proxy to the backend but the backend will redirect to Google
-    // Then Google redirects back to backend's callback
-    // We need to intercept that callback
+  // This endpoint initiates Google OAuth
+  // Backend will redirect to Google, then Google redirects back to backend's callback
+  // Backend then redirects to frontend's /auth/callback with token
 
-    const API_BASE_URL = 'https://gic-project.darororo.dev';
-    const frontendUrl = getRequestURL(event).origin;
+  const config = useRuntimeConfig();
+  const API_BASE_URL = config.apiBase;
 
-    const redirectUrl = `${API_BASE_URL}/users/google?redirect_uri=${encodeURIComponent(frontendUrl + '/auth/callback')}`;
-    console.log('🟢 Initiating Google OAuth, redirecting to:', redirectUrl);
+  console.log(
+    "🟢 Initiating Google OAuth, redirecting to:",
+    `${API_BASE_URL}/users/google`
+  );
 
-    // If the backend supports a redirect_uri parameter, use it
-    // Otherwise, just redirect to backend (but this will show JSON)
-    return sendRedirect(event, redirectUrl, 302);
+  // Simply redirect to backend OAuth endpoint
+  return sendRedirect(event, `${API_BASE_URL}/users/google`, 302);
 });

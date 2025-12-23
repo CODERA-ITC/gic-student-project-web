@@ -9,7 +9,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: "student" | "teacher";
+  role: "STUDENT" | "TEACHER";
   avatar?: string;
   program?: string;
   year?: string;
@@ -37,9 +37,9 @@ export const useAuthStore = defineStore("auth", {
   }),
 
   getters: {
-    isStudent: (state) => state.user?.role === "student",
-    isTeacher: (state) => state.user?.role === "teacher",
-    isAdmin: (state) => state.user?.role === "teacher",
+    isStudent: (state) => state.user?.role === "STUDENT",
+    isTeacher: (state) => state.user?.role === "TEACHER",
+    // isAdmin: (state) => state.user?.role === "ADMIN",
     currentUser: (state) => state.user,
     userRole: (state) => state.user?.role || null,
   },
@@ -135,7 +135,7 @@ export const useAuthStore = defineStore("auth", {
           }`.trim(),
           firstname: tokenPayload.firstname,
           lastname: tokenPayload.lastname,
-          role: tokenPayload.role || "student", // Default to student if not provided
+          role: tokenPayload.role || "STUDENT", // Default to student if not provided
           // avatar: tokenPayload.avatar || "/default-avatar.png",
           avatar: "default-avatar.png",
           program: tokenPayload.program,
@@ -188,7 +188,7 @@ export const useAuthStore = defineStore("auth", {
       email: string,
       password: string,
       confirmPassword: string,
-      role: "student" | "teacher"
+      role: "STUDENT" | "TEACHER"
     ): Promise<void> {
       this.isLoading = true;
       this.error = null;
@@ -290,7 +290,7 @@ export const useAuthStore = defineStore("auth", {
           }`.trim(),
           firstname: tokenPayload.firstname,
           lastname: tokenPayload.lastname,
-          role: tokenPayload.role || role,
+          role: tokenPayload.role || "STUDENT",
           avatar: tokenPayload.avatar,
           program: tokenPayload.program,
           year: tokenPayload.year,
@@ -340,9 +340,10 @@ export const useAuthStore = defineStore("auth", {
           throw new Error("Invalid token format");
         }
 
+        console.log("Token of the user", tokenPayload);
+
         // Check if this is a new user (needs security questions)
         // Backend should include hasSecurityQuestions or isNewUser in the JWT
-        console.log('OAuth Token Payload:', tokenPayload);
 
         // Check multiple possible flags from the token
         const needsQuestions =
@@ -354,8 +355,8 @@ export const useAuthStore = defineStore("auth", {
         // TODO: Remove this override once backend sends proper flag
         this.needsSecurityQuestions = true; // Override for testing
 
-        console.log('Token says needs questions:', needsQuestions);
-        console.log('Actually showing modal:', this.needsSecurityQuestions);
+        console.log("Token says needs questions:", needsQuestions);
+        console.log("Actually showing modal:", this.needsSecurityQuestions);
 
         // Map token payload to User interface
         this.user = {
@@ -366,7 +367,7 @@ export const useAuthStore = defineStore("auth", {
           }`.trim(),
           firstname: tokenPayload.firstname,
           lastname: tokenPayload.lastname,
-          role: tokenPayload.role || "student",
+          role: tokenPayload.role || "STUDENT",
           avatar: tokenPayload.avatar,
           program: tokenPayload.program,
           year: tokenPayload.year,
@@ -596,7 +597,7 @@ export const useAuthStore = defineStore("auth", {
     /**
      * Check if user has specific role
      */
-    hasRole(role: "student" | "teacher"): boolean {
+    hasRole(role: "STUDENT" | "TEACHER"): boolean {
       return this.user?.role === role;
     },
 
@@ -647,59 +648,65 @@ export const useAuthStore = defineStore("auth", {
           throw new Error("Not authenticated");
         }
 
-        console.log('🔵 Submitting security questions...');
+        console.log("🔵 Submitting security questions...");
 
         // TODO: Remove this mock when backend endpoint is ready
         // For now, simulate successful submission for testing
         const USE_MOCK = true; // Set to false when backend is ready
 
         if (USE_MOCK) {
-          console.log('🔵 Using mock response (backend endpoint not ready)');
-          await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
-          console.log('✅ Security questions saved successfully (mocked)');
+          console.log("🔵 Using mock response (backend endpoint not ready)");
+          await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
+          console.log("✅ Security questions saved successfully (mocked)");
         } else {
-          const response = await fetch(`${API_BASE_URL}/users/security-questions`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              securityQuestions: [
-                {
-                  question: answers.question1.question,
-                  answer: answers.question1.answer,
-                },
-                {
-                  question: answers.question2.question,
-                  answer: answers.question2.answer,
-                },
-                {
-                  question: answers.question3.question,
-                  answer: answers.question3.answer,
-                },
-              ],
-            }),
-          });
+          const response = await fetch(
+            `${API_BASE_URL}/users/security-questions`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                securityQuestions: [
+                  {
+                    question: answers.question1.question,
+                    answer: answers.question1.answer,
+                  },
+                  {
+                    question: answers.question2.question,
+                    answer: answers.question2.answer,
+                  },
+                  {
+                    question: answers.question3.question,
+                    answer: answers.question3.answer,
+                  },
+                ],
+              }),
+            }
+          );
 
-          console.log('🔵 Response status:', response.status);
+          console.log("🔵 Response status:", response.status);
 
           if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            console.log('❌ Error response:', errorData);
+            console.log("❌ Error response:", errorData);
             throw new Error(
               errorData.message || "Failed to save security questions"
             );
           }
 
           const responseData = await response.json().catch(() => ({}));
-          console.log('✅ Security questions saved successfully:', responseData);
+          console.log(
+            "✅ Security questions saved successfully:",
+            responseData
+          );
         }
 
         // Mark that security questions are now set
         this.needsSecurityQuestions = false;
       } catch (error) {
-        console.error('❌ Failed to submit security questions:', error);
+        console.error("❌ Failed to submit security questions:", error);
         this.error =
           error instanceof Error
             ? error.message

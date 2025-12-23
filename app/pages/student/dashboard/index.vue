@@ -1,26 +1,64 @@
 <template>
-  <div class="min-h-screen bg-white dark:bg-slate-900">
-    <!-- Header Section -->
-    <div
-      class="py-16 bg-gray-100 dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700"
-    >
-      <UContainer>
-        <div class="flex items-center justify-start gap-4 md:gap-8">
-          <div class="flex flex-col gap-2">
-            <h1
-              class="text-2xl md:text-4xl font-black text-black dark:text-white leading-none"
-            >
-              Welcome back,
-              <span class="text-blue-400">{{ student.name }}</span>
-            </h1>
-            <p class="text-gray-600 dark:text-slate-300">
-              Track and manage your projects
-            </p>
-          </div>
-          <!-- Moved create button to the Recent Projects header for a cleaner layout -->
-        </div>
-      </UContainer>
+  <div class="min-h-screen bg-slate-900">
+    <!-- Loading State for OAuth -->
+    <div v-if="isLoading" class="min-h-screen flex items-center justify-center">
+      <div class="text-center space-y-4">
+        <div
+          class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"
+        ></div>
+        <p class="text-slate-300">Completing sign in...</p>
+      </div>
     </div>
+
+    <!-- Error State -->
+    <div
+      v-else-if="error"
+      class="min-h-screen flex items-center justify-center"
+    >
+      <div class="text-center space-y-4">
+        <div class="text-red-400">
+          <svg
+            class="w-16 h-16 mx-auto"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          <h2 class="text-2xl font-bold mt-4">Authentication Failed</h2>
+          <p class="text-sm mt-2">{{ error }}</p>
+        </div>
+        <NuxtLink
+          to="/login"
+          class="inline-block px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+        >
+          Back to Login
+        </NuxtLink>
+      </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div v-else>
+      <!-- Header Section -->
+      <div class="py-16 bg-blue-600 border-b border-blue-700/30">
+        <UContainer>
+          <div class="flex items-center justify-between">
+            <div class="space-y-2">
+              <h1 class="text-5xl font-black text-white">
+                Welcome back,
+                <span class="text-blue-400">{{ student.name }}</span>
+              </h1>
+              <p class="text-gray-300">Track and manage your projects</p>
+            </div>
+            <ButtonsPresetButton preset="createProject" to="/projects/create" />
+          </div>
+        </UContainer>
+      </div>
 
     <!-- Main Content -->
     <UContainer class="py-12 mx-auto">
@@ -189,84 +227,163 @@
               </NuxtLink>
             </div>
 
-            <!-- Projects Grid -->
-            <div class="grid md:grid-cols-2 gap-4">
-              <div
-                v-for="project in myProjects.slice(0, 4)"
-                :key="project.id"
-                class="p-4 bg-gray-50 dark:bg-slate-700/30 rounded-lg border border-gray-200 dark:border-slate-600/50 group"
-              >
-                <div class="flex items-start justify-between mb-3">
-                  <div class="flex-1">
-                    <h3
-                      class="font-semibold text-black dark:text-white text-sm mb-1"
-                    >
-                      {{ project.title }}
-                    </h3>
-                    <p class="text-xs text-gray-600 dark:text-gray-400">
-                      {{ project.category }}
-                    </p>
-                  </div>
-                  <span
-                    :class="project.statusColor"
-                    class="text-xs font-semibold px-2 py-1 rounded ml-2 shrink-0"
-                  >
-                    {{ project.status }}
-                  </span>
-                </div>
-
-                <div class="space-y-3">
-                  <div
-                    class="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400"
-                  >
-                    <span>Progress</span>
-                    <span>{{ project.progress }}%</span>
-                  </div>
-                  <div
-                    class="w-full bg-gray-300 dark:bg-slate-600 rounded-full h-1.5"
-                  >
-                    <div
-                      :style="{ width: project.progress + '%' }"
-                      class="bg-blue-500 h-1.5 rounded-full"
-                    />
-                  </div>
-                  <div class="flex items-center justify-between">
-                    <span class="text-xs text-gray-500 dark:text-gray-500">
-                      Updated: {{ project.updated }}
-                    </span>
-                    <div class="flex gap-1">
-                      <NuxtLink
-                        :to="`/projects/${project.id}`"
-                        class="text-xs px-2 py-1 bg-blue-500 hover:bg-blue-500 text-white rounded border-none"
+              <div class="grid md:grid-cols-2 gap-4">
+                <div
+                  v-for="project in recentProjects"
+                  :key="project.id"
+                  class="p-4 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition-colors group cursor-pointer border border-slate-600/50 hover:border-blue-500/30"
+                >
+                  <div class="flex items-start justify-between mb-3">
+                    <div>
+                      <p
+                        class="font-semibold text-white group-hover:text-blue-400 transition-colors"
                       >
-                        View
-                      </NuxtLink>
-                      <ButtonsPresetButton
-                        preset="edit"
-                        size="xs"
-                        class="text-xs px-2 py-1 bg-gray-500 hover:bg-gray-500 text-white rounded border-none"
+                        {{ project.title }}
+                      </p>
+                      <p class="text-xs text-gray-400 mt-1">
+                        {{ project.category }}
+                      </p>
+                    </div>
+                    <span
+                      :class="project.statusColor"
+                      class="text-xs font-semibold px-2 py-1 rounded"
+                    >
+                      {{ project.status }}
+                    </span>
+                  </div>
+                  <div class="space-y-2">
+                    <div
+                      class="flex items-center justify-between text-xs text-gray-400"
+                    >
+                      <span>Progress</span>
+                      <span>{{ project.progress }}%</span>
+                    </div>
+                    <div class="w-full bg-slate-600 rounded-full h-1.5">
+                      <div
+                        :style="{ width: project.progress + '%' }"
+                        class="bg-blue-500 h-1.5 rounded-full transition-all"
                       />
                     </div>
+                    <p class="text-xs text-gray-500">
+                      Updated: {{ project.updated }}
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Sidebar -->
-        <div class="space-y-6"></div>
-      </div>
-    </UContainer>
+          <!-- Sidebar -->
+          <div class="space-y-6">
+            <!-- Quick Stats -->
+            <div
+              class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-xl p-6"
+            >
+              <h3 class="text-lg font-bold text-white mb-4">Your Progress</h3>
+              <div class="space-y-4">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-gray-400 text-sm">Completion Rate</span>
+                    <span class="text-white font-bold">75%</span>
+                  </div>
+                  <div class="w-full bg-slate-600 rounded-full h-2">
+                    <div
+                      class="bg-blue-500 h-2 rounded-full"
+                      style="width: 75%"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-gray-400 text-sm">Total Projects</span>
+                    <span class="text-white font-bold">8</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-gray-400 text-sm">Approved</span>
+                    <span class="text-emerald-400 font-bold">6</span>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-gray-400 text-sm">Average Grade</span>
+                    <span class="text-white font-bold">A-</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notifications/Updates -->
+            <div
+              class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-xl p-6"
+            >
+              <h3 class="text-lg font-bold text-white mb-4">Updates</h3>
+              <div class="space-y-3">
+                <div
+                  v-for="update in updates"
+                  :key="update.id"
+                  :class="update.bgColor"
+                  class="p-3 rounded-lg"
+                >
+                  <p class="text-sm text-white font-medium">
+                    {{ update.title }}
+                  </p>
+                  <p class="text-xs text-gray-300 mt-1">{{ update.message }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </UContainer>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useAuthStore } from "~/stores/auth";
 import SparklineChart from "~/components/SparklineChart.vue";
+import { useRouter, useRoute } from "vue-router";
 
 const authStore = useAuthStore();
+const router = useRouter();
+const route = useRoute();
+
+const isLoading = ref(false);
+const error = ref("");
+
+// Handle OAuth token from URL (if coming from OAuth callback)
+onMounted(async () => {
+  try {
+    const token = route.query.token;
+    const refreshToken = route.query.refresh_token;
+
+    if (token) {
+      isLoading.value = true;
+      console.log("Student Dashboard - OAuth Callback - Token:", token);
+
+      // Handle OAuth callback with the token
+      const tokenStr = String(token);
+      const refreshTokenStr = refreshToken ? String(refreshToken) : undefined;
+      await authStore.handleOAuthCallback(tokenStr, refreshTokenStr);
+
+      // Remove token from URL
+      await router.replace({ query: {} });
+
+      isLoading.value = false;
+    }
+  } catch (err) {
+    console.error("Failed to process OAuth token:", err);
+    error.value = err?.message || "Authentication failed. Please try again.";
+    isLoading.value = false;
+
+    // Redirect to login after error
+    setTimeout(() => {
+      router.push("/login");
+    }, 2000);
+  }
+});
 
 // Get student info from auth store
 const student = computed(() => ({

@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     https: {
       key: "./localhost.key",
       cert: "./localhost.crt",
-    }
+    },
   },
   modules: [
     "@nuxt/ui",
@@ -71,7 +71,10 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    apiBase: "http://localhost:3017", // Backend API base URL
+    apiBase: "https://gic-project.darororo.dev", // Backend API base URL (server-side)
+    public: {
+      apiUrl: process.env.NUXT_PUBLIC_API_URL || "https://gic-project.darororo.dev", // Backend API URL (client-side)
+    },
   },
 
   // Auto-import configuration

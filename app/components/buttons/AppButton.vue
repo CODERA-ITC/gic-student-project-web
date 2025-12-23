@@ -97,14 +97,15 @@ const emit = defineEmits<{
 }>();
 
 const iconSize = computed(() => {
-  const sizes = {
+  const sizes: Record<ButtonSize, string> = {
     xs: "w-3 h-3",
     sm: "w-4 h-4",
     md: "w-5 h-5",
     lg: "w-6 h-6",
     xl: "w-7 h-7",
   };
-  return sizes[props.size] || "w-5 h-5";
+  // Ensure consistent rendering on server and client
+  return sizes[props.size];
 });
 
 const handleClick = (event: MouseEvent) => {
