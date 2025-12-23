@@ -267,9 +267,9 @@ const handleLogin = async () => {
 
     console.log("Redirect to:", redirectTo);
 
-    if (redirectTo && typeof redirectTo === "string") {
-      await router.push(redirectTo);
-    }
+    // if (redirectTo && typeof redirectTo === "string") {
+    //   await router.push(redirectTo);
+    // }
 
     if (authStore.isTeacher) {
       await router.push("/teacher/dashboard");
