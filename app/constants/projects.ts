@@ -1,3 +1,5 @@
+import type { Project } from "~/stores/projects";
+
 export const projectsData: Project[] = [
   {
     id: 1,
@@ -44,14 +46,43 @@ export const projectsData: Project[] = [
         image: "https://randomuser.me/api/portraits/women/78.jpg",
       },
     ],
-    roadmap: [
-      "Phase 1: GPT-3 Integration",
-      "Phase 2: Conversation History",
-      "Phase 3: Multi-language Support",
-      "Phase 4: Production Deployment",
+    features: [
+      {
+        date: "Sep 1, 2024",
+        title: "GPT-3 Integration",
+        description:
+          "Set up GPT-3 API integration and basic chatbot framework with Python backend.",
+        icon: "i-lucide-brain",
+        status: "done",
+      },
+      {
+        date: "Sep 15, 2024",
+        title: "Conversation History",
+        description:
+          "Implemented conversation persistence and user session management with MongoDB.",
+        icon: "i-lucide-message-circle",
+        status: "done",
+      },
+      {
+        date: "Oct 1, 2024",
+        title: "Multi-language Support",
+        description:
+          "Added support for multiple languages and improved response accuracy.",
+        icon: "i-lucide-globe",
+        status: "done",
+      },
+      {
+        date: "Oct 15, 2024",
+        title: "Production Deployment",
+        description:
+          "Successfully deployed to production with monitoring and analytics dashboard.",
+        icon: "i-lucide-rocket",
+        status: "done",
+      },
     ],
     duration: "3 months",
     course: "Advanced AI & Machine Learning",
+    visibility: "public",
   },
 
   {
@@ -94,14 +125,43 @@ export const projectsData: Project[] = [
         image: "https://randomuser.me/api/portraits/men/67.jpg",
       },
     ],
-    roadmap: [
-      "Phase 1: Core Features",
-      "Phase 2: Social Integration",
-      "Phase 3: Wearable Sync",
-      "Phase 4: Launch",
+    features: [
+      {
+        date: "Aug 20, 2024",
+        title: "Core Features",
+        description:
+          "Developed workout tracking, nutrition logging, and health metrics dashboard.",
+        icon: "i-lucide-activity",
+        status: "done",
+      },
+      {
+        date: "Sep 10, 2024",
+        title: "Social Integration",
+        description:
+          "Added friend connections, workout sharing, and community challenges.",
+        icon: "i-lucide-users",
+        status: "done",
+      },
+      {
+        date: "Oct 5, 2024",
+        title: "Wearable Sync",
+        description:
+          "Integrated with HealthKit and popular fitness wearables for automatic data sync.",
+        icon: "i-lucide-watch",
+        status: "ongoing",
+      },
+      {
+        date: "Nov 1, 2024",
+        title: "Launch",
+        description:
+          "Final testing, app store submission, and public launch preparation.",
+        icon: "i-lucide-rocket",
+        status: "pending",
+      },
     ],
     duration: "4 months",
     course: "Mobile App Development",
+    visibility: "public",
   },
 
   {
@@ -153,14 +213,43 @@ export const projectsData: Project[] = [
         image: "https://randomuser.me/api/portraits/women/12.jpg",
       },
     ],
-    roadmap: [
-      "Phase 1: Product Catalog",
-      "Phase 2: Payment Integration",
-      "Phase 3: Analytics Dashboard",
-      "Phase 4: Production Launch",
+    features: [
+      {
+        date: "May 1, 2024",
+        title: "Product Catalog",
+        description:
+          "Built product management system with categories, search, and inventory tracking.",
+        icon: "i-lucide-package",
+        status: "done",
+      },
+      {
+        date: "Jun 15, 2024",
+        title: "Payment Integration",
+        description:
+          "Integrated Stripe payment processing with cart management and order flow.",
+        icon: "i-lucide-credit-card",
+        status: "done",
+      },
+      {
+        date: "Jul 20, 2024",
+        title: "Analytics Dashboard",
+        description:
+          "Developed admin dashboard with sales analytics, user insights, and reporting.",
+        icon: "i-lucide-bar-chart",
+        status: "done",
+      },
+      {
+        date: "Aug 10, 2024",
+        title: "Production Launch",
+        description:
+          "Deployed to production with monitoring, security hardening, and performance optimization.",
+        icon: "i-lucide-globe",
+        status: "done",
+      },
     ],
     duration: "6 months",
     course: "Full Stack Web Development",
+    visibility: "public",
   },
 
   {
@@ -203,14 +292,43 @@ export const projectsData: Project[] = [
         image: "https://randomuser.me/api/portraits/men/25.jpg",
       },
     ],
-    roadmap: [
-      "Phase 1: Sensor Setup",
-      "Phase 2: Data Collection",
-      "Phase 3: Dashboard",
-      "Phase 4: Deployment",
+    features: [
+      {
+        date: "Feb 1, 2024",
+        title: "Sensor Setup",
+        description:
+          "Deployed IoT sensors for temperature, humidity, and air quality monitoring.",
+        icon: "i-lucide-thermometer",
+        status: "done",
+      },
+      {
+        date: "Mar 15, 2024",
+        title: "Data Collection",
+        description:
+          "Implemented data aggregation system with real-time sensor data streaming.",
+        icon: "i-lucide-database",
+        status: "done",
+      },
+      {
+        date: "Apr 20, 2024",
+        title: "Dashboard",
+        description:
+          "Built interactive dashboard with data visualization and alert system.",
+        icon: "i-lucide-monitor",
+        status: "ongoing",
+      },
+      {
+        date: "May 30, 2024",
+        title: "Deployment",
+        description:
+          "System deployment and integration with environmental monitoring networks.",
+        icon: "i-lucide-cloud",
+        status: "pending",
+      },
     ],
     duration: "5 months",
     course: "IoT & Environmental Tech",
+    visibility: "private",
   },
 
   {
@@ -257,11 +375,39 @@ export const projectsData: Project[] = [
         image: "https://randomuser.me/api/portraits/men/44.jpg",
       },
     ],
-    roadmap: [
-      "Phase 1: Pipeline Architecture",
-      "Phase 2: Data Processing",
-      "Phase 3: Model Training",
-      "Phase 4: Deployment",
+    features: [
+      {
+        date: "Jan 15, 2024",
+        title: "Pipeline Architecture",
+        description:
+          "Designed scalable ML pipeline architecture using Apache Airflow and Docker.",
+        icon: "i-lucide-git-branch",
+        status: "done",
+      },
+      {
+        date: "Feb 20, 2024",
+        title: "Data Processing",
+        description:
+          "Implemented automated data cleaning, validation, and feature engineering modules.",
+        icon: "i-lucide-filter",
+        status: "done",
+      },
+      {
+        date: "Mar 25, 2024",
+        title: "Model Training",
+        description:
+          "Built automated model training with hyperparameter tuning and validation.",
+        icon: "i-lucide-brain",
+        status: "done",
+      },
+      {
+        date: "Apr 30, 2024",
+        title: "Deployment",
+        description:
+          "Deployed ML pipeline to production with monitoring and automated retraining.",
+        icon: "i-lucide-server",
+        status: "done",
+      },
     ],
     duration: "5 months",
     course: "Machine Learning Systems",
@@ -307,11 +453,39 @@ export const projectsData: Project[] = [
         image: "https://randomuser.me/api/portraits/men/75.jpg",
       },
     ],
-    roadmap: [
-      "Phase 1: OAuth Integration",
-      "Phase 2: Multi-platform Support",
-      "Phase 3: Analytics",
-      "Phase 4: Launch",
+    features: [
+      {
+        date: "Aug 1, 2023",
+        title: "OAuth Integration",
+        description:
+          "Implemented OAuth authentication for major social media platforms.",
+        icon: "i-lucide-key",
+        status: "done",
+      },
+      {
+        date: "Sep 15, 2023",
+        title: "Multi-platform Support",
+        description:
+          "Added support for Twitter, Facebook, Instagram, and LinkedIn APIs.",
+        icon: "i-lucide-share-2",
+        status: "done",
+      },
+      {
+        date: "Oct 20, 2023",
+        title: "Analytics",
+        description:
+          "Built engagement analytics and performance tracking dashboard.",
+        icon: "i-lucide-trending-up",
+        status: "done",
+      },
+      {
+        date: "Nov 30, 2023",
+        title: "Launch",
+        description:
+          "Public launch with user onboarding and customer support system.",
+        icon: "i-lucide-rocket",
+        status: "done",
+      },
     ],
     duration: "4 months",
     course: "Advanced Web Applications",
@@ -361,11 +535,39 @@ export const projectsData: Project[] = [
         image: "https://randomuser.me/api/portraits/men/36.jpg",
       },
     ],
-    roadmap: [
-      "Phase 1: Data Connectors",
-      "Phase 2: Visualization Engine",
-      "Phase 3: Report Builder",
-      "Phase 4: Production",
+    features: [
+      {
+        date: "May 1, 2023",
+        title: "Data Connectors",
+        description:
+          "Built connectors for databases, APIs, and file sources with real-time sync.",
+        icon: "i-lucide-plug",
+        status: "done",
+      },
+      {
+        date: "Jun 15, 2023",
+        title: "Visualization Engine",
+        description:
+          "Developed interactive charts, graphs, and custom visualization components.",
+        icon: "i-lucide-bar-chart-3",
+        status: "done",
+      },
+      {
+        date: "Jul 30, 2023",
+        title: "Report Builder",
+        description:
+          "Created drag-and-drop report builder with automated scheduling.",
+        icon: "i-lucide-file-text",
+        status: "done",
+      },
+      {
+        date: "Aug 31, 2023",
+        title: "Production",
+        description:
+          "Deployed platform with enterprise security and scalability features.",
+        icon: "i-lucide-server",
+        status: "done",
+      },
     ],
     duration: "5 months",
     course: "Data Visualization & Analytics",
@@ -406,6 +608,40 @@ export const projectsData: Project[] = [
       {
         name: "Sophie Chen",
         image: "https://randomuser.me/api/portraits/women/33.jpg",
+      },
+    ],
+    features: [
+      {
+        date: "Feb 1, 2024",
+        title: "Hardware Setup",
+        description:
+          "Set up Arduino controllers, sensors, and smart device integration framework.",
+        icon: "i-lucide-cpu",
+        status: "done",
+      },
+      {
+        date: "Mar 15, 2024",
+        title: "Mobile App Development",
+        description:
+          "Built React Native app for remote control and monitoring of home systems.",
+        icon: "i-lucide-smartphone",
+        status: "done",
+      },
+      {
+        date: "Apr 20, 2024",
+        title: "MQTT Integration",
+        description:
+          "Implemented real-time communication between devices using MQTT protocol.",
+        icon: "i-lucide-wifi",
+        status: "done",
+      },
+      {
+        date: "May 20, 2024",
+        title: "System Deployment",
+        description:
+          "Deployed complete home automation system with cloud monitoring.",
+        icon: "i-lucide-home",
+        status: "done",
       },
     ],
     duration: "4 months",
@@ -452,6 +688,40 @@ export const projectsData: Project[] = [
         image: "https://randomuser.me/api/portraits/men/29.jpg",
       },
     ],
+    features: [
+      {
+        date: "Aug 1, 2023",
+        title: "Smart Contract Development",
+        description:
+          "Developed secure voting smart contracts using Solidity with vote verification.",
+        icon: "i-lucide-shield-check",
+        status: "done",
+      },
+      {
+        date: "Sep 15, 2023",
+        title: "Web3 Integration",
+        description:
+          "Integrated Web3.js for blockchain interaction and wallet connectivity.",
+        icon: "i-lucide-link",
+        status: "done",
+      },
+      {
+        date: "Oct 30, 2023",
+        title: "IPFS Storage",
+        description:
+          "Implemented decentralized storage for candidate information and voting records.",
+        icon: "i-lucide-database",
+        status: "done",
+      },
+      {
+        date: "Dec 10, 2023",
+        title: "Security Audit",
+        description:
+          "Completed comprehensive security testing and deployed to Ethereum testnet.",
+        icon: "i-lucide-lock",
+        status: "done",
+      },
+    ],
     duration: "6 months",
     course: "Distributed Systems",
   },
@@ -488,8 +758,46 @@ export const projectsData: Project[] = [
         image: "https://randomuser.me/api/portraits/women/67.jpg",
       },
       {
-        name: "Oliver Brown",
-        image: "https://randomuser.me/api/portraits/men/38.jpg",
+        name: "Tom Anderson",
+        image: "https://randomuser.me/api/portraits/men/48.jpg",
+      },
+      {
+        name: "Lisa Wang",
+        image: "https://randomuser.me/api/portraits/women/52.jpg",
+      },
+    ],
+    features: [
+      {
+        date: "Jan 15, 2024",
+        title: "AR Foundation Setup",
+        description:
+          "Set up Unity AR Foundation with ARCore for Android device compatibility.",
+        icon: "i-lucide-eye",
+        status: "done",
+      },
+      {
+        date: "Feb 20, 2024",
+        title: "3D Model Integration",
+        description:
+          "Created and integrated 3D product models with realistic textures and lighting.",
+        icon: "i-lucide-box",
+        status: "done",
+      },
+      {
+        date: "Mar 15, 2024",
+        title: "Try-On Features",
+        description:
+          "Implementing virtual try-on functionality for clothing and accessories.",
+        icon: "i-lucide-user",
+        status: "ongoing",
+      },
+      {
+        date: "Apr 30, 2024",
+        title: "E-commerce Integration",
+        description:
+          "Integration with shopping platforms for seamless purchase experience.",
+        icon: "i-lucide-shopping-cart",
+        status: "pending",
       },
     ],
     duration: "5 months",
@@ -534,6 +842,40 @@ export const projectsData: Project[] = [
       {
         name: "Thomas Anderson",
         image: "https://randomuser.me/api/portraits/men/47.jpg",
+      },
+    ],
+    features: [
+      {
+        date: "Aug 1, 2024",
+        title: "Data Collection",
+        description:
+          "Set up data pipelines to collect stock market data and financial indicators.",
+        icon: "i-lucide-database",
+        status: "done",
+      },
+      {
+        date: "Sep 15, 2024",
+        title: "Algorithm Development",
+        description:
+          "Developed LSTM and Random Forest models for price prediction analysis.",
+        icon: "i-lucide-brain",
+        status: "done",
+      },
+      {
+        date: "Oct 20, 2024",
+        title: "Model Training",
+        description:
+          "Trained models on historical data with hyperparameter optimization.",
+        icon: "i-lucide-trending-up",
+        status: "done",
+      },
+      {
+        date: "Nov 5, 2024",
+        title: "Dashboard Launch",
+        description:
+          "Deployed prediction dashboard with real-time market analysis.",
+        icon: "i-lucide-monitor",
+        status: "done",
       },
     ],
     duration: "4 months",
@@ -742,6 +1084,56 @@ export const projectsData: Project[] = [
       {
         name: "Alex Thompson",
         image: "https://randomuser.me/api/portraits/men/31.jpg",
+      },
+    ],
+    features: [
+      {
+        date: "Mar 15, 2024",
+        title: "Project Kickoff",
+        description:
+          "Kicked off the project with team alignment. Set up project milestones and allocated resources.",
+        icon: "i-lucide-rocket",
+        status: "done",
+      },
+      {
+        date: "Apr 2, 2024",
+        title: "VR Environment Setup",
+        description:
+          "Configured Unity VR development environment and integrated Oculus SDK for headset compatibility.",
+        icon: "i-lucide-headphones",
+        status: "done",
+      },
+      {
+        date: "May 10, 2024",
+        title: "Museum Asset Creation",
+        description:
+          "Created 3D models of historical artifacts using Blender. Optimized models for VR performance.",
+        icon: "i-lucide-box",
+        status: "done",
+      },
+      {
+        date: "Jun 15, 2024",
+        title: "Interactive Systems",
+        description:
+          "Implementing interaction systems for artifact examination and information display panels.",
+        icon: "i-lucide-hand",
+        status: "ongoing",
+      },
+      {
+        date: "Jul 20, 2024",
+        title: "Multiplayer Integration",
+        description:
+          "Adding Photon networking to enable multiple users to explore the museum together.",
+        icon: "i-lucide-users",
+        status: "pending",
+      },
+      {
+        date: "Aug 30, 2024",
+        title: "Final Testing & Polish",
+        description:
+          "Comprehensive testing across different VR headsets and final performance optimizations.",
+        icon: "i-lucide-check-circle",
+        status: "pending",
       },
     ],
     duration: "5 months",

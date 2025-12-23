@@ -92,9 +92,10 @@ export const useAuthStore = defineStore("auth", {
       }
 
       // Otherwise, determine role from email and create a generic user
-      const role: "student" | "teacher" = email.includes("teacher")
-        ? "teacher"
-        : "student";
+      const role: "student" | "teacher" =
+        email.endsWith("@teacher") || email.includes("teacher")
+          ? "teacher"
+          : "student";
 
       return {
         id: role === "student" ? "STU999" : "TCH999",

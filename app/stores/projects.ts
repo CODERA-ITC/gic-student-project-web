@@ -11,6 +11,14 @@ export interface ProjectAuthor {
   year: string;
 }
 
+export interface FeatureItem {
+  date: string;
+  title: string;
+  description: string;
+  icon: string;
+  status: "pending" | "ongoing" | "done";
+}
+
 export interface Project {
   id: number;
   title: string;
@@ -29,9 +37,17 @@ export interface Project {
   createdAt: string;
   tags: string[];
   members?: { name: string; image: string }[];
-  roadmap?: string[];
+  features?: FeatureItem[];
   duration?: string;
   course?: string;
+  progress?: number;
+  visibility?: "public" | "private";
+  submissions?: {
+    id: number;
+    title: string;
+    date: string;
+    status: string;
+  }[];
 }
 
 export interface ProjectStats {
@@ -40,6 +56,7 @@ export interface ProjectStats {
   inProgress: number;
   totalLikes: number;
   totalViews: number;
+  totalTeamMembers: number;
 }
 
 export interface PaginationState {
@@ -51,6 +68,7 @@ export interface PaginationState {
 
 export interface ProjectState {
   projects: Project[];
+  userProjects: Project[];
   availableCategories: string[];
   availableTags: { label: string; value: string }[];
   likedProjects: Set<number>;
@@ -68,6 +86,7 @@ export interface ProjectState {
 export const useProjectStore = defineStore("projects", {
   state: (): ProjectState => ({
     projects: [],
+    userProjects: [],
     availableCategories: ["All"],
     availableTags: [],
     likedProjects: new Set(),
@@ -120,6 +139,10 @@ export const useProjectStore = defineStore("projects", {
           .length,
         totalLikes: this.projects.reduce((sum, p) => sum + p.likes, 0),
         totalViews: this.projects.reduce((sum, p) => sum + p.views, 0),
+        totalTeamMembers: this.projects.reduce(
+          (sum, p) => sum + (p.members?.length || 0),
+          0
+        ),
       };
     },
   },
@@ -164,6 +187,29 @@ export const useProjectStore = defineStore("projects", {
             tags: ["ai", "chatbot", "customer-support"],
             duration: "3 months",
             course: "Advanced AI & Machine Learning",
+            features: [
+              {
+                title: "Natural Language Processing",
+                description: "Advanced NLP for understanding user queries",
+                date: "2024-09-01",
+                icon: "i-heroicons-chat-bubble-left-right",
+                status: "done" as const,
+              },
+              {
+                title: "Knowledge Base Integration",
+                description: "Connect to existing FAQ and documentation",
+                date: "2024-09-15",
+                icon: "i-heroicons-book-open",
+                status: "done" as const,
+              },
+              {
+                title: "Analytics Dashboard",
+                description: "Track conversation metrics and user satisfaction",
+                date: "2024-10-01",
+                icon: "i-heroicons-chart-bar",
+                status: "ongoing" as const,
+              },
+            ],
           },
 
           {
@@ -193,9 +239,31 @@ export const useProjectStore = defineStore("projects", {
             ],
             createdAt: "2024-09-22",
             tags: ["fitness", "mobile", "health"],
-
             duration: "4 months",
             course: "Mobile App Development",
+            features: [
+              {
+                title: "Workout Tracking",
+                description: "Log and track various types of workouts",
+                date: "2024-08-15",
+                icon: "i-heroicons-trophy",
+                status: "done" as const,
+              },
+              {
+                title: "Nutrition Logging",
+                description: "Track daily meals and calorie intake",
+                date: "2024-09-01",
+                icon: "i-heroicons-heart",
+                status: "ongoing" as const,
+              },
+              {
+                title: "Social Features",
+                description: "Share progress with friends and community",
+                date: "2024-10-15",
+                icon: "i-heroicons-user-group",
+                status: "pending" as const,
+              },
+            ],
           },
           {
             id: 3,
@@ -255,6 +323,8 @@ export const useProjectStore = defineStore("projects", {
           "Artificial Intelligence",
           "Mobile Development",
           "Web Development",
+          "Web",
+          "Productivity",
           "Health Tech",
           "Data Science",
         ];
@@ -295,14 +365,27 @@ export const useProjectStore = defineStore("projects", {
 
     // 2. fetch Projects data from server
 
-    async fetchProjects(): Promise<Project[]> {
+    async fetchProjects(includePrivate = false): Promise<Project[]> {
       this.loading = true;
       try {
         // simulate network delay
         // await new Promise((resolve) => setTimeout(resolve, 100));
         // return current projects (in a real app this would come from an API)
 
-        const projects: Project[] = projectsData;
+        let projects: Project[] = projectsData;
+
+        // Add default visibility to projects that don't have it
+        projects = projects.map((project) => ({
+          ...project,
+          visibility: project.visibility || "public", // Default to public if not set
+        }));
+
+        // Filter by visibility - only show public projects for general users
+        if (!includePrivate) {
+          projects = projects.filter(
+            (project) => project.visibility !== "private"
+          );
+        }
 
         // Update pagination state
         this.pagination.totalItems = projects.length;
@@ -645,6 +728,258 @@ export const useProjectStore = defineStore("projects", {
       );
 
       return filtered.slice(start, end);
+    },
+
+    // Create new project
+    async createProject(
+      projectData: Omit<Project, "id" | "createdAt" | "likes" | "views">
+    ): Promise<Project> {
+      // Generate new ID
+      const newId = Math.max(...this.projects.map((p) => p.id)) + 1;
+
+      // Create new project with defaults
+      const newProject: Project = {
+        ...projectData,
+        id: newId,
+        createdAt: new Date().toISOString().split("T")[0],
+        likes: 0,
+        views: 0,
+        visibility: projectData.visibility || "public", // Default to public
+      };
+
+      // Add to both projects arrays
+      this.projects.unshift(newProject); // Add to beginning
+      this.userProjects.unshift(newProject); // Add to user projects as well
+
+      // Update pagination
+      this.pagination.totalItems = this.projects.length;
+      this.pagination.totalPages = Math.ceil(
+        this.projects.length / this.pagination.itemsPerPage
+      );
+
+      // In real app, this would sync with backend
+      // await api.createProject(newProject);
+
+      return newProject;
+    },
+
+    // Fetch user's projects
+    async fetchUserProjects(): Promise<void> {
+      this.loading = true;
+      try {
+        const authStore = useAuthStore();
+        if (!authStore.user) {
+          throw new Error("User not authenticated");
+        }
+
+        // In real app, this would be an API call
+        // For demo, filter existing projects by author
+        this.userProjects = this.projects.filter(
+          (project) => project.author?.name === authStore.user?.name
+        );
+
+        // Add some mock user projects if none exist
+        if (this.userProjects.length === 0) {
+          const mockUserProjects: Project[] = [
+            {
+              id: 1001,
+              title: "Personal Portfolio Website",
+              description:
+                "A responsive portfolio website showcasing my projects and skills",
+              category: "Web",
+              semester: "Semester 1, 2024",
+              status: "Completed" as const,
+              featured: false,
+              likes: 15,
+              views: 234,
+              demoUrl: "https://portfolio.demo.com",
+              githubUrl: "https://github.com/user/portfolio",
+              images: [
+                "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=500&auto=format&fit=crop&q=60",
+                "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&auto=format&fit=crop&q=60",
+              ],
+              createdAt: "2024-01-15",
+              tags: ["Vue.js", "Nuxt", "TailwindCSS"],
+              technologies: ["Vue.js", "Nuxt", "TailwindCSS", "TypeScript"],
+              author: {
+                name: authStore.user?.name || "Student",
+                avatar:
+                  authStore.user?.avatar ||
+                  "https://randomuser.me/api/portraits/men/1.jpg",
+                program: "Computer Science",
+                year: "2024",
+              },
+              duration: "3 months",
+              course: "Web Development",
+              progress: 100,
+              visibility: "public",
+              members: [
+                {
+                  name: "Alex Johnson",
+                  image: "https://randomuser.me/api/portraits/men/5.jpg",
+                },
+                {
+                  name: "Emily Davis",
+                  image: "https://randomuser.me/api/portraits/women/7.jpg",
+                },
+              ],
+              submissions: [
+                {
+                  id: 1,
+                  title: "Final Submission",
+                  date: "2024-01-15",
+                  status: "Approved",
+                },
+              ],
+            },
+            {
+              id: 1002,
+              title: "Task Management App",
+              description:
+                "A collaborative task management application with real-time updates",
+              category: "Productivity",
+              semester: "Semester 2, 2024",
+              status: "In Progress" as const,
+              featured: false,
+              likes: 8,
+              views: 127,
+              demoUrl: "https://taskapp.demo.com",
+              githubUrl: "https://github.com/user/task-manager",
+              images: [
+                "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=500&auto=format&fit=crop&q=60",
+              ],
+              createdAt: "2024-09-01",
+              tags: ["React", "Node.js", "MongoDB"],
+              technologies: ["React", "Node.js", "MongoDB", "Socket.io"],
+              author: {
+                name: authStore.user?.name || "Student",
+                avatar:
+                  authStore.user?.avatar ||
+                  "https://randomuser.me/api/portraits/men/1.jpg",
+                program: "Computer Science",
+                year: "2024",
+              },
+              duration: "4 months",
+              course: "Full Stack Development",
+              progress: 75,
+              visibility: "private",
+              members: [
+                {
+                  name: "Sarah Wilson",
+                  image: "https://randomuser.me/api/portraits/women/12.jpg",
+                },
+                {
+                  name: "Michael Brown",
+                  image: "https://randomuser.me/api/portraits/men/8.jpg",
+                },
+                {
+                  name: "Jessica Lee",
+                  image: "https://randomuser.me/api/portraits/women/15.jpg",
+                },
+              ],
+              features: [
+                {
+                  title: "User Authentication",
+                  description: "Secure login and registration system",
+                  date: "2024-09-15",
+                  icon: "i-heroicons-lock-closed",
+                  status: "done" as const,
+                },
+                {
+                  title: "Task Management",
+                  description: "Create, edit, and organize tasks",
+                  date: "2024-10-01",
+                  icon: "i-heroicons-clipboard-document-list",
+                  status: "ongoing" as const,
+                },
+                {
+                  title: "Real-time Collaboration",
+                  description: "Live updates for team members",
+                  date: "2024-11-01",
+                  icon: "i-heroicons-users",
+                  status: "pending" as const,
+                },
+              ],
+            },
+          ];
+
+          this.userProjects = mockUserProjects;
+        }
+      } catch (error) {
+        console.error("Failed to fetch user projects:", error);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // Get project by ID (works for both public and user projects)
+    async getProjectById(id: number): Promise<Project | null> {
+      // First try to find in user projects
+      let project = this.userProjects.find(
+        (p) => p.id === parseInt(id.toString())
+      );
+
+      // If not found, try in all projects
+      if (!project) {
+        project = this.projects.find((p) => p.id === parseInt(id.toString()));
+      }
+
+      return project || null;
+    },
+
+    // Update project status
+    async updateProjectStatus(
+      projectId: number,
+      status: string
+    ): Promise<void> {
+      // Update in user projects
+      const userProject = this.userProjects.find((p) => p.id === projectId);
+      if (userProject) {
+        userProject.status = status as any;
+      }
+
+      // Update in all projects
+      const project = this.projects.find((p) => p.id === projectId);
+      if (project) {
+        project.status = status as any;
+      }
+
+      // In real app, sync with backend
+      // await api.updateProjectStatus(projectId, status);
+    },
+
+    // Update project fields
+    async updateProject(
+      projectId: number,
+      updates: Partial<Project>
+    ): Promise<void> {
+      // Update in user projects
+      const userProjectIndex = this.userProjects.findIndex(
+        (p) => p.id === projectId
+      );
+      if (userProjectIndex !== -1) {
+        this.userProjects[userProjectIndex] = {
+          ...this.userProjects[userProjectIndex],
+          ...updates,
+        };
+      }
+
+      // Update in all projects
+      const projectIndex = this.projects.findIndex((p) => p.id === projectId);
+      if (projectIndex !== -1) {
+        this.projects[projectIndex] = {
+          ...this.projects[projectIndex],
+          ...updates,
+        };
+      }
+
+      // In real app, sync with backend
+      // await api.updateProject(projectId, updates);
+    },
+
+    // Get next available project ID
+    getNextProjectId(): number {
+      return Math.max(...this.projects.map((p) => p.id)) + 1;
     },
   },
 });

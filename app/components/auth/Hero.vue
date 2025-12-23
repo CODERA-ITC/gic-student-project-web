@@ -1,7 +1,8 @@
 <!-- components/Auth/Hero.vue -->
 <template>
     <div
-        class="hidden lg:block lg:w-1/2 relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
+        @click="backToPrevious" 
+        class="hidden lg:block lg:w-1/2 relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden hover:cursor-pointer">
         <div class="absolute inset-0 bg-cover bg-center opacity-30"
             style="background-image: url('/images/ITCcampus.png'); background-size: 160%;"></div>
 
@@ -21,3 +22,11 @@
         <div class="absolute bottom-20 left-20 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
     </div>
 </template>
+
+<script lang="ts" setup>
+const backToPrevious = () => {
+    window.history.back();
+};
+
+
+</script>
