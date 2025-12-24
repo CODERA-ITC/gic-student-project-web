@@ -172,8 +172,8 @@
           <template v-else>
             <ButtonsPresetButton
               preset="signin"
-              to="/login"
               class="w-full"
+              size="md"
               @click="mobileMenuOpen = false"
             />
           </template>

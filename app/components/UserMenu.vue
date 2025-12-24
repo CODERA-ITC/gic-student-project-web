@@ -13,15 +13,20 @@
     <div v-if="isAuthenticated" class="relative">
       <!-- User Button -->
       <button
-        class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+        class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors duration-200"
         @click="menuOpen = !menuOpen"
       >
         <!-- Avatar -->
-        <img
-          :src="user.avatar || '/default-avatar.png'"
-          :alt="user.name"
-          class="w-8 h-8 rounded-full object-cover border border-gray-300"
-        />
+        <div v-if="user.avatar" class="w-8 h-8 rounded-full overflow-hidden border border-gray-300 dark:border-slate-600">
+          <img
+            :src="user.avatar"
+            :alt="user.name"
+            class="w-full h-full object-cover"
+          />
+        </div>
+        <div v-else class="w-8 h-8 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center border border-gray-300 dark:border-slate-600">
+          <span class="text-xs font-semibold text-white">{{ getInitials(user.name) }}</span>
+        </div>
         <!-- Name and Role Badge -->
         <div class="hidden sm:block text-left">
           <p class="text-sm font-medium text-gray-900">{{ user.name }}</p>
@@ -149,14 +154,6 @@
             <UIcon name="i-heroicons-user-circle-20-solid" class="w-4 h-4" />
             Profile Settings
           </NuxtLink>
-          <NuxtLink
-            to="/preferences"
-            class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-            @click="closeMenu"
-          >
-            <UIcon name="i-heroicons-cog-6-tooth-20-solid" class="w-4 h-4" />
-            Preferences
-          </NuxtLink>
 
           <!-- Sign Out -->
           <hr class="border-gray-200" />
@@ -227,6 +224,15 @@ const getRoleBadgeClass = (role: string): string => {
     admin: "bg-red-100 text-red-700",
   };
   return classMap[role] || "bg-gray-100 text-gray-700";
+};
+
+const getInitials = (name: string): string => {
+  if (!name) return "U";
+  const parts = name.trim().split(" ");
+  if (parts.length === 1) {
+    return parts[0].substring(0, 2).toUpperCase();
+  }
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 };
 
 const closeMenu = () => {

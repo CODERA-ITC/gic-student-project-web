@@ -293,6 +293,12 @@ export const BUTTON_PRESETS = {
     variant: "ghost",
     size: "md",
   },
+  secondary: {
+    label: "Secondary",
+    color: "secondary",
+    variant: "outline",
+    size: "md",
+  },
   delete: {
     label: "Delete",
     icon: "i-heroicons-trash",

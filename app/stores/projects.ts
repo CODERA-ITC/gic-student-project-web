@@ -407,7 +407,8 @@ export const useProjectStore = defineStore("projects", {
       try {
         // simulate network delay
         // await new Promise((resolve) => setTimeout(resolve, 100));
-        // return current projects (in a real app this would come from an API)
+        // return current projects (in a real app this would come from an API)\
+        
 
         // Only load from projectsData if projects array is empty (initial load)
         if (this.projects.length === 0) {

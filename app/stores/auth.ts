@@ -25,8 +25,6 @@ export interface AuthState {
   needsSecurityQuestions: boolean;
 }
 
-const API_BASE_URL = "https://gic-project.darororo.dev";
-
 export const useAuthStore = defineStore("auth", {
   state: (): AuthState => ({
     user: null,
@@ -64,8 +62,8 @@ export const useAuthStore = defineStore("auth", {
           throw new Error("Invalid email format");
         }
 
-        // Call real API
-        const response = await fetch(`${API_BASE_URL}/users/login`, {
+        // Call real API via proxy
+        const response = await fetch("/api/users/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -119,28 +117,8 @@ export const useAuthStore = defineStore("auth", {
           localStorage.setItem("refresh_token", data.refresh_token);
         }
 
-        // Decode JWT to get user info (basic decode, not validation)
-        const tokenPayload = this.decodeJWT(data.access_token);
-
-        if (!tokenPayload) {
-          throw new Error("Invalid token format");
-        }
-
-        // Map token payload to User interface
-        this.user = {
-          id: tokenPayload.id,
-          email: tokenPayload.email,
-          name: `${tokenPayload.firstname || ""} ${
-            tokenPayload.lastname || ""
-          }`.trim(),
-          firstname: tokenPayload.firstname,
-          lastname: tokenPayload.lastname,
-          role: tokenPayload.role || "STUDENT", // Default to student if not provided
-          // avatar: tokenPayload.avatar || "/default-avatar.png",
-          avatar: "default-avatar.png",
-          program: tokenPayload.program,
-          year: tokenPayload.year,
-        };
+        // Fetch complete user details from API
+        await this.fetchCurrentUser();
 
         this.isAuthenticated = true;
       } catch (error) {
@@ -177,6 +155,56 @@ export const useAuthStore = defineStore("auth", {
       } catch (error) {
         console.error("Failed to decode JWT:", error);
         return null;
+      }
+    },
+
+    /**
+     * Fetch current user details from API
+     */
+    async fetchCurrentUser(): Promise<void> {
+      try {
+        const token = this.getToken();
+        if (!token) {
+          throw new Error("No authentication token");
+        }
+
+        const response = await fetch("/api/users/current", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        console.log(response);
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch user details");
+        }
+
+        const responseData = await response.json();
+
+        // if (!responseData.success || !responseData.data) {
+        //   throw new Error("Invalid response from server");
+        // }
+
+        const userData = responseData.data;
+
+        // Map API response to User interface
+        this.user = {
+          id: userData.id,
+          email: userData.email,
+          name: `${userData.firstname || ""} ${userData.lastname || ""}`.trim(),
+          firstname: userData.firstname,
+          lastname: userData.lastname,
+          role: userData.role || "STUDENT",
+          avatar: userData.avatar || undefined,
+          program: userData.program,
+          year: userData.year,
+        };
+      } catch (error) {
+        console.error("Failed to fetch current user:", error);
+        throw error;
       }
     },
 
@@ -222,8 +250,8 @@ export const useAuthStore = defineStore("auth", {
         const firstname = nameParts[0];
         const lastname = nameParts.slice(1).join(" ") || "";
 
-        // Call real API
-        const response = await fetch(`${API_BASE_URL}/users/register`, {
+        // Call real API via proxy
+        const response = await fetch("/api/users/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -274,27 +302,8 @@ export const useAuthStore = defineStore("auth", {
           localStorage.setItem("refresh_token", data.refresh_token);
         }
 
-        // Decode JWT to get user info
-        const tokenPayload = this.decodeJWT(data.access_token);
-
-        if (!tokenPayload) {
-          throw new Error("Invalid token format");
-        }
-
-        // Map token payload to User interface
-        this.user = {
-          id: tokenPayload.id,
-          email: tokenPayload.email,
-          name: `${tokenPayload.firstname || ""} ${
-            tokenPayload.lastname || ""
-          }`.trim(),
-          firstname: tokenPayload.firstname,
-          lastname: tokenPayload.lastname,
-          role: tokenPayload.role || "STUDENT",
-          avatar: tokenPayload.avatar,
-          program: tokenPayload.program,
-          year: tokenPayload.year,
-        };
+        // Fetch complete user details from API
+        await this.fetchCurrentUser();
 
         this.isAuthenticated = true;
       } catch (error) {
@@ -358,20 +367,8 @@ export const useAuthStore = defineStore("auth", {
         console.log("Token says needs questions:", needsQuestions);
         console.log("Actually showing modal:", this.needsSecurityQuestions);
 
-        // Map token payload to User interface
-        this.user = {
-          id: tokenPayload.id,
-          email: tokenPayload.email,
-          name: `${tokenPayload.firstname || ""} ${
-            tokenPayload.lastname || ""
-          }`.trim(),
-          firstname: tokenPayload.firstname,
-          lastname: tokenPayload.lastname,
-          role: tokenPayload.role || "STUDENT",
-          avatar: tokenPayload.avatar,
-          program: tokenPayload.program,
-          year: tokenPayload.year,
-        };
+        // Fetch complete user details from API
+        await this.fetchCurrentUser();
 
         this.isAuthenticated = true;
       } catch (error) {
@@ -421,20 +418,8 @@ export const useAuthStore = defineStore("auth", {
           return true;
         }
 
-        // Token is valid, restore user from token
-        this.user = {
-          id: tokenPayload.id,
-          email: tokenPayload.email,
-          name: `${tokenPayload.firstname || ""} ${
-            tokenPayload.lastname || ""
-          }`.trim(),
-          firstname: tokenPayload.firstname,
-          lastname: tokenPayload.lastname,
-          role: tokenPayload.role || "student",
-          avatar: tokenPayload.avatar,
-          program: tokenPayload.program,
-          year: tokenPayload.year,
-        };
+        // Token is valid, fetch current user from API
+        await this.fetchCurrentUser();
 
         this.isAuthenticated = true;
         return true;
@@ -462,7 +447,7 @@ export const useAuthStore = defineStore("auth", {
       }
 
       try {
-        const response = await fetch(`${API_BASE_URL}/users/refresh`, {
+        const response = await fetch("/api/users/refresh", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -493,23 +478,8 @@ export const useAuthStore = defineStore("auth", {
           );
         }
 
-        // Update user info from new token
-        const tokenPayload = this.decodeJWT(responseData.data.access_token);
-        if (tokenPayload) {
-          this.user = {
-            id: tokenPayload.id,
-            email: tokenPayload.email,
-            name: `${tokenPayload.firstname || ""} ${
-              tokenPayload.lastname || ""
-            }`.trim(),
-            firstname: tokenPayload.firstname,
-            lastname: tokenPayload.lastname,
-            role: tokenPayload.role || "student",
-            avatar: tokenPayload.avatar,
-            program: tokenPayload.program,
-            year: tokenPayload.year,
-          };
-        }
+        // Fetch complete user details from API
+        await this.fetchCurrentUser();
 
         return true;
       } catch (error) {
@@ -659,32 +629,29 @@ export const useAuthStore = defineStore("auth", {
           await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate network delay
           console.log("✅ Security questions saved successfully (mocked)");
         } else {
-          const response = await fetch(
-            `${API_BASE_URL}/users/security-questions`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify({
-                securityQuestions: [
-                  {
-                    question: answers.question1.question,
-                    answer: answers.question1.answer,
-                  },
-                  {
-                    question: answers.question2.question,
-                    answer: answers.question2.answer,
-                  },
-                  {
-                    question: answers.question3.question,
-                    answer: answers.question3.answer,
-                  },
-                ],
-              }),
-            }
-          );
+          const response = await fetch("/api/users/security-questions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              securityQuestions: [
+                {
+                  question: answers.question1.question,
+                  answer: answers.question1.answer,
+                },
+                {
+                  question: answers.question2.question,
+                  answer: answers.question2.answer,
+                },
+                {
+                  question: answers.question3.question,
+                  answer: answers.question3.answer,
+                },
+              ],
+            }),
+          });
 
           console.log("🔵 Response status:", response.status);
 

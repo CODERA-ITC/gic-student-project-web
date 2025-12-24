@@ -234,11 +234,24 @@
                 >
                   <td class="p-3 text-slate-100 align-top text-xs">
                     <div class="flex items-center gap-3">
-                      <img
-                        :src="project.studentAvatar"
-                        :alt="project.studentName"
-                        class="w-8 h-8 rounded-full object-cover shrink-0"
-                      />
+                      <div
+                        v-if="project.studentAvatar"
+                        class="w-8 h-8 rounded-full overflow-hidden shrink-0"
+                      >
+                        <img
+                          :src="project.studentAvatar"
+                          :alt="project.studentName"
+                          class="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div
+                        v-else
+                        class="w-8 h-8 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center shrink-0"
+                      >
+                        <span class="text-xs font-semibold text-white">{{
+                          project.studentInitials
+                        }}</span>
+                      </div>
                       <div>
                         <div
                           class="font-semibold text-black dark:text-white text-xs"
