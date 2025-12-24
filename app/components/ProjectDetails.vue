@@ -410,6 +410,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { gsap } from "gsap";
+import { Role } from "~/types/roles";
+
+
 
 // Template refs for animations
 const sectionRef = ref<HTMLElement | null>(null);
@@ -419,7 +422,7 @@ const titleRef = ref<HTMLElement | null>(null);
 interface Props {
   project: any;
   isLiked?: boolean;
-  userRole?: "student" | "teacher" | null;
+  userRole?: Role | null;
   isOwner?: boolean;
 }
 

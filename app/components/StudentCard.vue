@@ -4,22 +4,13 @@
   >
     <!-- Header Image -->
     <div
-      class="relative h-48 w-full bg-gradient-to-br from-orange-400 via-pink-500 via-purple-600 to-blue-700 overflow-hidden"
+      class="relative h-48 w-full bg-blue-900 dark:bg-blue-900 overflow-hidden"
     >
-      <div
-        class="absolute inset-0 bg-gradient-to-br from-orange-300/90 via-pink-400/70 via-purple-500/80 to-blue-600/95"
-      ></div>
-      <div
-        class="absolute inset-0 bg-gradient-to-tr from-transparent via-purple-500/40 to-blue-800/50"
-      ></div>
-      <div
-        class="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.2),transparent_50%)] group-hover:bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.3),transparent_50%)] transition-all duration-500"
-      ></div>
       <img
         v-if="headerImage"
         :src="headerImage"
         alt="Profile header"
-        class="h-full w-full object-cover mix-blend-overlay"
+        class="h-full w-full object-cover opacity-90"
       />
     </div>
 
@@ -39,7 +30,7 @@
             />
             <div
               v-else
-              class="h-full w-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-2xl font-bold"
+              class="h-full w-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center text-white text-2xl font-bold"
             >
               {{ name.charAt(0) }}
             </div>
@@ -69,7 +60,7 @@
               color="neutral"
               variant="soft"
               size="lg"
-              class="text-xs text-gray-700 dark:text-blue-300 px-3 py-1 rounded-xl border border-gray-200 dark:border-gray-600 cursor-pointer hover:bg-gradient-to-r hover:from-purple-100 hover:to-blue-100 dark:hover:from-purple-900/50 dark:hover:to-blue-900/50 hover:border-purple-300 dark:hover:border-purple-600 transition-all duration-300 font-medium"
+              class="text-xs text-gray-700 dark:text-blue-300 px-3 py-1 rounded-xl border border-gray-200 dark:border-gray-600 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 font-medium"
             >
               {{ tech }}
             </UBadge>
@@ -78,7 +69,7 @@
               color="neutral"
               variant="outline"
               size="lg"
-              class="text-xs bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 text-gray-700 dark:text-blue-300 px-3 py-1 rounded-xl border border-gray-300 dark:border-gray-500 font-medium hover:from-purple-50 hover:to-blue-50 dark:hover:from-purple-800/30 dark:hover:to-blue-800/30 transition-all duration-300"
+              class="text-xs bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-blue-300 px-3 py-1 rounded-xl border border-gray-300 dark:border-gray-500 font-medium hover:bg-blue-50 dark:hover:bg-blue-800/30 transition-all duration-300"
             >
               +{{ remainingTechCount }}
             </UBadge>
@@ -89,7 +80,7 @@
       <div class="flex-shrink-0">
         <!-- Stats Grid -->
         <div
-          class="mt-4 grid grid-cols-3 gap-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-4 border border-gray-200 dark:border-gray-600"
+          class="mt-4 grid grid-cols-3 gap-4 bg-gray-50 dark:bg-gray-800 rounded-2xl p-4 border border-gray-200 dark:border-gray-600"
         >
           <!-- Projects -->
           <div

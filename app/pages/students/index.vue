@@ -1,13 +1,17 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+  <div class="min-h-screen bg-white dark:bg-slate-900">
     <!-- Header Section -->
-    <div class="bg-gradient-to-r from-blue-600 to-purple-600 py-20">
+    <div
+      class="hero-nodes py-20 border-b border-blue-800/30 dark:border-slate-700"
+    >
       <UContainer>
         <div class="text-center space-y-4 max-w-2xl mx-auto">
-          <h1 class="text-5xl lg:text-6xl font-black text-white leading-tight">
+          <h1
+            class="text-4xl lg:text-6xl font-bold tracking-tight leading-tight text-blue-900 dark:text-white"
+          >
             Meet Our Students
           </h1>
-          <p class="text-xl text-gray-200">
+          <p class="text-xl text-blue-900/80 dark:text-gray-300">
             Discover talented students and their contributions to the GIC
             program
           </p>
@@ -16,21 +20,50 @@
     </div>
 
     <!-- Search and Filter -->
-    <UContainer class="py-8">
-      <!-- Full Width Search -->
-      <div class="w-full mb-6">
-        <div class="relative">
-          <UIcon
-            name="i-heroicons-magnifying-glass"
-            class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"
-          />
+    <UContainer class="py-8 bg-white dark:bg-slate-900">
+      <!-- Enhanced Search Bar -->
+      <div class="w-full mb-8">
+        <div class="relative group">
+          <div
+            class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none"
+          >
+            <UIcon
+              name="i-heroicons-magnifying-glass"
+              class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors"
+            />
+          </div>
           <UInput
             v-model="searchInput"
-            placeholder="Search students by name, program, or skills..."
-            class="pl-10 w-full rounded-xl border border-gray-300 dark:border-gray-700"
+            placeholder="Search students by name, program, or skills... (e.g., John, Computer Science, Python)"
+            icon="i-heroicons-magnifying-glass"
             size="xl"
+            class="w-full rounded-xl border-2 border-gray-300 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500 focus:border-blue-500 dark:focus:border-blue-400 transition-all shadow-sm hover:shadow-md"
+            :ui="{
+              icon: { leading: { padding: { xl: 'ps-12' } } },
+              base: 'text-base',
+              placeholder: 'placeholder-gray-400 dark:placeholder-gray-500',
+            }"
           />
+          <div
+            v-if="searchInput"
+            class="absolute inset-y-0 right-0 flex items-center pr-4"
+          >
+            <button
+              @click="searchInput = ''"
+              class="p-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full transition-colors"
+            >
+              <UIcon
+                name="i-heroicons-x-mark"
+                class="w-4 h-4 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+              />
+            </button>
+          </div>
         </div>
+        <!-- Search hint -->
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 ml-1">
+          <UIcon name="i-heroicons-information-circle" class="w-4 h-4 inline" />
+          Tip: Search by student name, academic program, or technical skills
+        </p>
       </div>
 
       <!-- Top Skills Filter -->
@@ -70,12 +103,12 @@
       </div>
 
       <!-- Results Count -->
-      <div class="mt-4 text-gray-600 dark:text-gray-400">
-        <p class="text-sm">
+      <div class="mt-4 text-gray-700 dark:text-gray-300">
+        <p class="text-lg">
           <template v-if="totalPages > 1">
             Showing {{ paginatedStudents.length }} of
           </template>
-          <span class="font-bold text-blue-900">{{
+          <span class="font-bold text-blue-900 dark:text-white">{{
             studentStore.filteredStudents.length
           }}</span>
           students
@@ -87,7 +120,9 @@
     </UContainer>
 
     <!-- Students Grid -->
-    <UContainer class="pb-12">
+    <UContainer
+      class="pb-12 bg-gradient-to-b via-gray-50 to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
+    >
       <!-- Students Grid -->
       <div
         class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center"
@@ -123,7 +158,7 @@
         />
 
         <span
-          class="px-4 py-2 text-sm font-medium text-blue-900 bg-blue-50 rounded-lg"
+          class="px-4 py-2 text-sm font-medium text-blue-900 dark:text-white bg-blue-50 dark:bg-slate-800 rounded-lg"
         >
           Page {{ currentPage }} of {{ totalPages }}
         </span>

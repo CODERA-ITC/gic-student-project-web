@@ -1,16 +1,14 @@
 <template>
   <!-- public page -->
-  <div
-    class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"
-  >
+  <div class="min-h-screen bg-white dark:bg-slate-900">
     <!-- Back Button -->
     <div
-      class="sticky top-20 z-40 bg-slate-800/80 backdrop-blur border-b border-slate-700"
+      class="sticky top-20 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur border-b border-gray-200 dark:border-slate-700"
     >
       <UContainer class="py-4">
         <NuxtLink
           to="/students"
-          class="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
+          class="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
         >
           <UIcon name="i-heroicons-arrow-left" class="w-5 h-5" />
           Back to Students
@@ -20,23 +18,25 @@
 
     <!-- Profile Header -->
     <div
-      class="bg-gradient-to-b from-blue-900 to-slate-900 border-b border-blue-800/30 py-12"
+      class="bg-blue-900 dark:bg-blue-900 border-b border-blue-700 dark:border-blue-800 py-12"
     >
       <UContainer>
         <div class="flex flex-col sm:flex-row gap-8 items-start sm:items-end">
           <!-- Avatar -->
           <div
-            class="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-6xl sm:text-8xl font-bold border-4 border-blue-400 shadow-2xl"
+            class="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center text-white text-6xl sm:text-8xl font-bold border-4 border-white dark:border-blue-600"
           >
             {{ student.name.charAt(0) }}
           </div>
 
           <!-- Profile Info -->
           <div class="flex-1">
-            <h1 class="text-4xl sm:text-5xl font-black text-white mb-2">
+            <h1 class="text-4xl sm:text-5xl font-bold text-white mb-2">
               {{ student.name }}
             </h1>
-            <p class="text-xl text-blue-300 mb-4">{{ student.role }}</p>
+            <p class="text-xl text-blue-100 dark:text-blue-200 mb-4">
+              {{ student.role }}
+            </p>
             <div class="flex gap-3 flex-wrap">
               <UBadge color="primary" variant="soft" size="md">
                 {{ student.department }}
@@ -57,36 +57,40 @@
         <div class="lg:col-span-2 space-y-8">
           <!-- About Section -->
           <div
-            class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-xl p-6 space-y-4"
+            class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 space-y-4"
           >
             <div class="flex items-center gap-3">
               <UIcon
                 name="i-heroicons-information-circle"
-                class="w-6 h-6 text-blue-400"
+                class="w-6 h-6 text-blue-600 dark:text-blue-400"
               />
-              <h2 class="text-2xl font-bold text-white">About</h2>
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                About
+              </h2>
             </div>
-            <p class="text-gray-300 leading-relaxed">
+            <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
               {{ student.bio }}
             </p>
           </div>
 
           <!-- Skills & Expertise -->
           <div
-            class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-xl p-6 space-y-4"
+            class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 space-y-4"
           >
             <div class="flex items-center gap-3 mb-4">
               <UIcon
                 name="i-heroicons-wrench-screwdriver"
-                class="w-6 h-6 text-yellow-400"
+                class="w-6 h-6 text-blue-600 dark:text-blue-400"
               />
-              <h2 class="text-2xl font-bold text-white">Skills & Expertise</h2>
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                Skills & Expertise
+              </h2>
             </div>
             <div class="flex gap-2 flex-wrap">
               <span
                 v-for="skill in student.skills"
                 :key="skill"
-                class="px-4 py-2 rounded-full bg-blue-500/20 text-blue-300 text-sm font-medium border border-blue-500/30 hover:bg-blue-500/30 transition-colors"
+                class="px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium border border-blue-200 dark:border-blue-700"
               >
                 {{ skill }}
               </span>
@@ -96,27 +100,32 @@
           <!-- Achievements -->
           <div
             v-if="student.achievements && student.achievements.length > 0"
-            class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-xl p-6 space-y-4"
+            class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 space-y-4"
           >
             <div class="flex items-center gap-3 mb-4">
-              <UIcon name="i-heroicons-star" class="w-6 h-6 text-yellow-400" />
-              <h2 class="text-2xl font-bold text-white">Achievements</h2>
+              <UIcon
+                name="i-heroicons-star"
+                class="w-6 h-6 text-yellow-500 dark:text-yellow-400"
+              />
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                Achievements
+              </h2>
             </div>
             <div class="space-y-3">
               <div
                 v-for="(achievement, idx) in student.achievements"
                 :key="idx"
-                class="flex items-start gap-3 p-4 bg-slate-700/50 rounded-lg border border-slate-600 hover:border-blue-500/50 transition-colors"
+                class="flex items-start gap-3 p-4 bg-gray-50 dark:bg-slate-700 rounded-lg border border-gray-200 dark:border-slate-600"
               >
                 <UIcon
                   name="i-heroicons-check-circle"
-                  class="w-6 h-6 text-green-400 mt-0.5 flex-shrink-0"
+                  class="w-6 h-6 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0"
                 />
                 <div>
-                  <p class="text-white font-semibold">
+                  <p class="text-gray-900 dark:text-white font-semibold">
                     {{ achievement.title }}
                   </p>
-                  <p class="text-gray-400 text-sm">
+                  <p class="text-gray-600 dark:text-gray-400 text-sm">
                     {{ achievement.description }}
                   </p>
                 </div>
@@ -126,14 +135,14 @@
 
           <!-- Projects Contributed -->
           <div
-            class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-xl p-6 space-y-4"
+            class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 space-y-4"
           >
             <div class="flex items-center gap-3 mb-4">
               <UIcon
                 name="i-heroicons-briefcase"
-                class="w-6 h-6 text-purple-400"
+                class="w-6 h-6 text-blue-600 dark:text-blue-400"
               />
-              <h2 class="text-2xl font-bold text-white">
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
                 Projects ({{ student.projectsContributed.length }})
               </h2>
             </div>
@@ -141,7 +150,7 @@
               <div
                 v-for="project in student.projectsContributed"
                 :key="project.id"
-                class="p-4 bg-slate-700/50 rounded-lg border border-slate-600 hover:border-blue-500/50 transition-colors group/proj"
+                class="p-4 bg-gray-50 dark:bg-slate-700 rounded-lg border border-gray-200 dark:border-slate-600 hover:border-blue-500 dark:hover:border-blue-500 transition-colors group/proj"
               >
                 <NuxtLink
                   :to="`/projects/${project.id}`"
@@ -150,11 +159,11 @@
                   <span class="text-3xl">{{ project.emoji }}</span>
                   <div class="flex-1">
                     <h3
-                      class="text-white font-semibold group-hover/proj:text-blue-300 transition-colors"
+                      class="text-gray-900 dark:text-white font-semibold group-hover/proj:text-blue-600 dark:group-hover/proj:text-blue-300 transition-colors"
                     >
                       {{ project.title }}
                     </h3>
-                    <p class="text-gray-400 text-sm">
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">
                       {{ project.category }} • {{ project.year }}
                     </p>
                   </div>
@@ -172,34 +181,36 @@
         <div class="space-y-6">
           <!-- Contact Info -->
           <div
-            class="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-6 space-y-4"
+            class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 space-y-4"
           >
             <h3
-              class="text-lg font-semibold text-white flex items-center gap-2"
+              class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2"
             >
               <UIcon name="i-heroicons-envelope" class="w-5 h-5" />
               Contact
             </h3>
             <div class="space-y-3">
               <div>
-                <p class="text-gray-400 text-sm">Email</p>
-                <p class="text-white font-medium break-all">
+                <p class="text-gray-600 dark:text-gray-400 text-sm">Email</p>
+                <p class="text-gray-900 dark:text-white font-medium break-all">
                   {{ student.email }}
                 </p>
               </div>
               <div>
-                <p class="text-gray-400 text-sm">Phone</p>
-                <p class="text-white font-medium">{{ student.phone }}</p>
+                <p class="text-gray-600 dark:text-gray-400 text-sm">Phone</p>
+                <p class="text-gray-900 dark:text-white font-medium">
+                  {{ student.phone }}
+                </p>
               </div>
             </div>
           </div>
 
           <!-- Statistics -->
           <div
-            class="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-6 space-y-4"
+            class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 space-y-4"
           >
             <h3
-              class="text-lg font-semibold text-white flex items-center gap-2"
+              class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2"
             >
               <UIcon name="i-heroicons-chart-bar" class="w-5 h-5" />
               Statistics

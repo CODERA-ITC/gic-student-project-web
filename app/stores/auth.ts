@@ -4,12 +4,13 @@
  */
 
 import { defineStore } from "pinia";
+import { Role } from "~/types/roles";
 
 export interface User {
   id: string;
   name: string;
   email: string;
-  role: "STUDENT" | "TEACHER";
+  role: Role;
   avatar?: string;
   program?: string;
   year?: string;
