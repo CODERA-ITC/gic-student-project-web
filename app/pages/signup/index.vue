@@ -234,8 +234,15 @@ const handleSignup = async () => {
   isLoading.value = true;
 
   try {
-    await authStore.signup(fullName.value, email.value, password.value);
-    await router.push("/dashboard");
+    await authStore.register(
+      fullName.value,
+      email.value,
+      password.value,
+      confirmPassword.value,
+      Role.student
+    ); // define Role.student appropriately
+
+    await router.push("/student/dashboard");
   } catch (err) {
     error.value = err instanceof Error ? err.message : "Sign up failed";
   } finally {

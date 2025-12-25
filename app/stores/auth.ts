@@ -4,6 +4,7 @@
  */
 
 import { defineStore } from "pinia";
+import { de } from "zod/locales";
 import { Role } from "~/types/roles";
 
 // Helper function to safely access localStorage only on client side
@@ -247,7 +248,7 @@ export const useAuthStore = defineStore("auth", {
       email: string,
       password: string,
       confirmPassword: string,
-      role: "STUDENT" | "TEACHER"
+      role: Role
     ): Promise<void> {
       this.isLoading = true;
       this.error = null;
@@ -281,8 +282,20 @@ export const useAuthStore = defineStore("auth", {
         const firstname = nameParts[0];
         const lastname = nameParts.slice(1).join(" ") || "";
 
+        /**
+         * {
+        "firstname": "John",
+        "lastname": "Doe",
+        "email": "john@example.com",
+        "password": "@password123",
+        "departmentCode": "GIC",
+        "bio": "Professor at GIC",
+        "hashedRefreshToken": "Refresh token for easy revoking"
+      }
+           */
+
         // Call real API via proxy
-        const response = await fetch("/api/users/register", {
+        const response = await fetch("/api/users/signup", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -292,7 +305,8 @@ export const useAuthStore = defineStore("auth", {
             lastname,
             email: email.trim().toLowerCase(),
             password,
-            role,
+            departmentCode: "GIC",
+            bio: `${role} at GIC`,
           }),
         });
 
