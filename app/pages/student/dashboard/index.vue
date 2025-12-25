@@ -298,7 +298,9 @@ import { useRouter, useRoute } from "vue-router";
 const authStore = useAuthStore();
 const router = useRouter();
 const route = useRoute();
-
+definePageMeta({
+  middleware: ["auth", "student"],
+});
 const isLoading = ref(false);
 const error = ref("");
 

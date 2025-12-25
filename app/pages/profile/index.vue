@@ -89,6 +89,10 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "~/stores/auth";
 
+definePageMeta({
+  middleware: ["auth"],
+});
+
 const router = useRouter();
 const authStore = useAuthStore();
 const activeTab = ref("profile");

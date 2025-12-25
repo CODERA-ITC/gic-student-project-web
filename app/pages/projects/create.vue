@@ -1009,6 +1009,10 @@
 </template>
 
 <script setup>
+definePageMeta({
+  middleware: ["auth"],
+});
+
 import { ref, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useProjectStore } from "~/stores/projects";

@@ -413,6 +413,10 @@ import SparklineChart from "~/components/SparklineChart.vue";
 
 const authStore = useAuthStore();
 
+definePageMeta({
+  middleware: ["auth", "teacher"],
+});
+
 // Get teacher info from auth store
 const teacher = computed(() => ({
   name: authStore.currentUser?.name || "Teacher",

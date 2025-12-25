@@ -186,6 +186,7 @@
 <script setup>
 definePageMeta({
   layout: "auth",
+  middleware: ["guest"],
 });
 
 import { ref, onMounted } from "vue";
@@ -271,10 +272,14 @@ const handleLogin = async () => {
     //   await router.push(redirectTo);
     // }
 
-
-    console.log("User Role - isTeacher:", authStore.isTeacher, "isAdmin:", authStore.isAdmin, "isStudent:", authStore.isStudent);
-
-
+    console.log(
+      "User Role - isTeacher:",
+      authStore.isTeacher,
+      "isAdmin:",
+      authStore.isAdmin,
+      "isStudent:",
+      authStore.isStudent
+    );
 
     if (authStore.isTeacher || authStore.isAdmin) {
       await router.push("/teacher/dashboard");

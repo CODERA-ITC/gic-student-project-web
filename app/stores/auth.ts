@@ -6,6 +6,26 @@
 import { defineStore } from "pinia";
 import { Role } from "~/types/roles";
 
+// Helper function to safely access localStorage only on client side
+const safeLocalStorage = {
+  getItem: (key: string): string | null => {
+    if (process.client && typeof localStorage !== "undefined") {
+      return localStorage.getItem(key);
+    }
+    return null;
+  },
+  setItem: (key: string, value: string): void => {
+    if (process.client && typeof localStorage !== "undefined") {
+      localStorage.setItem(key, value);
+    }
+  },
+  removeItem: (key: string): void => {
+    if (process.client && typeof localStorage !== "undefined") {
+      localStorage.removeItem(key);
+    }
+  },
+};
+
 export interface User {
   id: string;
   name: string;
@@ -109,13 +129,13 @@ export const useAuthStore = defineStore("auth", {
 
         // Store tokens
         if (data.access_token) {
-          localStorage.setItem("access_token", data.access_token);
+          safeLocalStorage.setItem("access_token", data.access_token);
         } else {
           throw new Error("No access token received from server");
         }
 
         if (data.refresh_token) {
-          localStorage.setItem("refresh_token", data.refresh_token);
+          safeLocalStorage.setItem("refresh_token", data.refresh_token);
         }
 
         // Fetch complete user details from API
@@ -129,8 +149,8 @@ export const useAuthStore = defineStore("auth", {
         this.error = error instanceof Error ? error.message : "Login failed";
 
         // Clear any existing tokens
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
+        safeLocalStorage.removeItem("access_token");
+        safeLocalStorage.removeItem("refresh_token");
 
         throw error;
       } finally {
@@ -306,11 +326,11 @@ export const useAuthStore = defineStore("auth", {
 
         // Store tokens
         if (data.access_token) {
-          localStorage.setItem("access_token", data.access_token);
+          safeLocalStorage.setItem("access_token", data.access_token);
         }
 
         if (data.refresh_token) {
-          localStorage.setItem("refresh_token", data.refresh_token);
+          safeLocalStorage.setItem("refresh_token", data.refresh_token);
         }
 
         // Fetch complete user details from API
@@ -346,11 +366,11 @@ export const useAuthStore = defineStore("auth", {
         }
 
         // Store the token
-        localStorage.setItem("access_token", token);
+        safeLocalStorage.setItem("access_token", token);
 
         // Store refresh token if provided
         if (refreshToken) {
-          localStorage.setItem("refresh_token", refreshToken);
+          safeLocalStorage.setItem("refresh_token", refreshToken);
         }
 
         // Decode JWT to get user info
@@ -388,8 +408,8 @@ export const useAuthStore = defineStore("auth", {
         this.error =
           error instanceof Error ? error.message : "OAuth login failed";
 
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
+        safeLocalStorage.removeItem("access_token");
+        safeLocalStorage.removeItem("refresh_token");
 
         throw error;
       } finally {
@@ -402,7 +422,7 @@ export const useAuthStore = defineStore("auth", {
      * Should be called on app initialization
      */
     async restoreAuth(): Promise<boolean> {
-      const token = localStorage.getItem("access_token");
+      const token = safeLocalStorage.getItem("access_token");
 
       if (!token) {
         return false;
@@ -437,8 +457,8 @@ export const useAuthStore = defineStore("auth", {
       } catch (error) {
         // Silent fail - just clear the tokens
         console.error("Failed to restore auth:", error);
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
+        safeLocalStorage.removeItem("access_token");
+        safeLocalStorage.removeItem("refresh_token");
         this.user = null;
         this.isAuthenticated = false;
         return false;
@@ -451,7 +471,7 @@ export const useAuthStore = defineStore("auth", {
      * Refresh access token using refresh token
      */
     async refreshAccessToken(): Promise<boolean> {
-      const refreshToken = localStorage.getItem("refresh_token");
+      const refreshToken = safeLocalStorage.getItem("refresh_token");
 
       if (!refreshToken) {
         return false;
@@ -479,11 +499,14 @@ export const useAuthStore = defineStore("auth", {
         }
 
         // Store new access token
-        localStorage.setItem("access_token", responseData.data.access_token);
+        safeLocalStorage.setItem(
+          "access_token",
+          responseData.data.access_token
+        );
 
         // Update refresh token if provided
         if (responseData.data.refresh_token) {
-          localStorage.setItem(
+          safeLocalStorage.setItem(
             "refresh_token",
             responseData.data.refresh_token
           );
@@ -571,8 +594,8 @@ export const useAuthStore = defineStore("auth", {
       this.error = null;
 
       // Clear stored tokens
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("refresh_token");
+      safeLocalStorage.removeItem("access_token");
+      safeLocalStorage.removeItem("refresh_token");
     },
 
     /**
@@ -586,7 +609,7 @@ export const useAuthStore = defineStore("auth", {
      * Get authentication token
      */
     getToken(): string | null {
-      return localStorage.getItem("access_token");
+      return safeLocalStorage.getItem("access_token");
     },
 
     /**

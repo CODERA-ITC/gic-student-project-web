@@ -114,6 +114,10 @@
 </template>
 
 <script setup>
+definePageMeta({
+  middleware: ["auth", "student"],
+});
+
 import { ref, computed, onMounted, watch } from "vue";
 import { useProjectStore } from "~/stores/projects";
 import { useAuthStore } from "~/stores/auth";
