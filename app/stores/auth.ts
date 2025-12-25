@@ -435,7 +435,13 @@ export const useAuthStore = defineStore("auth", {
         const tokenPayload = this.decodeJWT(token);
 
         if (!tokenPayload) {
-          throw new Error("Invalid token");
+          // Token is malformed, clear it
+          console.error("Invalid token format");
+          safeLocalStorage.removeItem("access_token");
+          safeLocalStorage.removeItem("refresh_token");
+          this.user = null;
+          this.isAuthenticated = false;
+          return false;
         }
 
         // Check if token is expired
@@ -444,7 +450,13 @@ export const useAuthStore = defineStore("auth", {
           // Token expired, try to refresh
           const refreshed = await this.refreshAccessToken();
           if (!refreshed) {
-            throw new Error("Token expired");
+            // Refresh failed, clear tokens
+            console.error("Token expired and refresh failed");
+            safeLocalStorage.removeItem("access_token");
+            safeLocalStorage.removeItem("refresh_token");
+            this.user = null;
+            this.isAuthenticated = false;
+            return false;
           }
           return true;
         }
@@ -455,11 +467,21 @@ export const useAuthStore = defineStore("auth", {
         this.isAuthenticated = true;
         return true;
       } catch (error) {
-        // Silent fail - just clear the tokens
-        console.error("Failed to restore auth:", error);
-        safeLocalStorage.removeItem("access_token");
-        safeLocalStorage.removeItem("refresh_token");
-        this.user = null;
+        // Network or temporary errors - keep tokens, just set loading to false
+        // User can try again on next navigation or refresh
+        console.error(
+          "Failed to restore auth (keeping tokens for retry):",
+          error
+        );
+
+        // Keep user authenticated if we already have their data
+        if (this.user) {
+          this.isAuthenticated = true;
+          return true;
+        }
+
+        // If we don't have user data yet, mark as not authenticated
+        // but DON'T clear tokens - they might work on next try
         this.isAuthenticated = false;
         return false;
       } finally {

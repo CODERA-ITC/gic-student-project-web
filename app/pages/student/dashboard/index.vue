@@ -1,12 +1,15 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-slate-900">
-    <!-- Loading State for OAuth -->
-    <div v-if="isLoading" class="min-h-screen flex items-center justify-center">
+    <!-- Loading State -->
+    <div
+      v-if="isLoading || authStore.isLoading"
+      class="min-h-screen flex items-center justify-center"
+    >
       <div class="text-center space-y-4">
         <div
           class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"
         ></div>
-        <p class="text-gray-600 dark:text-slate-300">Completing sign in...</p>
+        <p class="text-gray-600 dark:text-slate-300">Loading dashboard...</p>
       </div>
     </div>
 

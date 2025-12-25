@@ -7,6 +7,12 @@
 export default defineNuxtRouteMiddleware((to, from) => {
   const authStore = useAuthStore();
 
+  // Skip authentication on server side - we can't access localStorage there
+  if (typeof window === "undefined") {
+    console.log("Auth middleware: Server side, skipping auth check");
+    return;
+  }
+
   // Allow OAuth callback URLs with token to pass through
   // The page will handle the token and authenticate
   if (to.query.token) {
@@ -22,23 +28,29 @@ export default defineNuxtRouteMiddleware((to, from) => {
     return;
   }
 
+  // PRIORITY CHECK: If token exists in localStorage, always allow through
+  // This runs BEFORE checking isLoading or isAuthenticated to prevent race conditions
+  const token = localStorage.getItem("access_token");
+  if (token) {
+    console.log(
+      "Auth middleware: Token exists in localStorage, allowing through"
+    );
+    return;
+  }
+
+  // If auth is still loading, allow through - the page will show loading state
+  if (authStore.isLoading) {
+    console.log("Auth middleware: Auth is loading, allowing through");
+    return;
+  }
+
   // Check if user is authenticated
   if (!authStore.isAuthenticated) {
-    // Only check localStorage on client side
-    if (process.client) {
-      const token = localStorage.getItem("access_token");
-
-      if (token) {
-        // Token exists but store not initialized, allow the page to load
-        // The auth store will initialize on client side
-        return;
-      }
-    }
-
     // No authentication found, redirect to login
+    console.log("Auth middleware: No auth and no token, redirecting to login");
     return navigateTo({
       path: "/login",
-      query: { redirect: to.path }, // Use to.path instead of to.fullPath to avoid nested query params
+      query: { redirect: to.path },
     });
   }
 

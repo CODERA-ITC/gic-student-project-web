@@ -1,406 +1,426 @@
 <template>
   <div class="min-h-screen bg-white dark:bg-slate-900">
-    <!-- Header Section -->
+    <!-- Loading State -->
     <div
-      class="py-16 bg-gray-100 dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700"
+      v-if="authStore.isLoading"
+      class="min-h-screen flex items-center justify-center"
     >
-      <UContainer>
-        <div class="flex items-center justify-start gap-4 md:gap-8">
-          <div class="flex flex-col gap-2">
-            <h1
-              class="text-2xl md:text-4xl font-black text-black dark:text-white leading-none"
+      <div class="text-center space-y-4">
+        <div
+          class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"
+        ></div>
+        <p class="text-gray-600 dark:text-slate-300">Loading dashboard...</p>
+      </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div v-else>
+      <!-- Header Section -->
+      <div
+        class="py-16 bg-gray-100 dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700"
+      >
+        <UContainer>
+          <div class="flex items-center justify-start gap-4 md:gap-8">
+            <div class="flex flex-col gap-2">
+              <h1
+                class="text-2xl md:text-4xl font-black text-black dark:text-white leading-none"
+              >
+                Welcome back,
+                <span class="text-blue-400">{{ teacher.name }}</span>
+              </h1>
+              <p class="text-gray-600 dark:text-slate-300">
+                Manage student projects and review submissions
+              </p>
+            </div>
+          </div>
+        </UContainer>
+      </div>
+
+      <!-- Main Content -->
+      <UContainer class="py-12 mx-auto">
+        <!-- Activity Overview Title -->
+        <div class="mb-6">
+          <h2 class="text-xl font-bold text-black dark:text-white">
+            Activity Overview
+          </h2>
+          <p class="text-xs text-gray-600 dark:text-slate-400 mt-1">
+            Track your project submissions and review progress
+          </p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+          <div
+            v-for="stat in stats"
+            :key="stat.label"
+            class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6"
+          >
+            <!-- Header with Icon and Label -->
+            <div class="flex items-center gap-3 mb-4">
+              <UIcon
+                :name="stat.icon"
+                class="w-6 h-6 text-gray-600 dark:text-slate-400"
+              />
+              <h3 class="text-base font-semibold text-gray-900 dark:text-white">
+                {{ stat.label }}
+              </h3>
+            </div>
+
+            <!-- Main Value and Graph Container with Border -->
+            <div
+              class="border-l border-gray-400 dark:border-gray-500 pl-8 relative before:content-[''] before:absolute before:top-0 before:left-0 before:w-2 before:h-1 before:border-t before:border-gray-400 dark:before:border-gray-500 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-2 after:h-1 after:border-b after:border-gray-400 dark:after:border-gray-500"
             >
-              Welcome back,
-              <span class="text-blue-400">{{ teacher.name }}</span>
-            </h1>
-            <p class="text-gray-600 dark:text-slate-300">
-              Manage student projects and review submissions
-            </p>
+              <!-- Value and Graph on same line -->
+              <div class="flex items-start justify-between gap-4 mb-3">
+                <div class="text-3xl font-bold text-black dark:text-white">
+                  {{ stat.value }}
+                </div>
+                <!-- Sparkline Chart -->
+                <div class="w-32 h-12 flex items-center justify-center">
+                  <SparklineChart
+                    :data="stat.chartData"
+                    :width="128"
+                    :height="48"
+                    :color="
+                      stat.changeColor === 'positive'
+                        ? '#3b82f6'
+                        : stat.changeColor === 'negative'
+                        ? '#f59e0b'
+                        : '#3b82f6'
+                    "
+                    :stroke-width="2"
+                    :show-area="true"
+                  />
+                </div>
+              </div>
+
+              <!-- Change Info below -->
+              <div class="flex items-center gap-1">
+                <UIcon
+                  :name="
+                    stat.changeColor === 'positive'
+                      ? 'i-heroicons-arrow-trending-up'
+                      : 'i-heroicons-arrow-trending-down'
+                  "
+                  :class="
+                    stat.changeColor === 'positive'
+                      ? 'text-blue-500'
+                      : stat.changeColor === 'negative'
+                      ? 'text-amber-500'
+                      : 'text-blue-500'
+                  "
+                  class="w-4 h-4"
+                />
+                <p class="text-xs text-gray-600 dark:text-slate-400">
+                  {{ stat.change }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-1 gap-6">
+          <!-- Main Content -->
+          <div class="w-full">
+            <!-- Projects Table -->
+            <div
+              class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg overflow-hidden"
+            >
+              <!-- Filters and Search -->
+              <div
+                class="bg-white dark:bg-slate-800/50 backdrop-blur-sm border-b border-gray-200 dark:border-slate-700 p-6"
+              >
+                <!-- Section Header -->
+                <div class="mb-6">
+                  <h3
+                    class="text-gray-900 dark:text-white text-xl font-bold mb-2"
+                  >
+                    Student Projects
+                  </h3>
+                  <p class="text-xs text-gray-600 dark:text-slate-400">
+                    Search, filter, and manage all student project submissions
+                  </p>
+                </div>
+                <div
+                  class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4"
+                >
+                  <div class="relative flex-1">
+                    <UIcon
+                      name="i-heroicons-magnifying-glass"
+                      class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-500"
+                    />
+                    <input
+                      v-model="searchQuery"
+                      type="text"
+                      placeholder="Search projects..."
+                      class="w-full pl-10 pr-3 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-md text-black dark:text-white text-sm placeholder-gray-500 dark:placeholder-slate-500 focus:outline-none"
+                    />
+                  </div>
+                  <div class="flex gap-2">
+                    <ButtonsPresetButton
+                      preset="primary"
+                      label="Completed Project"
+                      icon="i-heroicons-check-circle"
+                      size="sm"
+                      @click="setActiveFilter('completed')"
+                      :class="{ 'bg-blue-800': activeFilter === 'completed' }"
+                    />
+                    <ButtonsPresetButton
+                      preset="primary"
+                      label="Pending Reviews"
+                      icon="i-heroicons-exclamation-circle"
+                      size="sm"
+                      @click="setActiveFilter('pending')"
+                      :class="{ 'bg-blue-800': activeFilter === 'pending' }"
+                    />
+                  </div>
+                </div>
+
+                <div class="flex gap-4 flex-wrap">
+                  <select
+                    v-model="selectedCategory"
+                    class="w-full sm:w-auto px-3 py-1.5 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-md text-black dark:text-white text-sm min-w-40 focus:outline-none"
+                  >
+                    <option value="">All Categories</option>
+                    <option value="web-development">Web Development</option>
+                    <option value="mobile-app">Mobile App</option>
+                    <option value="data-science">Data Science</option>
+                    <option value="ai-ml">AI/ML</option>
+                    <option value="game-dev">Game Development</option>
+                    <option value="other">Other</option>
+                  </select>
+
+                  <select
+                    v-model="selectedGeneration"
+                    class="w-full sm:w-auto px-3 py-1.5 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-md text-black dark:text-white text-sm min-w-40 focus:outline-none"
+                  >
+                    <option value="">All Years</option>
+                    <option value="gen-2024">2024</option>
+                    <option value="gen-2025">2025</option>
+                    <option value="gen-2026">2026</option>
+                  </select>
+                </div>
+              </div>
+              <table class="w-full border-collapse">
+                <thead>
+                  <tr>
+                    <th
+                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
+                    >
+                      Student
+                    </th>
+                    <th
+                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
+                    >
+                      Project Title
+                    </th>
+                    <th
+                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700 hidden md:table-cell"
+                    >
+                      Category
+                    </th>
+                    <th
+                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700 hidden md:table-cell"
+                    >
+                      Year
+                    </th>
+                    <th
+                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
+                    >
+                      Status
+                    </th>
+                    <th
+                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700 hidden md:table-cell"
+                    >
+                      Submitted
+                    </th>
+                    <th
+                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
+                    >
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="project in paginatedProjects"
+                    :key="project.id"
+                    class="border-b border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-900 last:border-b-0"
+                  >
+                    <td class="p-3 text-slate-100 align-top text-xs">
+                      <div class="flex items-center gap-3">
+                        <div
+                          v-if="project.studentAvatar"
+                          class="w-8 h-8 rounded-full overflow-hidden shrink-0"
+                        >
+                          <img
+                            :src="project.studentAvatar"
+                            :alt="project.studentName"
+                            class="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div
+                          v-else
+                          class="w-8 h-8 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center shrink-0"
+                        >
+                          <span class="text-xs font-semibold text-white">{{
+                            project.studentInitials
+                          }}</span>
+                        </div>
+                        <div>
+                          <div
+                            class="font-semibold text-black dark:text-white text-xs"
+                          >
+                            {{ project.studentName }}
+                          </div>
+                          <div
+                            class="text-xs text-gray-600 dark:text-slate-400"
+                          >
+                            {{ project.studentEmail }}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="p-3 text-slate-100 align-top text-xs">
+                      <div
+                        class="font-semibold text-black dark:text-white text-xs mb-1"
+                      >
+                        {{ project.title }}
+                      </div>
+                      <div
+                        class="text-xs text-gray-600 dark:text-slate-400 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap"
+                      >
+                        {{ project.description }}
+                      </div>
+                    </td>
+                    <td
+                      class="p-3 text-slate-100 align-top text-xs hidden md:table-cell"
+                    >
+                      <span
+                        class="bg-gray-200 dark:bg-slate-700 text-black dark:text-slate-100 px-2 py-1 rounded text-xs font-medium inline-block"
+                        >{{ project.category }}</span
+                      >
+                    </td>
+                    <td
+                      class="p-3 text-black dark:text-slate-100 align-top text-xs hidden md:table-cell"
+                    >
+                      {{ project.generation }}
+                    </td>
+                    <td class="p-3 text-slate-100 align-top text-xs">
+                      <span
+                        :class="
+                          project.status === 'completed'
+                            ? 'bg-green-600 text-white'
+                            : 'bg-yellow-600 text-white'
+                        "
+                        class="px-2 py-1 rounded text-xs font-semibold inline-block"
+                      >
+                        {{
+                          project.status === "completed"
+                            ? "Completed"
+                            : "Pending"
+                        }}
+                      </span>
+                    </td>
+                    <td
+                      class="p-3 text-black dark:text-slate-100 align-top text-xs hidden md:table-cell"
+                    >
+                      {{ project.submittedDate }}
+                    </td>
+                    <td class="p-3 text-slate-100 align-top text-xs">
+                      <div class="flex gap-2 flex-wrap">
+                        <ButtonsPresetButton
+                          v-if="project.status !== 'pending'"
+                          preset="danger"
+                          label="View"
+                          icon="i-heroicons-eye"
+                          size="xs"
+                          @click="viewProject(project)"
+                        />
+                        <ButtonsPresetButton
+                          v-if="project.status === 'pending'"
+                          preset="danger"
+                          label="Review"
+                          icon="i-heroicons-check-circle"
+                          size="xs"
+                          @click="reviewProject(project)"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <!-- Empty State -->
+              <div
+                v-if="totalFilteredProjects === 0"
+                class="text-center py-8 px-4"
+              >
+                <UIcon
+                  name="i-heroicons-inbox-stack"
+                  class="w-12 h-12 text-slate-500 mx-auto mb-4"
+                />
+                <h3 class="text-white text-lg font-semibold mb-2">
+                  No projects found
+                </h3>
+                <p class="text-slate-400 text-xs">
+                  Try adjusting your search or filter criteria.
+                </p>
+              </div>
+
+              <!-- Pagination -->
+              <div
+                v-if="totalPages > 1"
+                class="flex flex-col gap-4 items-center pt-6 pb-4 px-4 border-t border-gray-200 dark:border-slate-700"
+              >
+                <div class="text-gray-600 dark:text-slate-400 text-xs">
+                  Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to
+                  {{
+                    Math.min(currentPage * itemsPerPage, totalFilteredProjects)
+                  }}
+                  of {{ totalFilteredProjects }} projects
+                </div>
+                <div class="flex items-center gap-2">
+                  <ButtonsPresetButton
+                    preset="primary"
+                    label="Previous"
+                    icon="i-heroicons-arrow-left"
+                    size="sm"
+                    @click="prevPage"
+                    :disabled="currentPage === 1"
+                  />
+
+                  <div class="flex gap-1 mx-2">
+                    <ButtonsPresetButton
+                      v-for="page in visiblePages"
+                      :key="page"
+                      preset="secondary"
+                      :label="page.toString()"
+                      size="sm"
+                      class="rounded-md"
+                      @click="goToPage(page)"
+                      :class="{
+                        'bg-blue-500 text-white border-blue-500':
+                          page === currentPage,
+                      }"
+                    />
+                  </div>
+
+                  <ButtonsPresetButton
+                    preset="primary"
+                    label="Next"
+                    icon="i-heroicons-chevron-right"
+                    size="sm"
+                    @click="nextPage"
+                    :disabled="currentPage === totalPages"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </UContainer>
     </div>
-
-    <!-- Main Content -->
-    <UContainer class="py-12 mx-auto">
-      <!-- Activity Overview Title -->
-      <div class="mb-6">
-        <h2 class="text-xl font-bold text-black dark:text-white">
-          Activity Overview
-        </h2>
-        <p class="text-xs text-gray-600 dark:text-slate-400 mt-1">
-          Track your project submissions and review progress
-        </p>
-      </div>
-
-      <!-- Stats Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-        <div
-          v-for="stat in stats"
-          :key="stat.label"
-          class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6"
-        >
-          <!-- Header with Icon and Label -->
-          <div class="flex items-center gap-3 mb-4">
-            <UIcon
-              :name="stat.icon"
-              class="w-6 h-6 text-gray-600 dark:text-slate-400"
-            />
-            <h3 class="text-base font-semibold text-gray-900 dark:text-white">
-              {{ stat.label }}
-            </h3>
-          </div>
-
-          <!-- Main Value and Graph Container with Border -->
-          <div
-            class="border-l border-gray-400 dark:border-gray-500 pl-8 relative before:content-[''] before:absolute before:top-0 before:left-0 before:w-2 before:h-1 before:border-t before:border-gray-400 dark:before:border-gray-500 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-2 after:h-1 after:border-b after:border-gray-400 dark:after:border-gray-500"
-          >
-            <!-- Value and Graph on same line -->
-            <div class="flex items-start justify-between gap-4 mb-3">
-              <div class="text-3xl font-bold text-black dark:text-white">
-                {{ stat.value }}
-              </div>
-              <!-- Sparkline Chart -->
-              <div class="w-32 h-12 flex items-center justify-center">
-                <SparklineChart
-                  :data="stat.chartData"
-                  :width="128"
-                  :height="48"
-                  :color="
-                    stat.changeColor === 'positive'
-                      ? '#3b82f6'
-                      : stat.changeColor === 'negative'
-                      ? '#f59e0b'
-                      : '#3b82f6'
-                  "
-                  :stroke-width="2"
-                  :show-area="true"
-                />
-              </div>
-            </div>
-
-            <!-- Change Info below -->
-            <div class="flex items-center gap-1">
-              <UIcon
-                :name="
-                  stat.changeColor === 'positive'
-                    ? 'i-heroicons-arrow-trending-up'
-                    : 'i-heroicons-arrow-trending-down'
-                "
-                :class="
-                  stat.changeColor === 'positive'
-                    ? 'text-blue-500'
-                    : stat.changeColor === 'negative'
-                    ? 'text-amber-500'
-                    : 'text-blue-500'
-                "
-                class="w-4 h-4"
-              />
-              <p class="text-xs text-gray-600 dark:text-slate-400">
-                {{ stat.change }}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-1 gap-6">
-        <!-- Main Content -->
-        <div class="w-full">
-          <!-- Projects Table -->
-          <div
-            class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg overflow-hidden"
-          >
-            <!-- Filters and Search -->
-            <div
-              class="bg-white dark:bg-slate-800/50 backdrop-blur-sm border-b border-gray-200 dark:border-slate-700 p-6"
-            >
-              <!-- Section Header -->
-              <div class="mb-6">
-                <h3
-                  class="text-gray-900 dark:text-white text-xl font-bold mb-2"
-                >
-                  Student Projects
-                </h3>
-                <p class="text-xs text-gray-600 dark:text-slate-400">
-                  Search, filter, and manage all student project submissions
-                </p>
-              </div>
-              <div
-                class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4"
-              >
-                <div class="relative flex-1">
-                  <UIcon
-                    name="i-heroicons-magnifying-glass"
-                    class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-500"
-                  />
-                  <input
-                    v-model="searchQuery"
-                    type="text"
-                    placeholder="Search projects..."
-                    class="w-full pl-10 pr-3 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-md text-black dark:text-white text-sm placeholder-gray-500 dark:placeholder-slate-500 focus:outline-none"
-                  />
-                </div>
-                <div class="flex gap-2">
-                  <ButtonsPresetButton
-                    preset="primary"
-                    label="Completed Project"
-                    icon="i-heroicons-check-circle"
-                    size="sm"
-                    @click="setActiveFilter('completed')"
-                    :class="{ 'bg-blue-800': activeFilter === 'completed' }"
-                  />
-                  <ButtonsPresetButton
-                    preset="primary"
-                    label="Pending Reviews"
-                    icon="i-heroicons-exclamation-circle"
-                    size="sm"
-                    @click="setActiveFilter('pending')"
-                    :class="{ 'bg-blue-800': activeFilter === 'pending' }"
-                  />
-                </div>
-              </div>
-
-              <div class="flex gap-4 flex-wrap">
-                <select
-                  v-model="selectedCategory"
-                  class="w-full sm:w-auto px-3 py-1.5 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-md text-black dark:text-white text-sm min-w-40 focus:outline-none"
-                >
-                  <option value="">All Categories</option>
-                  <option value="web-development">Web Development</option>
-                  <option value="mobile-app">Mobile App</option>
-                  <option value="data-science">Data Science</option>
-                  <option value="ai-ml">AI/ML</option>
-                  <option value="game-dev">Game Development</option>
-                  <option value="other">Other</option>
-                </select>
-
-                <select
-                  v-model="selectedGeneration"
-                  class="w-full sm:w-auto px-3 py-1.5 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-md text-black dark:text-white text-sm min-w-40 focus:outline-none"
-                >
-                  <option value="">All Years</option>
-                  <option value="gen-2024">2024</option>
-                  <option value="gen-2025">2025</option>
-                  <option value="gen-2026">2026</option>
-                </select>
-              </div>
-            </div>
-            <table class="w-full border-collapse">
-              <thead>
-                <tr>
-                  <th
-                    class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
-                  >
-                    Student
-                  </th>
-                  <th
-                    class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
-                  >
-                    Project Title
-                  </th>
-                  <th
-                    class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700 hidden md:table-cell"
-                  >
-                    Category
-                  </th>
-                  <th
-                    class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700 hidden md:table-cell"
-                  >
-                    Year
-                  </th>
-                  <th
-                    class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
-                  >
-                    Status
-                  </th>
-                  <th
-                    class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700 hidden md:table-cell"
-                  >
-                    Submitted
-                  </th>
-                  <th
-                    class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
-                  >
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="project in paginatedProjects"
-                  :key="project.id"
-                  class="border-b border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-900 last:border-b-0"
-                >
-                  <td class="p-3 text-slate-100 align-top text-xs">
-                    <div class="flex items-center gap-3">
-                      <div
-                        v-if="project.studentAvatar"
-                        class="w-8 h-8 rounded-full overflow-hidden shrink-0"
-                      >
-                        <img
-                          :src="project.studentAvatar"
-                          :alt="project.studentName"
-                          class="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div
-                        v-else
-                        class="w-8 h-8 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center shrink-0"
-                      >
-                        <span class="text-xs font-semibold text-white">{{
-                          project.studentInitials
-                        }}</span>
-                      </div>
-                      <div>
-                        <div
-                          class="font-semibold text-black dark:text-white text-xs"
-                        >
-                          {{ project.studentName }}
-                        </div>
-                        <div class="text-xs text-gray-600 dark:text-slate-400">
-                          {{ project.studentEmail }}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="p-3 text-slate-100 align-top text-xs">
-                    <div
-                      class="font-semibold text-black dark:text-white text-xs mb-1"
-                    >
-                      {{ project.title }}
-                    </div>
-                    <div
-                      class="text-xs text-gray-600 dark:text-slate-400 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap"
-                    >
-                      {{ project.description }}
-                    </div>
-                  </td>
-                  <td
-                    class="p-3 text-slate-100 align-top text-xs hidden md:table-cell"
-                  >
-                    <span
-                      class="bg-gray-200 dark:bg-slate-700 text-black dark:text-slate-100 px-2 py-1 rounded text-xs font-medium inline-block"
-                      >{{ project.category }}</span
-                    >
-                  </td>
-                  <td
-                    class="p-3 text-black dark:text-slate-100 align-top text-xs hidden md:table-cell"
-                  >
-                    {{ project.generation }}
-                  </td>
-                  <td class="p-3 text-slate-100 align-top text-xs">
-                    <span
-                      :class="
-                        project.status === 'completed'
-                          ? 'bg-green-600 text-white'
-                          : 'bg-yellow-600 text-white'
-                      "
-                      class="px-2 py-1 rounded text-xs font-semibold inline-block"
-                    >
-                      {{
-                        project.status === "completed" ? "Completed" : "Pending"
-                      }}
-                    </span>
-                  </td>
-                  <td
-                    class="p-3 text-black dark:text-slate-100 align-top text-xs hidden md:table-cell"
-                  >
-                    {{ project.submittedDate }}
-                  </td>
-                  <td class="p-3 text-slate-100 align-top text-xs">
-                    <div class="flex gap-2 flex-wrap">
-                      <ButtonsPresetButton
-                        v-if="project.status !== 'pending'"
-                        preset="danger"
-                        label="View"
-                        icon="i-heroicons-eye"
-                        size="xs"
-                        @click="viewProject(project)"
-                      />
-                      <ButtonsPresetButton
-                        v-if="project.status === 'pending'"
-                        preset="danger"
-                        label="Review"
-                        icon="i-heroicons-check-circle"
-                        size="xs"
-                        @click="reviewProject(project)"
-                      />
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-
-            <!-- Empty State -->
-            <div
-              v-if="totalFilteredProjects === 0"
-              class="text-center py-8 px-4"
-            >
-              <UIcon
-                name="i-heroicons-inbox-stack"
-                class="w-12 h-12 text-slate-500 mx-auto mb-4"
-              />
-              <h3 class="text-white text-lg font-semibold mb-2">
-                No projects found
-              </h3>
-              <p class="text-slate-400 text-xs">
-                Try adjusting your search or filter criteria.
-              </p>
-            </div>
-
-            <!-- Pagination -->
-            <div
-              v-if="totalPages > 1"
-              class="flex flex-col gap-4 items-center pt-6 pb-4 px-4 border-t border-gray-200 dark:border-slate-700"
-            >
-              <div class="text-gray-600 dark:text-slate-400 text-xs">
-                Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to
-                {{
-                  Math.min(currentPage * itemsPerPage, totalFilteredProjects)
-                }}
-                of {{ totalFilteredProjects }} projects
-              </div>
-              <div class="flex items-center gap-2">
-                <ButtonsPresetButton
-                  preset="primary"
-                  label="Previous"
-                  icon="i-heroicons-arrow-left"
-                  size="sm"
-                  @click="prevPage"
-                  :disabled="currentPage === 1"
-                />
-
-                <div class="flex gap-1 mx-2">
-                  <ButtonsPresetButton
-                    v-for="page in visiblePages"
-                    :key="page"
-                    preset="secondary"
-                    :label="page.toString()"
-                    size="sm"
-                    class="rounded-md"
-                    @click="goToPage(page)"
-                    :class="{
-                      'bg-blue-500 text-white border-blue-500':
-                        page === currentPage,
-                    }"
-                  />
-                </div>
-
-                <ButtonsPresetButton
-                  preset="primary"
-                  label="Next"
-                  icon="i-heroicons-chevron-right"
-                  size="sm"
-                  @click="nextPage"
-                  :disabled="currentPage === totalPages"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </UContainer>
   </div>
 </template>
 

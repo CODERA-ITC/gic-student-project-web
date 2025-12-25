@@ -1,186 +1,198 @@
 <template>
   <div class="flex items-center gap-4">
-    <!-- Notifications Bell (Authenticated Users) -->
-    <NotificationBell
-      v-if="isAuthenticated"
-      :notifications="notifications as any"
-      @notification-click="handleNotificationClick"
-      @remove="handleRemoveNotification"
-      @clear-all="handleClearNotifications"
-    />
-
-    <!-- Authenticated User Dropdown -->
-    <div v-if="isAuthenticated" class="relative">
-      <!-- User Button -->
-      <button
-        class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors duration-200"
-        @click="menuOpen = !menuOpen"
-      >
-        <!-- Avatar -->
-        <div
-          v-if="user.avatar"
-          class="w-8 h-8 rounded-full overflow-hidden border border-gray-300 dark:border-slate-600"
-        >
-          <img
-            :src="user.avatar"
-            :alt="user.name"
-            class="w-full h-full object-cover"
-          />
-        </div>
-        <div
-          v-else
-          class="w-8 h-8 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center border border-gray-300 dark:border-slate-600"
-        >
-          <span class="text-xs font-semibold text-white">{{
-            getInitials(user.name)
-          }}</span>
-        </div>
-        <!-- Name and Role Badge -->
-        <div class="hidden sm:block text-left">
-          <p class="text-sm font-medium text-gray-900">{{ user.name }}</p>
-          <p class="text-xs text-gray-500 capitalize">{{ userRole }}</p>
-        </div>
-        <UIcon
-          name="i-heroicons-chevron-down-20-solid"
-          class="w-4 h-4 text-gray-600"
-        />
-      </button>
-
-      <!-- Dropdown Menu -->
-      <Transition
-        enter-active-class="transition ease-out duration-100"
-        enter-from-class="transform opacity-0 scale-95"
-        enter-to-class="transform opacity-100 scale-100"
-        leave-active-class="transition ease-in duration-75"
-        leave-from-class="transform opacity-100 scale-100"
-        leave-to-class="transform opacity-0 scale-95"
-      >
-        <div
-          v-show="menuOpen"
-          class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
-        >
-          <!-- User Info Header -->
-          <div class="px-4 py-3 border-b border-gray-200">
-            <p class="text-sm font-semibold text-gray-900">{{ user.name }}</p>
-            <p class="text-xs text-gray-500">{{ user.email }}</p>
-            <div class="mt-2 flex items-center gap-2">
-              <span
-                class="inline-block px-2 py-1 text-xs font-semibold rounded-full"
-                :class="getRoleBadgeClass(userRole)"
-              >
-                {{ userRole.toUpperCase() }}
-              </span>
-              <span v-if="user.program" class="text-xs text-gray-500">
-                {{ user.program }}
-              </span>
-            </div>
-          </div>
-
-          <!-- Divider -->
-          <hr class="border-gray-200" />
-
-          <!-- Student Menu Items -->
-          <template v-if="isStudent">
-            <NuxtLink
-              to="/student/dashboard"
-              class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-              @click="closeMenu"
-            >
-              <UIcon
-                name="i-heroicons-chart-bar-square-20-solid"
-                class="w-4 h-4"
-              />
-              My Dashboard
-            </NuxtLink>
-            <NuxtLink
-              to="/student/my-projects"
-              class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-              @click="closeMenu"
-            >
-              <UIcon name="i-heroicons-folder-20-solid" class="w-4 h-4" />
-              My Projects
-            </NuxtLink>
-            <NuxtLink
-              to="/student/submissions"
-              class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-              @click="closeMenu"
-            >
-              <UIcon name="i-heroicons-inbox-20-solid" class="w-4 h-4" />
-              Submissions
-            </NuxtLink>
-          </template>
-
-          <!-- Teacher Menu Items -->
-          <template v-if="isTeacher || isAdmin">
-            <NuxtLink
-              to="/teacher/dashboard"
-              class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-              @click="closeMenu"
-            >
-              <UIcon
-                name="i-heroicons-chart-bar-square-20-solid"
-                class="w-4 h-4"
-              />
-              Teacher Dashboard
-            </NuxtLink>
-            <NuxtLink
-              to="/teacher/manage-projects"
-              class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-              @click="closeMenu"
-            >
-              <UIcon
-                name="i-heroicons-document-check-20-solid"
-                class="w-4 h-4"
-              />
-              Manage Projects
-            </NuxtLink>
-            <NuxtLink
-              to="/teacher/submissions"
-              class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-              @click="closeMenu"
-            >
-              <UIcon name="i-heroicons-inbox-stack-20-solid" class="w-4 h-4" />
-              Review Submissions
-            </NuxtLink>
-            <NuxtLink
-              to="/teacher/analytics"
-              class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-              @click="closeMenu"
-            >
-              <UIcon name="i-heroicons-chart-pie-20-solid" class="w-4 h-4" />
-              Analytics
-            </NuxtLink>
-          </template>
-
-          <!-- Common Menu Items -->
-          <hr class="border-gray-200" />
-          <NuxtLink
-            to="/profile"
-            class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-            @click="closeMenu"
-          >
-            <UIcon name="i-heroicons-user-circle-20-solid" class="w-4 h-4" />
-            Profile Settings
-          </NuxtLink>
-
-          <!-- Sign Out -->
-          <hr class="border-gray-200" />
-          <button
-            class="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
-            @click="handleLogout"
-          >
-            <UIcon
-              name="i-heroicons-arrow-left-on-rectangle-20-solid"
-              class="w-4 h-4"
-            />
-            Sign Out
-          </button>
-        </div>
-      </Transition>
-
-      <!-- Backdrop -->
-      <div v-if="menuOpen" class="fixed inset-0 z-40" @click="closeMenu" />
+    <!-- Loading State -->
+    <div v-if="authStore.isLoading" class="flex items-center gap-2 px-3 py-2">
+      <div
+        class="w-6 h-6 border-2 border-gray-400 dark:border-gray-500 border-t-transparent rounded-full animate-spin"
+      ></div>
     </div>
+
+    <!-- Authenticated User Section -->
+    <template v-else-if="isAuthenticated">
+      <!-- Notifications Bell -->
+      <NotificationBell
+        :notifications="notifications as any"
+        @notification-click="handleNotificationClick"
+        @remove="handleRemoveNotification"
+        @clear-all="handleClearNotifications"
+      />
+
+      <!-- Authenticated User Dropdown -->
+      <div class="relative">
+        <!-- User Button -->
+        <button
+          class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors duration-200"
+          @click="menuOpen = !menuOpen"
+        >
+          <!-- Avatar -->
+          <div
+            v-if="user.avatar"
+            class="w-8 h-8 rounded-full overflow-hidden border border-gray-300 dark:border-slate-600"
+          >
+            <img
+              :src="user.avatar"
+              :alt="user.name"
+              class="w-full h-full object-cover"
+            />
+          </div>
+          <div
+            v-else
+            class="w-8 h-8 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center border border-gray-300 dark:border-slate-600"
+          >
+            <span class="text-xs font-semibold text-white">{{
+              getInitials(user.name)
+            }}</span>
+          </div>
+          <!-- Name and Role Badge -->
+          <div class="hidden sm:block text-left">
+            <p class="text-sm font-medium text-gray-900">{{ user.name }}</p>
+            <p class="text-xs text-gray-500 capitalize">{{ userRole }}</p>
+          </div>
+          <UIcon
+            name="i-heroicons-chevron-down-20-solid"
+            class="w-4 h-4 text-gray-600"
+          />
+        </button>
+
+        <!-- Dropdown Menu -->
+        <Transition
+          enter-active-class="transition ease-out duration-100"
+          enter-from-class="transform opacity-0 scale-95"
+          enter-to-class="transform opacity-100 scale-100"
+          leave-active-class="transition ease-in duration-75"
+          leave-from-class="transform opacity-100 scale-100"
+          leave-to-class="transform opacity-0 scale-95"
+        >
+          <div
+            v-show="menuOpen"
+            class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+          >
+            <!-- User Info Header -->
+            <div class="px-4 py-3 border-b border-gray-200">
+              <p class="text-sm font-semibold text-gray-900">{{ user.name }}</p>
+              <p class="text-xs text-gray-500">{{ user.email }}</p>
+              <div class="mt-2 flex items-center gap-2">
+                <span
+                  class="inline-block px-2 py-1 text-xs font-semibold rounded-full"
+                  :class="getRoleBadgeClass(userRole)"
+                >
+                  {{ userRole.toUpperCase() }}
+                </span>
+                <span v-if="user.program" class="text-xs text-gray-500">
+                  {{ user.program }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Divider -->
+            <hr class="border-gray-200" />
+
+            <!-- Student Menu Items -->
+            <template v-if="isStudent">
+              <NuxtLink
+                to="/student/dashboard"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                @click="closeMenu"
+              >
+                <UIcon
+                  name="i-heroicons-chart-bar-square-20-solid"
+                  class="w-4 h-4"
+                />
+                My Dashboard
+              </NuxtLink>
+              <NuxtLink
+                to="/student/my-projects"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                @click="closeMenu"
+              >
+                <UIcon name="i-heroicons-folder-20-solid" class="w-4 h-4" />
+                My Projects
+              </NuxtLink>
+              <NuxtLink
+                to="/student/submissions"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                @click="closeMenu"
+              >
+                <UIcon name="i-heroicons-inbox-20-solid" class="w-4 h-4" />
+                Submissions
+              </NuxtLink>
+            </template>
+
+            <!-- Teacher Menu Items -->
+            <template v-if="isTeacher || isAdmin">
+              <NuxtLink
+                to="/teacher/dashboard"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                @click="closeMenu"
+              >
+                <UIcon
+                  name="i-heroicons-chart-bar-square-20-solid"
+                  class="w-4 h-4"
+                />
+                Teacher Dashboard
+              </NuxtLink>
+              <NuxtLink
+                to="/teacher/manage-projects"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                @click="closeMenu"
+              >
+                <UIcon
+                  name="i-heroicons-document-check-20-solid"
+                  class="w-4 h-4"
+                />
+                Manage Projects
+              </NuxtLink>
+              <NuxtLink
+                to="/teacher/submissions"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                @click="closeMenu"
+              >
+                <UIcon
+                  name="i-heroicons-inbox-stack-20-solid"
+                  class="w-4 h-4"
+                />
+                Review Submissions
+              </NuxtLink>
+              <NuxtLink
+                to="/teacher/analytics"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                @click="closeMenu"
+              >
+                <UIcon name="i-heroicons-chart-pie-20-solid" class="w-4 h-4" />
+                Analytics
+              </NuxtLink>
+            </template>
+
+            <!-- Common Menu Items -->
+            <hr class="border-gray-200" />
+            <NuxtLink
+              to="/profile"
+              class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+              @click="closeMenu"
+            >
+              <UIcon name="i-heroicons-user-circle-20-solid" class="w-4 h-4" />
+              Profile Settings
+            </NuxtLink>
+
+            <!-- Sign Out -->
+            <hr class="border-gray-200" />
+            <button
+              class="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
+              @click="handleLogout"
+            >
+              <UIcon
+                name="i-heroicons-arrow-left-on-rectangle-20-solid"
+                class="w-4 h-4"
+              />
+              Sign Out
+            </button>
+          </div>
+        </Transition>
+
+        <!-- Backdrop -->
+        <div v-if="menuOpen" class="fixed inset-0 z-40" @click="closeMenu" />
+      </div>
+    </template>
 
     <!-- Guest Sign In/Up -->
     <template v-else>
