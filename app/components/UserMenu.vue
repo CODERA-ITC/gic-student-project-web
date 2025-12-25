@@ -116,6 +116,15 @@
                 <UIcon name="i-heroicons-inbox-20-solid" class="w-4 h-4" />
                 Submissions
               </NuxtLink>
+
+              <NuxtLink
+                to="/student/favorites"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                @click="closeMenu"
+              >
+                <UIcon name="i-heroicons-heart-20-solid" class="w-4 h-4" />
+                Favorites
+              </NuxtLink>
             </template>
 
             <!-- Teacher Menu Items -->
@@ -154,12 +163,12 @@
                 Review Submissions
               </NuxtLink>
               <NuxtLink
-                to="/teacher/analytics"
+                to="/teacher/favorites"
                 class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                 @click="closeMenu"
               >
-                <UIcon name="i-heroicons-chart-pie-20-solid" class="w-4 h-4" />
-                Analytics
+                <UIcon name="i-heroicons-heart-20-solid" class="w-4 h-4" />
+                Favorites
               </NuxtLink>
             </template>
 
