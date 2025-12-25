@@ -38,7 +38,7 @@ export const useAuthStore = defineStore("auth", {
   getters: {
     isStudent: (state) => state.user?.role === "STUDENT",
     isTeacher: (state) => state.user?.role === "TEACHER",
-    // isAdmin: (state) => state.user?.role === "ADMIN",
+    isAdmin: (state) => state.user?.role === "ADMIN",
     currentUser: (state) => state.user,
     userRole: (state) => state.user?.role || null,
   },
@@ -160,8 +160,9 @@ export const useAuthStore = defineStore("auth", {
     },
 
     /**
-     * Fetch current user details from API
+     * Fetch current user details from API by using ID from token
      */
+
     async fetchCurrentUser(): Promise<void> {
       try {
         const token = this.getToken();
@@ -169,7 +170,17 @@ export const useAuthStore = defineStore("auth", {
           throw new Error("No authentication token");
         }
 
-        const response = await fetch("/api/users/current", {
+        const decodedToken = this.decodeJWT(token);
+        if (!decodedToken || !decodedToken.iat) {
+          throw new Error("Invalid token");
+        }
+
+        const userId = decodedToken.id;
+        if (!userId) {
+          throw new Error("User ID not found in token");
+        }
+
+        const response = await fetch(`/api/users/${userId}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -177,28 +188,27 @@ export const useAuthStore = defineStore("auth", {
           },
         });
 
-        console.log(response);
-
         if (!response.ok) {
           throw new Error("Failed to fetch user details");
         }
 
-        const responseData = await response.json();
+        const userData = await response.json();
 
         // if (!responseData.success || !responseData.data) {
         //   throw new Error("Invalid response from server");
         // }
 
-        const userData = responseData.data;
-
         // Map API response to User interface
+
+        console.log("Fetched current user data:", userData.role.name);
+
         this.user = {
           id: userData.id,
           email: userData.email,
           name: `${userData.firstname || ""} ${userData.lastname || ""}`.trim(),
           firstname: userData.firstname,
           lastname: userData.lastname,
-          role: userData.role || "STUDENT",
+          role: userData.role.name,
           avatar: userData.avatar || undefined,
           program: userData.program,
           year: userData.year,

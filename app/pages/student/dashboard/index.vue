@@ -153,70 +153,13 @@
           </div>
         </div>
 
-        <!-- Recent Projects Section -->
-        <div
-          class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 mb-8"
-        >
-          <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-bold text-black dark:text-white">
-              Recent Projects
-            </h2>
-          </div>
-
-          <div class="grid md:grid-cols-2 gap-4">
-            <div
-              v-for="project in recentProjects.filter(
-                (p) => p.status === 'In Progress'
-              )"
-              :key="project.id"
-              class="p-4 bg-gray-50 dark:bg-slate-700/30 rounded-lg group border border-gray-200 dark:border-slate-600/50"
-            >
-              <div class="flex items-start justify-between mb-3">
-                <div>
-                  <p class="font-semibold text-black dark:text-white">
-                    {{ project.title }}
-                  </p>
-                  <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                    {{ project.category }}
-                  </p>
-                </div>
-                <span
-                  :class="project.statusColor"
-                  class="text-xs font-semibold px-2 py-1 rounded"
-                >
-                  {{ project.status }}
-                </span>
-              </div>
-              <div class="space-y-2">
-                <div
-                  class="flex items-center justify-between text-xs text-gray-600 dark:text-gray-400"
-                >
-                  <span>Progress</span>
-                  <span>{{ project.progress }}%</span>
-                </div>
-                <div
-                  class="w-full bg-gray-300 dark:bg-slate-600 rounded-full h-1.5"
-                >
-                  <div
-                    :style="{ width: project.progress + '%' }"
-                    class="bg-blue-500 h-1.5 rounded-full"
-                  />
-                </div>
-                <p class="text-xs text-gray-500 dark:text-gray-500">
-                  Updated: {{ project.updated }}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <!-- My Projects -->
         <div
           class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 mb-8"
         >
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold text-black dark:text-white">
-              My Projects
+              Recent Projects
             </h2>
             <NuxtLink
               to="my-projects"

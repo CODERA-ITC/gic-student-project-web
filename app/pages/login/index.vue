@@ -271,13 +271,24 @@ const handleLogin = async () => {
     //   await router.push(redirectTo);
     // }
 
-    if (authStore.isTeacher) {
+
+    console.log("User Role - isTeacher:", authStore.isTeacher, "isAdmin:", authStore.isAdmin, "isStudent:", authStore.isStudent);
+
+
+
+    if (authStore.isTeacher || authStore.isAdmin) {
       await router.push("/teacher/dashboard");
-    } else if (authStore.isAdmin) {
-      await router.push("/admin/dashboard");
     } else {
       await router.push("/student/dashboard");
     }
+
+    // if (authStore.isTeacher || authStore.isAdmin) {
+    //   await router.push("/teacher/dashboard");
+    // } else if (authStore.isAdmin) {
+    //   await router.push("/admin/dashboard");
+    // } else {
+    //   await router.push("/student/dashboard");
+    // }
   } catch (err) {
     // Error is already set in the store
     console.error("Login failed:", err);

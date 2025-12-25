@@ -56,7 +56,7 @@
             <button
               v-for="(img, idx) in project.images || []"
               :key="idx"
-              @click="currentImageIndex = idx"
+              @click="currentImageIndex = Number(idx)"
               :class="[
                 'w-2 h-2 rounded-full transition-all',
                 currentImageIndex === idx
@@ -181,7 +181,7 @@
                   :date="item.date"
                   :status="item.status"
                   :icon="item.icon"
-                  :index="index"
+                  :index="Number(index)"
                 />
               </div>
             </div>
@@ -321,7 +321,7 @@
 
           <!-- Hide/Show Project Button (Teacher only) -->
           <UButton
-            v-if="userRole === 'teacher'"
+            v-if="userRole === Role.teacher"
             @click="$emit('hide')"
             :color="project.visibility === 'private' ? 'success' : 'warning'"
             variant="solid"

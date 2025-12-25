@@ -17,15 +17,23 @@
         @click="menuOpen = !menuOpen"
       >
         <!-- Avatar -->
-        <div v-if="user.avatar" class="w-8 h-8 rounded-full overflow-hidden border border-gray-300 dark:border-slate-600">
+        <div
+          v-if="user.avatar"
+          class="w-8 h-8 rounded-full overflow-hidden border border-gray-300 dark:border-slate-600"
+        >
           <img
             :src="user.avatar"
             :alt="user.name"
             class="w-full h-full object-cover"
           />
         </div>
-        <div v-else class="w-8 h-8 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center border border-gray-300 dark:border-slate-600">
-          <span class="text-xs font-semibold text-white">{{ getInitials(user.name) }}</span>
+        <div
+          v-else
+          class="w-8 h-8 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center border border-gray-300 dark:border-slate-600"
+        >
+          <span class="text-xs font-semibold text-white">{{
+            getInitials(user.name)
+          }}</span>
         </div>
         <!-- Name and Role Badge -->
         <div class="hidden sm:block text-left">
@@ -103,7 +111,7 @@
           </template>
 
           <!-- Teacher Menu Items -->
-          <template v-if="isTeacher">
+          <template v-if="isTeacher || isAdmin">
             <NuxtLink
               to="/teacher/dashboard"
               class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
@@ -214,6 +222,7 @@ const menuOpen = ref(false);
 
 const userRole = computed(() => authStore.userRole || "guest");
 const isStudent = computed(() => authStore.isStudent);
+const isAdmin = computed(() => authStore.isAdmin);
 const isTeacher = computed(() => authStore.isTeacher);
 const notifications = computed(() => uiStore.notifications || []);
 
