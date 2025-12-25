@@ -82,7 +82,7 @@
                 <button
                   v-for="(img, idx) in project.images || []"
                   :key="idx"
-                  @click="currentImageIndex = idx"
+                  @click="currentImageIndex = Number(idx)"
                   :class="[
                     'w-2 h-2 rounded-full transition-all',
                     currentImageIndex === idx
