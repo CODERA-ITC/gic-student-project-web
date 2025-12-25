@@ -44,7 +44,7 @@
                   :class="[
                     'w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all',
                     currentStep > idx
-                      ? 'bg-green-600 text-white'
+                      ? 'bg-blue-900 text-white'
                       : currentStep === idx
                       ? 'bg-blue-900 text-white ring-2 ring-blue-800'
                       : 'bg-gray-300 dark:bg-slate-700 text-gray-600 dark:text-gray-400',
@@ -57,7 +57,7 @@
                   :class="[
                     'flex-1 h-1 mx-2 rounded-full transition-all',
                     currentStep > idx
-                      ? 'bg-green-600'
+                      ? 'bg-blue-900'
                       : 'bg-gray-300 dark:bg-slate-700',
                   ]"
                 ></div>
@@ -153,15 +153,14 @@
                           required
                         </p>
                       </div>
-                      <UButton
-                        type="button"
-                        color="primary"
-                        variant="outline"
-                        @click="$refs.thumbnailInput?.click()"
+                      <ButtonsPresetButton
+                        label="Add Images"
                         icon="i-heroicons-plus"
-                      >
-                        Add Images
-                      </UButton>
+                        color="primary"
+                        variant="solid"
+                        size="lg"
+                        @click="$refs.thumbnailInput?.click()"
+                      />
                     </div>
                   </div>
 
@@ -175,7 +174,9 @@
                           class="text-red-400"
                           >({{ 1 - form.thumbnails.length }} more needed)</span
                         >
-                        <span v-else class="text-green-400">✓</span>
+                        <span v-else class="text-blue-600 dark:text-blue-400"
+                          >✓</span
+                        >
                       </p>
                     </div>
 
@@ -290,16 +291,14 @@
                       class="flex-1 px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                       @keyup.enter="addTechnology"
                     />
-                    <UButton
-                      type="button"
-                      @click="addTechnology"
+                    <ButtonsPresetButton
+                      label="Add"
+                      icon="i-heroicons-plus"
                       color="primary"
                       variant="solid"
                       size="lg"
-                      icon="i-heroicons-plus"
-                    >
-                      Add
-                    </UButton>
+                      @click="addTechnology"
+                    />
                   </div>
                   <div class="flex flex-wrap gap-2">
                     <UBadge
@@ -478,16 +477,14 @@
                         class="flex-1 px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                         @keyup.enter="addTeamMember"
                       />
-                      <UButton
-                        type="button"
-                        @click="addTeamMember"
+                      <ButtonsPresetButton
+                        label="Add"
+                        icon="i-heroicons-plus"
                         color="primary"
                         variant="solid"
                         size="lg"
-                        icon="i-heroicons-plus"
-                      >
-                        Add
-                      </UButton>
+                        @click="addTeamMember"
+                      />
                     </div>
                   </div>
 
@@ -630,40 +627,34 @@
                   </div>
 
                   <div class="flex flex-col sm:flex-row gap-2">
-                    <UButton
-                      type="button"
-                      @click="
-                        editingFeatureIndex >= 0 ? addFeature() : addFeature()
+                    <ButtonsPresetButton
+                      :label="
+                        editingFeatureIndex >= 0
+                          ? 'Update Feature'
+                          : 'Add Feature'
                       "
-                      color="primary"
-                      variant="solid"
-                      size="lg"
                       :icon="
                         editingFeatureIndex >= 0
                           ? 'i-heroicons-check'
                           : 'i-heroicons-plus'
                       "
+                      color="primary"
+                      variant="solid"
+                      size="lg"
                       :disabled="
                         !featureInput.title || !featureInput.description
                       "
-                    >
-                      {{
-                        editingFeatureIndex >= 0
-                          ? "Update Feature"
-                          : "Add Feature"
-                      }}
-                    </UButton>
-                    <UButton
+                      @click="addFeature"
+                    />
+                    <ButtonsPresetButton
                       v-if="editingFeatureIndex >= 0"
-                      type="button"
-                      @click="cancelEditFeature"
+                      label="Cancel"
+                      icon="i-heroicons-x-mark"
                       color="gray"
                       variant="soft"
                       size="lg"
-                      icon="i-heroicons-x-mark"
-                    >
-                      Cancel
-                    </UButton>
+                      @click="cancelEditFeature"
+                    />
                   </div>
 
                   <div class="space-y-2" v-if="form.feature.length > 0">
@@ -1173,7 +1164,7 @@ const availableStatuses = ref([
 const getStatusColor = (status) => {
   switch (status) {
     case "done":
-      return "green";
+      return "blue";
     case "ongoing":
       return "blue";
     case "pending":
@@ -1242,22 +1233,75 @@ const filteredIcons = computed(() => {
 // Current academic year options
 const academicYearOptions = ["2024-2025", "2025-2026", "2026-2027"];
 
+// for demo purposes, pre-fill form with sample data
 const form = ref({
-  title: "",
-  description: "",
-  thumbnails: [], // Project preview images
-  category: "",
+  title: "AI Cat Detection System",
+  description:
+    "An AI-powered computer vision system that detects cats in images using deep learning. The project focuses on object detection, dataset preparation, model training, and visualizing detection results with bounding boxes.",
+  thumbnails: [],
+  category: "Artificial Intelligence",
   academicYear: "2024-2025",
-  technologies: [],
-  githubUrl: "",
-  demoUrl: "",
+  technologies: [
+    "Python",
+    "Computer Vision",
+    "YOLO",
+    "OpenCV",
+    "PyTorch",
+    "FiftyOne",
+  ],
+  githubUrl: "https://github.com/sarahchen/ai-cat-detection",
+  demoUrl: "https://ai-cat-detection.demo.com",
   visibility: "public",
-  duration: "",
-  teamSize: 1,
-  teamMembers: [],
-  feature: [],
-  tags: [],
-  course: "",
+  duration: "4 months",
+  teamSize: 4,
+  teamMembers: [
+    {
+      name: "Sarah Chen",
+      role: "Frontend Developer",
+      avatar: "https://randomuser.me/api/portraits/women/1.jpg",
+    },
+    {
+      name: "Alex Kumar",
+      role: "Backend Developer",
+      avatar: "https://randomuser.me/api/portraits/men/2.jpg",
+    },
+  ],
+  feature: [
+    {
+      title: "Dataset Collection",
+      description:
+        "Collected and filtered cat images from Open Images and removed unlabeled samples.",
+      date: "2025-09-01",
+      icon: "i-lucide-server",
+      status: "done",
+    },
+    {
+      title: "Model Training",
+      description:
+        "Trained a YOLO-based object detection model to detect cats in images.",
+      date: "2025-09-19",
+      icon: "i-heroicons-star",
+      status: "done",
+    },
+    {
+      title: "Bounding Box Visualization",
+      description:
+        "Implemented bounding box rendering for detected cats using OpenCV.",
+      date: "2025-10-26",
+      icon: "i-heroicons-chart-bar",
+      status: "done",
+    },
+    {
+      title: "Evaluation & Deployment",
+      description:
+        "Evaluated model performance and deployed a demo for image-based detection.",
+      date: "2025-12-01",
+      icon: "i-heroicons-cloud",
+      status: "done",
+    },
+  ],
+  tags: ["artificial-intelligence", "python", "computer-vision", "yolo"],
+  course: "Artificial Intelligence & Computer Vision",
 });
 
 const addTechnology = () => {
@@ -1482,8 +1526,6 @@ const submitForm = async () => {
       "Project data to be created:",
       JSON.stringify(projectData, null, 2)
     );
-    console.log("Author in project data:", projectData.author);
-
     let result;
     if (editMode.value) {
       // Update existing project
@@ -1555,7 +1597,7 @@ const submitForm = async () => {
       description: `Project ${
         editMode.value ? "updated" : "created"
       } successfully. Redirecting...`,
-      color: "green",
+      color: "blue",
       timeout: 2000,
     });
 

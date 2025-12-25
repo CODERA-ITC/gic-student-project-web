@@ -218,9 +218,12 @@
             >
               Project Team
             </h3>
-            <div class="grid sm:grid-cols-2 gap-4">
+            <div
+              v-if="filteredMembers.length > 0"
+              class="grid sm:grid-cols-2 gap-4"
+            >
               <div
-                v-for="(member, idx) in project.members || []"
+                v-for="(member, idx) in filteredMembers"
                 :key="idx"
                 class="flex items-center gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-700/50 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors"
               >
@@ -236,6 +239,9 @@
                 </p>
               </div>
             </div>
+            <p v-else class="text-gray-500 dark:text-gray-400 text-sm">
+              No other team members
+            </p>
           </div>
         </div>
       </div>
@@ -318,6 +324,9 @@
         <div class="space-y-3">
           <!-- Submit for Review Button (Student Owner only) - via slot -->
           <slot name="submit-button"></slot>
+
+          <!-- Edit and Delete Buttons (Owner only) - via slot -->
+          <slot name="action-buttons"></slot>
 
           <!-- Hide/Show Project Button (Teacher only) -->
           <UButton
@@ -412,8 +421,6 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import { gsap } from "gsap";
 import { Role } from "~/types/roles";
 
-
-
 // Template refs for animations
 const sectionRef = ref<HTMLElement | null>(null);
 const iconRef = ref<any>(null);
@@ -471,6 +478,17 @@ const timelineItems = computed(() => {
     icon: feature.icon || "i-lucide-star",
     status: feature.status || "completed",
   }));
+});
+
+// Filter team members to exclude the owner/author
+const filteredMembers = computed(() => {
+  if (!props.project?.members) return [];
+  if (!props.project?.author?.name) return props.project.members;
+
+  // Filter out the owner from the members list
+  return props.project.members.filter(
+    (member: any) => member.name !== props.project.author.name
+  );
 });
 
 // GSAP Animations

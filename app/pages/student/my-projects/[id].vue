@@ -39,23 +39,122 @@
         @hide="toggleVisibility"
       >
         <template #submit-button>
-          <UButton
+          <ButtonsPresetButton
             v-if="canSubmit"
-            @click="submitProject"
-            color="success"
-            variant="solid"
-            class="w-full justify-center"
+            preset="submitProject"
+            label="Submit for Review"
+            icon="i-heroicons-paper-airplane"
             size="lg"
             :loading="isSubmitting"
-          >
-            <template #leading>
-              <UIcon name="i-heroicons-paper-airplane" class="w-5 h-5" />
-            </template>
-            Submit for Review
-          </UButton>
+            class="w-full justify-center"
+            @click="submitProject"
+          />
+        </template>
+        <template #action-buttons>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <ButtonsPresetButton
+              label="Edit Project"
+              icon="i-heroicons-pencil-square"
+              color="primary"
+              variant="solid"
+              size="lg"
+              class="flex-1"
+              @click="editProject"
+            />
+            <ButtonsPresetButton
+              label="Delete Project"
+              icon="i-heroicons-trash"
+              size="lg"
+              class="flex-1"
+              @click="showDeleteModal = true"
+            />
+          </div>
         </template>
       </ProjectDetails>
     </UContainer>
+
+    <!-- Delete Confirmation Modal - Step 1 -->
+    <UModal v-model="showDeleteModal">
+      <div class="p-6">
+        <div class="flex items-center gap-3 mb-4">
+          <div
+            class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center"
+          >
+            <UIcon
+              name="i-heroicons-exclamation-triangle"
+              class="w-6 h-6 text-red-600 dark:text-red-400"
+            />
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+            Delete Project?
+          </h3>
+        </div>
+        <p class="text-gray-600 dark:text-gray-300 mb-6">
+          Are you sure you want to delete "<span class="font-semibold">{{
+            project?.title
+          }}</span
+          >"? This will permanently remove the project and all its data.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3 justify-end">
+          <ButtonsPresetButton
+            label="Cancel"
+            size="lg"
+            @click="showDeleteModal = false"
+          />
+          <ButtonsPresetButton
+            label="Continue"
+            icon="i-heroicons-arrow-right"
+            size="lg"
+            @click="proceedToFinalDelete"
+          />
+        </div>
+      </div>
+    </UModal>
+
+    <!-- Delete Confirmation Modal - Step 2 (Final) -->
+    <UModal v-model="showFinalDeleteModal">
+      <div class="p-6">
+        <div class="flex items-center gap-3 mb-4">
+          <div
+            class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center"
+          >
+            <UIcon
+              name="i-heroicons-exclamation-circle"
+              class="w-6 h-6 text-red-600 dark:text-red-400"
+            />
+          </div>
+          <h3 class="text-lg font-semibold text-red-600 dark:text-red-400">
+            Final Confirmation
+          </h3>
+        </div>
+        <div
+          class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6"
+        >
+          <p class="text-red-800 dark:text-red-300 font-medium mb-2">
+            ⚠️ This action cannot be undone!
+          </p>
+          <p class="text-red-700 dark:text-red-400 text-sm">
+            You are about to permanently delete this project. All project data,
+            images, and information will be lost forever.
+          </p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3 justify-end">
+          <ButtonsPresetButton
+            label="Go Back"
+            size="lg"
+            @click="cancelFinalDelete"
+          />
+          <ButtonsPresetButton
+            preset="delete"
+            label="Delete Permanently"
+            icon="i-heroicons-trash"  
+            size="lg"
+            :loading="isDeleting"
+            @click="confirmDelete"
+          />
+        </div>
+      </div>
+    </UModal>
 
     <!-- Submit Modal -->
     <UModal v-model="showSubmitModal">
@@ -69,21 +168,18 @@
           complete.
         </p>
         <div class="flex flex-col sm:flex-row gap-3 justify-end">
-          <UButton
+          <ButtonsPresetButton
+            preset="cancel"
+            size="lg"
             @click="showSubmitModal = false"
-            color="neutral"
-            variant="soft"
-          >
-            Cancel
-          </UButton>
-          <UButton
-            @click="confirmSubmit"
-            color="success"
-            variant="solid"
+          />
+          <ButtonsPresetButton
+            preset="submit"
+            label="Submit Project"
+            size="lg"
             :loading="isSubmitting"
-          >
-            Submit Project
-          </UButton>
+            @click="confirmSubmit"
+          />
         </div>
       </div>
     </UModal>
@@ -109,6 +205,9 @@ const project = ref(null);
 const isLoading = ref(true);
 const showSubmitModal = ref(false);
 const isSubmitting = ref(false);
+const showDeleteModal = ref(false);
+const showFinalDeleteModal = ref(false);
+const isDeleting = ref(false);
 
 // Load project data - ensure user projects are fetched first
 if (projectStore.userProjects.length === 0) {
@@ -140,14 +239,6 @@ if (!projectData) {
 
 project.value = projectData;
 
-// Debug: Log project data and user data
-console.log("=== OWNERSHIP CHECK DEBUG ===");
-console.log("Project ID:", projectId);
-console.log("Project data:", projectData);
-console.log("Project author:", projectData?.author);
-console.log("Current user:", authStore.user);
-console.log("Auth store user name:", authStore.user?.name);
-
 // Check if user owns this project
 const isOwner = computed(() => {
   if (!project.value || !authStore.user) {
@@ -156,12 +247,6 @@ const isOwner = computed(() => {
   }
   const owns = project.value.author?.name === authStore.user.name;
   console.log("Ownership check result:", owns);
-  console.log(
-    "Comparing:",
-    project.value.author?.name,
-    "===",
-    authStore.user.name
-  );
   return owns;
 });
 
@@ -213,6 +298,51 @@ const canSubmit = computed(() => {
 const submitProject = () => {
   if (!canSubmit.value) return;
   showSubmitModal.value = true;
+};
+
+const editProject = () => {
+  console.log("Edit button clicked!");
+  console.log("Project ID:", project.value?.id);
+  navigateTo(`/projects/create?edit=${project.value.id}`);
+};
+
+const proceedToFinalDelete = () => {
+  console.log("Delete button clicked - proceeding to final confirmation");
+  showDeleteModal.value = false;
+  showFinalDeleteModal.value = true;
+};
+
+const cancelFinalDelete = () => {
+  showFinalDeleteModal.value = false;
+  showDeleteModal.value = true;
+};
+
+const confirmDelete = async () => {
+  try {
+    isDeleting.value = true;
+
+    await projectStore.deleteProject(project.value.id);
+
+    const toast = useToast();
+    toast.add({
+      title: "Project Deleted",
+      description: "Your project has been successfully deleted.",
+      color: "success",
+    });
+
+    showDeleteModal.value = false;
+    await navigateTo("/student/my-projects");
+  } catch (error) {
+    console.error("Error deleting project:", error);
+    const toast = useToast();
+    toast.add({
+      title: "Delete Failed",
+      description: "Failed to delete project. Please try again.",
+      color: "error",
+    });
+  } finally {
+    isDeleting.value = false;
+  }
 };
 
 const confirmSubmit = async () => {

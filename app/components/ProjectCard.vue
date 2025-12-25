@@ -48,6 +48,30 @@
             class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
           ></div>
 
+          <!-- Edit and Delete Icons (only show if showEditButton and isProjectAuthor) -->
+          <div
+            v-if="showEditButton && isProjectAuthor"
+            class="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20"
+          >
+            <!-- Edit Icon -->
+            <button
+              @click.prevent.stop="$emit('edit', project.id)"
+              class="p-2 bg-blue-900 hover:bg-blue-700 text-white rounded-lg shadow-lg transition-all duration-200 hover:scale-105"
+              title="Edit project"
+            >
+              <UIcon name="i-heroicons-pencil-square" class="w-5 h-5" />
+            </button>
+
+            <!-- Delete Icon -->
+            <button
+              @click.prevent.stop="$emit('delete', project.id)"
+              class="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-lg transition-all duration-200 hover:scale-105"
+              title="Delete project"
+            >
+              <UIcon name="i-heroicons-trash" class="w-5 h-5" />
+            </button>
+          </div>
+
           <!-- Image Navigation Dots (only if multiple images) -->
           <div
             v-if="project.images.length > 1"
@@ -175,12 +199,12 @@
           <!-- Action buttons -->
           <div class="flex gap-2">
             <!-- Edit button (only for project authors) -->
-            <ButtonsPresetButton
-              v-if="isProjectAuthor"
+            <!-- <ButtonsPresetButton
+              v-if="showEditButton && isProjectAuthor"
               preset="edit"
               size="sm"
               :to="`/projects/create?edit=${project.id}`"
-            />
+            /> -->
 
             <!-- View button -->
             <ButtonsPresetButton
@@ -215,6 +239,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  showEditButton: {
+    type: Boolean,
+    default: false,
+  },
   project: {
     type: Object,
     required: true,
@@ -239,7 +267,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["toggle-like"]);
+const emit = defineEmits(["toggle-like", "edit", "delete"]);
 
 const currentImageIndex = ref(0);
 let autoPlayInterval = null;

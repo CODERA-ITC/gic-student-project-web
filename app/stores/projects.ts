@@ -408,7 +408,6 @@ export const useProjectStore = defineStore("projects", {
         // simulate network delay
         // await new Promise((resolve) => setTimeout(resolve, 100));
         // return current projects (in a real app this would come from an API)\
-        
 
         // Only load from projectsData if projects array is empty (initial load)
         if (this.projects.length === 0) {
@@ -421,6 +420,33 @@ export const useProjectStore = defineStore("projects", {
           }));
 
           this.projects = projects;
+
+          // Load user-created projects from localStorage and merge
+          if (typeof window !== "undefined") {
+            try {
+              const stored = localStorage.getItem("userCreatedProjects");
+              if (stored) {
+                const userProjects = JSON.parse(stored);
+                if (Array.isArray(userProjects)) {
+                  // Add user projects that don't already exist
+                  userProjects.forEach((userProject) => {
+                    if (!this.projects.find((p) => p.id === userProject.id)) {
+                      this.projects.unshift(userProject);
+                    }
+                  });
+
+                  // Update nextProjectId to be higher than any existing project ID
+                  const maxId = Math.max(
+                    ...this.projects.map((p) => p.id),
+                    999
+                  );
+                  this.nextProjectId = maxId + 1;
+                }
+              }
+            } catch (error) {
+              console.warn("Error loading user created projects:", error);
+            }
+          }
         }
 
         // Filter by visibility for return value
@@ -541,6 +567,22 @@ export const useProjectStore = defineStore("projects", {
     // Clear liked projects (call when user logs out)
     clearUserLikedProjects(): void {
       this.likedProjects.clear();
+    },
+
+    // Save user-created projects to localStorage
+    saveUserCreatedProjects(): void {
+      if (typeof window !== "undefined") {
+        try {
+          // Get only user-created projects (ID >= 1000)
+          const userCreatedProjects = this.projects.filter((p) => p.id >= 1000);
+          localStorage.setItem(
+            "userCreatedProjects",
+            JSON.stringify(userCreatedProjects)
+          );
+        } catch (error) {
+          console.warn("Error saving user created projects:", error);
+        }
+      }
     },
 
     // Pagination methods
@@ -815,6 +857,9 @@ export const useProjectStore = defineStore("projects", {
         this.projects.length / this.pagination.itemsPerPage
       );
 
+      // Save to localStorage
+      this.saveUserCreatedProjects();
+
       // In real app, this would sync with backend
       // await api.createProject(newProject);
 
@@ -903,7 +948,7 @@ export const useProjectStore = defineStore("projects", {
     async updateProject(
       projectId: number,
       updates: Partial<Project>
-    ): Promise<void> {
+    ): Promise<Project> {
       // Update in user projects
       const userProjectIndex = this.userProjects.findIndex(
         (p) => p.id === projectId
@@ -926,6 +971,52 @@ export const useProjectStore = defineStore("projects", {
 
       // In real app, sync with backend
       // await api.updateProject(projectId, updates);
+
+      // Save to localStorage
+      this.saveUserCreatedProjects();
+
+      // Return the updated project
+      const updatedProject = this.projects.find((p) => p.id === projectId);
+      if (!updatedProject) {
+        throw new Error(`Project with ID ${projectId} not found`);
+      }
+      return updatedProject;
+    },
+
+    // Delete project
+    async deleteProject(projectId: number): Promise<boolean> {
+      try {
+        // Remove from projects array
+        const projectIndex = this.projects.findIndex((p) => p.id === projectId);
+        if (projectIndex !== -1) {
+          this.projects.splice(projectIndex, 1);
+        }
+
+        // Remove from userProjects array
+        const userProjectIndex = this.userProjects.findIndex(
+          (p) => p.id === projectId
+        );
+        if (userProjectIndex !== -1) {
+          this.userProjects.splice(userProjectIndex, 1);
+        }
+
+        // Update pagination
+        this.pagination.totalItems = this.projects.length;
+        this.pagination.totalPages = Math.ceil(
+          this.projects.length / this.pagination.itemsPerPage
+        );
+
+        // Save to localStorage
+        this.saveUserCreatedProjects();
+
+        // In real app, sync with backend
+        // await api.deleteProject(projectId);
+
+        return true;
+      } catch (error) {
+        console.error("Failed to delete project:", error);
+        return false;
+      }
     },
 
     // Get next available project ID
