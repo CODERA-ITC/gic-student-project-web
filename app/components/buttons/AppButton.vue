@@ -3,7 +3,7 @@
     v-if="to"
     :to="to"
     :class="[
-      getButtonClasses(color, variant, size),
+      getButtonClasses(color, variant, size, fullWidth),
       {
         'opacity-50 cursor-not-allowed': disabled || loading,
         relative: loading,
@@ -28,7 +28,7 @@
     />
 
     <!-- Label -->
-    <span>{{ label }}</span>
+    <span class="truncate">{{ label }}</span>
   </NuxtLink>
 
   <button
@@ -36,7 +36,7 @@
     :type="type"
     :disabled="disabled || loading"
     :class="[
-      getButtonClasses(color, variant, size),
+      getButtonClasses(color, variant, size, fullWidth),
       {
         'opacity-50 cursor-not-allowed': disabled || loading,
         relative: loading,
@@ -60,7 +60,7 @@
     />
 
     <!-- Label -->
-    <span>{{ label }}</span>
+    <span class="truncate">{{ label }}</span>
   </button>
 </template>
 
@@ -80,6 +80,7 @@ interface Props {
   disabled?: boolean;
   loading?: boolean;
   trailingIcon?: boolean;
+  fullWidth?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -90,6 +91,7 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   loading: false,
   trailingIcon: false,
+  fullWidth: false,
 });
 
 const emit = defineEmits<{

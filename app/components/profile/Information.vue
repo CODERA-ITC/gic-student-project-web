@@ -172,7 +172,7 @@
       </div>
     </div>
 
-    <div class="flex justify-end gap-3 pt-4">
+    <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4">
       <ButtonsPresetButton
         preset="cancel"
         label="Cancel"

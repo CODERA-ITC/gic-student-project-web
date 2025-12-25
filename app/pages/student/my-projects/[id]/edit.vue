@@ -46,7 +46,7 @@
             />
             <span class="text-yellow-200">You have unsaved changes</span>
           </div>
-          <div class="flex gap-2">
+          <div class="flex flex-col sm:flex-row gap-2">
             <UButton
               @click="discardChanges"
               color="gray"

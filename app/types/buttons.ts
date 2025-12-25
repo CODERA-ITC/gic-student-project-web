@@ -153,20 +153,22 @@ export const BUTTON_COLORS = {
 
 /**
  * Size configuration
+ * Enhanced for mobile touch targets (minimum 44x44px for accessibility)
  */
 export const BUTTON_SIZES = {
-  xs: "px-2 py-1 text-xs",
-  sm: "px-3 py-1.5 text-sm",
-  md: "px-4 py-2 text-base",
-  lg: "px-6 py-3 text-lg",
-  xl: "px-8 py-4 text-xl",
+  xs: "px-2 py-1 text-xs min-h-[32px]",
+  sm: "px-3 py-2 text-sm min-h-[36px]",
+  md: "px-4 py-2.5 text-base min-h-[44px]",
+  lg: "px-6 py-3 text-lg min-h-[48px]",
+  xl: "px-8 py-4 text-xl min-h-[56px]",
 };
 
 /**
  * Base button styles (always applied)
+ * Enhanced for mobile accessibility with proper touch targets
  */
 export const BUTTON_BASE =
-  "inline-flex items-center font-medium justify-center gap-2 rounded-md transition-all duration-300 focus:outline-none";
+  "inline-flex items-center font-medium justify-center gap-2 rounded-md transition-all duration-300 focus:outline-none touch-manipulation select-none active:scale-95";
 
 /**
  * Get button classes based on configuration

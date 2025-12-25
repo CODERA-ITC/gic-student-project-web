@@ -543,7 +543,9 @@
               </div>
 
               <!-- Footer -->
-              <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3">
+              <div
+                class="bg-gray-50 px-6 py-4 flex flex-col-reverse sm:flex-row justify-end gap-3"
+              >
                 <button
                   @click="showAuthModal = false"
                   class="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium transition-colors"

@@ -68,7 +68,7 @@
           submitted, you won't be able to edit it until the review process is
           complete.
         </p>
-        <div class="flex gap-3 justify-end">
+        <div class="flex flex-col sm:flex-row gap-3 justify-end">
           <UButton
             @click="showSubmitModal = false"
             color="neutral"

@@ -45,10 +45,14 @@
           </div>
           <!-- Name and Role Badge -->
           <div class="hidden sm:block text-left">
-            <p class="text-sm font-medium text-gray-900 dark:text-white">{{ user.name }}</p>
-            <p class="text-xs text-gray-500 dark:text-slate-300 capitalize">{{ userRole }}</p>
+            <p class="text-sm font-medium text-gray-900 dark:text-white">
+              {{ user.name }}
+            </p>
+            <p class="text-xs text-gray-500 dark:text-slate-300 capitalize">
+              {{ userRole }}
+            </p>
           </div>
-          <UIcon 
+          <UIcon
             name="i-heroicons-chevron-down-20-solid"
             class="w-4 h-4 text-gray-600 dark:text-slate-300"
           />
@@ -65,33 +69,42 @@
         >
           <div
             v-show="menuOpen"
-            class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+            class="absolute right-0 mt-2 w-64 sm:w-56 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-slate-700 z-50 max-h-[calc(100vh-100px)] overflow-y-auto"
           >
             <!-- User Info Header -->
-            <div class="px-4 py-3 border-b border-gray-200">
-              <p class="text-sm font-semibold text-gray-900">{{ user.name }}</p>
-              <p class="text-xs text-gray-500">{{ user.email }}</p>
-              <div class="mt-2 flex items-center gap-2">
+            <div
+              class="px-4 py-3 border-b border-gray-200 dark:border-slate-700"
+            >
+              <p class="text-sm font-semibold text-gray-900 dark:text-white">
+                {{ user.name }}
+              </p>
+              <p class="text-xs text-gray-500 dark:text-slate-400">
+                {{ user.email }}
+              </p>
+              <div class="mt-2 flex items-center gap-2 flex-wrap">
                 <span
                   class="inline-block px-2 py-1 text-xs font-semibold rounded-full"
                   :class="getRoleBadgeClass(userRole)"
                 >
                   {{ userRole.toUpperCase() }}
                 </span>
-                <span v-if="user.program" class="text-xs text-gray-500">
+                <span
+                  v-if="user.program"
+                  class="text-xs text-gray-500 dark:text-slate-400"
+                >
                   {{ user.program }}
                 </span>
               </div>
             </div>
 
             <!-- Divider -->
-            <hr class="border-gray-200" />
+            <hr class="border-gray-200 dark:border-slate-700" />
 
             <!-- Student Menu Items -->
             <template v-if="isStudent">
               <NuxtLink
                 to="/student/dashboard"
-                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                 @click="closeMenu"
               >
                 <UIcon
@@ -102,7 +115,7 @@
               </NuxtLink>
               <NuxtLink
                 to="/student/my-projects"
-                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                 @click="closeMenu"
               >
                 <UIcon name="i-heroicons-folder-20-solid" class="w-4 h-4" />
@@ -110,7 +123,7 @@
               </NuxtLink>
               <NuxtLink
                 to="/student/submissions"
-                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                 @click="closeMenu"
               >
                 <UIcon name="i-heroicons-inbox-20-solid" class="w-4 h-4" />
@@ -119,7 +132,7 @@
 
               <NuxtLink
                 to="/student/favorites"
-                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                 @click="closeMenu"
               >
                 <UIcon name="i-heroicons-heart-20-solid" class="w-4 h-4" />
@@ -131,7 +144,7 @@
             <template v-if="isTeacher || isAdmin">
               <NuxtLink
                 to="/teacher/dashboard"
-                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                 @click="closeMenu"
               >
                 <UIcon
@@ -142,7 +155,7 @@
               </NuxtLink>
               <NuxtLink
                 to="/teacher/manage-projects"
-                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                 @click="closeMenu"
               >
                 <UIcon
@@ -153,7 +166,7 @@
               </NuxtLink>
               <NuxtLink
                 to="/teacher/submissions"
-                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                 @click="closeMenu"
               >
                 <UIcon
@@ -164,7 +177,7 @@
               </NuxtLink>
               <NuxtLink
                 to="/teacher/favorites"
-                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                 @click="closeMenu"
               >
                 <UIcon name="i-heroicons-heart-20-solid" class="w-4 h-4" />
@@ -173,10 +186,10 @@
             </template>
 
             <!-- Common Menu Items -->
-            <hr class="border-gray-200" />
+            <hr class="border-gray-200 dark:border-slate-700" />
             <NuxtLink
               to="/profile"
-              class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+              class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
               @click="closeMenu"
             >
               <UIcon name="i-heroicons-user-circle-20-solid" class="w-4 h-4" />
@@ -184,9 +197,9 @@
             </NuxtLink>
 
             <!-- Sign Out -->
-            <hr class="border-gray-200" />
+            <hr class="border-gray-200 dark:border-slate-700" />
             <button
-              class="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
+              class="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-left"
               @click="handleLogout"
             >
               <UIcon
@@ -249,11 +262,15 @@ const notifications = computed(() => uiStore.notifications || []);
 
 const getRoleBadgeClass = (role: string): string => {
   const classMap: Record<string, string> = {
-    student: "bg-blue-100 text-blue-700",
-    teacher: "bg-purple-100 text-purple-700",
-    admin: "bg-red-100 text-red-700",
+    student: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+    teacher:
+      "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
+    admin: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
   };
-  return classMap[role] || "bg-gray-100 text-gray-700";
+  return (
+    classMap[role] ||
+    "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400"
+  );
 };
 
 const getInitials = (name: string): string => {

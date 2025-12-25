@@ -144,7 +144,7 @@
 
             <!-- Actions -->
             <div
-              class="flex gap-2 mt-auto pt-4 border-t border-gray-200 dark:border-slate-700"
+              class="flex flex-col sm:flex-row gap-2 mt-auto pt-4 border-t border-gray-200 dark:border-slate-700"
             >
               <NuxtLink
                 :to="`/projects/${project.id}`"

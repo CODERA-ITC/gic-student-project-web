@@ -119,7 +119,7 @@
           This will remove all {{ favoriteProjects.length }} projects from your
           favorites. This action cannot be undone.
         </p>
-        <div class="flex gap-3 justify-end">
+        <div class="flex flex-col sm:flex-row gap-3 justify-end">
           <ButtonsPresetButton
             preset="cancel"
             @click="showClearConfirm = false"

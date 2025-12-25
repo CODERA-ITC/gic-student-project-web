@@ -20,15 +20,17 @@
         class="py-16 bg-gray-100 dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700"
       >
         <UContainer>
-          <div class="flex items-center justify-start gap-4 md:gap-8">
-            <div class="flex flex-col gap-2">
+          <div
+            class="flex flex-col sm:flex-row items-start sm:items-center justify-start gap-4 md:gap-8"
+          >
+            <div class="flex flex-col gap-2 flex-1">
               <h1
-                class="text-2xl md:text-4xl font-black text-black dark:text-white leading-none"
+                class="text-2xl sm:text-3xl md:text-4xl font-black text-black dark:text-white leading-none"
               >
                 Welcome back,
                 <span class="text-blue-400">{{ teacher.name }}</span>
               </h1>
-              <p class="text-gray-600 dark:text-slate-300">
+              <p class="text-sm sm:text-base text-gray-600 dark:text-slate-300">
                 Manage student projects and review submissions
               </p>
             </div>

@@ -39,7 +39,7 @@
             professional portfolios, and get recognized by peers and industry
             professionals.
           </p>
-          <div class="flex gap-4 pt-4">
+          <div class="flex flex-col sm:flex-row gap-4 pt-4">
             <UButton color="primary" size="lg" icon="i-heroicons-rocket-launch">
               Get Started
             </UButton>

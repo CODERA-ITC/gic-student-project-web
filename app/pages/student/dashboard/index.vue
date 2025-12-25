@@ -52,9 +52,13 @@
         class="py-16 bg-white dark:bg-slate-800 border-b border-blue-700/30 dark:border-slate-700"
       >
         <UContainer>
-          <div class="flex items-center justify-between">
+          <div
+            class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0"
+          >
             <div class="space-y-2">
-              <h1 class="text-5xl font-black text-black dark:text-white">
+              <h1
+                class="text-3xl sm:text-4xl lg:text-5xl font-black text-black dark:text-white"
+              >
                 Welcome back,
                 <span class="text-blue-900 dark:text-blue-300">{{
                   student.name
@@ -68,6 +72,7 @@
               preset="createProject"
               to="/projects/create"
               size="md"
+              class="w-full sm:w-auto"
             />
           </div>
         </UContainer>
