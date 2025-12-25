@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-slate-900">
+  <div class="min-h-screen bg-white dark:bg-slate-900">
     <!-- Header Section -->
     <div
       class="py-16 bg-gradient-to-r from-emerald-600 to-teal-600 border-b border-emerald-700/30"
@@ -8,7 +8,7 @@
         <div class="flex items-center justify-between">
           <div class="space-y-2">
             <h1 class="text-5xl font-black text-white">My Projects</h1>
-            <p class="text-gray-200">
+            <p class="text-emerald-50 dark:text-gray-200">
               Manage and track your project submissions
             </p>
           </div>
@@ -20,7 +20,9 @@
     <!-- Main Content -->
     <UContainer class="py-12">
       <!-- Tabs -->
-      <div class="flex gap-4 mb-8 border-b border-slate-700">
+      <div
+        class="flex gap-4 mb-8 border-b border-gray-200 dark:border-slate-700"
+      >
         <button
           v-for="tab in tabs"
           :key="tab.value"
@@ -28,14 +30,14 @@
           :class="[
             'px-6 py-3 font-semibold transition-all duration-200 border-b-2',
             activeTab === tab.value
-              ? 'text-emerald-400 border-emerald-400'
-              : 'text-gray-400 border-transparent hover:text-gray-300',
+              ? 'text-emerald-600 dark:text-emerald-400 border-emerald-600 dark:border-emerald-400'
+              : 'text-gray-500 dark:text-gray-400 border-transparent hover:text-gray-700 dark:hover:text-gray-300',
           ]"
         >
           {{ tab.label }}
           <span
             v-if="tab.count !== undefined"
-            class="ml-2 px-2 py-0.5 bg-slate-700 rounded-full text-sm"
+            class="ml-2 px-2 py-0.5 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-full text-sm"
           >
             {{ tab.count }}
           </span>
@@ -47,7 +49,7 @@
         <div
           v-for="project in filteredProjects"
           :key="project.id"
-          class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-xl overflow-hidden hover:border-emerald-500/50 transition-all duration-300 group flex flex-col"
+          class="bg-white dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl overflow-hidden hover:border-emerald-500/50 transition-all duration-300 group flex flex-col"
         >
           <!-- Project Header -->
           <div :class="project.gradient" class="h-32 relative overflow-hidden">
@@ -65,16 +67,18 @@
           <div class="p-6 flex flex-col flex-grow">
             <!-- Title and Category -->
             <div class="mb-4">
-              <h3 class="text-xl font-bold text-white mb-2">
+              <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
                 {{ project.title }}
               </h3>
-              <p class="text-sm text-gray-400">{{ project.description }}</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                {{ project.description }}
+              </p>
             </div>
 
             <!-- Meta Info -->
             <div class="space-y-3 mb-4 text-sm">
               <div class="flex items-center justify-between">
-                <span class="text-gray-400">Status:</span>
+                <span class="text-gray-600 dark:text-gray-400">Status:</span>
                 <span
                   :class="getStatusColor(project.status)"
                   class="px-3 py-1 rounded-full text-xs font-semibold"
@@ -83,16 +87,20 @@
                 </span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-gray-400">Category:</span>
-                <span class="text-white">{{ project.category }}</span>
+                <span class="text-gray-600 dark:text-gray-400">Category:</span>
+                <span class="text-gray-900 dark:text-white">{{
+                  project.category
+                }}</span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-gray-400">Semester:</span>
-                <span class="text-white">{{ project.semester }}</span>
+                <span class="text-gray-600 dark:text-gray-400">Semester:</span>
+                <span class="text-gray-900 dark:text-white">{{
+                  project.semester
+                }}</span>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-gray-400">Progress:</span>
-                <span class="text-white font-semibold"
+                <span class="text-gray-600 dark:text-gray-400">Progress:</span>
+                <span class="text-gray-900 dark:text-white font-semibold"
                   >{{ project.progress }}%</span
                 >
               </div>
@@ -100,7 +108,9 @@
 
             <!-- Progress Bar -->
             <div class="mb-4">
-              <div class="w-full bg-slate-700 rounded-full h-2">
+              <div
+                class="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-2"
+              >
                 <div
                   :style="{ width: project.progress + '%' }"
                   class="bg-emerald-500 h-2 rounded-full transition-all"
@@ -110,19 +120,21 @@
 
             <!-- Team -->
             <div class="mb-4">
-              <p class="text-xs text-gray-400 mb-2">Team Members</p>
+              <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">
+                Team Members
+              </p>
               <div class="flex -space-x-2">
                 <div
                   v-for="(member, idx) in project.members.slice(0, 3)"
                   :key="idx"
-                  class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-xs font-bold border-2 border-slate-800"
+                  class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-xs font-bold border-2 border-white dark:border-slate-800"
                   :title="member"
                 >
                   {{ member.charAt(0) }}
                 </div>
                 <div
                   v-if="project.members.length > 3"
-                  class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-white text-xs font-bold border-2 border-slate-800"
+                  class="w-8 h-8 rounded-full bg-gray-300 dark:bg-slate-700 flex items-center justify-center text-gray-700 dark:text-white text-xs font-bold border-2 border-white dark:border-slate-800"
                   :title="`+${project.members.length - 3} more`"
                 >
                   +{{ project.members.length - 3 }}
@@ -131,7 +143,9 @@
             </div>
 
             <!-- Actions -->
-            <div class="flex gap-2 mt-auto pt-4 border-t border-slate-700">
+            <div
+              class="flex gap-2 mt-auto pt-4 border-t border-gray-200 dark:border-slate-700"
+            >
               <NuxtLink
                 :to="`/projects/${project.id}`"
                 class="flex-1 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold transition-colors text-center"
@@ -139,7 +153,7 @@
                 View
               </NuxtLink>
               <button
-                class="flex-1 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-semibold transition-colors"
+                class="flex-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-white rounded-lg text-sm font-semibold transition-colors"
               >
                 Edit
               </button>
@@ -152,9 +166,9 @@
       <div v-if="filteredProjects.length === 0" class="text-center py-20">
         <UIcon
           name="i-heroicons-inbox"
-          class="w-16 h-16 text-gray-600 mx-auto mb-4"
+          class="w-16 h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4"
         />
-        <p class="text-gray-400 text-lg mb-6">
+        <p class="text-gray-600 dark:text-gray-400 text-lg mb-6">
           {{
             activeTab === "all"
               ? "You haven't created any projects yet"

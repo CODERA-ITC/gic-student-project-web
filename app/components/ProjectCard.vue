@@ -86,7 +86,10 @@
                 v-if="showLikeButton"
                 @click.prevent.stop="toggleLikeHandler"
                 :class="[
-                  'flex items-center gap-1.5 transition-all duration-300 cursor-pointer',
+                  'flex items-center gap-1.5 transition-all duration-300 cursor-pointer p-1 rounded-lg',
+                  isLiked
+                    ? 'bg-red-50 dark:bg-red-900/20'
+                    : 'hover:bg-gray-100 dark:hover:bg-slate-700',
                 ]"
                 :title="isLiked ? 'Remove favorite' : 'Add favorite'"
                 type="button"
@@ -96,10 +99,10 @@
                     isLiked ? 'i-heroicons-heart-solid' : 'i-heroicons-heart'
                   "
                   :class="[
-                    'w-5 h-5 transition-transform duration-300',
+                    'w-5 h-5 transition-all duration-300',
                     isLiked
-                      ? 'text-red-600 dark:text-red-500'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500',
+                      ? 'text-red-600 dark:text-red-400 scale-110'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:scale-110',
                   ]"
                 />
                 <span
@@ -242,6 +245,11 @@ const currentImageIndex = ref(0);
 let autoPlayInterval = null;
 
 const isLiked = computed(() => {
+  // Check if likedProjects is a Set or an object
+  if (props.likedProjects instanceof Set) {
+    return props.likedProjects.has(props.project?.id);
+  }
+  // Fallback for object-based liked projects
   return !!props.likedProjects?.[props.project?.id];
 });
 
@@ -257,6 +265,12 @@ const isProjectAuthor = computed(() => {
 
 const toggleLikeHandler = () => {
   emit("toggle-like", props.project.id);
+
+  console.log(
+    `Toggled like for project ID: ${props.project.id}, new like status: ${
+      isLiked.value ? "liked" : "unliked"
+    }`
+  );
 };
 
 const formatNumber = (num) => {
@@ -266,11 +280,7 @@ const formatNumber = (num) => {
 
 const startAutoPlay = () => {
   // Only run on client side
-  if (
-    process.client &&
-    props.project?.images &&
-    props.project.images.length > 1
-  ) {
+  if (props.project?.images && props.project.images.length > 1) {
     autoPlayInterval = setInterval(() => {
       currentImageIndex.value =
         (currentImageIndex.value + 1) % props.project.images.length;

@@ -1,13 +1,15 @@
 <template>
   <div class="min-h-screen bg-white dark:bg-slate-900">
     <!-- Hero Section -->
-    <div class="py-20 bg-blue-600 dark:bg-blue-600 border-b border-blue-700/30">
+    <div class="py-20 bg-white dark:bg-blue-900 border-b border-blue-700/30">
       <UContainer>
         <div class="text-center space-y-4 max-w-3xl mx-auto">
-          <h1 class="text-5xl lg:text-6xl font-black text-white leading-tight">
+          <h1
+            class="text-5xl lg:text-6xl font-black text-blue-900 dark:text-white leading-tight"
+          >
             About GIC Student Portal
           </h1>
-          <p class="text-xl text-white/90 dark:text-gray-300">
+          <p class="text-xl text-blue-900/90 dark:text-blue-200">
             Celebrating innovation, creativity, and collaboration in the GIC
             program
           </p>
@@ -41,18 +43,29 @@
             <UButton color="primary" size="lg" icon="i-heroicons-rocket-launch">
               Get Started
             </UButton>
-            <UButton variant="outline" color="primary" size="lg" icon="i-heroicons-arrow-top-right-on-square" trailing>
+            <UButton
+              variant="outline"
+              color="primary"
+              size="lg"
+              icon="i-heroicons-arrow-top-right-on-square"
+              trailing
+            >
               Learn More
             </UButton>
           </div>
         </div>
 
         <div
-          class="relative h-96 rounded-2xl overflow-hidden bg-gradient-to-br from-blue-50 to-purple-50 dark:from-slate-800 dark:to-slate-900 border border-gray-200 dark:border-slate-700">
-          <div class="absolute inset-0 bg-gradient-to-br from-blue-600 to-purple-700 opacity-10 dark:opacity-20"></div>
+          class="relative h-96 rounded-2xl overflow-hidden bg-gradient-to-br from-blue-50 to-purple-50 dark:from-slate-800 dark:to-slate-900 border border-gray-200 dark:border-slate-700"
+        >
+          <div
+            class="absolute inset-0 bg-gradient-to-br from-blue-600 to-purple-700 opacity-10 dark:opacity-20"
+          ></div>
           <div class="absolute inset-0 flex items-center justify-center">
-            <UIcon name="i-heroicons-light-bulb"
-              class="w-32 h-32 text-blue-500 dark:text-blue-400 opacity-20 dark:opacity-30" />
+            <UIcon
+              name="i-heroicons-light-bulb"
+              class="w-32 h-32 text-blue-500 dark:text-blue-400 opacity-20 dark:opacity-30"
+            />
           </div>
         </div>
       </div>
@@ -61,18 +74,28 @@
       <div class="space-y-8">
         <div class="text-center space-y-4 max-w-2xl mx-auto mb-12">
           <UBadge color="primary" variant="soft">Core Values</UBadge>
-          <h2 class="text-4xl font-black text-gray-900 dark:text-white">What We Believe In</h2>
+          <h2 class="text-4xl font-black text-gray-900 dark:text-white">
+            What We Believe In
+          </h2>
         </div>
 
         <div class="grid md:grid-cols-3 gap-6">
-          <div v-for="value in coreValues" :key="value.title"
-            class="bg-white dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-8 hover:border-blue-500/50 transition-all duration-300 group shadow-sm dark:shadow-none">
+          <div
+            v-for="value in coreValues"
+            :key="value.title"
+            class="bg-white dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-8 hover:border-blue-500/50 transition-all duration-300 group shadow-sm dark:shadow-none"
+          >
             <div
-              class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
+            >
               <UIcon :name="value.icon" class="w-8 h-8 text-white" />
             </div>
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">{{ value.title }}</h3>
-            <p class="text-gray-700 dark:text-gray-300 leading-relaxed">{{ value.description }}</p>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">
+              {{ value.title }}
+            </h3>
+            <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+              {{ value.description }}
+            </p>
           </div>
         </div>
       </div>
@@ -81,19 +104,29 @@
       <div class="space-y-8">
         <div class="text-center space-y-4 max-w-2xl mx-auto mb-12">
           <UBadge color="primary" variant="soft">Features</UBadge>
-          <h2 class="text-4xl font-black text-gray-900 dark:text-white">Built for Students</h2>
+          <h2 class="text-4xl font-black text-gray-900 dark:text-white">
+            Built for Students
+          </h2>
         </div>
 
         <div class="grid md:grid-cols-2 gap-6">
-          <div v-for="feature in features" :key="feature.title"
-            class="flex gap-4 p-6 bg-gray-50 dark:bg-slate-800/30 border border-gray-200 dark:border-slate-700 rounded-xl hover:border-blue-500/50 transition-all duration-300">
+          <div
+            v-for="feature in features"
+            :key="feature.title"
+            class="flex gap-4 p-6 bg-gray-50 dark:bg-slate-800/30 border border-gray-200 dark:border-slate-700 rounded-xl hover:border-blue-500/50 transition-all duration-300"
+          >
             <div
-              class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center flex-shrink-0">
+              class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center flex-shrink-0"
+            >
               <UIcon :name="feature.icon" class="w-6 h-6 text-white" />
             </div>
             <div>
-              <h3 class="font-bold text-gray-900 dark:text-white mb-1">{{ feature.title }}</h3>
-              <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+              <h3 class="font-bold text-gray-900 dark:text-white mb-1">
+                {{ feature.title }}
+              </h3>
+              <p
+                class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed"
+              >
                 {{ feature.description }}
               </p>
             </div>
@@ -111,37 +144,52 @@
         </div>
 
         <div class="grid md:grid-cols-4 gap-6">
-          <div v-for="member in teamMembers" :key="member.name" class="text-center group">
+          <div
+            v-for="member in teamMembers"
+            :key="member.name"
+            class="text-center group"
+          >
             <div
               class="w-32 h-32 rounded-full bg-gradient-to-br mx-auto mb-4 flex items-center justify-center text-white text-3xl font-bold group-hover:scale-110 transition-transform shadow-lg"
-              :class="member.gradient">
+              :class="member.gradient"
+            >
               {{ member.initials }}
             </div>
             <h3
-              class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors">
+              class="text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors"
+            >
               {{ member.name }}
             </h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400">{{ member.role }}</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              {{ member.role }}
+            </p>
           </div>
         </div>
       </div>
 
       <!-- Statistics -->
       <div
-        class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 border border-blue-200 dark:border-blue-800/30 rounded-2xl p-12">
+        class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-slate-800/50 dark:to-slate-800/30 border border-blue-200 dark:border-slate-700 rounded-2xl p-12"
+      >
         <div class="grid md:grid-cols-4 gap-8">
           <div v-for="stat in statistics" :key="stat.label" class="text-center">
-            <p class="text-4xl lg:text-5xl font-black text-blue-600 dark:text-blue-400 mb-2">
+            <p
+              class="text-4xl lg:text-5xl font-black text-blue-600 dark:text-blue-300 mb-2"
+            >
               {{ stat.value }}
             </p>
-            <p class="text-gray-700 dark:text-gray-300 font-semibold">{{ stat.label }}</p>
+            <p class="text-gray-700 dark:text-gray-200 font-semibold">
+              {{ stat.label }}
+            </p>
           </div>
         </div>
       </div>
 
       <!-- CTA Section -->
       <div class="text-center space-y-6 py-12">
-        <h2 class="text-4xl font-black text-gray-900 dark:text-white">Ready to Join?</h2>
+        <h2 class="text-4xl font-black text-gray-900 dark:text-white">
+          Ready to Join?
+        </h2>
         <p class="text-xl text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
           Showcase your projects, connect with other students, and build your
           professional portfolio today.
@@ -150,7 +198,13 @@
           <UButton color="primary" size="xl" icon="i-heroicons-rocket-launch">
             Get Started
           </UButton>
-          <UButton variant="outline" color="primary" size="xl" icon="i-heroicons-envelope" trailing>
+          <UButton
+            variant="outline"
+            color="primary"
+            size="xl"
+            icon="i-heroicons-envelope"
+            trailing
+          >
             Contact Us
           </UButton>
         </div>

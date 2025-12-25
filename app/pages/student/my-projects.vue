@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-gray-50 dark:bg-slate-900">
     <!-- Header Section -->
     <div
-      class="py-16 bg-gradient-to-r from-blue-600 to-indigo-600 border-b border-blue-700/30"
+      class="py-16 bg-gradient-to-r from-blue-900 to-indigo-600 border-b border-blue-700/30"
     >
       <UContainer>
         <div class="flex items-center justify-between">

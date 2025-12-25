@@ -45,12 +45,12 @@
           </div>
           <!-- Name and Role Badge -->
           <div class="hidden sm:block text-left">
-            <p class="text-sm font-medium text-gray-900">{{ user.name }}</p>
-            <p class="text-xs text-gray-500 capitalize">{{ userRole }}</p>
+            <p class="text-sm font-medium text-gray-900 dark:text-white">{{ user.name }}</p>
+            <p class="text-xs text-gray-500 dark:text-slate-300 capitalize">{{ userRole }}</p>
           </div>
-          <UIcon
+          <UIcon 
             name="i-heroicons-chevron-down-20-solid"
-            class="w-4 h-4 text-gray-600"
+            class="w-4 h-4 text-gray-600 dark:text-slate-300"
           />
         </button>
 

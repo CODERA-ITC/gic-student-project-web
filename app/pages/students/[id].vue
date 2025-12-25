@@ -3,16 +3,12 @@
   <div class="min-h-screen bg-white dark:bg-slate-900">
     <!-- Back Button -->
     <div
-      class="sticky top-20 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur border-b border-gray-200 dark:border-slate-700"
+      class="top-20 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur border-b border-gray-200 dark:border-slate-700"
     >
       <UContainer class="py-4">
-        <NuxtLink
-          to="/students"
-          class="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
-        >
-          <UIcon name="i-heroicons-arrow-left" class="w-5 h-5" />
-          Back to Students
-        </NuxtLink>
+        <div class="flex items-center justify-between">
+          <ButtonsPresetButton preset="back" to="/students" />
+        </div>
       </UContainer>
     </div>
 
@@ -218,32 +214,34 @@
             <div class="space-y-3">
               <!-- Projects -->
               <div
-                class="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg"
+                class="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-700/50 rounded-lg"
               >
                 <div class="flex items-center gap-2">
                   <UIcon
                     name="i-heroicons-briefcase"
-                    class="w-5 h-5 text-purple-400"
+                    class="w-5 h-5 text-purple-600 dark:text-purple-400"
                   />
-                  <span class="text-gray-300">Projects</span>
+                  <span class="text-gray-700 dark:text-gray-300">Projects</span>
                 </div>
-                <span class="text-white font-semibold">{{
+                <span class="text-gray-900 dark:text-white font-semibold">{{
                   student.projectsContributed.length
                 }}</span>
               </div>
 
               <!-- Contributions -->
               <div
-                class="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg"
+                class="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-700/50 rounded-lg"
               >
                 <div class="flex items-center gap-2">
                   <UIcon
                     name="i-heroicons-code-bracket"
-                    class="w-5 h-5 text-green-400"
+                    class="w-5 h-5 text-green-600 dark:text-green-400"
                   />
-                  <span class="text-gray-300">Contributions</span>
+                  <span class="text-gray-700 dark:text-gray-300"
+                    >Contributions</span
+                  >
                 </div>
-                <span class="text-white font-semibold">{{
+                <span class="text-gray-900 dark:text-white font-semibold">{{
                   student.contributions
                 }}</span>
               </div>
@@ -252,10 +250,10 @@
 
           <!-- Social Links -->
           <div
-            class="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-6 space-y-4"
+            class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-800 dark:to-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-6 space-y-4"
           >
             <h3
-              class="text-lg font-semibold text-white flex items-center gap-2"
+              class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2"
             >
               <UIcon name="i-heroicons-share-20-solid" class="w-5 h-5" />
               Social
@@ -265,39 +263,49 @@
                 v-if="student.github"
                 :href="student.github"
                 target="_blank"
-                class="flex items-center gap-2 p-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-colors"
+                class="flex items-center gap-2 p-3 bg-white dark:bg-slate-700/50 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors border border-gray-200 dark:border-transparent"
               >
-                <UIcon name="i-mdi-github" class="w-5 h-5 text-gray-300" />
-                <span class="text-gray-300 hover:text-white">GitHub</span>
+                <UIcon
+                  name="i-mdi-github"
+                  class="w-5 h-5 text-gray-700 dark:text-gray-300"
+                />
+                <span
+                  class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  >GitHub</span
+                >
               </a>
               <a
                 v-if="student.linkedin"
                 :href="student.linkedin"
                 target="_blank"
-                class="flex items-center gap-2 p-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-colors"
+                class="flex items-center gap-2 p-3 bg-white dark:bg-slate-700/50 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors border border-gray-200 dark:border-transparent"
               >
-                <UIcon name="i-mdi-linkedin" class="w-5 h-5 text-blue-400" />
-                <span class="text-gray-300 hover:text-white">LinkedIn</span>
+                <UIcon
+                  name="i-mdi-linkedin"
+                  class="w-5 h-5 text-blue-600 dark:text-blue-400"
+                />
+                <span
+                  class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  >LinkedIn</span
+                >
               </a>
               <a
                 v-if="student.portfolio"
                 :href="student.portfolio"
                 target="_blank"
-                class="flex items-center gap-2 p-3 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition-colors"
+                class="flex items-center gap-2 p-3 bg-white dark:bg-slate-700/50 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors border border-gray-200 dark:border-transparent"
               >
                 <UIcon
                   name="i-heroicons-globe-alt"
-                  class="w-5 h-5 text-purple-400"
+                  class="w-5 h-5 text-purple-600 dark:text-purple-400"
                 />
-                <span class="text-gray-300 hover:text-white">Portfolio</span>
+                <span
+                  class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                  >Portfolio</span
+                >
               </a>
             </div>
           </div>
-
-          <!-- Follow Button -->
-          <UButton color="primary" class="w-full" size="lg">
-            Follow Student
-          </UButton>
         </div>
       </div>
     </UContainer>

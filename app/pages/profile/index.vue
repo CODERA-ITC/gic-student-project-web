@@ -2,16 +2,22 @@
   <div class="min-h-screen bg-gray-50 dark:bg-slate-900">
     <!-- Header Section -->
     <div
-      class="py-16 bg-blue-600 dark:bg-slate-800 border-b border-blue-700/30 dark:border-slate-700"
+      class="py-16 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900 border-b border-blue-700/30 dark:border-slate-700"
     >
       <UContainer>
         <div class="flex items-center gap-4 mb-4">
-          <ButtonsPresetButton preset="back" @click="goBack" />
+          <div
+            class="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-lg p-1 hover:bg-white/20 dark:hover:bg-white/10 transition-colors"
+          >
+            <ButtonsPresetButton
+              preset="back"
+              @click="goBack"
+              class="!text-white"
+            />
+          </div>
         </div>
         <div class="space-y-2">
-          <h1 class="text-4xl font-black text-white dark:text-white">
-            Profile Settings
-          </h1>
+          <h1 class="text-4xl font-black text-white">Profile Settings</h1>
           <p class="text-blue-100 dark:text-slate-300">
             Manage your account and preferences
           </p>
