@@ -115,69 +115,12 @@
     </UContainer>
 
     <!-- Delete Confirmation Modal -->
-    <Teleport to="body">
-      <Transition name="modal">
-        <div
-          v-if="showDeleteConfirm"
-          class="fixed inset-0 z-50 flex items-center justify-center p-4"
-          @click.self="closeDeleteModal"
-        >
-          <!-- Backdrop -->
-          <div
-            class="absolute inset-0 bg-gray-900/75 dark:bg-gray-900/90 backdrop-blur-sm"
-            @click="closeDeleteModal"
-          ></div>
-
-          <!-- Modal Container -->
-          <div
-            class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-xl shadow-2xl transform transition-all"
-          >
-            <div class="p-8">
-              <p class="text-gray-600 dark:text-gray-300 mb-4">
-                Are you sure you want to delete "<span class="font-semibold">{{
-                  getProjectTitle(projectToDelete)
-                }}</span
-                >"? This will permanently remove the project and all its data.
-              </p>
-
-              <!-- Verification Input -->
-              <div
-                class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6"
-              >
-                <p class="text-red-800 dark:text-red-300 font-medium mb-3">
-                  To confirm, type
-                  <span class="font-bold">DELETE</span> below:
-                </p>
-                <input
-                  v-model="deleteConfirmText"
-                  type="text"
-                  placeholder="Type DELETE to confirm"
-                  class="w-full px-4 py-3 bg-white dark:bg-slate-800 border-2 border-red-300 dark:border-red-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
-                  @keyup.enter="
-                    deleteConfirmText === 'DELETE' && confirmDelete()
-                  "
-                />
-              </div>
-
-              <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                <ButtonsPresetButton
-                  preset="cancel"
-                  size="lg"
-                  @click="closeDeleteModal"
-                />
-                <ButtonsPresetButton
-                  preset="delete"
-                  label="Confirm Delete"
-                  size="lg"
-                  :disabled="deleteConfirmText !== 'DELETE'"
-                  @click="confirmDelete"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </Transition>
-    </Teleport>
+    <DeleteConfirmationModal
+      v-model="showDeleteConfirm"
+      :project-title="getProjectTitle(projectToDelete)"
+      :is-deleting="isDeleting"
+      @confirm="confirmDelete"
+    />
   </div>
 </template>
 
@@ -245,20 +188,12 @@ const handleEdit = (projectId) => {
 // Handle delete project
 const showDeleteConfirm = ref(false);
 const projectToDelete = ref(null);
-const deleteConfirmText = ref("");
+const isDeleting = ref(false);
 
 const handleDelete = (projectId) => {
   console.log("Delete project requested:", projectId);
   projectToDelete.value = projectId;
-  deleteConfirmText.value = ""; // Reset confirmation text
   showDeleteConfirm.value = true;
-};
-
-// Close delete modal and reset state
-const closeDeleteModal = () => {
-  showDeleteConfirm.value = false;
-  projectToDelete.value = null;
-  deleteConfirmText.value = "";
 };
 
 // Get project title for delete confirmation
@@ -270,9 +205,10 @@ const getProjectTitle = (projectId) => {
 
 const confirmDelete = async () => {
   console.log("Confirming delete for project:", projectToDelete.value);
-  if (!projectToDelete.value || deleteConfirmText.value !== "DELETE") return;
+  if (!projectToDelete.value) return;
 
   try {
+    isDeleting.value = true;
     const deletedId = projectToDelete.value;
     console.log("Confirming delete for project:", deletedId);
 
@@ -286,7 +222,8 @@ const confirmDelete = async () => {
         color: "blue",
       });
 
-      closeDeleteModal();
+      showDeleteConfirm.value = false;
+      projectToDelete.value = null;
 
       // Refresh user projects from store
       await projectStore.fetchUserProjects();
@@ -301,6 +238,8 @@ const confirmDelete = async () => {
       description: "Failed to delete project. Please try again.",
       color: "red",
     });
+  } finally {
+    isDeleting.value = false;
   }
 };
 
@@ -652,27 +591,3 @@ useHead({
   ],
 });
 </script>
-
-<style scoped>
-/* Modal transition animations */
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-}
-
-.modal-enter-active .relative,
-.modal-leave-active .relative {
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.modal-enter-from .relative,
-.modal-leave-to .relative {
-  transform: scale(0.95);
-  opacity: 0;
-}
-</style>

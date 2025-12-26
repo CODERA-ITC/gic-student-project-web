@@ -1626,7 +1626,14 @@ const submitForm = async () => {
       return;
     }
 
-    await navigateTo(`/student/my-projects/${projectId}`);
+    // Force refresh the store data before navigating
+    await projectStore.fetchUserProjects();
+
+    // Navigate with force flag to ensure fresh load
+    await navigateTo(`/student/my-projects/${projectId}`, {
+      replace: true,
+      external: false,
+    });
   } catch (error) {
     console.error(
       `Error ${editMode.value ? "updating" : "creating"} project:`,

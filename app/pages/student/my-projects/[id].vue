@@ -73,116 +73,70 @@
       </ProjectDetails>
     </UContainer>
 
-    <!-- Delete Confirmation Modal - Step 1 -->
-    <UModal v-model="showDeleteModal">
-      <div class="p-6">
-        <div class="flex items-center gap-3 mb-4">
-          <div
-            class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center"
-          >
-            <UIcon
-              name="i-heroicons-exclamation-triangle"
-              class="w-6 h-6 text-red-600 dark:text-red-400"
-            />
-          </div>
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-            Delete Project?
-          </h3>
-        </div>
-        <p class="text-gray-600 dark:text-gray-300 mb-6">
-          Are you sure you want to delete "<span class="font-semibold">{{
-            project?.title
-          }}</span
-          >"? This will permanently remove the project and all its data.
-        </p>
-        <div class="flex flex-col sm:flex-row gap-3 justify-end">
-          <ButtonsPresetButton
-            label="Cancel"
-            size="lg"
-            @click="showDeleteModal = false"
-          />
-          <ButtonsPresetButton
-            label="Continue"
-            icon="i-heroicons-arrow-right"
-            size="lg"
-            @click="proceedToFinalDelete"
-          />
-        </div>
-      </div>
-    </UModal>
-
-    <!-- Delete Confirmation Modal - Step 2 (Final) -->
-    <UModal v-model="showFinalDeleteModal">
-      <div class="p-6">
-        <div class="flex items-center gap-3 mb-4">
-          <div
-            class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center"
-          >
-            <UIcon
-              name="i-heroicons-exclamation-circle"
-              class="w-6 h-6 text-red-600 dark:text-red-400"
-            />
-          </div>
-          <h3 class="text-lg font-semibold text-red-600 dark:text-red-400">
-            Final Confirmation
-          </h3>
-        </div>
-        <div
-          class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6"
-        >
-          <p class="text-red-800 dark:text-red-300 font-medium mb-2">
-            ⚠️ This action cannot be undone!
-          </p>
-          <p class="text-red-700 dark:text-red-400 text-sm">
-            You are about to permanently delete this project. All project data,
-            images, and information will be lost forever.
-          </p>
-        </div>
-        <div class="flex flex-col sm:flex-row gap-3 justify-end">
-          <ButtonsPresetButton
-            label="Go Back"
-            size="lg"
-            @click="cancelFinalDelete"
-          />
-          <ButtonsPresetButton
-            preset="delete"
-            label="Delete Permanently"
-            icon="i-heroicons-trash"  
-            size="lg"
-            :loading="isDeleting"
-            @click="confirmDelete"
-          />
-        </div>
-      </div>
-    </UModal>
-
     <!-- Submit Modal -->
-    <UModal v-model="showSubmitModal">
-      <div class="p-6">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Submit Project for Review
-        </h3>
-        <p class="text-gray-600 dark:text-gray-300 mb-6">
-          Are you sure you want to submit this project for review? Once
-          submitted, you won't be able to edit it until the review process is
-          complete.
-        </p>
-        <div class="flex flex-col sm:flex-row gap-3 justify-end">
-          <ButtonsPresetButton
-            preset="cancel"
-            size="lg"
+    <Teleport to="body">
+      <Transition name="modal">
+        <div
+          v-if="showSubmitModal"
+          class="fixed inset-0 z-50 flex items-center justify-center p-4"
+          @click.self="showSubmitModal = false"
+        >
+          <!-- Backdrop -->
+          <div
+            class="absolute inset-0 bg-gray-900/75 dark:bg-gray-900/90 backdrop-blur-sm"
             @click="showSubmitModal = false"
-          />
-          <ButtonsPresetButton
-            preset="submit"
-            label="Submit Project"
-            size="lg"
-            :loading="isSubmitting"
-            @click="confirmSubmit"
-          />
+          ></div>
+
+          <!-- Modal Container -->
+          <div
+            class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-xl shadow-2xl transform transition-all"
+          >
+            <div class="p-8">
+              <div class="flex items-center gap-3 mb-4">
+                <div
+                  class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center"
+                >
+                  <UIcon
+                    name="i-heroicons-paper-airplane"
+                    class="w-6 h-6 text-blue-600 dark:text-blue-400"
+                  />
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                  Submit Project for Review
+                </h3>
+              </div>
+              <p class="text-gray-600 dark:text-gray-300 mb-6">
+                Are you sure you want to submit this project for review? Once
+                submitted, you won't be able to edit it until the review process
+                is complete.
+              </p>
+              <div class="flex flex-col sm:flex-row gap-3 justify-end">
+                <ButtonsPresetButton
+                  preset="cancel"
+                  size="lg"
+                  @click="showSubmitModal = false"
+                />
+                <ButtonsPresetButton
+                  preset="submit"
+                  label="Submit Project"
+                  size="lg"
+                  :loading="isSubmitting"
+                  @click="confirmSubmit"
+                />
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </UModal>
+      </Transition>
+    </Teleport>
+
+    <!-- Delete Confirmation Modal -->
+    <DeleteConfirmationModal
+      v-model="showDeleteModal"
+      :project-title="project?.title || 'this project'"
+      :is-deleting="isDeleting"
+      @confirm="confirmDelete"
+    />
 
     <!-- Authentication Modal -->
     <AuthModal v-model="showAuthModal" />
@@ -206,62 +160,80 @@ const isLoading = ref(true);
 const showSubmitModal = ref(false);
 const isSubmitting = ref(false);
 const showDeleteModal = ref(false);
-const showFinalDeleteModal = ref(false);
+const deleteConfirmText = ref("");
 const isDeleting = ref(false);
 
-// Load project data - ensure user projects are fetched first
-if (projectStore.userProjects.length === 0) {
-  await projectStore.fetchUserProjects();
-}
+// Load user's liked projects and project data when component mounts
+onMounted(async () => {
+  try {
+    console.log("=== LOADING PROJECT ===", projectId);
+    console.log("Store state:", {
+      totalProjects: projectStore.projects.length,
+      totalUserProjects: projectStore.userProjects.length,
+      projectIds: projectStore.projects.map((p) => p.id),
+      userProjectIds: projectStore.userProjects.map((p) => p.id),
+    });
 
-// Also fetch all projects if needed
-if (projectStore.projects.length === 0) {
-  await projectStore.fetchProjects();
-}
+    // Load liked projects first
+    await projectStore.loadUserLikedProjects();
 
-let projectData = await projectStore.getProjectById(projectId);
+    // Always fetch fresh data to ensure we have the latest
+    console.log("Fetching fresh project data...");
+    await projectStore.fetchUserProjects();
+    await projectStore.fetchProjects();
 
-// If project not found initially, try refreshing the data
-if (!projectData) {
-  console.log("Project not found initially, refreshing...");
-  await projectStore.fetchProjects();
-  await projectStore.fetchUserProjects();
-  projectData = await projectStore.getProjectById(projectId);
-}
+    console.log("After fetch:", {
+      totalProjects: projectStore.projects.length,
+      totalUserProjects: projectStore.userProjects.length,
+      projectIds: projectStore.projects.map((p) => p.id),
+      userProjectIds: projectStore.userProjects.map((p) => p.id),
+    });
 
-if (!projectData) {
-  console.error("Project not found after refresh:", projectId);
-  throw createError({
-    statusCode: 404,
-    statusMessage: "Project not found",
-  });
-}
+    let projectData = await projectStore.getProjectById(projectId);
 
-project.value = projectData;
+    // If project still not found after fetch, something is wrong
+    if (!projectData) {
+      console.error("Project not found after fetch:", projectId);
+      console.error(
+        "Available project IDs:",
+        projectStore.projects.map((p) => p.id)
+      );
+      console.error(
+        "Available user project IDs:",
+        projectStore.userProjects.map((p) => p.id)
+      );
+
+      throw createError({
+        statusCode: 404,
+        statusMessage: "Project not found",
+      });
+    }
+
+    project.value = projectData;
+
+    // Check ownership after project is loaded
+    if (!isOwner.value) {
+      console.log("User is not owner, redirecting to public view");
+      await navigateTo(`/projects/${projectId}`);
+      return;
+    }
+
+    console.log("✅ User is owner, displaying project");
+  } catch (error) {
+    console.error("❌ Error loading project:", error);
+    // Don't throw here, just show error state
+  } finally {
+    isLoading.value = false;
+  }
+});
 
 // Check if user owns this project
 const isOwner = computed(() => {
   if (!project.value || !authStore.user) {
-    console.log("Ownership check failed: missing project or user");
     return false;
   }
-  const owns = project.value.author?.name === authStore.user.name;
-  console.log("Ownership check result:", owns);
-  return owns;
+  return project.value.author?.name === authStore.user.name;
 });
-
-console.log("isOwner computed value:", isOwner.value);
-
-// If not owner, redirect to public view
-if (!isOwner.value) {
-  console.log("!!! REDIRECTING TO PUBLIC VIEW !!!");
-  console.log("Project author:", project.value?.author?.name);
-  console.log("Current user:", authStore.user?.name);
-  await navigateTo(`/projects/${projectId}`);
-}
-
-console.log("User IS owner, staying on student page");
-isLoading.value = false;
 
 // Image carousel
 const currentImageIndex = ref(0);
@@ -306,32 +278,34 @@ const editProject = () => {
   navigateTo(`/projects/create?edit=${project.value.id}`);
 };
 
-const proceedToFinalDelete = () => {
-  console.log("Delete button clicked - proceeding to final confirmation");
+// Close delete modal and reset state
+const closeDeleteModal = () => {
   showDeleteModal.value = false;
-  showFinalDeleteModal.value = true;
-};
-
-const cancelFinalDelete = () => {
-  showFinalDeleteModal.value = false;
-  showDeleteModal.value = true;
+  deleteConfirmText.value = "";
 };
 
 const confirmDelete = async () => {
+  console.log("Confirming delete for project:", project.value?.id);
+  if (!project.value || deleteConfirmText.value !== "DELETE") return;
+
   try {
     isDeleting.value = true;
 
-    await projectStore.deleteProject(project.value.id);
+    const result = await projectStore.deleteProject(project.value.id);
 
-    const toast = useToast();
-    toast.add({
-      title: "Project Deleted",
-      description: "Your project has been successfully deleted.",
-      color: "success",
-    });
+    if (result) {
+      const toast = useToast();
+      toast.add({
+        title: "Project Deleted",
+        description: "Your project has been successfully deleted.",
+        color: "success",
+      });
 
-    showDeleteModal.value = false;
-    await navigateTo("/student/my-projects");
+      closeDeleteModal();
+      await navigateTo("/student/my-projects");
+    } else {
+      throw new Error("Delete operation returned false");
+    }
   } catch (error) {
     console.error("Error deleting project:", error);
     const toast = useToast();
@@ -427,11 +401,6 @@ const toggleVisibility = async () => {
   }
 };
 
-// Load user's liked projects when component mounts
-onMounted(async () => {
-  await projectStore.loadUserLikedProjects();
-});
-
 // Watch for auth changes and reload liked projects
 watch(
   () => authStore.isAuthenticated,
@@ -499,6 +468,28 @@ useHead({
 </script>
 
 <style scoped>
+/* Modal transition animations */
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-active .relative,
+.modal-leave-active .relative {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.modal-enter-from .relative,
+.modal-leave-to .relative {
+  transform: scale(0.95);
+  opacity: 0;
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
