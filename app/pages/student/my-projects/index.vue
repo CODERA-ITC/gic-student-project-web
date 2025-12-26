@@ -2,12 +2,12 @@
   <div class="min-h-screen bg-gray-50 dark:bg-slate-900">
     <!-- Header Section -->
     <div
-      class="py-16 bg-gradient-to-r from-blue-900 to-indigo-600 border-b border-blue-700/30"
+      class="py-16 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 dark:border-slate-700"
     >
       <UContainer>
         <div class="flex items-center justify-between">
           <div class="space-y-2">
-            <h1 class="text-5xl font-black text-white">My Projects</h1>
+            <h1 class="text-4xl font-black text-white">My Projects</h1>
             <p class="text-gray-200">
               Manage and track your student project submissions
             </p>

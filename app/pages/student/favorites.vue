@@ -5,7 +5,7 @@
       class="py-16 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900 border-b border-blue-700/30 dark:border-slate-700"
     >
       <UContainer>
-        <div class="flex items-center gap-4 mb-4">
+        <div class="flex flex-row items-center gap-4 mb-4">
           <div
             class="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-lg p-1 hover:bg-white/20 dark:hover:bg-white/10 transition-colors"
           >
@@ -99,42 +99,11 @@
       </div>
     </UContainer>
 
-    <!-- Clear Confirmation Modal -->
-    <UModal v-model="showClearConfirm">
-      <div class="p-6 bg-white dark:bg-slate-800">
-        <div class="flex items-center gap-3 mb-4">
-          <div
-            class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center"
-          >
-            <UIcon
-              name="i-heroicons-exclamation-triangle"
-              class="w-6 h-6 text-red-600 dark:text-red-400"
-            />
-          </div>
-          <h3 class="text-xl font-bold text-gray-900 dark:text-white">
-            Clear All Favorites?
-          </h3>
-        </div>
-        <p class="text-gray-600 dark:text-gray-400 mb-6">
-          This will remove all {{ favoriteProjects.length }} projects from your
-          favorites. This action cannot be undone.
-        </p>
-        <div class="flex flex-col sm:flex-row gap-3 justify-end">
-          <ButtonsPresetButton
-            preset="cancel"
-            @click="showClearConfirm = false"
-          />
-          <ButtonsPresetButton
-            label="Clear All"
-            icon="i-heroicons-trash"
-            color="danger"
-            variant="solid"
-            size="md"
-            @click="clearAllFavorites"
-          />
-        </div>
-      </div>
-    </UModal>
+    <DeleteConfirmationModal
+      v-model="showClearConfirm"
+      projectTitle="all favorite projects"
+      @confirm="clearAllFavorites"
+    />
   </div>
 </template>
 

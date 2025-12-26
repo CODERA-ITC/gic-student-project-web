@@ -2,13 +2,26 @@
   <div class="min-h-screen bg-gray-50 dark:bg-slate-900">
     <!-- Header Section -->
     <div
-      class="py-16 bg-blue-600 dark:bg-slate-800 border-b border-blue-700/30 dark:border-slate-700"
+      class="py-16 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 dark:border-slate-700"
     >
+      <!-- py-16 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900 border-b border-blue-700/30 dark:border-slate-700 -->
+
       <UContainer>
+        <div class="flex flex-row items-center gap-4 mb-4">
+          <div
+            class="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-lg p-1 hover:bg-white/20 dark:hover:bg-white/10 transition-colors"
+          >
+            <ButtonsPresetButton
+              preset="back"
+              @click="$router.push('/student/dashboard')"
+              class="!text-white"
+            />
+          </div>
+        </div>
         <div class="space-y-2">
-          <h1 class="text-4xl font-black text-white dark:text-white">
-            My Submissions
-          </h1>
+          <div class="flex items-center gap-3">
+            <h1 class="text-4xl font-black text-white">My Submissions</h1>
+          </div>
           <p class="text-blue-100 dark:text-slate-300">
             Track all your project submissions and their status
           </p>

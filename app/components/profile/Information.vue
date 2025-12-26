@@ -166,8 +166,9 @@
               ? 'Tell students about your expertise and teaching philosophy...'
               : 'Tell others about yourself...'
           "
-          :rows="4"
-          size="lg"
+          :rows="5"
+          :cols="100"
+          size="xl"
         />
       </div>
     </div>
@@ -216,6 +217,7 @@ const yearOptions = [
   { label: "2nd Year", value: "2" },
   { label: "3rd Year", value: "3" },
   { label: "4th Year", value: "4" },
+  { label: "5th Year", value: "5" },
 ];
 
 const positionOptions = [
