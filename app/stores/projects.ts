@@ -40,7 +40,6 @@ export interface Project {
   features?: FeatureItem[];
   duration?: string;
   course?: string;
-  progress?: number;
   visibility?: "public" | "private";
   submissions?: {
     id: number;
@@ -113,6 +112,24 @@ export const useProjectStore = defineStore("projects", {
       return this.projects.filter((project) => project.featured).slice(0, 3);
     },
 
+    // Get real-time calculated status for a project based on its features
+    getProjectStatus() {
+      return (projectId: number): "Completed" | "In Progress" => {
+        const project = this.projects.find((p) => p.id === projectId);
+        if (!project) return "In Progress";
+
+        // Always calculate status based on current features
+        if (!project.features || project.features.length === 0) {
+          return "In Progress";
+        }
+
+        const allDone = project.features.every(
+          (feature) => feature.status === "done"
+        );
+        return allDone ? "Completed" : "In Progress";
+      };
+    },
+
     projectsByCategory(): Record<string, Partial<Project>[]> {
       // it will have a table that store all category
       const categoryMap: Record<string, Partial<Project>[]> = {};
@@ -151,6 +168,19 @@ export const useProjectStore = defineStore("projects", {
   },
 
   actions: {
+    // Calculate project status based on features
+    calculateProjectStatus(
+      features?: FeatureItem[]
+    ): "Completed" | "In Progress" {
+      if (!features || features.length === 0) {
+        return "In Progress";
+      }
+
+      // Check if all features are done
+      const allDone = features.every((feature) => feature.status === "done");
+      return allDone ? "Completed" : "In Progress";
+    },
+
     // Simulate fetch project state
     // In real application, this would involve API calls
     // 1. fetch Category data from server
@@ -838,6 +868,7 @@ export const useProjectStore = defineStore("projects", {
         likes: 0,
         views: 0,
         visibility: projectData.visibility || "public", // Default to public
+        status: this.calculateProjectStatus(projectData.features), // Auto-calculate status
       };
 
       // Add to both projects arrays
@@ -949,37 +980,89 @@ export const useProjectStore = defineStore("projects", {
       projectId: number,
       updates: Partial<Project>
     ): Promise<Project> {
+      console.log("UpdateProject called with:", {
+        projectId,
+        projectIdType: typeof projectId,
+        hasUpdates: !!updates,
+        totalProjects: this.projects.length,
+        projectIds: this.projects.map((p) => p.id),
+      });
+
+      // Ensure projectId is a number
+      const numericProjectId =
+        typeof projectId === "string" ? parseInt(projectId) : projectId;
+
+      // If features are being updated, recalculate status
+      if (updates.features) {
+        updates.status = this.calculateProjectStatus(updates.features);
+      }
+
+      let updated = false;
+
       // Update in user projects
       const userProjectIndex = this.userProjects.findIndex(
-        (p) => p.id === projectId
+        (p) => p.id === numericProjectId
       );
       if (userProjectIndex !== -1) {
         this.userProjects[userProjectIndex] = {
           ...this.userProjects[userProjectIndex],
           ...updates,
         };
+        // Recalculate status if not explicitly set and features exist
+        if (!updates.status && this.userProjects[userProjectIndex].features) {
+          this.userProjects[userProjectIndex].status =
+            this.calculateProjectStatus(
+              this.userProjects[userProjectIndex].features
+            );
+        }
+        updated = true;
       }
 
       // Update in all projects
-      const projectIndex = this.projects.findIndex((p) => p.id === projectId);
+      const projectIndex = this.projects.findIndex(
+        (p) => p.id === numericProjectId
+      );
       if (projectIndex !== -1) {
         this.projects[projectIndex] = {
           ...this.projects[projectIndex],
           ...updates,
         };
+        // Recalculate status if not explicitly set and features exist
+        if (!updates.status && this.projects[projectIndex].features) {
+          this.projects[projectIndex].status = this.calculateProjectStatus(
+            this.projects[projectIndex].features
+          );
+        }
+        updated = true;
+      }
+
+      if (!updated) {
+        console.error("Project not found in any array:", {
+          projectId: numericProjectId,
+          userProjects: this.userProjects.map((p) => p.id),
+          allProjects: this.projects.map((p) => p.id),
+        });
+        throw new Error(`Project with ID ${numericProjectId} not found`);
       }
 
       // In real app, sync with backend
-      // await api.updateProject(projectId, updates);
+      // await api.updateProject(numericProjectId, updates);
 
       // Save to localStorage
       this.saveUserCreatedProjects();
 
       // Return the updated project
-      const updatedProject = this.projects.find((p) => p.id === projectId);
+      const updatedProject =
+        this.projects.find((p) => p.id === numericProjectId) ||
+        this.userProjects.find((p) => p.id === numericProjectId);
+
       if (!updatedProject) {
-        throw new Error(`Project with ID ${projectId} not found`);
+        throw new Error(
+          `Project with ID ${numericProjectId} not found after update`
+        );
       }
+
+      console.log("Project updated successfully:", updatedProject.id);
       return updatedProject;
     },
 

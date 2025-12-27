@@ -315,6 +315,46 @@
                 </div>
               </div>
 
+              <!-- Tags -->
+              <div>
+                <label
+                  class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3"
+                >
+                  Tags
+                </label>
+                <div class="space-y-3">
+                  <div class="flex gap-2">
+                    <input
+                      v-model="tagInput"
+                      type="text"
+                      placeholder="e.g., AI, Machine Learning, Web Development..."
+                      class="flex-1 px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                      @keyup.enter="addTag"
+                    />
+                    <ButtonsPresetButton
+                      label="Add"
+                      icon="i-heroicons-plus"
+                      color="primary"
+                      variant="solid"
+                      size="lg"
+                      @click="addTag"
+                    />
+                  </div>
+                  <div class="flex flex-wrap gap-2">
+                    <UBadge
+                      v-for="(tag, idx) in form.tags"
+                      :key="idx"
+                      color="primary"
+                      class="cursor-pointer hover:opacity-80"
+                      @click="form.tags.splice(idx, 1)"
+                    >
+                      {{ tag }}
+                      <UIcon name="i-heroicons-x-mark" class="w-4 h-4 ml-1" />
+                    </UBadge>
+                  </div>
+                </div>
+              </div>
+
               <!-- GitHub URL -->
               <div>
                 <label
@@ -829,6 +869,21 @@
                     </div>
                   </div>
 
+                  <div v-if="form.technologies.length > 0">
+                    <p class="text-xs text-gray-500 dark:text-gray-500">Tags</p>
+                    <div class="flex flex-wrap gap-2 mt-1">
+                      <UBadge
+                        v-for="tag in form.tags"
+                        :key="tag"
+                        color="primary"
+                        variant="soft"
+                        size="sm"
+                      >
+                        {{ tag }}
+                      </UBadge>
+                    </div>
+                  </div>
+
                   <div v-if="form.teamMembers.length > 0">
                     <p class="text-xs text-gray-500 dark:text-gray-500">
                       Team Members
@@ -1092,6 +1147,7 @@ const agreedToTerms = ref(false);
 const isSubmitting = ref(false);
 
 const techInput = ref("");
+const tagInput = ref("");
 const memberInput = ref("");
 const memberSearchQuery = ref("");
 const iconSearchQuery = ref("");
@@ -1253,7 +1309,7 @@ const form = ref({
   demoUrl: "https://ai-cat-detection.demo.com",
   visibility: "public",
   duration: "4 months",
-  teamSize: 4,
+  teamSize: 3,
   teamMembers: [
     {
       name: "Sarah Chen",
@@ -1316,6 +1372,16 @@ const addTechnology = () => {
 
 const removeTechnology = (index) => {
   form.value.technologies.splice(index, 1);
+};
+
+const addTag = () => {
+  if (
+    tagInput.value.trim() &&
+    !form.value.tags.includes(tagInput.value.trim())
+  ) {
+    form.value.tags.push(tagInput.value.trim());
+    tagInput.value = "";
+  }
 };
 
 const addTeamMember = () => {
@@ -1529,8 +1595,12 @@ const submitForm = async () => {
     let result;
     if (editMode.value) {
       // Update existing project
+      console.log("Edit mode - updating project:", {
+        editProjectId: editProjectId.value,
+        type: typeof editProjectId.value,
+      });
       result = await projectStore.updateProject(
-        editProjectId.value,
+        parseInt(editProjectId.value),
         projectData
       );
     } else {
@@ -1606,12 +1676,6 @@ const submitForm = async () => {
 
     // Navigate to the project details page
     const projectId = editMode.value ? editProjectId.value : result.id;
-    console.log(
-      "Navigating to project:",
-      projectId,
-      "Path:",
-      `/student/my-projects/${projectId}`
-    );
 
     // Final validation before navigation
     if (!projectId || projectId === -Infinity || isNaN(projectId)) {

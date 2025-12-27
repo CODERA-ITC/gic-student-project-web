@@ -86,12 +86,11 @@
             {{ project.academicYear }}
           </UBadge>
           <UBadge
-            v-if="project.status"
-            :color="project.status === 'Completed' ? 'success' : 'warning'"
+            :color="currentStatus === 'Completed' ? 'success' : 'warning'"
             variant="solid"
             size="md"
           >
-            {{ project.status }}
+            {{ currentStatus }}
           </UBadge>
         </div>
         <h1
@@ -420,6 +419,9 @@
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { gsap } from "gsap";
 import { Role } from "~/types/roles";
+import { useProjectStore } from "~/stores/projects";
+
+const projectStore = useProjectStore();
 
 // Template refs for animations
 const sectionRef = ref<HTMLElement | null>(null);
@@ -489,6 +491,13 @@ const filteredMembers = computed(() => {
   return props.project.members.filter(
     (member: any) => member.name !== props.project.author.name
   );
+});
+
+// Real-time status calculation - updates automatically when features change
+const currentStatus = computed(() => {
+  return props.project
+    ? projectStore.getProjectStatus(props.project.id)
+    : "In Progress";
 });
 
 // GSAP Animations
