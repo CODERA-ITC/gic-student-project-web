@@ -13,11 +13,10 @@ jobs:
 
     steps:
       - name: Pull code from main 
-        working-directory: $PROJECT_PATH
         run: |
           echo "STAGE=PULL" >> $GITHUB_ENV
 
-          cd gic-student-project-web
+          cd "$PROJECT_PATH/gic-student-project-web"
           git checkout main
           git pull origin main
       - name: Login Docker Hub
@@ -29,9 +28,8 @@ jobs:
         run: |
           echo "STAGE=Build" >> $GITHUB_ENV
 
-          cd gic-student-project-web
+          cd "$PROJECT_PATH/gic-student-project-web"
           docker build -t ${{ secrets.DOCKER_USERNAME }}/gic-student-frontend:latest .
-        working-directory: $PROJECT_PATH
 
       - name: Push image
         run: |
@@ -42,9 +40,9 @@ jobs:
       - name: Restart container
         run: |
           echo "STAGE=Deploy" >> $GITHUB_ENV
+          cd $PROJECT_PATH
           docker compose stop frontend
           docker compose up --build -d app
-        working-directory: $PROJECT_PATH
 
 
       - name: Set status
