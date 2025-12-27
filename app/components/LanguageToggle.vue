@@ -1,6 +1,6 @@
 <template>
   <UButton color="gray" variant="ghost" size="md" @click="toggleLocale">
-    <span class="text-3xl">
+    <span class="text-4xl">
       {{ locale === "kh" ? "🇬🇧" : "🇰🇭" }}
     </span>
   </UButton>

@@ -42,7 +42,7 @@
               class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6"
             >
               <p class="text-red-800 dark:text-red-300 font-medium mb-3">
-                ⚠️ To confirm, type <span class="font-bold">DELETE</span> below:
+                To confirm, type <span class="font-bold">DELETE</span> below:
               </p>
               <input
                 v-model="deleteText"
@@ -53,7 +53,7 @@
               />
             </div>
 
-            <div class="flex flex-col sm:flex-row gap-3 justify-end">
+            <div class="flex flex-col sm:flex-row gap-3 justify-center ">
               <ButtonsPresetButton
                 preset="cancel"
                 size="lg"
