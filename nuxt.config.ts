@@ -73,7 +73,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     apiBase: "https://gic-project.darororo.dev", // Backend API base URL (server-side)
     public: {
-      apiUrl: process.env.NUXT_PUBLIC_API_URL || "https://gic-project.darororo.dev", // Backend API URL (client-side)
+      apiUrl:
+        process.env.NUXT_PUBLIC_API_URL || "https://gic-project.darororo.dev", // Backend API URL (client-side)
     },
   },
 
@@ -84,16 +85,12 @@ export default defineNuxtConfig({
   },
 
   // Component auto-discovery
-  // components: [
-  //   {
-  //     path: "~/components",
-  //     pathPrefix: false,
-  //   },
-  //   {
-  //     path: "~/app/components",
-  //     // pathPrefix: false,
-  //   },
-  // ],
+  components: true,
+
+  // Image module configuration
+  image: {
+    // Add any image configuration if needed
+  },
 
   ui: {},
 });
