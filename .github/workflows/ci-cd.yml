@@ -42,7 +42,7 @@ jobs:
           echo "STAGE=Deploy" >> $GITHUB_ENV
           cd $PROJECT_PATH
           docker compose stop frontend
-          docker compose up --build -d app
+          docker compose up --build -d frontend
 
 
       - name: Set status
@@ -67,5 +67,4 @@ jobs:
             -d "text=📌 $ICON $TEXT; Status: $STATUS\`
           *Repo:* \`${{ github.repository }}\`
           *Actor:* \`${{ github.actor }}\`
-          *Message:* \`${{ github.event.commits[0].message }}\`
-          *View:* https://github.com/${{ github.repository }}/commit/${{ github.sha }}"
+          *Message:* \`${{ github.event.commits[0].message }}"
