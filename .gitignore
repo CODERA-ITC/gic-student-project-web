@@ -5,6 +5,7 @@
 .nitro
 .cache
 dist
+docs
 .azure
 # Node dependencies
 node_modules
