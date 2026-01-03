@@ -29,7 +29,7 @@
       </div>
 
       <ProjectDetails
-        v-else-if="project && project.id"
+        v-else-if="project"
         :project="project"
         :is-liked="isLiked"
         :user-role="authStore.userRole"
@@ -42,7 +42,7 @@
           <ButtonsPresetButton
             v-if="canSubmit"
             preset="submitProject"
-            label="Submit for Review"
+            label="Submit to Teacher"
             icon="i-heroicons-paper-airplane"
             size="lg"
             :loading="isSubmitting"
@@ -102,13 +102,14 @@
                   />
                 </div>
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                  Submit Project for Review
+                  Submit to Teacher
                 </h3>
               </div>
               <p class="text-gray-600 dark:text-gray-300 mb-6">
-                Are you sure you want to submit this project for review? Once
-                submitted, you won't be able to edit it until the review process
-                is complete.
+                Are you sure you want to submit this project to your teacher for
+                review? Your project will be sent to all teachers for
+                evaluation. You won't be able to edit it until the review is
+                complete.
               </p>
               <div class="flex flex-col sm:flex-row gap-3 justify-end">
                 <ButtonsPresetButton
@@ -259,11 +260,7 @@ const showAuthModal = ref(false);
 
 // Student-specific computed properties
 const canSubmit = computed(() => {
-  return (
-    isOwner.value &&
-    (project.value?.status === "Draft" ||
-      project.value?.status === "In Progress")
-  );
+  return isOwner.value;
 });
 
 // Student-specific methods
@@ -323,13 +320,14 @@ const confirmSubmit = async () => {
   try {
     isSubmitting.value = true;
 
-    await projectStore.updateProjectStatus(project.value.id, "In Review");
-    project.value.status = "In Review";
+    // Submit to teacher - update status to "Submitted" or "In Review"
+    await projectStore.updateProjectStatus(project.value.id, "Submitted");
+    project.value.status = "Submitted";
 
     const toast = useToast();
     toast.add({
       title: "Project Submitted!",
-      description: "Your project has been submitted for review.",
+      description: "Your project has been submitted to teachers for review.",
       color: "success",
     });
 

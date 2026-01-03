@@ -140,7 +140,7 @@
                   Project Thumbnails/Previews *
                 </label>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
-                  Upload at least 2 images showcasing your project (screenshots,
+                  Upload 2-5 images showcasing your project (screenshots,
                   mockups, demos)
                 </p>
 
@@ -193,7 +193,7 @@
                           }}
                         </p>
                         <p class="text-sm text-gray-600 dark:text-gray-400">
-                          PNG, JPG, GIF up to 5MB each • Minimum 2 images
+                          PNG, JPG, GIF up to 5MB each • Maximum 5 images
                           required
                         </p>
                       </div>
@@ -203,6 +203,7 @@
                         color="primary"
                         variant="solid"
                         size="lg"
+                        :disabled="form.thumbnails.length >= 5"
                         @click="$refs.thumbnailInput?.click()"
                       />
                     </div>
@@ -212,7 +213,7 @@
                   <div v-if="form.thumbnails.length > 0" class="space-y-3">
                     <div class="flex items-center justify-between">
                       <p class="text-sm text-gray-700 dark:text-gray-300">
-                        {{ form.thumbnails.length }}/2+ images
+                        {{ form.thumbnails.length }}/5 images
                         <span
                           v-if="form.thumbnails.length < 2"
                           class="text-red-400"
@@ -1606,7 +1607,32 @@ const handleThumbnailDrop = (event) => {
 };
 
 const processThumbnailFiles = (files) => {
+  const MAX_IMAGES = 5;
+  const currentCount = form.value.thumbnails.length;
+  const remainingSlots = MAX_IMAGES - currentCount;
+
+  if (remainingSlots <= 0) {
+    const toast = useToast();
+    toast.add({
+      title: "Image Limit Reached",
+      description: "You can only upload a maximum of 5 images per project.",
+      color: "warning",
+    });
+    return;
+  }
+
+  let filesProcessed = 0;
   Array.from(files).forEach((file) => {
+    if (filesProcessed >= remainingSlots) {
+      const toast = useToast();
+      toast.add({
+        title: "Image Limit Reached",
+        description: `Only ${remainingSlots} more image(s) can be added. Maximum is 5 images per project.`,
+        color: "warning",
+      });
+      return;
+    }
+
     if (file.type.startsWith("image/") && file.size <= 5 * 1024 * 1024) {
       // 5MB limit
       const reader = new FileReader();
@@ -1614,6 +1640,7 @@ const processThumbnailFiles = (files) => {
         form.value.thumbnails.push(e.target.result);
       };
       reader.readAsDataURL(file);
+      filesProcessed++;
     } else {
       console.warn("File must be an image under 5MB");
     }
