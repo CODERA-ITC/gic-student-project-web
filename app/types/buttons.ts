@@ -240,9 +240,9 @@ export const BUTTON_PRESETS = {
   },
   submitProject: {
     label: "Submit Your Project",
-    icon: "i-heroicons-rocket-launch",
+    icon: "i-heroicons-clipboard-document-check",
     color: "primary",
-    variant: "solid",
+    variant: "outline",
     size: "lg",
   },
   viewProfileStudent: {
@@ -340,6 +340,13 @@ export const BUTTON_PRESETS = {
   },
   submit: {
     label: "Submit",
+    icon: "i-heroicons-check",
+    color: "primary",
+    variant: "solid",
+    size: "md",
+  },
+  confirm: {
+    label: "Confirm",
     icon: "i-heroicons-check",
     color: "primary",
     variant: "solid",
