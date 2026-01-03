@@ -888,6 +888,9 @@ export const useProjectStore = defineStore("projects", {
         this.projects.length / this.pagination.itemsPerPage
       );
 
+
+      
+
       // Save to localStorage
       this.saveUserCreatedProjects();
 

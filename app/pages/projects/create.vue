@@ -14,11 +14,35 @@
 
         <!-- Header -->
         <div class="max-w-3xl mx-auto mb-12">
-          <h1
-            class="text-5xl font-black font-semibold text-gray-900 dark:text-white mb-2"
-          >
-            {{ editMode ? "Edit Project" : "Create New Project" }}
-          </h1>
+          <div class="flex items-center justify-between mb-2">
+            <h1
+              class="text-5xl font-black font-semibold text-gray-900 dark:text-white"
+            >
+              {{ editMode ? "Edit Project" : "Create New Project" }}
+            </h1>
+            <div v-if="!editMode" class="flex items-center gap-2 text-sm">
+              <UIcon
+                :name="
+                  isSaving
+                    ? 'i-heroicons-arrow-path'
+                    : 'i-heroicons-check-circle'
+                "
+                :class="[
+                  'w-4 h-4',
+                  isSaving ? 'text-blue-500 animate-spin' : 'text-green-500',
+                ]"
+              />
+              <span class="text-gray-600 dark:text-gray-400">
+                {{
+                  isSaving
+                    ? "Saving..."
+                    : lastSaved
+                    ? `Saved ${formatTimeAgo(lastSaved)}`
+                    : "Auto-save enabled"
+                }}
+              </span>
+            </div>
+          </div>
           <p class="text-xl text-gray-600 dark:text-gray-300">
             {{
               editMode
@@ -116,7 +140,7 @@
                   Project Thumbnails/Previews *
                 </label>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
-                  Upload at least 1 images showcasing your project (screenshots,
+                  Upload at least 2 images showcasing your project (screenshots,
                   mockups, demos)
                 </p>
 
@@ -124,9 +148,15 @@
                   <!-- Image Upload Area -->
                   <div
                     @drop="handleThumbnailDrop"
-                    @dragover.prevent
-                    @dragenter.prevent
-                    class="border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-xl p-6 text-center transition-colors hover:border-blue-500 hover:bg-gray-100 dark:hover:bg-slate-700/30"
+                    @dragover.prevent="handleDragOver"
+                    @dragenter.prevent="handleDragEnter"
+                    @dragleave="handleDragLeave"
+                    :class="[
+                      'border-2 border-dashed rounded-xl p-6 text-center transition-all duration-200',
+                      isDragging
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 scale-105 shadow-lg ring-2 ring-blue-500 ring-opacity-50'
+                        : 'border-gray-300 dark:border-slate-600 hover:border-blue-500 hover:bg-gray-100 dark:hover:bg-slate-700/30',
+                    ]"
                   >
                     <input
                       ref="thumbnailInput"
@@ -140,16 +170,30 @@
                     <div class="space-y-3">
                       <UIcon
                         name="i-heroicons-photo"
-                        class="w-12 h-12 text-gray-400 dark:text-gray-400 mx-auto"
+                        :class="[
+                          'w-12 h-12 mx-auto transition-all duration-200',
+                          isDragging
+                            ? 'text-blue-500 dark:text-blue-400 scale-105 animate-bounce'
+                            : 'text-gray-400 dark:text-gray-400',
+                        ]"
                       />
                       <div>
                         <p
-                          class="text-gray-900 dark:text-white font-medium mb-1"
+                          :class="[
+                            'font-medium mb-1 transition-colors duration-200',
+                            isDragging
+                              ? 'text-blue-600 dark:text-blue-400'
+                              : 'text-gray-900 dark:text-white',
+                          ]"
                         >
-                          Drop project images here or click to browse
+                          {{
+                            isDragging
+                              ? "Drop your images here!"
+                              : "Drop project images here or click to browse"
+                          }}
                         </p>
                         <p class="text-sm text-gray-600 dark:text-gray-400">
-                          PNG, JPG, GIF up to 5MB each • Minimum 3 images
+                          PNG, JPG, GIF up to 5MB each • Minimum 2 images
                           required
                         </p>
                       </div>
@@ -168,11 +212,11 @@
                   <div v-if="form.thumbnails.length > 0" class="space-y-3">
                     <div class="flex items-center justify-between">
                       <p class="text-sm text-gray-700 dark:text-gray-300">
-                        {{ form.thumbnails.length }}/3+ images
+                        {{ form.thumbnails.length }}/2+ images
                         <span
-                          v-if="form.thumbnails.length < 1"
+                          v-if="form.thumbnails.length < 2"
                           class="text-red-400"
-                          >({{ 1 - form.thumbnails.length }} more needed)</span
+                          >({{ 2 - form.thumbnails.length }} more needed)</span
                         >
                         <span v-else class="text-blue-600 dark:text-blue-400"
                           >✓</span
@@ -220,7 +264,7 @@
                       No images uploaded
                     </p>
                     <p class="text-sm text-gray-600 dark:text-gray-400">
-                      Please upload at least 3 project images to continue
+                      Please upload at least 2 project images to continue
                     </p>
                   </div>
                 </div>
@@ -304,8 +348,7 @@
                     <UBadge
                       v-for="(tech, idx) in form.technologies"
                       :key="idx"
-                      color="primary"
-                      class="cursor-pointer hover:opacity-80"
+                      class="cursor-pointer hover:opacity-80 bg-blue-900 text-white"
                       @click="form.technologies.splice(idx, 1)"
                     >
                       {{ tech }}
@@ -344,8 +387,7 @@
                     <UBadge
                       v-for="(tag, idx) in form.tags"
                       :key="idx"
-                      color="primary"
-                      class="cursor-pointer hover:opacity-80"
+                      class="cursor-pointer hover:opacity-80 bg-blue-900 text-white"
                       @click="form.tags.splice(idx, 1)"
                     >
                       {{ tag }}
@@ -424,15 +466,17 @@
                   <label
                     class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2"
                   >
-                    Team Size
+                    Team Size (Auto-calculated)
                   </label>
                   <input
-                    v-model.number="form.teamSize"
+                    :value="form.teamMembers.length"
                     type="number"
-                    min="1"
-                    max="20"
-                    class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                    disabled
+                    class="w-full px-4 py-3 bg-gray-100 dark:bg-slate-700/50 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white cursor-not-allowed"
                   />
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Team size updates automatically based on selected members
+                  </p>
                 </div>
               </div>
 
@@ -463,7 +507,7 @@
                     >
                       <div
                         v-for="suggestedMember in filteredSuggestedMembers"
-                        :key="suggestedMember.name"
+                        :key="suggestedMember.id"
                         @click="toggleTeamMember(suggestedMember)"
                         :class="[
                           'p-3 rounded-lg border-2 cursor-pointer transition-all hover:scale-105',
@@ -475,14 +519,15 @@
                         <div class="flex items-center gap-2">
                           <img
                             :src="suggestedMember.avatar"
-                            :alt="suggestedMember.name"
+                            :alt="`${suggestedMember.firstName} ${suggestedMember.lastName}`"
                             class="w-8 h-8 rounded-full"
                           />
                           <div class="flex-1 min-w-0">
                             <p
                               class="text-sm font-medium text-gray-900 dark:text-white truncate"
                             >
-                              {{ suggestedMember.name }}
+                              {{ suggestedMember.firstName }}
+                              {{ suggestedMember.lastName }}
                             </p>
                             <p
                               class="text-xs text-gray-500 dark:text-gray-400 truncate"
@@ -502,30 +547,6 @@
                     >
                       No members found matching "{{ memberSearchQuery }}"
                     </p>
-                  </div>
-
-                  <!-- Custom Team Member Input -->
-                  <div>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                      Or add a custom member:
-                    </p>
-                    <div class="flex gap-2">
-                      <input
-                        v-model="memberInput"
-                        type="text"
-                        placeholder="Enter team member name"
-                        class="flex-1 px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                        @keyup.enter="addTeamMember"
-                      />
-                      <ButtonsPresetButton
-                        label="Add"
-                        icon="i-heroicons-plus"
-                        color="primary"
-                        variant="solid"
-                        size="lg"
-                        @click="addTeamMember"
-                      />
-                    </div>
                   </div>
 
                   <!-- Selected Team Members Display -->
@@ -605,7 +626,10 @@
                         ]"
                         :title="iconOption.label"
                       >
-                        <UIcon :name="iconOption.name" class="w-5 h-5" />
+                        <UIcon
+                          :name="iconOption.name"
+                          class="w-5 h-5 text-gray-900 dark:text-white"
+                        />
                       </button>
                     </div>
                     <p
@@ -771,12 +795,13 @@
                     required
                   >
                     <option value="">Select duration</option>
-                    <option value="1 month">1 month</option>
-                    <option value="2 months">2 months</option>
-                    <option value="3 months">3 months</option>
-                    <option value="4 months">4 months</option>
-                    <option value="5 months">5 months</option>
-                    <option value="6 months">6 months</option>
+                    <option
+                      v-for="duration in durationOptions"
+                      :key="duration"
+                      :value="duration"
+                    >
+                      {{ duration }}
+                    </option>
                   </select>
                 </div>
 
@@ -1008,7 +1033,7 @@
 
                 <ButtonsPresetButton
                   v-if="currentStep === steps.length - 1"
-                  preset="submit"
+                  :preset="editMode ? 'confirm' : 'submit'"
                   :disabled="!canProceedToNextStep || isSubmitting"
                   :loading="isSubmitting"
                   @click="submitForm"
@@ -1066,6 +1091,21 @@ import { ref, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useProjectStore } from "~/stores/projects";
 import { useAuthStore } from "~/stores/auth";
+import {
+  availableIcons,
+  searchIcons,
+  getFeaturedIcons,
+} from "~/constants/icons";
+import {
+  availableStatuses,
+  suggestedMembers as defaultSuggestedMembers,
+  getStatusColor,
+  getStatusLabel,
+  searchTeamMembers,
+  durationOptions,
+  academicYearOptions,
+  visibilityOptions,
+} from "~/constants/project-options";
 
 const router = useRouter();
 const route = useRoute();
@@ -1078,6 +1118,13 @@ const editProjectId = ref(null);
 
 // Initialize edit mode if edit parameter is provided
 onMounted(async () => {
+  // Check authentication first
+  if (!authStore.isAuthenticated) {
+    showAuthModal.value = true;
+    await navigateTo("/login");
+    return;
+  }
+
   // First load categories
   await projectStore.fetchCategories();
 
@@ -1087,6 +1134,18 @@ onMounted(async () => {
     editMode.value = true;
     editProjectId.value = editId;
     await loadProjectForEditing(editId);
+  } else {
+    // Load from localStorage only if not in edit mode
+    loadFromLocalStorage();
+  }
+
+  // Save on beforeunload (page close/refresh)
+  if (process.client) {
+    window.addEventListener("beforeunload", (e) => {
+      if (!editMode.value && !isSubmitting.value) {
+        saveToLocalStorage();
+      }
+    });
   }
 });
 
@@ -1130,11 +1189,6 @@ const loadProjectForEditing = async (projectId) => {
   }
 };
 
-// Ensure user is authenticated
-if (!authStore.isAuthenticated) {
-  await navigateTo("/login");
-}
-
 const steps = [
   { id: "basic", label: "Basic Info" },
   { id: "technical", label: "Technical" },
@@ -1142,9 +1196,12 @@ const steps = [
   { id: "review", label: "Review" },
 ];
 
+const showAuthModal = ref(false);
 const currentStep = ref(0);
 const agreedToTerms = ref(false);
 const isSubmitting = ref(false);
+const lastSaved = ref(null);
+const isSaving = ref(false);
 
 const techInput = ref("");
 const tagInput = ref("");
@@ -1160,136 +1217,35 @@ const featureInput = ref({
   status: "pending",
 });
 
-// Suggested team members
-const suggestedMembers = ref([
-  {
-    name: "Sarah Chen",
-    role: "Frontend Developer",
-    avatar: "https://randomuser.me/api/portraits/women/1.jpg",
-  },
-  {
-    name: "Alex Kumar",
-    role: "Backend Developer",
-    avatar: "https://randomuser.me/api/portraits/men/2.jpg",
-  },
-  {
-    name: "Maya Rodriguez",
-    role: "UI/UX Designer",
-    avatar: "https://randomuser.me/api/portraits/women/3.jpg",
-  },
-  {
-    name: "David Park",
-    role: "DevOps Engineer",
-    avatar: "https://randomuser.me/api/portraits/men/4.jpg",
-  },
-  {
-    name: "Emma Thompson",
-    role: "Product Manager",
-    avatar: "https://randomuser.me/api/portraits/women/5.jpg",
-  },
-  {
-    name: "James Wilson",
-    role: "Full Stack Developer",
-    avatar: "https://randomuser.me/api/portraits/men/6.jpg",
-  },
-]);
-
-// Available icons for features
-const availableIcons = ref([
-  { name: "i-lucide-server", label: "Server" },
-  { name: "i-lucide-bar-chart", label: "Analytics" },
-  { name: "i-heroicons-star", label: "Feature" },
-  { name: "i-heroicons-shield-check", label: "Security" },
-  { name: "i-heroicons-cog-6-tooth", label: "Settings" },
-  { name: "i-heroicons-chart-bar", label: "Dashboard" },
-  { name: "i-heroicons-user-group", label: "Team" },
-  { name: "i-heroicons-lock-closed", label: "Auth" },
-  { name: "i-heroicons-device-phone-mobile", label: "Mobile" },
-  { name: "i-heroicons-globe-alt", label: "Web" },
-  { name: "i-heroicons-cloud", label: "Cloud" },
-]);
-
-// Available status options
-const availableStatuses = ref([
-  { value: "pending", label: "In Pending" },
-  { value: "ongoing", label: "Ongoing" },
-  { value: "done", label: "Done" },
-]);
-
-// Helper functions
-const getStatusColor = (status) => {
-  switch (status) {
-    case "done":
-      return "blue";
-    case "ongoing":
-      return "blue";
-    case "pending":
-    default:
-      return "yellow";
-  }
-};
-
-const getStatusLabel = (status) => {
-  const statusOption = availableStatuses.value.find((s) => s.value === status);
-  return statusOption ? statusOption.label : status;
-};
-
-const isTeamMemberSelected = (member) => {
-  return form.value.teamMembers.some(
-    (m) => (typeof m === "string" ? m : m.name) === member.name
-  );
-};
-
-const toggleTeamMember = (member) => {
-  const existingIndex = form.value.teamMembers.findIndex(
-    (m) => (typeof m === "string" ? m : m.name) === member.name
-  );
-
-  if (existingIndex >= 0) {
-    form.value.teamMembers.splice(existingIndex, 1);
-  } else {
-    form.value.teamMembers.push({
-      name: member.name,
-      role: member.role,
-      avatar: member.avatar,
-    });
-  }
-};
+// Use suggested team members from constants
+const suggestedMembers = ref(defaultSuggestedMembers);
 
 // Available categories from store
 const availableCategories = computed(() => {
   return projectStore.availableCategories.filter((cat) => cat !== "All");
 });
 
+// Helper functions for team members
+const isTeamMemberSelected = (member) => {
+  const memberName = `${member.firstName} ${member.lastName}`;
+  return form.value.teamMembers.some(
+    (m) => (typeof m === "string" ? m : m.name) === memberName
+  );
+};
+
 // Computed properties for search filtering
 const filteredSuggestedMembers = computed(() => {
-  if (!memberSearchQuery.value.trim()) {
-    return suggestedMembers.value;
-  }
-  const query = memberSearchQuery.value.toLowerCase();
-  return suggestedMembers.value.filter(
-    (member) =>
-      member.name.toLowerCase().includes(query) ||
-      member.role.toLowerCase().includes(query)
-  );
+  return searchTeamMembers(suggestedMembers.value, memberSearchQuery.value);
 });
 
 const filteredIcons = computed(() => {
-  if (!iconSearchQuery.value.trim()) {
-    return availableIcons.value;
+  if (!iconSearchQuery.value) {
+    return getFeaturedIcons(15);
   }
-  const query = iconSearchQuery.value.toLowerCase();
-  return availableIcons.value.filter(
-    (icon) =>
-      icon.label.toLowerCase().includes(query) ||
-      icon.name.toLowerCase().includes(query)
-  );
+  return searchIcons(iconSearchQuery.value);
 });
 
-// Current academic year options
-const academicYearOptions = ["2024-2025", "2025-2026", "2026-2027"];
-
-// for demo purposes, pre-fill form with sample data
+// For demo purposes, pre-fill form with sample data
 const form = ref({
   title: "AI Cat Detection System",
   description:
@@ -1360,6 +1316,102 @@ const form = ref({
   course: "Artificial Intelligence & Computer Vision",
 });
 
+// LocalStorage management
+const FORM_STORAGE_KEY = "gic-project-draft";
+
+const saveToLocalStorage = () => {
+  if (editMode.value) return; // Don't save drafts when editing
+
+  try {
+    isSaving.value = true;
+    const formData = {
+      ...form.value,
+      currentStep: currentStep.value,
+      savedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(formData));
+    lastSaved.value = new Date();
+
+    setTimeout(() => {
+      isSaving.value = false;
+    }, 500);
+  } catch (error) {
+    console.error("Error saving to localStorage:", error);
+    isSaving.value = false;
+  }
+};
+
+const loadFromLocalStorage = () => {
+  if (editMode.value) return; // Don't load drafts when editing
+
+  try {
+    const savedData = localStorage.getItem(FORM_STORAGE_KEY);
+    if (savedData) {
+      const parsed = JSON.parse(savedData);
+
+      // Show confirmation dialog
+      const shouldRestore = confirm(
+        `Found a saved draft from ${new Date(
+          parsed.savedAt
+        ).toLocaleString()}. Would you like to restore it?`
+      );
+
+      if (shouldRestore) {
+        form.value = {
+          title: parsed.title || "",
+          description: parsed.description || "",
+          thumbnails: parsed.thumbnails || [],
+          category: parsed.category || "",
+          academicYear: parsed.academicYear || "",
+          technologies: parsed.technologies || [],
+          githubUrl: parsed.githubUrl || "",
+          demoUrl: parsed.demoUrl || "",
+          visibility: parsed.visibility || "public",
+          duration: parsed.duration || "",
+          teamSize: parsed.teamSize || 1,
+          teamMembers: parsed.teamMembers || [],
+          feature: parsed.feature || [],
+          tags: parsed.tags || [],
+          course: parsed.course || "",
+        };
+        currentStep.value = parsed.currentStep || 0;
+        lastSaved.value = new Date(parsed.savedAt);
+
+        const toast = useToast();
+        toast.add({
+          title: "Draft Restored",
+          description: "Your previous work has been restored.",
+          color: "blue",
+          timeout: 3000,
+        });
+      } else {
+        clearLocalStorage();
+      }
+    }
+  } catch (error) {
+    console.error("Error loading from localStorage:", error);
+  }
+};
+
+const clearLocalStorage = () => {
+  try {
+    localStorage.removeItem(FORM_STORAGE_KEY);
+    lastSaved.value = null;
+  } catch (error) {
+    console.error("Error clearing localStorage:", error);
+  }
+};
+
+const formatTimeAgo = (date) => {
+  const seconds = Math.floor((new Date() - date) / 1000);
+  if (seconds < 60) return "just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  return "today";
+};
+
 const addTechnology = () => {
   if (
     techInput.value.trim() &&
@@ -1369,6 +1421,31 @@ const addTechnology = () => {
     techInput.value = "";
   }
 };
+
+// Watch form changes and auto-save with debounce
+let saveTimeout = null;
+watch(
+  () => form.value,
+  () => {
+    if (!editMode.value) {
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() => {
+        saveToLocalStorage();
+      }, 2000); // Save 2 seconds after user stops typing
+    }
+  },
+  { deep: true }
+);
+
+// Watch currentStep changes and save
+watch(
+  () => currentStep.value,
+  () => {
+    if (!editMode.value) {
+      saveToLocalStorage();
+    }
+  }
+);
 
 const removeTechnology = (index) => {
   form.value.technologies.splice(index, 1);
@@ -1381,6 +1458,25 @@ const addTag = () => {
   ) {
     form.value.tags.push(tagInput.value.trim());
     tagInput.value = "";
+  }
+};
+
+const toggleTeamMember = (member) => {
+  const memberName = `${member.firstName} ${member.lastName}`;
+  const existingIndex = form.value.teamMembers.findIndex(
+    (m) => (typeof m === "string" ? m : m.name) === memberName
+  );
+
+  if (existingIndex >= 0) {
+    // Remove member if already selected
+    form.value.teamMembers.splice(existingIndex, 1);
+  } else {
+    // Add member if not selected
+    form.value.teamMembers.push({
+      name: memberName,
+      role: member.role,
+      avatar: member.avatar,
+    });
   }
 };
 
@@ -1471,6 +1567,26 @@ const removeFeature = (index) => {
 
 // Thumbnail upload handlers
 const thumbnailInput = ref(null);
+const isDragging = ref(false);
+let dragCounter = 0;
+
+const handleDragEnter = (event) => {
+  event.preventDefault();
+  dragCounter++;
+  isDragging.value = true;
+};
+
+const handleDragLeave = (event) => {
+  dragCounter--;
+  if (dragCounter === 0) {
+    isDragging.value = false;
+  }
+};
+
+const handleDragOver = (event) => {
+  event.preventDefault();
+  isDragging.value = true;
+};
 
 const handleThumbnailSelect = (event) => {
   const files = event.target.files;
@@ -1481,6 +1597,8 @@ const handleThumbnailSelect = (event) => {
 
 const handleThumbnailDrop = (event) => {
   event.preventDefault();
+  isDragging.value = false;
+  dragCounter = 0;
   const files = event.dataTransfer.files;
   if (files) {
     processThumbnailFiles(files);
@@ -1658,6 +1776,11 @@ const submitForm = async () => {
         color: "red",
       });
       return;
+    }
+
+    // Clear localStorage on successful creation
+    if (!editMode.value) {
+      clearLocalStorage();
     }
 
     // Show success message with toast

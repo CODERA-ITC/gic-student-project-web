@@ -345,6 +345,13 @@ export const BUTTON_PRESETS = {
     variant: "solid",
     size: "md",
   },
+   confirm: {
+    label: "Confirm",
+    icon: "i-heroicons-check",
+    color: "primary",
+    variant: "solid",
+    size: "md",
+  },
   close: {
     label: "Close",
     icon: "i-heroicons-x-mark",
