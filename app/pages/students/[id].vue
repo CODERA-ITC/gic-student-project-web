@@ -1,9 +1,9 @@
 <template>
   <!-- public page -->
-  <div class="min-h-screen bg-white dark:bg-slate-900">
+  <div class="min-h-screen bg-gray-50 dark:bg-slate-900">
     <!-- Back Button -->
     <div
-      class="top-20 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur border-b border-gray-200 dark:border-slate-700"
+      class="sticky top-0 z-40 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm border-b border-gray-200 dark:border-slate-700 shadow-sm"
     >
       <UContainer class="py-4">
         <div class="flex items-center justify-between">
@@ -14,32 +14,50 @@
 
     <!-- Profile Header -->
     <div
-      class="bg-blue-900 dark:bg-blue-900 border-b border-blue-700 dark:border-blue-800 py-12"
+      class="bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-500 dark:from-blue-800 dark:via-blue-700 dark:to-cyan-700 border-b border-blue-400/30 dark:border-blue-800/30 py-16 relative overflow-hidden"
     >
-      <UContainer>
-        <div class="flex flex-col sm:flex-row gap-8 items-start sm:items-end">
+      <!-- Background Pattern -->
+      <div
+        class="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC40Ij48cGF0aCBkPSJNMzYgMzBoLTEydjEyaDEyVjMwem0tMTIgMGgtMTJ2MTJoMTJWMzB6bTEyLTEyaC0xMnYxMmgxMlYxOHptMCAxMmgxMnYxMkg0OFYzMHptMC0xMmgxMnYxMkg0OFYxOHoiLz48L2c+PC9nPjwvc3ZnPg==')]"
+      ></div>
+
+      <UContainer class="relative">
+        <div
+          class="flex flex-col md:flex-row gap-8 items-start md:items-center"
+        >
           <!-- Avatar -->
           <div
-            class="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center text-white text-6xl sm:text-8xl font-bold border-4 border-white dark:border-blue-600"
+            class="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-6xl md:text-8xl font-bold border-4 border-white/30 shadow-2xl"
           >
             {{ student.name.charAt(0) }}
           </div>
 
           <!-- Profile Info -->
           <div class="flex-1">
-            <h1 class="text-4xl sm:text-5xl font-bold text-white mb-2">
+            <h1
+              class="text-4xl md:text-5xl font-bold text-white mb-2 drop-shadow-lg"
+            >
               {{ student.name }}
             </h1>
-            <p class="text-xl text-blue-100 dark:text-blue-200 mb-4">
+            <p class="text-xl text-white/90 mb-4 drop-shadow">
               {{ student.role }}
             </p>
             <div class="flex gap-3 flex-wrap">
-              <UBadge color="primary" variant="soft" size="md">
+              <span
+                class="px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg text-white font-medium"
+              >
                 {{ student.department }}
-              </UBadge>
-              <UBadge color="info" variant="soft" size="md">
+              </span>
+              <span
+                class="px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg text-white font-medium"
+              >
                 Year {{ student.year }}
-              </UBadge>
+              </span>
+              <span
+                class="px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg text-white font-medium"
+              >
+                GPA: {{ student.gpa }}
+              </span>
             </div>
           </div>
         </div>
@@ -250,59 +268,83 @@
 
           <!-- Social Links -->
           <div
-            class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-800 dark:to-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-6 space-y-4"
+            class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 space-y-4 shadow-sm"
           >
             <h3
               class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2"
             >
-              <UIcon name="i-heroicons-share-20-solid" class="w-5 h-5" />
-              Social
+              <UIcon
+                name="i-heroicons-link"
+                class="w-5 h-5 text-blue-600 dark:text-blue-400"
+              />
+              Connect
             </h3>
             <div class="space-y-2">
               <a
                 v-if="student.github"
                 :href="student.github"
                 target="_blank"
-                class="flex items-center gap-2 p-3 bg-white dark:bg-slate-700/50 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors border border-gray-200 dark:border-transparent"
+                rel="noopener noreferrer"
+                class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/50 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-all border border-transparent hover:border-gray-300 dark:hover:border-slate-600 group"
               >
-                <UIcon
-                  name="i-mdi-github"
-                  class="w-5 h-5 text-gray-700 dark:text-gray-300"
-                />
+                <div class="p-2 bg-white dark:bg-slate-800 rounded-lg">
+                  <UIcon
+                    name="i-simple-icons-github"
+                    class="w-5 h-5 text-gray-700 dark:text-gray-300"
+                  />
+                </div>
                 <span
-                  class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                  >GitHub</span
+                  class="text-gray-700 dark:text-gray-300 font-medium group-hover:text-gray-900 dark:group-hover:text-white"
+                  >GitHub Profile</span
                 >
+                <UIcon
+                  name="i-heroicons-arrow-top-right-on-square"
+                  class="w-4 h-4 text-gray-400 ml-auto group-hover:text-gray-600 dark:group-hover:text-gray-300"
+                />
               </a>
               <a
                 v-if="student.linkedin"
                 :href="student.linkedin"
                 target="_blank"
-                class="flex items-center gap-2 p-3 bg-white dark:bg-slate-700/50 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors border border-gray-200 dark:border-transparent"
+                rel="noopener noreferrer"
+                class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/50 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all border border-transparent hover:border-blue-200 dark:hover:border-blue-800 group"
               >
-                <UIcon
-                  name="i-mdi-linkedin"
-                  class="w-5 h-5 text-blue-600 dark:text-blue-400"
-                />
+                <div class="p-2 bg-white dark:bg-slate-800 rounded-lg">
+                  <UIcon
+                    name="i-simple-icons-linkedin"
+                    class="w-5 h-5 text-blue-600 dark:text-blue-400"
+                  />
+                </div>
                 <span
-                  class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                  >LinkedIn</span
+                  class="text-gray-700 dark:text-gray-300 font-medium group-hover:text-blue-700 dark:group-hover:text-blue-300"
+                  >LinkedIn Profile</span
                 >
+                <UIcon
+                  name="i-heroicons-arrow-top-right-on-square"
+                  class="w-4 h-4 text-gray-400 ml-auto group-hover:text-blue-600 dark:group-hover:text-blue-400"
+                />
               </a>
               <a
                 v-if="student.portfolio"
                 :href="student.portfolio"
                 target="_blank"
-                class="flex items-center gap-2 p-3 bg-white dark:bg-slate-700/50 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors border border-gray-200 dark:border-transparent"
+                rel="noopener noreferrer"
+                class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-slate-700/50 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-all border border-transparent hover:border-purple-200 dark:hover:border-purple-800 group"
               >
-                <UIcon
-                  name="i-heroicons-globe-alt"
-                  class="w-5 h-5 text-purple-600 dark:text-purple-400"
-                />
+                <div class="p-2 bg-white dark:bg-slate-800 rounded-lg">
+                  <UIcon
+                    name="i-heroicons-globe-alt"
+                    class="w-5 h-5 text-purple-600 dark:text-purple-400"
+                  />
+                </div>
                 <span
-                  class="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                  >Portfolio</span
+                  class="text-gray-700 dark:text-gray-300 font-medium group-hover:text-purple-700 dark:group-hover:text-purple-300"
+                  >Portfolio Website</span
                 >
+                <UIcon
+                  name="i-heroicons-arrow-top-right-on-square"
+                  class="w-4 h-4 text-gray-400 ml-auto group-hover:text-purple-600 dark:group-hover:text-purple-400"
+                />
               </a>
             </div>
           </div>
