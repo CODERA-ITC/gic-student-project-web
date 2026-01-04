@@ -24,6 +24,10 @@ export interface Notification {
   thumbnail?: string;
   channel?: string;
   isRead?: boolean;
+  avatar?: string;
+  thumbnail?: string;
+  channel?: string;
+  isRead?: boolean;
 }
 
 export interface UiModals {
@@ -69,8 +73,7 @@ export const useUiStore = defineStore("ui", {
     notifications: [
       {
         id: 1,
-        title:
-          "Noobie GMK uploaded: Binance ជើងក្រោះប្រាប់ពាសំលេង ការបោះផ្សាយថ្មី #binnance",
+        title: "Noobie GMK uploaded: Binance ជើងក្រោះប្រាប់ពាសំលេង ការបោះផ្សាយថ្មី #binnance",
         message: "New video from Noobie GMK",
         type: "project" as NotificationType,
         timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
@@ -82,13 +85,10 @@ export const useUiStore = defineStore("ui", {
       },
       {
         id: 2,
-        title:
-          "Noobie GMK uploaded: Binance Launch New P2P Trading Zone New User #binance",
+        title: "Noobie GMK uploaded: Binance Launch New P2P Trading Zone New User #binance",
         message: "New video about P2P trading",
         type: "project" as NotificationType,
-        timestamp: new Date(
-          Date.now() - 13 * 24 * 60 * 60 * 1000,
-        ).toISOString(),
+        timestamp: new Date(Date.now() - 13 * 24 * 60 * 60 * 1000).toISOString(),
         avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=NoobieGMK",
         thumbnail: "https://picsum.photos/seed/binance2/120/90",
         channel: "Noobie GMK",
@@ -100,9 +100,7 @@ export const useUiStore = defineStore("ui", {
         title: "Noobie GMK uploaded: Apro (AT) តម្រូវ Oracle លើ Binance",
         message: "New cryptocurrency analysis",
         type: "approval" as NotificationType,
-        timestamp: new Date(
-          Date.now() - 14 * 24 * 60 * 60 * 1000,
-        ).toISOString(),
+        timestamp: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
         avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=NoobieGMK",
         thumbnail: "https://picsum.photos/seed/apro/120/90",
         channel: "Noobie GMK",
@@ -114,9 +112,7 @@ export const useUiStore = defineStore("ui", {
         title: "M.Megamind is live: ម៉ូដែលអេលេសភិកសំរាប់ការសិក្សាអិនធឺណិត",
         message: "Live stream started",
         type: "info" as NotificationType,
-        timestamp: new Date(
-          Date.now() - 21 * 24 * 60 * 60 * 1000,
-        ).toISOString(),
+        timestamp: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString(),
         avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Megamind",
         thumbnail: "https://picsum.photos/seed/live1/120/90",
         channel: "M.Megamind",
@@ -125,13 +121,10 @@ export const useUiStore = defineStore("ui", {
       },
       {
         id: 5,
-        title:
-          "Noobie GMK uploaded: លើក EV ពីដំបូងទេ? ណាខ្លះជាសំលេង? | Tesla Drive",
+        title: "Noobie GMK uploaded: លើក EV ពីដំបូងទេ? ណាខ្លះជាសំលេង? | Tesla Drive",
         message: "Tesla electric vehicle review",
         type: "project" as NotificationType,
-        timestamp: new Date(
-          Date.now() - 21 * 24 * 60 * 60 * 1000,
-        ).toISOString(),
+        timestamp: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000).toISOString(),
         avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=NoobieGMK",
         thumbnail: "https://picsum.photos/seed/tesla/120/90",
         channel: "Noobie GMK",
