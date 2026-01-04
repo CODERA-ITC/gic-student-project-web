@@ -58,8 +58,23 @@
             <!-- Profile Information -->
             <ProfileInformation
               v-if="activeTab === 'profile'"
+              :initial-data="profileData"
               @save="handleProfileSave"
-              @cancel="handleCancel"
+            />
+
+            <!-- Public Profile Preview -->
+            <ProfilePublicProfilePreview
+              v-if="activeTab === 'public'"
+              :user="authStore.user"
+              :bio="profileData.bio"
+              :skills="profileData.skills"
+              :social-links="profileData.socialLinks"
+              :program="profileData.program"
+              :year="profileData.year"
+              :phone="profileData.phone"
+              :gpa="profileData.gpa"
+              :project-count="profileData.projectCount"
+              :achievements="profileData.achievements"
             />
 
             <!-- Account Settings -->
@@ -91,7 +106,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "~/stores/auth";
 
@@ -116,19 +131,47 @@ const goBack = () => {
 
 const tabs = ref([
   { id: "profile", label: "Profile", icon: "i-heroicons-user" },
+  { id: "public", label: "Public Profile", icon: "i-heroicons-eye" },
   { id: "account", label: "Account", icon: "i-heroicons-lock-closed" },
   { id: "notifications", label: "Notifications", icon: "i-heroicons-bell" },
   { id: "privacy", label: "Privacy", icon: "i-heroicons-shield-check" },
 ]);
 
+// Profile data that can be edited and reflected in the public profile
+const profileData = reactive({
+  bio: "Passionate student at GIC, working on exciting projects and learning new technologies. Dedicated to continuous learning and innovation in software development.",
+  skills: ["JavaScript", "TypeScript", "Vue.js", "Node.js", "Python", "React"],
+  socialLinks: {
+    github: "",
+    linkedin: "",
+    twitter: "",
+    portfolio: "",
+  },
+  program: "Computer Science",
+  year: "4th Year",
+  phone: "",
+  gpa: "3.85",
+  projectCount: 0,
+  achievements: 0,
+});
+
 // Event handlers
 const handleProfileSave = (data: any) => {
   console.log("Profile saved:", data);
+  // Update profile data with saved information
+  if (data.bio) profileData.bio = data.bio;
+  if (data.skills) profileData.skills = data.skills;
+  if (data.program) profileData.program = data.program;
+  if (data.year) profileData.year = data.year;
+  if (data.phone) profileData.phone = data.phone;
+  if (data.gpa) profileData.gpa = data.gpa;
+  if (data.socialLinks) {
+    profileData.socialLinks = {
+      ...profileData.socialLinks,
+      ...data.socialLinks,
+    };
+  }
   // TODO: Implement API call
-};
-
-const handleCancel = () => {
-  console.log("Changes cancelled");
 };
 
 const handlePasswordUpdate = (data: any) => {

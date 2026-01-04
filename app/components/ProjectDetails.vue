@@ -227,10 +227,20 @@
                 class="flex items-center gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-700/50 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors"
               >
                 <img
+                  v-if="member.image"
                   :src="member.image"
                   :alt="member.name"
                   class="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                  @error="(e) => ((e.target as HTMLElement).style.display = 'none')"
                 />
+                <div
+                  v-if="!member.image"
+                  class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0"
+                >
+                  <span class="text-white text-sm font-bold">
+                    {{ getInitials(member.name) }}
+                  </span>
+                </div>
                 <p
                   class="text-gray-800 dark:text-gray-200 font-medium truncate"
                 >
@@ -492,6 +502,16 @@ const filteredMembers = computed(() => {
     (member: any) => member.name !== props.project.author.name
   );
 });
+
+// Get two-letter initials from member name
+const getInitials = (name: string): string => {
+  if (!name) return "NA";
+  const parts = name.trim().split(" ");
+  if (parts.length === 1) {
+    return parts[0].substring(0, 2).toUpperCase();
+  }
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+};
 
 // Real-time status calculation - updates automatically when features change
 const currentStatus = computed(() => {

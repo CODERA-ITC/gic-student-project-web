@@ -219,7 +219,7 @@ const confirmDelete = async () => {
       toast.add({
         title: "Project Deleted",
         description: "Your project has been successfully deleted.",
-        color: "blue",
+        color: "success",
       });
 
       showDeleteConfirm.value = false;
@@ -236,7 +236,7 @@ const confirmDelete = async () => {
     toast.add({
       title: "Delete Failed",
       description: "Failed to delete project. Please try again.",
-      color: "red",
+      color: "error",
     });
   } finally {
     isDeleting.value = false;

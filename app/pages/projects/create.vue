@@ -1080,6 +1080,86 @@
         <!-- Success notification handled by toast -->
       </Teleport>
     </UContainer>
+
+    <!-- Draft Restoration Modal -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition duration-200 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition duration-150 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div
+          v-if="showDraftModal"
+          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+          @click.self="dismissDraft"
+        >
+          <div
+            class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 dark:border-slate-700 transform transition-all"
+            @click.stop
+          >
+            <div class="p-6">
+              <div class="flex items-center gap-3 mb-4">
+                <div
+                  class="flex-shrink-0 w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center"
+                >
+                  <UIcon
+                    name="i-heroicons-document-text"
+                    class="w-6 h-6 text-amber-600 dark:text-amber-400"
+                  />
+                </div>
+                <div class="flex-1">
+                  <h3
+                    class="text-lg font-semibold text-gray-900 dark:text-white"
+                  >
+                    Draft Found
+                  </h3>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">
+                    {{
+                      draftData
+                        ? new Date(draftData.savedAt).toLocaleString()
+                        : ""
+                    }}
+                  </p>
+                </div>
+                <button
+                  @click="dismissDraft"
+                  class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                >
+                  <UIcon name="i-heroicons-x-mark" class="w-5 h-5" />
+                </button>
+              </div>
+
+              <p class="text-gray-700 dark:text-gray-300 mb-6">
+                We found a saved draft of your project. Would you like to
+                restore it and continue where you left off?
+              </p>
+
+              <div class="flex gap-3">
+                <ButtonsPresetButton
+                  label="Dismiss"
+                  icon="i-heroicons-x-mark"
+                  color="gray"
+                  variant="soft"
+                  class="flex-1"
+                  @click="dismissDraft"
+                />
+                <ButtonsPresetButton
+                  label="Restore Draft"
+                  icon="i-heroicons-arrow-path"
+                  color="primary"
+                  variant="solid"
+                  class="flex-1"
+                  @click="restoreDraft"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -1159,6 +1239,18 @@ const loadProjectForEditing = async (projectId) => {
       console.log("Project features:", project.features);
 
       // Pre-fill form with existing project data
+      // Normalize members structure to ensure avatar/image property consistency
+      const normalizedMembers = (project.members || []).map((member) => {
+        if (typeof member === "string") {
+          return { name: member, role: "", avatar: "" };
+        }
+        return {
+          name: member.name || "",
+          role: member.role || "",
+          avatar: member.avatar || member.image || "",
+        };
+      });
+
       form.value = {
         title: project.title || "",
         description: project.description || "",
@@ -1170,14 +1262,12 @@ const loadProjectForEditing = async (projectId) => {
         demoUrl: project.demoUrl || "",
         visibility: project.visibility || "public",
         duration: project.duration || "",
-        teamSize: project.members?.length || 1,
-        teamMembers: project.members || [],
+        teamSize: normalizedMembers.length || 1,
+        teamMembers: normalizedMembers,
         feature: project.features || project.feature || [],
         tags: project.tags || [],
         course: project.course || "",
       };
-
-      console.log("Form features after loading:", form.value.feature);
     }
   } catch (error) {
     console.error("Error loading project for editing:", error);
@@ -1217,6 +1307,10 @@ const featureInput = ref({
   icon: "i-heroicons-star",
   status: "pending",
 });
+
+// Draft restoration modal
+const showDraftModal = ref(false);
+const draftData = ref(null);
 
 // Use suggested team members from constants
 const suggestedMembers = ref(defaultSuggestedMembers);
@@ -1325,8 +1419,11 @@ const saveToLocalStorage = () => {
 
   try {
     isSaving.value = true;
+    // Exclude thumbnails (base64 images) from localStorage to avoid quota issues
+    const { thumbnails, ...formDataWithoutImages } = form.value;
     const formData = {
-      ...form.value,
+      ...formDataWithoutImages,
+      thumbnailCount: thumbnails?.length || 0, // Save only the count
       currentStep: currentStep.value,
       savedAt: new Date().toISOString(),
     };
@@ -1339,6 +1436,19 @@ const saveToLocalStorage = () => {
   } catch (error) {
     console.error("Error saving to localStorage:", error);
     isSaving.value = false;
+
+    // Handle quota exceeded error
+    if (error.name === "QuotaExceededError") {
+      // Clear the draft to free up space
+      try {
+        localStorage.removeItem(FORM_STORAGE_KEY);
+        console.warn(
+          "localStorage quota exceeded. Auto-save disabled for this session."
+        );
+      } catch (clearError) {
+        console.error("Failed to clear localStorage:", clearError);
+      }
+    }
   }
 };
 
@@ -1350,48 +1460,56 @@ const loadFromLocalStorage = () => {
     if (savedData) {
       const parsed = JSON.parse(savedData);
 
-      // Show confirmation dialog
-      const shouldRestore = confirm(
-        `Found a saved draft from ${new Date(
-          parsed.savedAt
-        ).toLocaleString()}. Would you like to restore it?`
-      );
-
-      if (shouldRestore) {
-        form.value = {
-          title: parsed.title || "",
-          description: parsed.description || "",
-          thumbnails: parsed.thumbnails || [],
-          category: parsed.category || "",
-          academicYear: parsed.academicYear || "",
-          technologies: parsed.technologies || [],
-          githubUrl: parsed.githubUrl || "",
-          demoUrl: parsed.demoUrl || "",
-          visibility: parsed.visibility || "public",
-          duration: parsed.duration || "",
-          teamSize: parsed.teamSize || 1,
-          teamMembers: parsed.teamMembers || [],
-          feature: parsed.feature || [],
-          tags: parsed.tags || [],
-          course: parsed.course || "",
-        };
-        currentStep.value = parsed.currentStep || 0;
-        lastSaved.value = new Date(parsed.savedAt);
-
-        const toast = useToast();
-        toast.add({
-          title: "Draft Restored",
-          description: "Your previous work has been restored.",
-          color: "blue",
-          timeout: 3000,
-        });
-      } else {
-        clearLocalStorage();
-      }
+      // Store draft data and show modal
+      draftData.value = parsed;
+      showDraftModal.value = true;
     }
   } catch (error) {
     console.error("Error loading from localStorage:", error);
   }
+};
+
+const restoreDraft = () => {
+  if (!draftData.value) return;
+
+  const parsed = draftData.value;
+
+  // Restore form data individually (preserving existing thumbnails and reactivity)
+  form.value.title = parsed.title || "";
+  form.value.description = parsed.description || "";
+  // Don't restore thumbnails - they weren't saved to avoid quota issues
+  form.value.category = parsed.category || "";
+  form.value.academicYear = parsed.academicYear || "";
+  form.value.technologies = parsed.technologies || [];
+  form.value.githubUrl = parsed.githubUrl || "";
+  form.value.demoUrl = parsed.demoUrl || "";
+  form.value.visibility = parsed.visibility || "public";
+  form.value.duration = parsed.duration || "";
+  form.value.teamSize = parsed.teamSize || 1;
+  form.value.teamMembers = parsed.teamMembers || [];
+  form.value.feature = parsed.feature || [];
+  form.value.tags = parsed.tags || [];
+  form.value.course = parsed.course || "";
+
+  currentStep.value = parsed.currentStep || 0;
+  lastSaved.value = new Date(parsed.savedAt);
+
+  showDraftModal.value = false;
+  draftData.value = null;
+
+  const toast = useToast();
+  toast.add({
+    title: "Draft Restored",
+    description: "Your previous work has been restored.",
+    color: "success",
+    timeout: 3000,
+  });
+};
+
+const dismissDraft = () => {
+  showDraftModal.value = false;
+  draftData.value = null;
+  clearLocalStorage();
 };
 
 const clearLocalStorage = () => {
@@ -1448,9 +1566,7 @@ watch(
   }
 );
 
-const removeTechnology = (index) => {
-  form.value.technologies.splice(index, 1);
-};
+
 
 const addTag = () => {
   if (
@@ -1479,31 +1595,6 @@ const toggleTeamMember = (member) => {
       avatar: member.avatar,
     });
   }
-};
-
-const addTeamMember = () => {
-  if (memberInput.value.trim()) {
-    const newMember = {
-      name: memberInput.value.trim(),
-      role: "Team Member",
-      avatar: `https://randomuser.me/api/portraits/${
-        Math.random() > 0.5 ? "men" : "women"
-      }/${Math.floor(Math.random() * 99)}.jpg`,
-    };
-
-    if (
-      !form.value.teamMembers.find(
-        (m) => (typeof m === "string" ? m : m.name) === newMember.name
-      )
-    ) {
-      form.value.teamMembers.push(newMember);
-      memberInput.value = "";
-    }
-  }
-};
-
-const removeTeamMember = (index) => {
-  form.value.teamMembers.splice(index, 1);
 };
 
 const addFeature = () => {
@@ -1727,7 +1818,16 @@ const submitForm = async () => {
         }/${form.value.title.toLowerCase().replace(/\s+/g, "-")}`,
       images: form.value.thumbnails,
       tags: form.value.tags,
-      members: form.value.teamMembers,
+      members: form.value.teamMembers.map((member) => {
+        if (typeof member === "string") {
+          return { name: member, role: "", image: "" };
+        }
+        return {
+          name: member.name || "",
+          role: member.role || "",
+          image: member.avatar || member.image || "",
+        };
+      }),
       features: form.value.feature, // Use 'features' to match Project interface
       duration: form.value.duration || "3 months",
       course: form.value.course || "Project Development",
@@ -1750,16 +1850,8 @@ const submitForm = async () => {
       );
     } else {
       // Create new project
-      console.log("Creating project with data:", projectData);
-      console.log(
-        "Store projects before creation:",
-        projectStore.projects.length
-      );
 
       result = await projectStore.createProject(projectData);
-
-      console.log("Project created with result:", result);
-      console.log("Result ID:", result.id, "Type:", typeof result.id);
 
       // Ensure the new project is in the store's arrays
       // Add to projects array if not already there
@@ -1767,7 +1859,6 @@ const submitForm = async () => {
         (p) => p.id === result.id
       );
       if (!existsInProjects) {
-        console.log("Adding project to projects array");
         projectStore.projects.unshift(result);
       }
 
@@ -1779,13 +1870,6 @@ const submitForm = async () => {
         console.log("Adding project to userProjects array");
         projectStore.userProjects.unshift(result);
       }
-
-      console.log(
-        "Project added to store. Total projects:",
-        projectStore.projects.length,
-        "User projects:",
-        projectStore.userProjects.length
-      );
     }
 
     console.log(
@@ -1800,7 +1884,7 @@ const submitForm = async () => {
       toast.add({
         title: "Error",
         description: "Failed to generate valid project ID. Please try again.",
-        color: "red",
+        color: "error",
       });
       return;
     }
@@ -1817,7 +1901,7 @@ const submitForm = async () => {
       description: `Project ${
         editMode.value ? "updated" : "created"
       } successfully. Redirecting...`,
-      color: "blue",
+      color: "success",
       timeout: 2000,
     });
 
@@ -1834,7 +1918,7 @@ const submitForm = async () => {
       errorToast.add({
         title: "Navigation Error",
         description: "Invalid project ID. Redirecting to projects list.",
-        color: "red",
+        color: "error",
       });
       await navigateTo("/student/my-projects");
       return;
@@ -1857,7 +1941,7 @@ const submitForm = async () => {
     toast.add({
       title: "Error",
       description: `Failed to ${editMode.value ? "update" : "create"} project`,
-      color: "red",
+      color: "error",
     });
   } finally {
     isSubmitting.value = false;

@@ -58,9 +58,22 @@
           <!-- Categories Pills -->
           <div class="flex-1">
             <div class="flex items-center justify-center gap-1 flex-wrap">
-              <!-- Show loading state or actual categories -->
+              <!-- Loading state -->
+              <div v-if="isLoadingData" class="flex gap-2">
+                <div
+                  class="h-10 w-20 bg-gray-200 dark:bg-slate-700 rounded-lg animate-pulse"
+                ></div>
+                <div
+                  class="h-10 w-24 bg-gray-200 dark:bg-slate-700 rounded-lg animate-pulse"
+                ></div>
+                <div
+                  class="h-10 w-28 bg-gray-200 dark:bg-slate-700 rounded-lg animate-pulse"
+                ></div>
+              </div>
+
+              <!-- Show actual categories when loaded -->
               <div
-                v-if="categories.length > 1"
+                v-else-if="isCategoriesLoaded"
                 class="hidden md:flex flex-wrap gap-2 justify-center"
               >
                 <ButtonsPresetButton
@@ -81,10 +94,7 @@
               </div>
 
               <!-- Mobile Category Select -->
-              <div
-                v-if="categories.length > 1"
-                class="relative md:hidden w-full"
-              >
+              <div v-if="isCategoriesLoaded" class="relative md:hidden w-full">
                 <USelectMenu
                   v-model="selectedCategory"
                   size="xl"
@@ -585,27 +595,45 @@ import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useProjectStore } from "~/stores/projects";
 
 const projectStore = useProjectStore();
+const isLoadingData = ref(false);
 
 // Initialize data on component mount
 onMounted(async () => {
-  if (projectStore.projects.length === 0) {
-    try {
-      await Promise.all([
-        projectStore.fetchCategories(),
-        projectStore.fetchTags(),
-        projectStore.fetchProjects(),
-        projectStore.loadUserLikedProjects(),
-      ]);
-    } catch (error) {
-      console.error("Error fetching data:", error);
+  isLoadingData.value = true;
+  try {
+    // Always fetch categories and tags to ensure they're loaded
+    await Promise.all([
+      projectStore.fetchCategories(),
+      projectStore.fetchTags(),
+    ]);
+
+    // Only fetch projects if not already loaded
+    if (projectStore.projects.length === 0) {
+      await projectStore.fetchProjects();
     }
+
+    // Load user liked projects
+    await projectStore.loadUserLikedProjects();
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  } finally {
+    isLoadingData.value = false;
   }
 });
 
 // Store computed properties
 const categories = computed(() => {
-  const cats = projectStore.availableCategories || ["All"];
-  return cats.map((cat) => ({ label: cat, value: cat }));
+  const cats = projectStore.availableCategories || [];
+  // Ensure "All" is always present and is the first option
+  const allCategories = cats.length > 0 ? cats : ["All"];
+  if (!allCategories.includes("All")) {
+    allCategories.unshift("All");
+  }
+  return allCategories.map((cat) => ({ label: cat, value: cat }));
+});
+
+const isCategoriesLoaded = computed(() => {
+  return !isLoadingData.value && categories.value.length > 0;
 });
 
 const categoryOptions = computed(() => categories.value.slice(0, 6));

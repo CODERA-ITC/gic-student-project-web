@@ -5,207 +5,303 @@
       class="hero-nodes py-20 border-b border-blue-800/30 dark:border-slate-700"
     >
       <UContainer>
-        <div class="text-center space-y-4 max-w-2xl mx-auto">
-          <h1
-            class="text-4xl lg:text-6xl font-bold tracking-tight leading-tight text-blue-900 dark:text-white"
+        <div class="space-y-6">
+          <div class="text-center space-y-4 max-w-2xl mx-auto">
+            <h1
+              class="text-4xl lg:text-6xl font-bold tracking-tight leading-tight text-blue-900 dark:text-white"
+            >
+              Meet Our Students
+            </h1>
+            <p class="text-xl text-blue-900/80 dark:text-gray-300">
+              Discover talented students and their contributions to the GIC
+              program
+            </p>
+          </div>
+
+          <!-- Action Buttons -->
+          <div
+            class="flex flex-col sm:flex-row gap-3 justify-center items-center flex-wrap"
           >
-            Meet Our Students
-          </h1>
-          <p class="text-xl text-blue-900/80 dark:text-gray-300">
-            Discover talented students and their contributions to the GIC
-            program
-          </p>
+            <ButtonsPresetButton
+              preset="exploreProjects"
+              to="/projects"
+              size="md"
+            />
+          </div>
         </div>
       </UContainer>
     </div>
 
-    <!-- Search and Filter -->
-    <UContainer class="py-8 bg-white dark:bg-slate-900">
-      <!-- Enhanced Search Bar -->
-      <div class="w-full mb-8">
-        <div class="relative group">
-          <div
-            class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none"
-          >
-            <UIcon
-              name="i-heroicons-magnifying-glass"
-              class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors"
+    <!-- Sticky Top Bar -->
+    <div
+      class="sticky top-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-sm border-b border-gray-200 dark:border-slate-700"
+    >
+      <UContainer>
+        <div class="flex items-center justify-between w-full gap-2 py-4">
+          <!-- Sort Dropdown -->
+          <div class="relative">
+            <USelectMenu
+              v-model="selectedSort"
+              size="xl"
+              :items="sortOptions"
+              class="w-35 rounded-xl"
             />
           </div>
-          <UInput
-            v-model="searchInput"
-            placeholder="Search students by name, program, or skills... (e.g., John, Computer Science, Python)"
-            icon="i-heroicons-magnifying-glass"
-            size="xl"
-            class="w-full rounded-xl border-2 border-gray-300 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-500 focus:border-blue-500 dark:focus:border-blue-400 transition-all shadow-sm hover:shadow-md"
-            :ui="{
-              icon: { leading: { padding: { xl: 'ps-12' } } },
-              base: 'text-base',
-              placeholder: 'placeholder-gray-400 dark:placeholder-gray-500',
-            }"
+
+          <!-- Skills Pills -->
+          <div class="flex-1">
+            <div class="flex items-center justify-center gap-1 flex-wrap">
+              <!-- Desktop Skills -->
+              <div class="hidden md:flex flex-wrap gap-2 justify-center">
+                <ButtonsPresetButton
+                  v-for="skill in topSkills"
+                  :key="skill"
+                  :label="skill"
+                  :color="selectedSkill === skill ? 'primary' : 'secondary'"
+                  :variant="selectedSkill === skill ? 'solid' : 'ghost'"
+                  size="md"
+                  @click="toggleSkillFilter(skill)"
+                />
+              </div>
+
+              <!-- Mobile Skills Select -->
+              <div class="relative md:hidden w-full">
+                <USelectMenu
+                  v-model="selectedSkillObj"
+                  size="xl"
+                  :items="skillOptions"
+                  placeholder="Select skill"
+                  class="w-full rounded-xl"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Filters Button -->
+          <ButtonsPresetButton
+            label="Filters"
+            icon="i-heroicons-funnel"
+            :color="showFilters ? 'primary' : 'secondary'"
+            :variant="showFilters ? 'solid' : 'outline'"
+            size="md"
+            @click="toggleFilters"
           />
+        </div>
+
+        <!-- Expandable Filters Panel -->
+        <Transition
+          enter-active-class="transition-all duration-500 ease-out"
+          enter-from-class="opacity-0 -translate-y-3"
+          enter-to-class="opacity-100 translate-y-0"
+          leave-active-class="transition-all duration-200 ease-in"
+          leave-from-class="opacity-100 translate-y-0"
+          leave-to-class="opacity-0 -translate-y-3"
+        >
           <div
-            v-if="searchInput"
-            class="absolute inset-y-0 right-0 flex items-center pr-4"
+            v-if="showFilters"
+            class="rounded-2xl p-6 border border-blue-200 dark:border-slate-700 bg-blue-50/30 dark:bg-slate-800/50 backdrop-blur-sm space-y-4 shadow-lg"
           >
-            <button
-              @click="searchInput = ''"
-              class="p-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full transition-colors"
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Search Input -->
+              <div class="relative">
+                <p
+                  class="text-lg font-semibold mb-2 text-blue-900 dark:text-white"
+                >
+                  Search Students
+                </p>
+                <UInput
+                  v-model="searchInput"
+                  placeholder="Search by name, program, or skills..."
+                  icon="i-heroicons-magnifying-glass"
+                  class="w-full rounded-xl"
+                  size="xl"
+                />
+              </div>
+
+              <!-- Program Filter -->
+              <div>
+                <p
+                  class="text-lg font-semibold mb-2 text-blue-900 dark:text-white"
+                >
+                  Program
+                </p>
+                <USelectMenu
+                  v-model="selectedProgram"
+                  size="xl"
+                  :items="programOptions"
+                  placeholder="Select program"
+                  class="w-full rounded-xl"
+                />
+              </div>
+            </div>
+          </div>
+        </Transition>
+      </UContainer>
+    </div>
+
+    <!-- Main Content -->
+    <Transition enter-active-class="transition-all ease-out duration-700">
+      <UContainer
+        class="py-9 bg-gradient-to-b via-gray-50 to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
+      >
+        <div class="space-y-6">
+          <!-- Results and Active Filters -->
+          <div class="flex items-center justify-between flex-wrap gap-4">
+            <!-- Results Count -->
+            <div class="flex items-center gap-4">
+              <p class="text-lg text-gray-700 dark:text-gray-300">
+                <template v-if="totalPages > 1">
+                  Showing {{ paginatedStudents.length }} of
+                </template>
+                <span class="font-bold text-blue-900 dark:text-white">{{
+                  studentStore.filteredStudents.length
+                }}</span>
+                students
+                <template v-if="totalPages > 1">
+                  (Page {{ currentPage }} of {{ totalPages }})
+                </template>
+              </p>
+
+              <!-- Active Filters -->
+              <div v-if="hasActiveFilters && (selectedSkill && selectedSkill !== 'All Skills')" class="flex items-center gap-2">
+                <span class="text-md text-gray-500 dark:text-gray-400">•</span>
+                <div class="flex flex-wrap gap-1">
+                  <UBadge
+                    v-if="selectedSkill && selectedSkill !== 'All Skills'"
+                    color="primary"
+                    variant="soft"
+                    size="sm"
+                    class="flex items-center gap-1"
+                  >
+                    {{ selectedSkill }}
+                    <UButton
+                      @click="selectedSkill = ''"
+                      color="primary"
+                      variant="ghost"
+                      size="xs"
+                      icon="i-heroicons-x-mark"
+                      :padded="false"
+                      class="ml-1"
+                    />
+                  </UBadge>
+                  <UBadge
+                    v-if="searchInput"
+                    color="primary"
+                    variant="soft"
+                    size="sm"
+                    class="flex items-center gap-1"
+                  >
+                    Search: "{{ searchInput }}"
+                    <UButton
+                      @click="searchInput = ''"
+                      color="primary"
+                      variant="ghost"
+                      size="xs"
+                      icon="i-heroicons-x-mark"
+                      :padded="false"
+                      class="ml-1"
+                    />
+                  </UBadge>
+                </div>
+              </div>
+            </div>
+
+            <!-- Clear All Filters Button -->
+            <ButtonsPresetButton
+              v-if="hasActiveFilters && selectedSkill !== 'All Skills'"
+              preset="clearFilters"
+              @click="clearFilters"
+            />
+          </div>
+
+          <!-- Students Grid -->
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
+          >
+            <StudentPortfolio
+              v-for="student in paginatedStudents"
+              :key="student.id"
+              :name="student.name"
+              :program="student.program"
+              :year="student.year"
+              :avatar="student.avatar"
+              :bio="student.bio"
+              :skills="student.skills"
+              :project-count="student.projects.length"
+              :gpa="student.gpa"
+              :achievements="student.achievements?.length || 0"
+              :graduation-year="student.graduationYear"
+              :gen="student.gen"
+              :social="student.social"
+              @view-profile="() => navigateTo(`/students/${student.id}`)"
+            />
+          </div>
+
+          <!-- Pagination -->
+          <div
+            v-if="totalPages > 1"
+            class="flex justify-center items-center gap-4 mt-8"
+          >
+            <ButtonsPresetButton
+              label="Previous"
+              icon="i-heroicons-arrow-left"
+              color="secondary"
+              variant="outline"
+              size="md"
+              :disabled="currentPage === 1"
+              @click="currentPage = Math.max(1, currentPage - 1)"
+            />
+
+            <span
+              class="px-4 py-2 text-sm font-medium text-blue-900 dark:text-white bg-blue-50 dark:bg-slate-800 rounded-lg"
             >
-              <UIcon
-                name="i-heroicons-x-mark"
-                class="w-4 h-4 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
-              />
-            </button>
+              Page {{ currentPage }} of {{ totalPages }}
+            </span>
+
+            <ButtonsPresetButton
+              label="Next"
+              icon="i-heroicons-arrow-right"
+              color="primary"
+              variant="solid"
+              size="md"
+              :disabled="currentPage === totalPages"
+              @click="currentPage = Math.min(totalPages, currentPage + 1)"
+            />
+          </div>
+
+          <!-- Pagination Info -->
+          <div
+            v-if="studentStore.filteredStudents.length > 0"
+            class="text-center mt-6"
+          >
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to
+              {{
+                Math.min(
+                  currentPage * itemsPerPage,
+                  studentStore.filteredStudents.length
+                )
+              }}
+              of {{ studentStore.filteredStudents.length }} students
+            </p>
+          </div>
+
+          <!-- Empty State -->
+          <div
+            v-if="studentStore.filteredStudents.length === 0"
+            class="text-center py-20"
+          >
+            <UIcon
+              name="i-heroicons-users"
+              class="w-16 h-16 text-gray-600 dark:text-gray-400 mx-auto mb-4"
+            />
+            <p class="text-gray-400 dark:text-gray-500 text-lg">
+              No students found matching your filters
+            </p>
           </div>
         </div>
-        <!-- Search hint -->
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 ml-1">
-          <UIcon name="i-heroicons-information-circle" class="w-4 h-4 inline" />
-          Tip: Search by student name, academic program, or technical skills
-        </p>
-      </div>
-
-      <!-- Top Skills Filter -->
-      <div class="mb-6">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Filter by Top Skills
-        </h3>
-        <div class="flex flex-wrap gap-3">
-          <ButtonsPresetButton
-            v-for="skill in topSkills"
-            :key="skill"
-            @click="toggleSkillFilter(skill)"
-            :label="skill"
-            :color="selectedSkill === skill ? 'primary' : 'secondary'"
-            :variant="selectedSkill === skill ? 'solid' : 'ghost'"
-            size="md"
-            class="transition-all duration-200"
-          >
-            {{ skill }}
-          </ButtonsPresetButton>
-        </div>
-      </div>
-
-      <!-- Other Filters -->
-      <div
-        class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between"
-      >
-        <!-- Clear All Filters -->
-        <ButtonsPresetButton
-          v-if="hasActiveFilters"
-          @click="clearFilters"
-          preset="clearFilters"
-          class="w-full sm:w-auto"
-        >
-          Clear All Filters
-        </ButtonsPresetButton>
-      </div>
-
-      <!-- Results Count -->
-      <div class="mt-4 text-gray-700 dark:text-gray-300">
-        <p class="text-lg">
-          <template v-if="totalPages > 1">
-            Showing {{ paginatedStudents.length }} of
-          </template>
-          <span class="font-bold text-blue-900 dark:text-white">{{
-            studentStore.filteredStudents.length
-          }}</span>
-          students
-          <template v-if="totalPages > 1">
-            (Page {{ currentPage }} of {{ totalPages }})
-          </template>
-        </p>
-      </div>
-    </UContainer>
-
-    <!-- Students Grid -->
-    <UContainer
-      class="pb-12 bg-gradient-to-b via-gray-50 to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
-    >
-      <!-- Students Grid -->
-      <div
-        class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center"
-      >
-        <StudentCard
-          v-for="student in paginatedStudents"
-          :key="student.id"
-          :name="student.name"
-          :main-skill="student.program"
-          :image="student.avatar"
-          :header-image="''"
-          :tech-skills="student.skills"
-          :projects="student.projects.length"
-          :generation="student.graduationYear.toString()"
-          :joined-year="new Date(student.joinedDate).getFullYear().toString()"
-          @view-profile="() => navigateTo(`/students/${student.id}`)"
-        />
-      </div>
-
-      <!-- Pagination -->
-      <div
-        v-if="totalPages > 1"
-        class="flex justify-center items-center gap-4 mt-8"
-      >
-        <ButtonsPresetButton
-          label="Previous"
-          icon="i-heroicons-arrow-left"
-          color="secondary"
-          variant="outline"
-          size="md"
-          :disabled="currentPage === 1"
-          @click="currentPage = Math.max(1, currentPage - 1)"
-        />
-
-        <span
-          class="px-4 py-2 text-sm font-medium text-blue-900 dark:text-white bg-blue-50 dark:bg-slate-800 rounded-lg"
-        >
-          Page {{ currentPage }} of {{ totalPages }}
-        </span>
-
-        <ButtonsPresetButton
-          label="Next"
-          icon="i-heroicons-arrow-right"
-          color="primary"
-          variant="solid"
-          size="md"
-          :disabled="currentPage === totalPages"
-          @click="currentPage = Math.min(totalPages, currentPage + 1)"
-        />
-      </div>
-
-      <!-- Pagination Info -->
-      <div
-        v-if="studentStore.filteredStudents.length > 0"
-        class="text-center mt-6"
-      >
-        <p class="text-sm text-gray-600">
-          Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to
-          {{
-            Math.min(
-              currentPage * itemsPerPage,
-              studentStore.filteredStudents.length
-            )
-          }}
-          of {{ studentStore.filteredStudents.length }} students
-        </p>
-      </div>
-
-      <!-- Empty State -->
-      <div
-        v-if="studentStore.filteredStudents.length === 0"
-        class="text-center py-20"
-      >
-        <UIcon
-          name="i-heroicons-users"
-          class="w-16 h-16 text-gray-400 mx-auto mb-4"
-        />
-        <p class="text-gray-500 text-lg mb-2">No students found</p>
-        <p class="text-gray-400 text-sm">
-          Try adjusting your search criteria or filters
-        </p>
-      </div>
-    </UContainer>
+      </UContainer>
+    </Transition>
   </div>
 </template>
 
@@ -215,20 +311,28 @@ import { useStudentStore } from "~/stores/students";
 // Store
 const studentStore = useStudentStore();
 
-// Top skills categories based on common developer roles
+// Filter state
+const showFilters = ref(false);
+
+// Initialize store data on mount
+onMounted(() => {
+  // Ensure student store has data
+  if (studentStore.students.length === 0) {
+    console.warn("No students in store");
+  }
+});
+
+// Top skills categories
 const topSkills = [
-  "Web Developer",
-  "Mobile Developer",
-  "Network Administrator",
-  "Data Scientist",
-  "DevOps Engineer",
-  "Cybersecurity",
-  "AI/ML Engineer",
+  "All Skills",
+  "Web Developer", // can be front-end or back-end
   "Full Stack Developer",
+  "Mobile Developer",
+  "AI/ML Engineer",
 ];
 
-// Selected skill filter
-const selectedSkill = ref("");
+// Selected skill filter (default to "All Skills")
+const selectedSkill = ref("All Skills");
 
 // Search input with debounce
 const searchInput = ref("");
@@ -238,23 +342,57 @@ let searchTimeout = null;
 const currentPage = ref(1);
 const itemsPerPage = ref(12);
 
-// Sort options for the dropdown
-const sortOptions = [
-  { label: "Name", value: "name" },
-  { label: "Program", value: "program" },
-  { label: "Year", value: "year" },
-  { label: "GPA", value: "gpa" },
-  { label: "Projects", value: "projects" },
-];
+// Sort options
+const sortOptions = ref([
+  { label: "Name", value: "name", icon: "i-heroicons-user" },
+  { label: "Program", value: "program", icon: "i-heroicons-academic-cap" },
+  { label: "Projects", value: "projects", icon: "i-heroicons-folder" },
+  { label: "Year", value: "year", icon: "i-heroicons-calendar" },
+]);
 
+const selectedSort = ref(sortOptions.value[0]);
+
+// Program options for filter
+const programOptions = ref([
+  { label: "All Programs", value: "All" },
+  { label: "Computer Science", value: "Computer Science" },
+  { label: "Software Engineering", value: "Software Engineering" },
+  { label: "Information Technology", value: "Information Technology" },
+  { label: "Data Science", value: "Data Science" },
+]);
+
+const selectedProgram = ref(programOptions.value[0]);
+
+// Skill options for mobile select
+const skillOptions = computed(() =>
+  topSkills.map((skill) => ({ label: skill, value: skill }))
+);
+
+const selectedSkillObj = computed({
+  get: () =>
+    skillOptions.value.find((s) => s.value === selectedSkill.value) ||
+    skillOptions.value[0],
+  set: (val) => {
+    selectedSkill.value = val.value;
+    if (val.value === "All Skills") {
+      studentStore.setFilter("search", "");
+    } else {
+      studentStore.setFilter("search", val.value);
+    }
+  },
+});
+
+// Toggle filters panel
+const toggleFilters = () => {
+  showFilters.value = !showFilters.value;
+};
 // Computed properties
 const hasActiveFilters = computed(() => {
   return (
-    studentStore.filters.program !== "All" ||
-    studentStore.filters.year !== "All" ||
     studentStore.filters.search !== "" ||
-    studentStore.filters.sortBy !== "name" ||
-    selectedSkill.value !== ""
+    selectedSkill.value !== "" ||
+    selectedProgram.value.value !== "All" ||
+    selectedSort.value.value !== "name"
   );
 });
 
@@ -272,37 +410,55 @@ const totalPages = computed(() => {
 
 // Methods
 const toggleSkillFilter = (skill) => {
-  if (selectedSkill.value === skill) {
-    selectedSkill.value = "";
+  if (skill === "All Skills") {
+    selectedSkill.value = "All Skills";
+    studentStore.setFilter("search", "");
+  } else if (selectedSkill.value === skill) {
+    selectedSkill.value = "All Skills";
     studentStore.setFilter("search", "");
   } else {
     selectedSkill.value = skill;
-    // Set search to match the skill category
     studentStore.setFilter("search", skill);
   }
 };
 
-const clearSkillFilter = () => {
-  selectedSkill.value = "";
-  searchInput.value = "";
-  studentStore.setFilter("search", "");
-};
-
 const clearFilters = () => {
-  selectedSkill.value = "";
+  selectedSkill.value = "All Skills";
   searchInput.value = "";
+  selectedProgram.value = programOptions.value[0];
+  selectedSort.value = sortOptions.value[0];
   studentStore.clearFilters();
-  currentPage.value = 1; // Reset to first page
+  currentPage.value = 1;
 
-  // Clear any pending search timeout
   if (searchTimeout) {
     clearTimeout(searchTimeout);
   }
 };
 
 // Watch for filter changes to reset pagination
-watch([() => studentStore.filters.search, () => selectedSkill.value], () => {
-  currentPage.value = 1;
+watch(
+  [
+    () => studentStore.filters.search,
+    () => selectedSkill.value,
+    () => selectedProgram.value,
+  ],
+  () => {
+    currentPage.value = 1;
+  }
+);
+
+// Watch for sort changes
+watch(selectedSort, (newSort) => {
+  if (newSort?.value) {
+    studentStore.setFilter("sortBy", newSort.value);
+  }
+});
+
+// Watch for program changes
+watch(selectedProgram, (newProgram) => {
+  if (newProgram?.value) {
+    studentStore.setFilter("program", newProgram.value);
+  }
 });
 
 // Debounced search functionality
@@ -313,7 +469,7 @@ watch(searchInput, (newValue) => {
 
   searchTimeout = setTimeout(() => {
     studentStore.setFilter("search", newValue);
-  }, 3000); // 3 second delay
+  }, 2000);
 });
 
 // Page meta
