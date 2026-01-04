@@ -2,46 +2,32 @@
   <div class="flex items-center gap-4">
     <!-- Loading State -->
     <div v-if="authStore.isLoading" class="flex items-center gap-2 px-3 py-2">
-      <div
-        class="w-6 h-6 border-2 border-gray-400 dark:border-gray-500 border-t-transparent rounded-full animate-spin"
-      ></div>
+      <div class="w-6 h-6 border-2 border-gray-400 dark:border-gray-500 border-t-transparent rounded-full animate-spin">
+      </div>
     </div>
 
     <!-- Authenticated User Section -->
     <template v-else-if="isAuthenticated">
       <!-- Notifications Bell -->
-      <NotificationBell
-        :notifications="notifications as any"
-        @notification-click="handleNotificationClick"
-        @remove="handleRemoveNotification"
-        @clear-all="handleClearNotifications"
-      />
+      <NotificationBell :notifications="notifications as any" @notification-click="handleNotificationClick"
+        @remove="handleRemoveNotification" @clear-all="handleClearNotifications" />
 
       <!-- Authenticated User Dropdown -->
       <div class="relative">
         <!-- User Button -->
         <button
           class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors duration-200"
-          @click="menuOpen = !menuOpen"
-        >
+          @click="menuOpen = !menuOpen">
           <!-- Avatar -->
-          <div
-            v-if="user.avatar"
-            class="w-8 h-8 rounded-full overflow-hidden border border-gray-300 dark:border-slate-600"
-          >
-            <img
-              :src="user.avatar"
-              :alt="user.name"
-              class="w-full h-full object-cover"
-            />
+          <div v-if="user.avatar"
+            class="w-8 h-8 rounded-full overflow-hidden border border-gray-300 dark:border-slate-600">
+            <img :src="user.avatar" :alt="user.name" class="w-full h-full object-cover" />
           </div>
-          <div
-            v-else
-            class="w-8 h-8 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center border border-gray-300 dark:border-slate-600"
-          >
+          <div v-else
+            class="w-8 h-8 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center border border-gray-300 dark:border-slate-600">
             <span class="text-xs font-semibold text-white">{{
               getInitials(user.name)
-            }}</span>
+              }}</span>
           </div>
           <!-- Name and Role Badge -->
           <div class="hidden sm:block text-left">
@@ -52,29 +38,18 @@
               {{ userRole }}
             </p>
           </div>
-          <UIcon
-            name="i-heroicons-chevron-down-20-solid"
-            class="w-4 h-4 text-gray-600 dark:text-slate-300"
-          />
+          <UIcon name="i-heroicons-chevron-down-20-solid" class="w-4 h-4 text-gray-600 dark:text-slate-300" />
         </button>
 
         <!-- Dropdown Menu -->
-        <Transition
-          enter-active-class="transition ease-out duration-100"
-          enter-from-class="transform opacity-0 scale-95"
-          enter-to-class="transform opacity-100 scale-100"
-          leave-active-class="transition ease-in duration-75"
-          leave-from-class="transform opacity-100 scale-100"
-          leave-to-class="transform opacity-0 scale-95"
-        >
-          <div
-            v-show="menuOpen"
-            class="absolute right-0 mt-2 w-64 sm:w-56 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-slate-700 z-50 max-h-[calc(100vh-100px)] overflow-y-auto"
-          >
+        <Transition enter-active-class="transition ease-out duration-100"
+          enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100"
+          leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100"
+          leave-to-class="transform opacity-0 scale-95">
+          <div v-show="menuOpen"
+            class="absolute right-0 mt-2 w-64 sm:w-56 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-slate-700 z-50 max-h-[calc(100vh-100px)] overflow-y-auto">
             <!-- User Info Header -->
-            <div
-              class="px-4 py-3 border-b border-gray-200 dark:border-slate-700"
-            >
+            <div class="px-4 py-3 border-b border-gray-200 dark:border-slate-700">
               <p class="text-sm font-semibold text-gray-900 dark:text-white">
                 {{ user.name }}
               </p>
@@ -82,16 +57,11 @@
                 {{ user.email }}
               </p>
               <div class="mt-2 flex items-center gap-2 flex-wrap">
-                <span
-                  class="inline-block px-2 py-1 text-xs font-semibold rounded-full"
-                  :class="getRoleBadgeClass(userRole)"
-                >
+                <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full"
+                  :class="getRoleBadgeClass(userRole)">
                   {{ userRole.toUpperCase() }}
                 </span>
-                <span
-                  v-if="user.program"
-                  class="text-xs text-gray-500 dark:text-slate-400"
-                >
+                <span v-if="user.program" class="text-xs text-gray-500 dark:text-slate-400">
                   {{ user.program }}
                 </span>
               </div>
@@ -102,39 +72,28 @@
 
             <!-- Student Menu Items -->
             <template v-if="isStudent">
-              <NuxtLink
-                to="/student/dashboard"
+              <NuxtLink to="/student/dashboard"
                 class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
-                @click="closeMenu"
-              >
-                <UIcon
-                  name="i-heroicons-chart-bar-square-20-solid"
-                  class="w-4 h-4"
-                />
+                @click="closeMenu">
+                <UIcon name="i-heroicons-chart-bar-square-20-solid" class="w-4 h-4" />
                 My Dashboard
               </NuxtLink>
-              <NuxtLink
-                to="/student/my-projects"
+              <NuxtLink to="/student/my-projects"
                 class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
-                @click="closeMenu"
-              >
+                @click="closeMenu">
                 <UIcon name="i-heroicons-folder-20-solid" class="w-4 h-4" />
                 My Projects
               </NuxtLink>
-              <NuxtLink
-                to="/student/submissions"
+              <NuxtLink to="/student/submissions"
                 class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
-                @click="closeMenu"
-              >
+                @click="closeMenu">
                 <UIcon name="i-heroicons-inbox-20-solid" class="w-4 h-4" />
                 Submissions
               </NuxtLink>
 
-              <NuxtLink
-                to="/student/favorites"
+              <NuxtLink to="/student/favorites"
                 class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
-                @click="closeMenu"
-              >
+                @click="closeMenu">
                 <UIcon name="i-heroicons-heart-20-solid" class="w-4 h-4" />
                 Favorites
               </NuxtLink>
@@ -142,44 +101,27 @@
 
             <!-- Teacher Menu Items -->
             <template v-if="isTeacher || isAdmin">
-              <NuxtLink
-                to="/teacher/dashboard"
+              <NuxtLink to="/teacher/dashboard"
                 class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
-                @click="closeMenu"
-              >
-                <UIcon
-                  name="i-heroicons-chart-bar-square-20-solid"
-                  class="w-4 h-4"
-                />
+                @click="closeMenu">
+                <UIcon name="i-heroicons-chart-bar-square-20-solid" class="w-4 h-4" />
                 Teacher Dashboard
               </NuxtLink>
-              <NuxtLink
-                to="/teacher/manage-projects"
+              <NuxtLink to="/teacher/manage-projects"
                 class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
-                @click="closeMenu"
-              >
-                <UIcon
-                  name="i-heroicons-document-check-20-solid"
-                  class="w-4 h-4"
-                />
+                @click="closeMenu">
+                <UIcon name="i-heroicons-document-check-20-solid" class="w-4 h-4" />
                 Manage Projects
               </NuxtLink>
-              <NuxtLink
-                to="/teacher/submissions"
+              <NuxtLink to="/teacher/submissions"
                 class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
-                @click="closeMenu"
-              >
-                <UIcon
-                  name="i-heroicons-inbox-stack-20-solid"
-                  class="w-4 h-4"
-                />
+                @click="closeMenu">
+                <UIcon name="i-heroicons-inbox-stack-20-solid" class="w-4 h-4" />
                 Review Submissions
               </NuxtLink>
-              <NuxtLink
-                to="/teacher/favorites"
+              <NuxtLink to="/teacher/favorites"
                 class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
-                @click="closeMenu"
-              >
+                @click="closeMenu">
                 <UIcon name="i-heroicons-heart-20-solid" class="w-4 h-4" />
                 Favorites
               </NuxtLink>
@@ -187,11 +129,9 @@
 
             <!-- Common Menu Items -->
             <hr class="border-gray-200 dark:border-slate-700" />
-            <NuxtLink
-              to="/profile"
+            <NuxtLink to="/profile"
               class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
-              @click="closeMenu"
-            >
+              @click="closeMenu">
               <UIcon name="i-heroicons-user-circle-20-solid" class="w-4 h-4" />
               Profile Settings
             </NuxtLink>
@@ -200,12 +140,8 @@
             <hr class="border-gray-200 dark:border-slate-700" />
             <button
               class="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-left"
-              @click="handleLogout"
-            >
-              <UIcon
-                name="i-heroicons-arrow-left-on-rectangle-20-solid"
-                class="w-4 h-4"
-              />
+              @click="handleLogout">
+              <UIcon name="i-heroicons-arrow-left-on-rectangle-20-solid" class="w-4 h-4" />
               Sign Out
             </button>
           </div>
@@ -226,7 +162,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useAuthStore } from "~/stores/auth";
 import { useUiStore } from "~/stores/ui";
 import type { Notification } from "~/stores/ui";
@@ -258,7 +194,26 @@ const userRole = computed(() => authStore.userRole || "guest");
 const isStudent = computed(() => authStore.isStudent);
 const isAdmin = computed(() => authStore.isAdmin);
 const isTeacher = computed(() => authStore.isTeacher);
-const notifications = computed(() => uiStore.notifications || []);
+const notifications = computed(() => {
+  console.log('📢 Notifications from store:', uiStore.notifications);
+  console.log('📢 Notifications length:', uiStore.notifications?.length || 0);
+  return uiStore.notifications || [];
+});
+
+// Debug on mount
+onMounted(() => {
+  console.log('🔥 UserMenu mounted');
+  console.log('🔥 UI Store state:', uiStore.$state);
+  console.log('🔥 Notifications on mount:', uiStore.notifications);
+  console.log('🔥 Notifications count:', uiStore.notifications.length);
+
+  // Force alert to verify code is running
+  if (uiStore.notifications.length === 0) {
+    console.error('❌ PROBLEM: Store has 0 notifications!');
+  } else {
+    console.log('✅ SUCCESS: Store has', uiStore.notifications.length, 'notifications');
+  }
+});
 
 const getRoleBadgeClass = (role: string): string => {
   const classMap: Record<string, string> = {
