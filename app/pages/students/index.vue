@@ -163,11 +163,11 @@
               </p>
 
               <!-- Active Filters -->
-              <div v-if="hasActiveFilters" class="flex items-center gap-2">
+              <div v-if="hasActiveFilters && (selectedSkill && selectedSkill !== 'All Skills')" class="flex items-center gap-2">
                 <span class="text-md text-gray-500 dark:text-gray-400">•</span>
                 <div class="flex flex-wrap gap-1">
                   <UBadge
-                    v-if="selectedSkill"
+                    v-if="selectedSkill && selectedSkill !== 'All Skills'"
                     color="primary"
                     variant="soft"
                     size="sm"
@@ -208,7 +208,7 @@
 
             <!-- Clear All Filters Button -->
             <ButtonsPresetButton
-              v-if="hasActiveFilters"
+              v-if="hasActiveFilters && selectedSkill !== 'All Skills'"
               preset="clearFilters"
               @click="clearFilters"
             />
