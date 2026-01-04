@@ -350,6 +350,9 @@ export const useAuthStore = defineStore("auth", {
         // Fetch complete user details from API
         await this.fetchCurrentUser();
 
+        // New users from signup need to set up security questions
+        this.needsSecurityQuestions = true;
+
         this.isAuthenticated = true;
       } catch (error) {
         this.user = null;
