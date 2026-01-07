@@ -34,7 +34,7 @@
 
     <!-- Sticky Top Bar -->
     <div
-      class="sticky top-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-sm border-b border-gray-200 dark:border-slate-700"
+      class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-sm border-b border-gray-200 dark:border-slate-700"
     >
       <UContainer>
         <div class="flex items-center justify-between w-full gap-2 py-4">
@@ -163,7 +163,14 @@
               </p>
 
               <!-- Active Filters -->
-              <div v-if="hasActiveFilters && (selectedSkill && selectedSkill !== 'All Skills')" class="flex items-center gap-2">
+              <div
+                v-if="
+                  hasActiveFilters &&
+                  selectedSkill &&
+                  selectedSkill !== 'All Skills'
+                "
+                class="flex items-center gap-2"
+              >
                 <span class="text-md text-gray-500 dark:text-gray-400">•</span>
                 <div class="flex flex-wrap gap-1">
                   <UBadge
