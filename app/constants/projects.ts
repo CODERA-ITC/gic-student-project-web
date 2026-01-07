@@ -8,8 +8,8 @@ export const projectsData: Project[] = [
       "An intelligent chatbot powered by GPT-3 for customer support. This project aims to enhance user experience by providing instant and accurate responses to common inquiries.",
     academicYear: "2024-2025",
     author: {
-      name: "Sarah Chen",
-      avatar: "https://randomuser.me/api/portraits/women/11.jpg",
+      name: "Mr. Test",
+      avatar: "https://randomuser.me/api/portraits/women/50.jpg",
       program: "Computer Science",
       year: "4th Year",
     },
@@ -90,10 +90,10 @@ export const projectsData: Project[] = [
     description: "Track workouts, nutrition, and health metrics on the go.",
     academicYear: "2024-2025",
     author: {
-      name: "Alex Rodriguez",
-      avatar: "https://randomuser.me/api/portraits/men/21.jpg",
-      program: "Mobile Development",
-      year: "3rd Year",
+      name: "Mr. Test",
+      avatar: "https://randomuser.me/api/portraits/women/50.jpg",
+      program: "Computer Science",
+      year: "4th Year",
     },
     technologies: ["React Native", "Firebase", "Redux", "HealthKit"],
     category: "Mobile Development",
@@ -162,7 +162,6 @@ export const projectsData: Project[] = [
     course: "Mobile App Development",
     visibility: "public",
   },
-
   {
     id: 3,
     title: "E-Commerce Platform",
@@ -170,9 +169,9 @@ export const projectsData: Project[] = [
       "Full-stack online store with payment integration and analytics.",
     academicYear: "2024-2025",
     author: {
-      name: "Priya Patel",
-      avatar: "https://randomuser.me/api/portraits/women/90.jpg",
-      program: "Web Development",
+      name: "Mr. Test",
+      avatar: "https://randomuser.me/api/portraits/women/50.jpg",
+      program: "Computer Science",
       year: "4th Year",
     },
     technologies: ["Next.js", "Stripe", "PostgreSQL", "Tailwind", "Vercel"],

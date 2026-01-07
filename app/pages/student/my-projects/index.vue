@@ -111,16 +111,46 @@
           <div class="flex gap-3 w-full sm:w-auto">
             <USelect
               v-model="selectedTag"
-              :options="tagOptions"
+              :items="tagOptions"
               placeholder="All Tags"
               class="flex-1 sm:w-40"
             />
             <USelect
               v-model="selectedCategory"
-              :options="categoryOptions"
+              :items="categoryOptions"
               placeholder="All Categories"
               class="flex-1 sm:w-40"
             />
+
+            <!-- View Mode Toggle -->
+            <div
+              class="flex gap-1 bg-gray-100 dark:bg-slate-700 rounded-lg p-1"
+            >
+              <button
+                @click="viewMode = 'grid'"
+                :class="[
+                  'p-2 rounded transition-all duration-200',
+                  viewMode === 'grid'
+                    ? 'bg-blue-900 text-white shadow-md'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-600',
+                ]"
+                title="Grid View"
+              >
+                <UIcon name="i-heroicons-squares-2x2" class="w-4 h-4" />
+              </button>
+              <button
+                @click="viewMode = 'list'"
+                :class="[
+                  'p-2 rounded transition-all duration-200',
+                  viewMode === 'list'
+                    ? 'bg-blue-900 text-white shadow-md'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-600',
+                ]"
+                title="List View"
+              >
+                <UIcon name="i-heroicons-list-bullet" class="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -135,63 +165,197 @@
         actionTo="/projects/create"
       />
 
-      <!-- Projects Grid -->
-      <div v-else class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <ProjectCard
-          v-for="project in paginatedProjects"
-          :key="project.id"
-          :project="project"
-          base-route="/student/my-projects"
-          :show-like-button="true"
-          :show-edit-button="true"
-          :liked-projects="likedProjects"
-          @toggle-like="handleToggleLike"
-          @edit="handleEdit"
-          @delete="handleDelete"
-        />
-      </div>
-
-      <!-- Pagination -->
+      <!-- Projects Section -->
       <div
-        v-if="totalPages > 1"
-        class="mt-12 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-6"
+        v-else
+        class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700"
       >
-        <div class="flex items-center justify-between">
-          <div class="text-sm text-gray-500 dark:text-slate-400">
-            Showing {{ startIndex + 1 }} to
-            {{ Math.min(endIndex, totalProjects) }} of
-            {{ totalProjects }} projects
+        <!-- Grid View -->
+        <div v-if="viewMode === 'grid'" class="p-6">
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <ProjectCard
+              v-for="project in paginatedProjects"
+              :key="project.id"
+              :project="project"
+              base-route="/student/my-projects"
+              :show-like-button="true"
+              :show-edit-button="true"
+              :liked-projects="likedProjects"
+              @toggle-like="handleToggleLike"
+              @edit="handleEdit"
+              @delete="handleDelete"
+            />
           </div>
-          <div class="flex items-center gap-2">
-            <UButton
-              icon="i-heroicons-chevron-left"
-              size="xs"
-              variant="ghost"
-              :disabled="currentPage === 1"
-              @click="currentPage--"
-            />
-            <div class="flex items-center gap-1">
-              <button
-                v-for="page in displayedPages"
-                :key="page"
-                :class="[
-                  'px-3 py-1 text-sm rounded-lg transition-colors',
-                  page === currentPage
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700',
-                ]"
-                @click="currentPage = page"
+        </div>
+
+        <!-- List View -->
+        <div v-else class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-gray-50 dark:bg-slate-900">
+              <tr>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
+                >
+                  Project
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
+                >
+                  Category
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
+                >
+                  Status
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
+                >
+                  Created
+                </th>
+                <th
+                  class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
+                >
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-slate-700">
+              <tr
+                v-for="project in paginatedProjects"
+                :key="project.id"
+                class="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
               >
-                {{ page }}
-              </button>
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <img
+                      v-if="project.images && project.images[0]"
+                      :src="project.images[0]"
+                      :alt="project.title"
+                      class="w-12 h-12 rounded-lg object-cover"
+                    />
+                    <div
+                      v-else
+                      class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center"
+                    >
+                      <UIcon
+                        name="i-heroicons-cube"
+                        class="w-6 h-6 text-white"
+                      />
+                    </div>
+                    <div>
+                      <p
+                        class="text-sm font-semibold text-gray-900 dark:text-white"
+                      >
+                        {{ project.title }}
+                      </p>
+                      <p
+                        class="text-xs text-gray-500 dark:text-gray-400 line-clamp-1"
+                      >
+                        {{ project.description }}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <span
+                    class="inline-flex text-center items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+                  >
+                    {{ project.category }}
+                  </span>
+                </td>
+                <td class="px-6 py-4">
+                  <span
+                    :class="[
+                      'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+                      project.status === 'Completed'
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                        : project.status === 'In Review'
+                        ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+                        : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300',
+                    ]"
+                  >
+                    {{ project.status }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-600 dark:text-slate-400">
+                  {{ new Date(project.createdAt).toLocaleDateString() }}
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex items-center justify-end gap-2">
+                    <UButton
+                      icon="i-heroicons-eye"
+                      size="xs"
+                      color="primary"
+                      variant="ghost"
+                      label="View"
+                      @click="navigateTo(`/student/my-projects/${project.id}`)"
+                    />
+                    <UButton
+                      icon="i-heroicons-pencil"
+                      size="xs"
+                      color="primary"
+                      variant="ghost"
+                      label="Edit"
+                      @click="handleEdit(project.id)"
+                    />
+                    <UButton
+                      icon="i-heroicons-trash"
+                      size="xs"
+                      color="error"
+                      variant="ghost"
+                      label="Delete"
+                      @click="handleDelete(project.id)"
+                    />
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div
+          v-if="totalPages > 1"
+          class="px-6 pb-6 border-t border-gray-200 dark:border-slate-700 pt-6"
+        >
+          <div class="flex items-center justify-between">
+            <div class="text-sm text-gray-500 dark:text-slate-400">
+              Showing {{ startIndex + 1 }} to
+              {{ Math.min(endIndex, totalProjects) }} of
+              {{ totalProjects }} projects
             </div>
-            <UButton
-              icon="i-heroicons-chevron-right"
-              size="xs"
-              variant="ghost"
-              :disabled="currentPage === totalPages"
-              @click="currentPage++"
-            />
+            <div class="flex items-center gap-2">
+              <UButton
+                icon="i-heroicons-chevron-left"
+                size="xs"
+                variant="ghost"
+                :disabled="currentPage === 1"
+                @click="currentPage--"
+              />
+              <div class="flex items-center gap-1">
+                <button
+                  v-for="page in displayedPages"
+                  :key="page"
+                  :class="[
+                    'px-3 py-1 text-sm rounded-lg transition-colors',
+                    page === currentPage
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700',
+                  ]"
+                  @click="currentPage = page"
+                >
+                  {{ page }}
+                </button>
+              </div>
+              <UButton
+                icon="i-heroicons-chevron-right"
+                size="xs"
+                variant="ghost"
+                :disabled="currentPage === totalPages"
+                @click="currentPage++"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -223,11 +387,12 @@ const authStore = useAuthStore();
 const activeTab = ref("all");
 const searchQuery = ref("");
 const debouncedSearchQuery = ref("");
-const selectedTag = ref("");
-const selectedCategory = ref("");
+const selectedTag = ref("All Tags");
+const selectedCategory = ref("All Categories");
 const currentPage = ref(1);
 const pageSize = ref(9);
 const isSearching = ref(false);
+const viewMode = ref("grid"); // Add view mode toggle
 
 // Like functionality
 const likedProjects = ref({});
@@ -356,6 +521,10 @@ onMounted(async () => {
   // Load user's projects
   await projectStore.fetchUserProjects();
 
+  // Load tags and categories for filters
+  await projectStore.fetchTags();
+  await projectStore.fetchCategories();
+
   console.log("Projects in store after fetch:", {
     totalUserProjects: projectStore.userProjects.length,
     userProjectIds: projectStore.userProjects.map((p) => ({
@@ -428,14 +597,14 @@ const filteredProjects = computed(() => {
   }
 
   // Filter by tag
-  if (selectedTag.value) {
+  if (selectedTag.value && selectedTag.value !== "All Tags") {
     projects = projects.filter(
       (p) => p.tags && p.tags.includes(selectedTag.value)
     );
   }
 
   // Filter by category
-  if (selectedCategory.value) {
+  if (selectedCategory.value && selectedCategory.value !== "All Categories") {
     projects = projects.filter((p) => p.category === selectedCategory.value);
   }
 
@@ -470,28 +639,29 @@ const displayedPages = computed(() => {
   for (let i = start; i <= end; i++) {
     pages.push(i);
   }
+
   return pages;
 });
 
 const tagOptions = computed(() => {
-  const tags = new Set();
-  myProjects.value.forEach((p) => {
-    if (p.tags) {
-      p.tags.forEach((tag) => tags.add(tag));
-    }
-  });
-  return [
-    { label: "All Tags", value: "" },
-    ...Array.from(tags).map((t) => ({ label: t, value: t })),
-  ];
+  if (!projectStore.availableTags || projectStore.availableTags.length === 0) {
+    return ["All Tags"];
+  }
+  const tags = projectStore.availableTags.map((t) => t.label);
+  return ["All Tags", ...tags];
 });
 
 const categoryOptions = computed(() => {
-  const categories = new Set(myProjects.value.map((p) => p.category));
-  return [
-    { label: "All Categories", value: "" },
-    ...Array.from(categories).map((c) => ({ label: c, value: c })),
-  ];
+  if (
+    !projectStore.availableCategories ||
+    projectStore.availableCategories.length === 0
+  ) {
+    return ["All Categories"];
+  }
+  const categories = projectStore.availableCategories.filter(
+    (c) => c !== "All"
+  );
+  return ["All Categories", ...categories];
 });
 
 // Search debouncing
