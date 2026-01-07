@@ -5,54 +5,58 @@
       class="py-16 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 dark:border-slate-700"
     >
       <UContainer>
-        <div class="flex items-center justify-between">
-          <div class="space-y-2">
-            <h1 class="text-4xl font-black text-white">My Projects</h1>
-            <p class="text-gray-200">
-              Manage and track your student project submissions
-            </p>
+        <div
+          class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        >
+          <div class="flex flex-col items-start gap-4 mb-4">
+            <div
+              class="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-lg p-1 hover:bg-white/20 dark:hover:bg-white/10 transition-colors"
+            >
+              <ButtonsPresetButton
+                preset="back"
+                @click="$router.push('/student/dashboard')"
+                class="!text-white"
+              />
+            </div>
+
+            <!-- <div class="space-y-2">
+              <div class="flex items-center gap-3">
+                <UIcon
+                  name="i-heroicons-heart-solid"
+                  class="w-10 h-10 text-red-400"
+                />
+                <h1 class="text-4xl font-black text-white">
+                  Favorite Projects
+                </h1>
+              </div>
+              <p class="text-blue-100 dark:text-slate-300">
+                Projects you've liked and want to revisit
+              </p>
+            </div> -->
+
+            <div class="space-y-2">
+              <h1 class="text-4xl font-black text-white">My Projects</h1>
+              <p class="text-gray-200">
+                Create, manage, and organize all your projects
+              </p>
+            </div>
           </div>
-          <ButtonsPresetButton preset="createProject" to="/projects/create" />
+
+          <div class="flex gap-3">
+            <ButtonsPresetButton
+              preset="createProject"
+              to="/projects/create"
+              color="neutral"
+              variant="solid"
+              class="!bg-white !text-blue-600 hover:!bg-gray-100 dark:!bg-slate-800 dark:!text-blue-400 dark:hover:!bg-slate-700"
+            />
+          </div>
         </div>
       </UContainer>
     </div>
 
     <!-- Main Content -->
     <UContainer class="py-12">
-      <!-- Filter and Search -->
-      <div class="flex flex-col md:flex-row gap-4 mb-8">
-        <div class="flex-1 relative">
-          <SearchBar
-            v-model="searchQuery"
-            placeholder="Search projects by title, description, tech, members..."
-            class="w-full"
-          />
-          <div
-            v-if="isSearching"
-            class="absolute right-3 top-1/2 -translate-y-1/2"
-          >
-            <UIcon
-              name="i-heroicons-arrow-path"
-              class="w-4 h-4 text-blue-500 animate-spin"
-            />
-          </div>
-        </div>
-        <div class="flex gap-4">
-          <USelect
-            v-model="selectedSemester"
-            :options="semesterOptions"
-            placeholder="All Semesters"
-            class="w-48"
-          />
-          <USelect
-            v-model="selectedCategory"
-            :options="categoryOptions"
-            placeholder="All Categories"
-            class="w-48"
-          />
-        </div>
-      </div>
-
       <!-- Tabs -->
       <div
         class="flex gap-4 mb-8 border-b border-gray-200 dark:border-slate-700"
@@ -78,6 +82,49 @@
         </button>
       </div>
 
+      <!-- Search and Filters -->
+      <div
+        class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-6 mb-8"
+      >
+        <div
+          class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        >
+          <div class="flex items-center gap-3 w-full sm:w-auto">
+            <div class="relative flex-1 sm:flex-initial sm:w-80">
+              <UIcon
+                name="i-heroicons-magnifying-glass"
+                class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-slate-500 w-4 h-4"
+              />
+              <input
+                v-model="searchQuery"
+                type="text"
+                placeholder="Search projects..."
+                class="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+              />
+            </div>
+            <span
+              class="text-sm text-gray-500 dark:text-slate-400 whitespace-nowrap"
+            >
+              {{ totalProjects }} total
+            </span>
+          </div>
+          <div class="flex gap-3 w-full sm:w-auto">
+            <USelect
+              v-model="selectedTag"
+              :options="tagOptions"
+              placeholder="All Tags"
+              class="flex-1 sm:w-40"
+            />
+            <USelect
+              v-model="selectedCategory"
+              :options="categoryOptions"
+              placeholder="All Categories"
+              class="flex-1 sm:w-40"
+            />
+          </div>
+        </div>
+      </div>
+
       <!-- Empty State -->
       <EmptyState
         v-if="filteredProjects.length === 0"
@@ -91,7 +138,7 @@
       <!-- Projects Grid -->
       <div v-else class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <ProjectCard
-          v-for="project in filteredProjects"
+          v-for="project in paginatedProjects"
           :key="project.id"
           :project="project"
           base-route="/student/my-projects"
@@ -105,12 +152,48 @@
       </div>
 
       <!-- Pagination -->
-      <div v-if="totalPages > 1" class="flex justify-center mt-12">
-        <UPagination
-          v-model="currentPage"
-          :page-count="pageSize"
-          :total="totalProjects"
-        />
+      <div
+        v-if="totalPages > 1"
+        class="mt-12 bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-6"
+      >
+        <div class="flex items-center justify-between">
+          <div class="text-sm text-gray-500 dark:text-slate-400">
+            Showing {{ startIndex + 1 }} to
+            {{ Math.min(endIndex, totalProjects) }} of
+            {{ totalProjects }} projects
+          </div>
+          <div class="flex items-center gap-2">
+            <UButton
+              icon="i-heroicons-chevron-left"
+              size="xs"
+              variant="ghost"
+              :disabled="currentPage === 1"
+              @click="currentPage--"
+            />
+            <div class="flex items-center gap-1">
+              <button
+                v-for="page in displayedPages"
+                :key="page"
+                :class="[
+                  'px-3 py-1 text-sm rounded-lg transition-colors',
+                  page === currentPage
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700',
+                ]"
+                @click="currentPage = page"
+              >
+                {{ page }}
+              </button>
+            </div>
+            <UButton
+              icon="i-heroicons-chevron-right"
+              size="xs"
+              variant="ghost"
+              :disabled="currentPage === totalPages"
+              @click="currentPage++"
+            />
+          </div>
+        </div>
       </div>
     </UContainer>
 
@@ -140,10 +223,10 @@ const authStore = useAuthStore();
 const activeTab = ref("all");
 const searchQuery = ref("");
 const debouncedSearchQuery = ref("");
-const selectedSemester = ref("");
+const selectedTag = ref("");
 const selectedCategory = ref("");
 const currentPage = ref(1);
-const pageSize = ref(12);
+const pageSize = ref(9);
 const isSearching = ref(false);
 
 // Like functionality
@@ -245,6 +328,9 @@ const confirmDelete = async () => {
 
 // Check authentication
 onMounted(async () => {
+  // Restore authentication state from localStorage
+  await authStore.restoreAuth();
+
   if (!authStore.isAuthenticated) {
     await navigateTo("/login");
     return;
@@ -295,11 +381,7 @@ const myProjects = computed(() => {
 
 const tabs = computed(() => [
   { label: "All Projects", value: "all", count: myProjects.value.length },
-  {
-    label: "In Progress",
-    value: "in-progress",
-    count: getProjectsByStatus("In Progress").length,
-  },
+
   {
     label: "Under Review",
     value: "in-review",
@@ -333,11 +415,9 @@ const filteredProjects = computed(() => {
         p.title.toLowerCase().includes(query) ||
         p.description.toLowerCase().includes(query) ||
         p.category.toLowerCase().includes(query) ||
-        p.semester.toLowerCase().includes(query) ||
         (p.tags && p.tags.some((tag) => tag.toLowerCase().includes(query))) ||
         (p.technologies &&
           p.technologies.some((tech) => tech.toLowerCase().includes(query))) ||
-        (p.course && p.course.toLowerCase().includes(query)) ||
         (p.members &&
           p.members.some((member) =>
             (typeof member === "string" ? member : member.name)
@@ -347,9 +427,11 @@ const filteredProjects = computed(() => {
     );
   }
 
-  // Filter by semester
-  if (selectedSemester.value) {
-    projects = projects.filter((p) => p.semester === selectedSemester.value);
+  // Filter by tag
+  if (selectedTag.value) {
+    projects = projects.filter(
+      (p) => p.tags && p.tags.includes(selectedTag.value)
+    );
   }
 
   // Filter by category
@@ -357,57 +439,59 @@ const filteredProjects = computed(() => {
     projects = projects.filter((p) => p.category === selectedCategory.value);
   }
 
-  // Pagination
-  const startIndex = (currentPage.value - 1) * pageSize.value;
-  return projects.slice(startIndex, startIndex + pageSize.value);
+  return projects;
 });
 
-const totalProjects = computed(() => {
-  // Return total count before pagination
-  let projects = myProjects.value;
+const totalProjects = computed(() => filteredProjects.value.length);
 
-  if (activeTab.value !== "all") {
-    const statusMap = {
-      "in-progress": "In Progress",
-      "in-review": "In Review",
-      completed: "Completed",
-    };
-    projects = projects.filter((p) => p.status === statusMap[activeTab.value]);
-  }
-
-  if (searchQuery.value.trim()) {
-    const query = searchQuery.value.toLowerCase();
-    projects = projects.filter(
-      (p) =>
-        p.title.toLowerCase().includes(query) ||
-        p.description.toLowerCase().includes(query) ||
-        p.category.toLowerCase().includes(query)
-    );
-  }
-
-  if (selectedSemester.value) {
-    projects = projects.filter((p) => p.semester === selectedSemester.value);
-  }
-
-  if (selectedCategory.value) {
-    projects = projects.filter((p) => p.category === selectedCategory.value);
-  }
-
-  return projects.length;
+const paginatedProjects = computed(() => {
+  const start = startIndex.value;
+  const end = endIndex.value;
+  return filteredProjects.value.slice(start, end);
 });
+
+const startIndex = computed(() => (currentPage.value - 1) * pageSize.value);
+const endIndex = computed(() => startIndex.value + pageSize.value);
 
 const totalPages = computed(() =>
   Math.ceil(totalProjects.value / pageSize.value)
 );
 
-const semesterOptions = computed(() => {
-  const semesters = new Set(myProjects.value.map((p) => p.semester));
-  return Array.from(semesters).map((s) => ({ label: s, value: s }));
+const displayedPages = computed(() => {
+  const pages = [];
+  const maxVisible = 5;
+  let start = Math.max(1, currentPage.value - Math.floor(maxVisible / 2));
+  let end = Math.min(totalPages.value, start + maxVisible - 1);
+
+  if (end - start < maxVisible - 1) {
+    start = Math.max(1, end - maxVisible + 1);
+  }
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+  return pages;
+});
+
+const tagOptions = computed(() => {
+  const tags = new Set();
+  myProjects.value.forEach((p) => {
+    if (p.tags) {
+      p.tags.forEach((tag) => tags.add(tag));
+    }
+  });
+  return [
+    { label: "All Tags", value: "" },
+    ...Array.from(tags).map((t) => ({ label: t, value: t })),
+  ];
 });
 
 const categoryOptions = computed(() => {
   const categories = new Set(myProjects.value.map((p) => p.category));
-  return Array.from(categories).map((c) => ({ label: c, value: c }));
+  return [
+    { label: "All Categories", value: "" },
+    ...Array.from(categories).map((c) => ({ label: c, value: c })),
+  ];
 });
 
 // Search debouncing
@@ -418,7 +502,13 @@ watch(searchQuery, (newQuery) => {
   searchTimeout = setTimeout(() => {
     debouncedSearchQuery.value = newQuery;
     isSearching.value = false;
+    currentPage.value = 1; // Reset to first page on search
   }, 300);
+});
+
+// Reset pagination when filters change
+watch([selectedTag, selectedCategory, activeTab], () => {
+  currentPage.value = 1;
 });
 
 // Methods

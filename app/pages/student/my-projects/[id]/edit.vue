@@ -645,6 +645,9 @@ const discardChanges = () => {
 
 // Lifecycle
 onMounted(async () => {
+  // Restore authentication state from localStorage
+  await authStore.restoreAuth();
+
   if (!authStore.isAuthenticated) {
     await navigateTo("/login");
     return;

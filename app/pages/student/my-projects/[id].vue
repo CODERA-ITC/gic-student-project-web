@@ -260,7 +260,12 @@ const showAuthModal = ref(false);
 
 // Student-specific computed properties
 const canSubmit = computed(() => {
-  return isOwner.value;
+  if (!isOwner.value || !project.value) return false;
+
+  // Check if project has already been submitted
+  const hasSubmission =
+    project.value.submissions && project.value.submissions.length > 0;
+  return !hasSubmission;
 });
 
 // Student-specific methods
@@ -320,18 +325,24 @@ const confirmSubmit = async () => {
   try {
     isSubmitting.value = true;
 
-    // Submit to teacher - update status to "Submitted" or "In Review"
-    await projectStore.updateProjectStatus(project.value.id, "Submitted");
-    project.value.status = "Submitted";
+    // Submit project for review - add to submissions array
+    const success = await projectStore.submitProjectForReview(project.value.id);
 
-    const toast = useToast();
-    toast.add({
-      title: "Project Submitted!",
-      description: "Your project has been submitted to teachers for review.",
-      color: "success",
-    });
+    if (success) {
+      const toast = useToast();
+      toast.add({
+        title: "Project Submitted!",
+        description: "Your project has been submitted to teachers for review.",
+        color: "success",
+      });
 
-    showSubmitModal.value = false;
+      showSubmitModal.value = false;
+
+      // Optionally navigate to submissions page
+      // await navigateTo("/student/submissions");
+    } else {
+      throw new Error("Submission failed");
+    }
   } catch (error) {
     console.error("Error submitting project:", error);
     const toast = useToast();
