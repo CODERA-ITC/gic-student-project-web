@@ -1,9 +1,15 @@
 <template>
   <nav
-    class="sticky top-0 z-[100] bg-white dark:bg-neutral-900 border-b border-gray-200 dark:border-neutral-800 shadow-sm backdrop-blur-sm bg-opacity-95 dark:bg-opacity-95"
+    :class="[
+      'sticky top-0 z-[100] bg-white dark:bg-neutral-900 border-b border-gray-200 dark:border-neutral-800 shadow-sm backdrop-blur-sm bg-opacity-95 dark:bg-opacity-95 transition-all duration-500 ease-in-out',
+      isScrolled ? 'py-0' : 'py-0',
+    ]"
   >
     <div
-      class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full"
+      :class="[
+        'flex items-center justify-between px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full transition-all duration-500 ease-in-out',
+        isScrolled ? 'h-13' : 'h-16',
+      ]"
     >
       <!-- Logo Section -->
       <NuxtLink to="/" class="flex items-center shrink-0 space-x-2">
@@ -12,15 +18,24 @@
           alt="ITC Logo"
           width="auto"
           height="54"
-          class="object-contain hover:opacity-80 transition-opacity duration-200 rounded-xs"
+          :class="[
+            'object-contain hover:opacity-80 transition-all duration-500 ease-in-out rounded-xs origin-left',
+            isScrolled ? 'scale-[0.80]' : 'scale-100',
+          ]"
         />
-        <div class="w-px h-12 bg-gray-300 dark:bg-neutral-700 mr-3"></div>
+        <div
+          class="w-px bg-gray-300 dark:bg-neutral-700 mr-3 transition-all duration-500 ease-in-out"
+          :class="isScrolled ? 'h-9' : 'h-12'"
+        ></div>
         <NuxtImg
           src="/images/gic-logo-small.png"
           alt="GIC Student Portal"
           width="auto"
           height="47"
-          class="object-contain hover:opacity-80 transition-opacity duration-200 rounded-xs"
+          :class="[
+            'object-contain hover:opacity-80 transition-all duration-500 ease-in-out rounded-xs origin-left',
+            isScrolled ? 'scale-[0.80]' : 'scale-100',
+          ]"
         />
       </NuxtLink>
 
@@ -248,7 +263,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import { useAuthStore } from "~/stores/auth";
 import { useUiStore } from "~/stores/ui";
@@ -257,6 +272,25 @@ const { t, setLocale } = useI18n();
 
 // State
 const mobileMenuOpen = ref(false);
+const isScrolled = ref(false);
+
+// Scroll detection
+const handleScroll = () => {
+  isScrolled.value = window.scrollY > 10;
+};
+
+onMounted(() => {
+  if (process.client) {
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // Check initial state
+  }
+});
+
+onUnmounted(() => {
+  if (process.client) {
+    window.removeEventListener("scroll", handleScroll);
+  }
+});
 
 const route = useRoute();
 const authStore = useAuthStore();

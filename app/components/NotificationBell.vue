@@ -51,7 +51,9 @@
         </div>
 
         <!-- Notifications List -->
-        <div class="max-h-[600px] overflow-y-auto bg-white dark:bg-gray-800">
+        <div
+          class="max-h-[70vh] overflow-y-auto bg-white dark:bg-gray-800 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent"
+        >
           <div
             v-if="notifications.length === 0"
             class="px-4 py-12 text-center text-gray-500 dark:text-gray-400"
@@ -145,7 +147,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watchEffect } from "vue";
+import { ref, computed, watchEffect, watch, onUnmounted } from "vue";
 
 interface NotificationItem {
   id: number;
@@ -185,6 +187,24 @@ const emit = defineEmits<{
 
 const dropdownOpen = ref(false);
 const buttonRef = ref<HTMLElement | null>(null);
+
+// Lock body scroll when dropdown is open
+watch(dropdownOpen, (isOpen) => {
+  if (process.client) {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+  }
+});
+
+// Clean up on unmount
+onUnmounted(() => {
+  if (process.client) {
+    document.body.style.overflow = "";
+  }
+});
 
 // Debug: Log notifications when component receives them
 watchEffect(() => {

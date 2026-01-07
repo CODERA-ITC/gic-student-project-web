@@ -34,10 +34,10 @@
 
     <!-- Sticky Top Bar -->
     <div
-      class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-sm border-b border-gray-200 dark:border-slate-700"
+      class="sticky top-13 z-[100] bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-sm border-b border-gray-200 dark:border-slate-700"
     >
       <UContainer>
-        <div class="flex items-center justify-between w-full gap-2 py-4">
+        <div class="flex items-center justify-between w-full gap-2 py-2">
           <!-- Sort Dropdown -->
           <div class="relative">
             <USelectMenu
