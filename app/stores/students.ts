@@ -21,11 +21,9 @@ export interface Student {
   projects: number[];
   achievements: string[];
   social: StudentSocial;
-  location: string;
   joinedDate: string;
   graduationYear: number;
   gen: number;
-  gpa: number;
 }
 
 export interface StudentFilters {
@@ -38,7 +36,6 @@ export interface StudentFilters {
 export interface StudentStats {
   total: number;
   byProgram: Record<string, Student[]>;
-  averageGPA: string;
   graduating2025: number;
   graduating2026: number;
 }
@@ -106,9 +103,6 @@ export const useStudentStore = defineStore("students", {
         case "year":
           filtered.sort((a, b) => b.graduationYear - a.graduationYear);
           break;
-        case "gpa":
-          filtered.sort((a, b) => b.gpa - a.gpa);
-          break;
         case "projects":
           filtered.sort((a, b) => b.projects.length - a.projects.length);
           break;
@@ -132,10 +126,6 @@ export const useStudentStore = defineStore("students", {
       return {
         total: this.students.length,
         byProgram: this.studentsByProgram,
-        averageGPA: (
-          this.students.reduce((sum, s) => sum + s.gpa, 0) /
-          this.students.length
-        ).toFixed(2),
         graduating2025: this.students.filter((s) => s.graduationYear === 2025)
           .length,
         graduating2026: this.students.filter((s) => s.graduationYear === 2026)
@@ -143,9 +133,9 @@ export const useStudentStore = defineStore("students", {
       };
     },
 
-    topPerformers(): Student[] {
-      return [...this.students].sort((a, b) => b.gpa - a.gpa).slice(0, 5);
-    },
+    // topPerformers(): Student[] {
+    //   return [...this.students].sort((a, b) => b.gpa - a.gpa).slice(0, 5);
+    // },
   },
 
   actions: {

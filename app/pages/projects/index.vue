@@ -292,18 +292,16 @@
                       </UBadge>
                       <UBadge
                         v-for="tag in selectedTags"
-                        :key="tag.value"
+                        :key="tag"
                         color="primary"
                         variant="soft"
                         size="sm"
                         class="flex items-center gap-1"
                       >
-                        {{ tag.label }}
+                        {{ tag }}
                         <UButton
                           @click="
-                            selectedTags = selectedTags.filter(
-                              (t) => t.value !== tag.value
-                            )
+                            selectedTags = selectedTags.filter((t) => t !== tag)
                           "
                           color="primary"
                           variant="ghost"
@@ -688,27 +686,8 @@ const categorySearch = computed({
 });
 
 const selectedTags = computed({
-  get: () => {
-    const tagValues = projectStore.filters.tags;
-    const availableTags = tags.value || [];
-    // Convert string values back to objects for USelectMenu
-    return tagValues
-      .map(
-        (tagValue) =>
-          availableTags.find((tag) => tag.value === tagValue) || {
-            label: tagValue,
-            value: tagValue,
-          }
-      )
-      .filter(Boolean);
-  },
-  set: (selectedOptions) => {
-    // Convert objects to string values for store
-    const tagValues = selectedOptions
-      .map((option) => option?.value || option)
-      .filter(Boolean);
-    projectStore.setFilter("tags", tagValues);
-  },
+  get: () => projectStore.filters.tags,
+  set: (value) => projectStore.setFilter("tags", value),
 });
 
 const selectedYear = computed({
@@ -819,7 +798,7 @@ const categorySuggestions = computed(() => {
 
   const input = categorySearchInput.value.toLowerCase();
   const allCategories = [...new Set(projects.value.map((p) => p.category))];
-
+  // fetch from current projects to ensure relevance directly
   return allCategories
     .filter((category) => category.toLowerCase().includes(input))
     .map((category) => ({
@@ -833,10 +812,9 @@ const categorySuggestions = computed(() => {
 });
 
 const filteredTags = computed(() => {
-  const selectedTagObjects = selectedTags.value;
-  const selectedValues = selectedTagObjects.map((tag) => tag.value);
+  const selectedValues = selectedTags.value;
   const availableTags = tags.value || [];
-  return availableTags.filter((tag) => !selectedValues.includes(tag.value));
+  return availableTags.filter((tag) => !selectedValues.includes(tag));
 });
 
 // Category suggestion methods

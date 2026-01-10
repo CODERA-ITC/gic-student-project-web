@@ -366,10 +366,55 @@ export const useAuthStore = defineStore("auth", {
       }
     },
 
+    // Allow search users
+
+    async searchUsers(query: string): Promise<User[]> {
+      try {
+        const token = this.getToken();
+        if (!token) {
+          throw new Error("No authentication token");
+        }
+
+        const response = await fetch(
+          `/api/users/search?q=${encodeURIComponent(query)}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to search users");
+        }
+
+        const responseData = await response.json();
+
+        if (!responseData.success || !responseData.data) {
+          throw new Error("Invalid response from server");
+        }
+
+        return responseData.data.map((userData: any) => ({
+          id: userData.id,
+          name: `${userData.firstname || ""} ${userData.lastname || ""}`.trim(),
+          email: userData.email,
+          avatar:
+            userData.avatar ||
+           "" , // default avatar empty string if not provided
+        }));
+      } catch (error) {
+        console.error("Failed to search users:", error);
+        throw error;
+      }
+    },
+
     /**
      * Handle OAuth callback (Google/GitHub)
      * This should be called from your OAuth callback page
      */
+
     async handleOAuthCallback(
       token: string,
       refreshToken?: string

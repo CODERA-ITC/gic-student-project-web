@@ -3,6 +3,7 @@ import { any } from "zod";
 import { useAuthStore } from "~/stores/auth";
 
 import { projectsData } from "~/constants/projects";
+import { ca } from "zod/locales";
 // Types
 export interface ProjectAuthor {
   name: string;
@@ -12,7 +13,7 @@ export interface ProjectAuthor {
 }
 
 export interface FeatureItem {
-  date: string;
+  date?: string;
   title: string;
   description: string;
   icon: string;
@@ -20,7 +21,7 @@ export interface FeatureItem {
 }
 
 export interface Project {
-  id: number;
+  id?: number;
   title: string;
   description: string;
   academicYear?: string;
@@ -69,7 +70,7 @@ export interface ProjectState {
   projects: Project[];
   userProjects: Project[];
   availableCategories: string[];
-  availableTags: { label: string; value: string }[];
+  availableTags: string[];
   likedProjects: Set<number>;
   loading: boolean;
   pagination: PaginationState;
@@ -209,10 +210,10 @@ export const useProjectStore = defineStore("projects", {
       this.loading = true;
       try {
         // simulate network delay
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        // return current categories (in a real app this would come from an API)
+        // await new Promise((resolve) => setTimeout(resolve, 100));
+        // // return current categories (in a real app this would come from an API)
 
-        const categories = [
+        const categoriesMock = [
           "All",
           "Artificial Intelligence",
           "Mobile Development",
@@ -222,36 +223,95 @@ export const useProjectStore = defineStore("projects", {
           "Health Tech",
           "Data Science",
         ];
-        return (this.availableCategories = categories);
+        const data = await fetch("/api/categories", {
+          method: "GET",
+        });
+
+        console.log("Fetch categories response:", data);
+
+        const categories = (await data.json()) || categoriesMock;
+
+        console.log("Fetched categories:", categories);
+
+        // const response = await fetch("/api/users/signup", {
+        //       method: "POST",
+        //       headers: {
+        //         "Content-Type": "application/json",
+        //       },
+        //       body: JSON.stringify({
+        //         firstname,
+        //         lastname,
+        //         email: email.trim().toLowerCase(),
+        //         password,
+        //         departmentCode: "GIC",
+        //         bio: `${role} at
+        // GIC`,
+        //       }),
+        //     });
+
+        // convert the array of object json to array of string
+        let categoriesString: string[] = Array.from(
+          new Set(
+            categories.map((cat: any) =>
+              typeof cat === "string" ? cat : cat.name
+            )
+          )
+        );
+
+        return (this.availableCategories = categoriesString);
       } finally {
         this.loading = false;
       }
     },
 
-    async fetchTags(): Promise<{ label: string; value: string }[]> {
+    async fetchTags(): Promise<string[]> {
       this.loading = true;
       try {
         // simulate network delay
         await new Promise((resolve) => setTimeout(resolve, 100));
 
-        const tags = [
-          { label: "Web Development", value: "web" },
-          { label: "Mobile App", value: "mobile" },
-          { label: "AI/ML", value: "ai" },
-          { label: "Data Science", value: "data" },
-          { label: "IoT", value: "iot" },
-          { label: "Blockchain", value: "blockchain" },
-          { label: "Machine Learning", value: "ml" },
-          {
-            label: "Artificial Intelligence",
-            value: "artificial-intelligence",
-          },
-          { label: "Software Development", value: "software" },
-          { label: "Frontend", value: "frontend" },
-          { label: "Backend", value: "backend" },
-          { label: "Full Stack", value: "fullstack" },
+        // for label no need to create value because value will be same as label but in lowercase and replace space with hyphen
+        const tagsMock = [
+          "Web Development",
+          "Mobile App",
+          "AI/ML",
+          "Data Science",
+          "IoT",
+          "Blockchain",
+          "Machine Learning",
+          "Artificial Intelligence",
+          "Software Development",
+          "Frontend",
+          "Backend",
+          "Full Stack",
         ];
-        return (this.availableTags = tags);
+
+        const data = await fetch("/api/tags", {
+          method: "GET",
+        });
+
+        const response = await data.json();
+        // Ensure tags is an array - handle different response structures
+        let tags = Array.isArray(response)
+          ? response
+          : response?.data || response?.tags || tagsMock;
+
+        // Fallback to tagsMock if tags is still not an array
+        if (!Array.isArray(tags)) {
+          console.warn(
+            "Tags response is not an array, using mock data:",
+            response
+          );
+          tags = tagsMock;
+        }
+
+        let tagsString: string[] = Array.from(
+          new Set(
+            tags.map((tag: any) => (typeof tag === "string" ? tag : tag.name))
+          )
+        );
+
+        return (this.availableTags = tagsString);
       } finally {
         this.loading = false;
       }
@@ -390,7 +450,14 @@ export const useProjectStore = defineStore("projects", {
             const parsed = JSON.parse(stored);
             if (Array.isArray(parsed)) {
               this.likedProjects = new Set(parsed);
+              console.log(
+                `📚 Loaded ${parsed.length} liked project(s) for user ${authStore.user.name}`
+              );
             }
+          } else {
+            console.log(
+              `📚 No liked projects found for user ${authStore.user.name}`
+            );
           }
         } catch (error) {
           console.warn("Error loading user liked projects:", error);
@@ -414,6 +481,9 @@ export const useProjectStore = defineStore("projects", {
           localStorage.setItem(
             key,
             JSON.stringify(Array.from(this.likedProjects))
+          );
+          console.log(
+            `💾 Saved ${this.likedProjects.size} liked project(s) for user ${authStore.user.name}`
           );
         } catch (error) {
           console.warn("Error saving user liked projects:", error);
@@ -488,6 +558,7 @@ export const useProjectStore = defineStore("projects", {
       const project = this.projects.find((p) => p.id === projectId);
       if (project) {
         project.views++;
+        console.log(`📊 Project "${project.title}" - Views: ${project.views}`);
       }
     },
 
@@ -703,10 +774,7 @@ export const useProjectStore = defineStore("projects", {
       this.userProjects.unshift(newProject); // Add to user projects as well
 
       console.log("After creation:", {
-        newProject: newProject,
-        totalProjects: this.projects.length,
-        totalUserProjects: this.userProjects.length,
-        userProjectIds: this.userProjects.map((p) => p.id),
+        newProject,
       });
 
       // Update pagination

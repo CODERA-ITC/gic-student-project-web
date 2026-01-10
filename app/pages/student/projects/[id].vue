@@ -146,6 +146,15 @@ isLoading.value = false;
 // Load user's liked projects when component mounts
 onMounted(async () => {
   await projectStore.loadUserLikedProjects();
+
+  // Track unique view
+  const { trackView } = useProjectView();
+  const isUniqueView = await trackView(projectId);
+
+  // Only increment views if it's a unique view
+  if (isUniqueView && project.value) {
+    projectStore.incrementViews(project.value.id);
+  }
 });
 
 // Watch for auth changes and reload liked projects

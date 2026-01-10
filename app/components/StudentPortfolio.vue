@@ -102,9 +102,9 @@
         </div>
         <div class="text-center">
           <div class="text-lg font-bold text-gray-900 dark:text-white">
-            {{ gpa || "N/A" }}
+            {{ joined || "2026" }}
           </div>
-          <div class="text-xs text-gray-500 dark:text-gray-400">GPA</div>
+          <div class="text-xs text-gray-500 dark:text-gray-400">Joined</div>
         </div>
         <div class="text-center">
           <div class="text-lg font-bold text-gray-900 dark:text-white">
@@ -199,6 +199,7 @@ interface Props {
   skills?: string[];
   projectCount?: number;
   gpa?: number;
+  joined?: string;
   gen?: number;
   social?: StudentSocial;
   maxSkills?: number;

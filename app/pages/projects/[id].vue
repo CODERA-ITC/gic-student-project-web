@@ -75,6 +75,15 @@ const showAuthModal = ref(false);
 // Load user's liked projects when component mounts
 onMounted(async () => {
   await projectStore.loadUserLikedProjects();
+
+  // Track unique view
+  const { trackView } = useProjectView();
+  const isUniqueView = await trackView(projectId);
+
+  // Only increment views if it's a unique view
+  if (isUniqueView && project.value) {
+    projectStore.incrementViews(project.value.id);
+  }
 });
 
 // Watch for auth changes and reload liked projects
@@ -115,15 +124,15 @@ const toggleLike = async () => {
 
 const shareProject = async () => {
   const url = window.location.href;
+
+  console.log("Sharing project URL:", url);
   const toast = useToast();
 
   try {
     if (navigator.share) {
       // Use native share API if available (mobile devices, some browsers)
       await navigator.share({
-        title: project.value.title,
-        text: project.value.description,
-        url: url,
+        text: url,
       });
       toast.add({
         title: "Shared successfully!",

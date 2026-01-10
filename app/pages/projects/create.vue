@@ -328,22 +328,44 @@
                   Technologies Used *
                 </label>
                 <div class="space-y-3">
-                  <div class="flex gap-2">
-                    <input
-                      v-model="techInput"
-                      type="text"
-                      placeholder="e.g., React, Node.js, MongoDB..."
-                      class="flex-1 px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                      @keyup.enter="addTechnology"
-                    />
-                    <ButtonsPresetButton
-                      label="Add"
-                      icon="i-heroicons-plus"
-                      color="primary"
-                      variant="solid"
-                      size="lg"
-                      @click="addTechnology"
-                    />
+                  <div class="relative tech-suggestion-container">
+                    <div class="flex gap-2">
+                      <input
+                        v-model="techInput"
+                        type="text"
+                        placeholder="e.g., React, Node.js, MongoDB..."
+                        class="flex-1 px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                        @keyup.enter="addTechnology"
+                        @focus="showTechSuggestions = true"
+                        @keydown.escape="showTechSuggestions = false"
+                      />
+                      <ButtonsPresetButton
+                        label="Add"
+                        icon="i-heroicons-plus"
+                        color="primary"
+                        variant="solid"
+                        size="lg"
+                        @click="addTechnology"
+                      />
+                    </div>
+
+                    <!-- Technology Suggestions Dropdown -->
+                    <div
+                      v-if="showTechSuggestions && techSuggestions.length > 0"
+                      class="absolute top-full left-0 right-0 z-50 mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg max-h-48 overflow-y-auto"
+                    >
+                      <div
+                        v-for="suggestion in techSuggestions"
+                        :key="suggestion"
+                        @click="selectTechSuggestion(suggestion)"
+                        class="px-4 py-2 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer border-b border-gray-100 dark:border-slate-700 last:border-b-0 transition-colors"
+                      >
+                        <span
+                          class="font-medium text-blue-900 dark:text-white"
+                          >{{ suggestion }}</span
+                        >
+                      </div>
+                    </div>
                   </div>
                   <div class="flex flex-wrap gap-2">
                     <UBadge
@@ -367,22 +389,44 @@
                   Tags
                 </label>
                 <div class="space-y-3">
-                  <div class="flex gap-2">
-                    <input
-                      v-model="tagInput"
-                      type="text"
-                      placeholder="e.g., AI, Machine Learning, Web Development..."
-                      class="flex-1 px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                      @keyup.enter="addTag"
-                    />
-                    <ButtonsPresetButton
-                      label="Add"
-                      icon="i-heroicons-plus"
-                      color="primary"
-                      variant="solid"
-                      size="lg"
-                      @click="addTag"
-                    />
+                  <div class="relative tag-suggestion-container">
+                    <div class="flex gap-2">
+                      <input
+                        v-model="tagInput"
+                        type="text"
+                        placeholder="e.g., AI, Machine Learning, Web Development..."
+                        class="flex-1 px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                        @keyup.enter="addTag"
+                        @focus="showTagSuggestions = true"
+                        @keydown.escape="showTagSuggestions = false"
+                      />
+                      <ButtonsPresetButton
+                        label="Add"
+                        icon="i-heroicons-plus"
+                        color="primary"
+                        variant="solid"
+                        size="lg"
+                        @click="addTag"
+                      />
+                    </div>
+
+                    <!-- Tag Suggestions Dropdown -->
+                    <div
+                      v-if="showTagSuggestions && tagSuggestions.length > 0"
+                      class="absolute top-full left-0 right-0 z-50 mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg max-h-48 overflow-y-auto"
+                    >
+                      <div
+                        v-for="suggestion in tagSuggestions"
+                        :key="suggestion"
+                        @click="selectTagSuggestion(suggestion)"
+                        class="px-4 py-2 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer border-b border-gray-100 dark:border-slate-700 last:border-b-0 transition-colors"
+                      >
+                        <span
+                          class="font-medium text-blue-900 dark:text-white"
+                          >{{ suggestion }}</span
+                        >
+                      </div>
+                    </div>
                   </div>
                   <div class="flex flex-wrap gap-2">
                     <UBadge
@@ -433,7 +477,7 @@
                 <label
                   class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3"
                 >
-                  Repository Visibility
+                  Project Visibility
                 </label>
                 <div class="flex gap-4">
                   <label
@@ -496,12 +540,20 @@
                     </p>
                     <!-- Member Search -->
                     <div class="mb-3">
-                      <input
-                        v-model="memberSearchQuery"
-                        type="text"
-                        placeholder="Search members by name or role..."
-                        class="w-full px-3 py-2 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                      />
+                      <div class="relative">
+                        <input
+                          v-model="memberSearchQuery"
+                          type="text"
+                          placeholder="Search members by name or role..."
+                          class="w-full px-3 py-2 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                          @keydown.escape="memberSearchQuery = ''"
+                        />
+                        <UIcon
+                          v-if="isSearchingMembers"
+                          name="i-heroicons-arrow-path"
+                          class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-500 animate-spin"
+                        />
+                      </div>
                     </div>
                     <div
                       class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
@@ -542,11 +594,13 @@
                     <p
                       v-if="
                         filteredSuggestedMembers.length === 0 &&
-                        memberSearchQuery
+                        debouncedMemberSearchQuery
                       "
                       class="text-sm text-gray-500 dark:text-gray-400 text-center py-4"
                     >
-                      No members found matching "{{ memberSearchQuery }}"
+                      No members found matching "{{
+                        debouncedMemberSearchQuery
+                      }}"
                     </p>
                   </div>
 
@@ -1168,7 +1222,7 @@ definePageMeta({
   middleware: ["auth"],
 });
 
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useProjectStore } from "~/stores/projects";
 import { useAuthStore } from "~/stores/auth";
@@ -1186,6 +1240,7 @@ import {
   durationOptions,
   academicYearOptions,
   visibilityOptions,
+  technologiesOptions,
 } from "~/constants/project-options";
 
 const router = useRouter();
@@ -1206,8 +1261,8 @@ onMounted(async () => {
     return;
   }
 
-  // First load categories
-  await projectStore.fetchCategories();
+  // First load categories and tags
+  await Promise.all([projectStore.fetchCategories(), projectStore.fetchTags()]);
 
   // Then check for edit mode
   const editId = route.query.edit;
@@ -1227,6 +1282,34 @@ onMounted(async () => {
         saveToLocalStorage();
       }
     });
+
+    // Handle click outside for tag suggestions
+    // Remove any existing listener first to prevent duplicates
+    document.removeEventListener("click", handleClickOutsideTag);
+    document.addEventListener("click", handleClickOutsideTag);
+  }
+});
+
+// Hide suggestions when clicking outside
+const handleClickOutsideTag = (event) => {
+  const target = event.target;
+
+  // Check if click is outside tech suggestions
+  const techContainer = target.closest(".tech-suggestion-container");
+  if (!techContainer) {
+    showTechSuggestions.value = false;
+  }
+
+  // Check if click is outside tag suggestions
+  const tagContainer = target.closest(".tag-suggestion-container");
+  if (!tagContainer) {
+    showTagSuggestions.value = false;
+  }
+};
+
+onUnmounted(() => {
+  if (process.client) {
+    document.removeEventListener("click", handleClickOutsideTag);
   }
 });
 
@@ -1297,6 +1380,11 @@ const isSaving = ref(false);
 const techInput = ref("");
 const tagInput = ref("");
 const memberInput = ref("");
+const showTagSuggestions = ref(false);
+const showTechSuggestions = ref(false);
+const debouncedTechInput = ref("");
+const debouncedTagInput = ref("");
+const debouncedMemberSearchQuery = ref("");
 const memberSearchQuery = ref("");
 const iconSearchQuery = ref("");
 const editingFeatureIndex = ref(-1);
@@ -1312,25 +1400,107 @@ const featureInput = ref({
 const showDraftModal = ref(false);
 const draftData = ref(null);
 
-// Use suggested team members from constants
-const suggestedMembers = ref(defaultSuggestedMembers);
+// Dynamic team members from API search
+const suggestedMembers = ref([]);
+const isSearchingMembers = ref(false);
 
 // Available categories from store
 const availableCategories = computed(() => {
   return projectStore.availableCategories.filter((cat) => cat !== "All");
 });
 
+// Helper function to get initials from name
+const getInitials = (name) => {
+  if (!name) return "U";
+  const parts = name.trim().split(" ");
+  if (parts.length === 1) {
+    return parts[0].substring(0, 2).toUpperCase();
+  }
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+};
+
+// Helper function to generate avatar URL from name
+const generateAvatarFromName = (name) => {
+  const initials = getInitials(name);
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+    name
+  )}&background=random&color=fff&bold=true&size=128`;
+};
+
 // Helper functions for team members
 const isTeamMemberSelected = (member) => {
-  const memberName = `${member.firstName} ${member.lastName}`;
-  return form.value.teamMembers.some(
-    (m) => (typeof m === "string" ? m : m.name) === memberName
-  );
+  // Use ID comparison to handle users with same name but different IDs
+  return form.value.teamMembers.some((m) => {
+    // If m is a string, it's old data, compare by name
+    if (typeof m === "string") {
+      const memberName = `${member.firstName} ${member.lastName}`;
+      return m === memberName;
+    }
+    // Use ID comparison for proper selection
+    return m.id === member.id;
+  });
 };
 
 // Computed properties for search filtering
 const filteredSuggestedMembers = computed(() => {
-  return searchTeamMembers(suggestedMembers.value, memberSearchQuery.value);
+  // Deduplicate by user ID to prevent showing same user multiple times
+  const uniqueMembers = new Map();
+  suggestedMembers.value.forEach((member) => {
+    if (!uniqueMembers.has(member.id)) {
+      uniqueMembers.set(member.id, member);
+    }
+  });
+  return Array.from(uniqueMembers.values()).slice(0, 5);
+});
+
+// Debounce member search input and call API
+let memberDebounceTimeout = null;
+watch(memberSearchQuery, async (newValue) => {
+  clearTimeout(memberDebounceTimeout);
+
+  if (!newValue.trim()) {
+    suggestedMembers.value = [];
+    debouncedMemberSearchQuery.value = "";
+    return;
+  }
+
+  memberDebounceTimeout = setTimeout(async () => {
+    debouncedMemberSearchQuery.value = newValue;
+
+    try {
+      isSearchingMembers.value = true;
+      const results = await authStore.searchUsers(newValue);
+
+      // Transform API results to match TeamMember interface
+      // Deduplicate results from API by ID before mapping
+      const uniqueResults = [];
+      const seenIds = new Set();
+
+      results.forEach((user) => {
+        const userId = user.id?.toString();
+        if (userId && !seenIds.has(userId)) {
+          seenIds.add(userId);
+          uniqueResults.push(user);
+        }
+      });
+
+      suggestedMembers.value = uniqueResults.map((user, index) => {
+        const fullName = user.name || "Unknown User";
+        return {
+          id: parseInt(user.id) || index + 1,
+          firstName: fullName.split(" ")[0] || "",
+          lastName: fullName.split(" ").slice(1).join(" ") || "",
+          role: "Team Member",
+          avatar: user.avatar || generateAvatarFromName(fullName),
+        };
+      });
+    } catch (error) {
+      console.error("Failed to search members:", error);
+      suggestedMembers.value = [];
+    } finally {
+      isSearchingMembers.value = false;
+    }
+  }, 300);
 });
 
 const filteredIcons = computed(() => {
@@ -1348,14 +1518,7 @@ const form = ref({
   thumbnails: [],
   category: "Artificial Intelligence",
   academicYear: "2024-2025",
-  technologies: [
-    "Python",
-    "Computer Vision",
-    "YOLO",
-    "OpenCV",
-    "PyTorch",
-    "FiftyOne",
-  ],
+  technologies: [],
   githubUrl: "https://github.com/sarahchen/ai-cat-detection",
   demoUrl: "https://ai-cat-detection.demo.com",
   visibility: "public",
@@ -1407,7 +1570,7 @@ const form = ref({
       status: "done",
     },
   ],
-  tags: ["artificial-intelligence", "python", "computer-vision", "yolo"],
+  tags: [],
   course: "Artificial Intelligence & Computer Vision",
 });
 
@@ -1531,6 +1694,38 @@ const formatTimeAgo = (date) => {
   return "today";
 };
 
+// Technology suggestions from static options
+const techSuggestions = computed(() => {
+  if (!debouncedTechInput.value.trim()) return [];
+
+  const input = debouncedTechInput.value.toLowerCase();
+
+  return technologiesOptions
+    .filter(
+      (tech) =>
+        tech.toLowerCase().includes(input) &&
+        !form.value.technologies.includes(tech)
+    )
+    .slice(0, 5);
+});
+
+// Debounce tech input
+let techDebounceTimeout = null;
+watch(techInput, (newValue) => {
+  clearTimeout(techDebounceTimeout);
+  techDebounceTimeout = setTimeout(() => {
+    debouncedTechInput.value = newValue;
+  }, 300);
+});
+
+const selectTechSuggestion = (suggestion) => {
+  if (!form.value.technologies.includes(suggestion)) {
+    form.value.technologies.push(suggestion);
+  }
+  techInput.value = "";
+  showTechSuggestions.value = false;
+};
+
 const addTechnology = () => {
   if (
     techInput.value.trim() &&
@@ -1538,6 +1733,7 @@ const addTechnology = () => {
   ) {
     form.value.technologies.push(techInput.value.trim());
     techInput.value = "";
+    showTechSuggestions.value = false;
   }
 };
 
@@ -1566,7 +1762,37 @@ watch(
   }
 );
 
+// Tag suggestions from store
+const tagSuggestions = computed(() => {
+  if (!debouncedTagInput.value.trim()) return [];
 
+  const input = debouncedTagInput.value.toLowerCase();
+  const availableTags = projectStore.availableTags || [];
+
+  return availableTags
+    .filter(
+      (tag) =>
+        tag.toLowerCase().includes(input) && !form.value.tags.includes(tag)
+    )
+    .slice(0, 5);
+});
+
+// Debounce tag input
+let tagDebounceTimeout = null;
+watch(tagInput, (newValue) => {
+  clearTimeout(tagDebounceTimeout);
+  tagDebounceTimeout = setTimeout(() => {
+    debouncedTagInput.value = newValue;
+  }, 300);
+});
+
+const selectTagSuggestion = (suggestion) => {
+  if (!form.value.tags.includes(suggestion)) {
+    form.value.tags.push(suggestion);
+  }
+  tagInput.value = "";
+  showTagSuggestions.value = false;
+};
 
 const addTag = () => {
   if (
@@ -1575,21 +1801,30 @@ const addTag = () => {
   ) {
     form.value.tags.push(tagInput.value.trim());
     tagInput.value = "";
+    showTagSuggestions.value = false;
   }
 };
 
 const toggleTeamMember = (member) => {
   const memberName = `${member.firstName} ${member.lastName}`;
-  const existingIndex = form.value.teamMembers.findIndex(
-    (m) => (typeof m === "string" ? m : m.name) === memberName
-  );
+
+  // Use ID for comparison to handle users with same name
+  const existingIndex = form.value.teamMembers.findIndex((m) => {
+    // If m is a string, it's old data, use name comparison
+    if (typeof m === "string") {
+      return m === memberName;
+    }
+    // Use ID comparison for proper selection
+    return m.id === member.id;
+  });
 
   if (existingIndex >= 0) {
     // Remove member if already selected
     form.value.teamMembers.splice(existingIndex, 1);
   } else {
-    // Add member if not selected
+    // Add member if not selected - include ID
     form.value.teamMembers.push({
+      id: member.id,
       name: memberName,
       role: member.role,
       avatar: member.avatar,
@@ -1794,6 +2029,7 @@ const submitForm = async () => {
       description: form.value.description,
       academicYear: form.value.academicYear,
       author: {
+        id: authStore.user?.id,
         name: authStore.user?.name || "Current User",
         avatar:
           authStore.user?.avatar ||
@@ -1833,17 +2069,8 @@ const submitForm = async () => {
       course: form.value.course || "Project Development",
     };
 
-    console.log(
-      "Project data to be created:",
-      JSON.stringify(projectData, null, 2)
-    );
     let result;
     if (editMode.value) {
-      // Update existing project
-      console.log("Edit mode - updating project:", {
-        editProjectId: editProjectId.value,
-        type: typeof editProjectId.value,
-      });
       result = await projectStore.updateProject(
         parseInt(editProjectId.value),
         projectData
