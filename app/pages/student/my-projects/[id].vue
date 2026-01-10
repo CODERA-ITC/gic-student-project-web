@@ -233,7 +233,7 @@ const isOwner = computed(() => {
   if (!project.value || !authStore.user) {
     return false;
   }
-  return project.value.author?.name === authStore.user.name;
+  return project.value.author?.id === authStore.user.id;
 });
 
 // Image carousel

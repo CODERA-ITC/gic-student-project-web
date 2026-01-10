@@ -226,7 +226,7 @@ export const useAuthStore = defineStore("auth", {
         this.user = {
           id: userData.id,
           email: userData.email,
-          name: `${userData.firstname || ""} ${userData.lastname || ""}`.trim(),
+          name: `${userData.firstname || ""} ${userData.lastname || userData.email}`.trim(),
           firstname: userData.firstname,
           lastname: userData.lastname,
           role: userData.role.name,
@@ -279,8 +279,8 @@ export const useAuthStore = defineStore("auth", {
 
         // Split full name into first and last name
         const nameParts = fullName.trim().split(" ");
-        const firstname = nameParts[0];
-        const lastname = nameParts.slice(1).join(" ") || "";
+        const firstName = nameParts[0];
+        const lastName = nameParts.slice(1).join(" ") || "";
 
         /**
          * {
@@ -301,8 +301,8 @@ export const useAuthStore = defineStore("auth", {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            firstname,
-            lastname,
+            firstName,
+            lastName,
             email: email.trim().toLowerCase(),
             password,
             departmentCode: "GIC",
