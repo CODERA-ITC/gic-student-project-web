@@ -3,7 +3,7 @@ import type { Project } from "~/stores/projects";
 export const projectsData: Project[] = [
   {
     id: 1,
-    title: "AI Chat Assistant",
+    name: "AI Chat Assistant",
     description:
       "An intelligent chatbot powered by GPT-3 for customer support. This project aims to enhance user experience by providing instant and accurate responses to common inquiries.",
     academicYear: "2024-2025",
@@ -49,7 +49,7 @@ export const projectsData: Project[] = [
     features: [
       {
         date: "Sep 1, 2024",
-        title: "GPT-3 Integration",
+        name: "GPT-3 Integration",
         description:
           "Set up GPT-3 API integration and basic chatbot framework with Python backend.",
         icon: "i-lucide-brain",
@@ -57,7 +57,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Sep 15, 2024",
-        title: "Conversation History",
+        name: "Conversation History",
         description:
           "Implemented conversation persistence and user session management with MongoDB.",
         icon: "i-lucide-message-circle",
@@ -65,7 +65,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Oct 1, 2024",
-        title: "Multi-language Support",
+        name: "Multi-language Support",
         description:
           "Added support for multiple languages and improved response accuracy.",
         icon: "i-lucide-globe",
@@ -73,7 +73,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Oct 15, 2024",
-        title: "Production Deployment",
+        name: "Production Deployment",
         description:
           "Successfully deployed to production with monitoring and analytics dashboard.",
         icon: "i-lucide-rocket",
@@ -86,7 +86,7 @@ export const projectsData: Project[] = [
   },
   {
     id: 2,
-    title: "Mobile Fitness App",
+    name: "Mobile Fitness App",
     description: "Track workouts, nutrition, and health metrics on the go.",
     academicYear: "2024-2025",
     author: {
@@ -127,7 +127,7 @@ export const projectsData: Project[] = [
     features: [
       {
         date: "Aug 20, 2024",
-        title: "Core Features",
+        name: "Core Features",
         description:
           "Developed workout tracking, nutrition logging, and health metrics dashboard.",
         icon: "i-lucide-activity",
@@ -135,7 +135,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Sep 10, 2024",
-        title: "Social Integration",
+        name: "Social Integration",
         description:
           "Added friend connections, workout sharing, and community challenges.",
         icon: "i-lucide-users",
@@ -143,7 +143,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Oct 5, 2024",
-        title: "Wearable Sync",
+        name: "Wearable Sync",
         description:
           "Integrated with HealthKit and popular fitness wearables for automatic data sync.",
         icon: "i-lucide-watch",
@@ -151,7 +151,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Nov 1, 2024",
-        title: "Launch",
+        name: "Launch",
         description:
           "Final testing, app store submission, and public launch preparation.",
         icon: "i-lucide-rocket",
@@ -164,7 +164,7 @@ export const projectsData: Project[] = [
   },
   {
     id: 3,
-    title: "E-Commerce Platform",
+    name: "E-Commerce Platform",
     description:
       "Full-stack online store with payment integration and analytics.",
     academicYear: "2024-2025",
@@ -214,7 +214,7 @@ export const projectsData: Project[] = [
     features: [
       {
         date: "May 1, 2024",
-        title: "Product Catalog",
+        name: "Product Catalog",
         description:
           "Built product management system with categories, search, and inventory tracking.",
         icon: "i-lucide-package",
@@ -222,7 +222,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Jun 15, 2024",
-        title: "Payment Integration",
+        name: "Payment Integration",
         description:
           "Integrated Stripe payment processing with cart management and order flow.",
         icon: "i-lucide-credit-card",
@@ -230,7 +230,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Jul 20, 2024",
-        title: "Analytics Dashboard",
+        name: "Analytics Dashboard",
         description:
           "Developed admin dashboard with sales analytics, user insights, and reporting.",
         icon: "i-lucide-bar-chart",
@@ -238,7 +238,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Aug 10, 2024",
-        title: "Production Launch",
+        name: "Production Launch",
         description:
           "Deployed to production with monitoring, security hardening, and performance optimization.",
         icon: "i-lucide-globe",
@@ -252,7 +252,7 @@ export const projectsData: Project[] = [
 
   {
     id: 4,
-    title: "Climate Monitoring IoT",
+    name: "Climate Monitoring IoT",
     description: "IoT sensors and dashboard for environmental monitoring.",
     academicYear: "2024-2025",
     author: {
@@ -293,7 +293,7 @@ export const projectsData: Project[] = [
     features: [
       {
         date: "Feb 1, 2024",
-        title: "Sensor Setup",
+        name: "Sensor Setup",
         description:
           "Deployed IoT sensors for temperature, humidity, and air quality monitoring.",
         icon: "i-lucide-thermometer",
@@ -301,7 +301,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Mar 15, 2024",
-        title: "Data Collection",
+        name: "Data Collection",
         description:
           "Implemented data aggregation system with real-time sensor data streaming.",
         icon: "i-lucide-database",
@@ -309,7 +309,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Apr 20, 2024",
-        title: "Dashboard",
+        name: "Dashboard",
         description:
           "Built interactive dashboard with data visualization and alert system.",
         icon: "i-lucide-monitor",
@@ -317,7 +317,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "May 30, 2024",
-        title: "Deployment",
+        name: "Deployment",
         description:
           "System deployment and integration with environmental monitoring networks.",
         icon: "i-lucide-cloud",
@@ -331,7 +331,7 @@ export const projectsData: Project[] = [
 
   {
     id: 5,
-    title: "Machine Learning Pipeline",
+    name: "Machine Learning Pipeline",
     description: "Automated data processing and model training framework.",
     academicYear: "2024-2025",
     author: {
@@ -376,7 +376,7 @@ export const projectsData: Project[] = [
     features: [
       {
         date: "Jan 15, 2024",
-        title: "Pipeline Architecture",
+        name: "Pipeline Architecture",
         description:
           "Designed scalable ML pipeline architecture using Apache Airflow and Docker.",
         icon: "i-lucide-git-branch",
@@ -384,7 +384,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Feb 20, 2024",
-        title: "Data Processing",
+        name: "Data Processing",
         description:
           "Implemented automated data cleaning, validation, and feature engineering modules.",
         icon: "i-lucide-filter",
@@ -392,7 +392,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Mar 25, 2024",
-        title: "Model Training",
+        name: "Model Training",
         description:
           "Built automated model training with hyperparameter tuning and validation.",
         icon: "i-lucide-brain",
@@ -400,7 +400,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Apr 30, 2024",
-        title: "Deployment",
+        name: "Deployment",
         description:
           "Deployed ML pipeline to production with monitoring and automated retraining.",
         icon: "i-lucide-server",
@@ -413,7 +413,7 @@ export const projectsData: Project[] = [
 
   {
     id: 6,
-    title: "Social Media Dashboard",
+    name: "Social Media Dashboard",
     description: "Manage and monitor multiple social accounts in one place.",
     academicYear: "2024-2025",
     author: {
@@ -454,7 +454,7 @@ export const projectsData: Project[] = [
     features: [
       {
         date: "Aug 1, 2023",
-        title: "OAuth Integration",
+        name: "OAuth Integration",
         description:
           "Implemented OAuth authentication for major social media platforms.",
         icon: "i-lucide-key",
@@ -462,7 +462,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Sep 15, 2023",
-        title: "Multi-platform Support",
+        name: "Multi-platform Support",
         description:
           "Added support for Twitter, Facebook, Instagram, and LinkedIn APIs.",
         icon: "i-lucide-share-2",
@@ -470,7 +470,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Oct 20, 2023",
-        title: "Analytics",
+        name: "Analytics",
         description:
           "Built engagement analytics and performance tracking dashboard.",
         icon: "i-lucide-trending-up",
@@ -478,7 +478,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Nov 30, 2023",
-        title: "Launch",
+        name: "Launch",
         description:
           "Public launch with user onboarding and customer support system.",
         icon: "i-lucide-rocket",
@@ -491,7 +491,7 @@ export const projectsData: Project[] = [
 
   {
     id: 7,
-    title: "Data Analytics Platform",
+    name: "Data Analytics Platform",
     description: "Real-time data visualization and reporting tool.",
     academicYear: "2024-2025",
     author: {
@@ -536,7 +536,7 @@ export const projectsData: Project[] = [
     features: [
       {
         date: "May 1, 2023",
-        title: "Data Connectors",
+        name: "Data Connectors",
         description:
           "Built connectors for databases, APIs, and file sources with real-time sync.",
         icon: "i-lucide-plug",
@@ -544,7 +544,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Jun 15, 2023",
-        title: "Visualization Engine",
+        name: "Visualization Engine",
         description:
           "Developed interactive charts, graphs, and custom visualization components.",
         icon: "i-lucide-bar-chart-3",
@@ -552,7 +552,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Jul 30, 2023",
-        title: "Report Builder",
+        name: "Report Builder",
         description:
           "Created drag-and-drop report builder with automated scheduling.",
         icon: "i-lucide-file-text",
@@ -560,7 +560,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Aug 31, 2023",
-        title: "Production",
+        name: "Production",
         description:
           "Deployed platform with enterprise security and scalability features.",
         icon: "i-lucide-server",
@@ -574,7 +574,7 @@ export const projectsData: Project[] = [
   // Additional projects for pagination testing
   {
     id: 8,
-    title: "IoT Home Automation",
+    name: "IoT Home Automation",
     description:
       "Smart home system controlling lights, temperature, and security using IoT sensors and mobile app integration.",
     academicYear: "2024-2025",
@@ -611,7 +611,7 @@ export const projectsData: Project[] = [
     features: [
       {
         date: "Feb 1, 2024",
-        title: "Hardware Setup",
+        name: "Hardware Setup",
         description:
           "Set up Arduino controllers, sensors, and smart device integration framework.",
         icon: "i-lucide-cpu",
@@ -619,7 +619,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Mar 15, 2024",
-        title: "Mobile App Development",
+        name: "Mobile App Development",
         description:
           "Built React Native app for remote control and monitoring of home systems.",
         icon: "i-lucide-smartphone",
@@ -627,7 +627,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Apr 20, 2024",
-        title: "MQTT Integration",
+        name: "MQTT Integration",
         description:
           "Implemented real-time communication between devices using MQTT protocol.",
         icon: "i-lucide-wifi",
@@ -635,7 +635,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "May 20, 2024",
-        title: "System Deployment",
+        name: "System Deployment",
         description:
           "Deployed complete home automation system with cloud monitoring.",
         icon: "i-lucide-home",
@@ -648,7 +648,7 @@ export const projectsData: Project[] = [
 
   {
     id: 9,
-    title: "Blockchain Voting System",
+    name: "Blockchain Voting System",
     description:
       "Secure and transparent voting platform built on Ethereum blockchain ensuring vote integrity and anonymity.",
     academicYear: "2024-2025",
@@ -689,7 +689,7 @@ export const projectsData: Project[] = [
     features: [
       {
         date: "Aug 1, 2023",
-        title: "Smart Contract Development",
+        name: "Smart Contract Development",
         description:
           "Developed secure voting smart contracts using Solidity with vote verification.",
         icon: "i-lucide-shield-check",
@@ -697,7 +697,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Sep 15, 2023",
-        title: "Web3 Integration",
+        name: "Web3 Integration",
         description:
           "Integrated Web3.js for blockchain interaction and wallet connectivity.",
         icon: "i-lucide-link",
@@ -705,7 +705,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Oct 30, 2023",
-        title: "IPFS Storage",
+        name: "IPFS Storage",
         description:
           "Implemented decentralized storage for candidate information and voting records.",
         icon: "i-lucide-database",
@@ -713,7 +713,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Dec 10, 2023",
-        title: "Security Audit",
+        name: "Security Audit",
         description:
           "Completed comprehensive security testing and deployed to Ethereum testnet.",
         icon: "i-lucide-lock",
@@ -726,7 +726,7 @@ export const projectsData: Project[] = [
 
   {
     id: 10,
-    title: "AR Shopping Experience",
+    name: "AR Shopping Experience",
     description:
       "Augmented reality mobile app allowing users to virtually try products before purchasing online.",
     academicYear: "2024-2025",
@@ -767,7 +767,7 @@ export const projectsData: Project[] = [
     features: [
       {
         date: "Jan 15, 2024",
-        title: "AR Foundation Setup",
+        name: "AR Foundation Setup",
         description:
           "Set up Unity AR Foundation with ARCore for Android device compatibility.",
         icon: "i-lucide-eye",
@@ -775,7 +775,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Feb 20, 2024",
-        title: "3D Model Integration",
+        name: "3D Model Integration",
         description:
           "Created and integrated 3D product models with realistic textures and lighting.",
         icon: "i-lucide-box",
@@ -783,7 +783,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Mar 15, 2024",
-        title: "Try-On Features",
+        name: "Try-On Features",
         description:
           "Implementing virtual try-on functionality for clothing and accessories.",
         icon: "i-lucide-user",
@@ -791,7 +791,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Apr 30, 2024",
-        title: "E-commerce Integration",
+        name: "E-commerce Integration",
         description:
           "Integration with shopping platforms for seamless purchase experience.",
         icon: "i-lucide-shopping-cart",
@@ -804,7 +804,7 @@ export const projectsData: Project[] = [
 
   {
     id: 11,
-    title: "Machine Learning Stock Predictor",
+    name: "Machine Learning Stock Predictor",
     description:
       "AI-powered platform that analyzes market trends and predicts stock prices using multiple ML algorithms.",
     academicYear: "2024-2025",
@@ -845,7 +845,7 @@ export const projectsData: Project[] = [
     features: [
       {
         date: "Aug 1, 2024",
-        title: "Data Collection",
+        name: "Data Collection",
         description:
           "Set up data pipelines to collect stock market data and financial indicators.",
         icon: "i-lucide-database",
@@ -853,7 +853,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Sep 15, 2024",
-        title: "Algorithm Development",
+        name: "Algorithm Development",
         description:
           "Developed LSTM and Random Forest models for price prediction analysis.",
         icon: "i-lucide-brain",
@@ -861,7 +861,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Oct 20, 2024",
-        title: "Model Training",
+        name: "Model Training",
         description:
           "Trained models on historical data with hyperparameter optimization.",
         icon: "i-lucide-trending-up",
@@ -869,7 +869,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Nov 5, 2024",
-        title: "Dashboard Launch",
+        name: "Dashboard Launch",
         description:
           "Deployed prediction dashboard with real-time market analysis.",
         icon: "i-lucide-monitor",
@@ -882,7 +882,7 @@ export const projectsData: Project[] = [
 
   {
     id: 12,
-    title: "Social Media Analytics Dashboard",
+    name: "Social Media Analytics Dashboard",
     description:
       "Comprehensive dashboard analyzing social media engagement across multiple platforms with real-time insights.",
     academicYear: "2024-2025",
@@ -919,7 +919,7 @@ export const projectsData: Project[] = [
     features: [
       {
         date: "Aug 20, 2024",
-        title: "Core Features",
+        name: "Core Features",
         description:
           "Developed workout tracking, nutrition logging, and health metrics dashboard.",
         icon: "i-lucide-activity",
@@ -927,7 +927,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Sep 10, 2024",
-        title: "Social Integration",
+        name: "Social Integration",
         description:
           "Added friend connections, workout sharing, and community challenges.",
         icon: "i-lucide-users",
@@ -935,7 +935,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Oct 5, 2024",
-        title: "Wearable Sync",
+        name: "Wearable Sync",
         description:
           "Integrated with HealthKit and popular fitness wearables for automatic data sync.",
         icon: "i-lucide-watch",
@@ -943,7 +943,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Nov 1, 2024",
-        title: "Launch",
+        name: "Launch",
         description:
           "Final testing, app store submission, and public launch preparation.",
         icon: "i-lucide-rocket",
@@ -956,7 +956,7 @@ export const projectsData: Project[] = [
 
   {
     id: 13,
-    title: "Virtual Classroom Platform",
+    name: "Virtual Classroom Platform",
     description:
       "Interactive online learning platform with video conferencing, whiteboard, and collaborative tools for remote education.",
     academicYear: "2024-2025",
@@ -997,7 +997,7 @@ export const projectsData: Project[] = [
     features: [
       {
         date: "Aug 20, 2024",
-        title: "Core Features",
+        name: "Core Features",
         description:
           "Developed workout tracking, nutrition logging, and health metrics dashboard.",
         icon: "i-lucide-activity",
@@ -1005,7 +1005,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Sep 10, 2024",
-        title: "Social Integration",
+        name: "Social Integration",
         description:
           "Added friend connections, workout sharing, and community challenges.",
         icon: "i-lucide-users",
@@ -1013,7 +1013,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Oct 5, 2024",
-        title: "Wearable Sync",
+        name: "Wearable Sync",
         description:
           "Integrated with HealthKit and popular fitness wearables for automatic data sync.",
         icon: "i-lucide-watch",
@@ -1021,7 +1021,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Nov 1, 2024",
-        title: "Launch",
+        name: "Launch",
         description:
           "Final testing, app store submission, and public launch preparation.",
         icon: "i-lucide-rocket",
@@ -1034,7 +1034,7 @@ export const projectsData: Project[] = [
 
   {
     id: 14,
-    title: "Cryptocurrency Trading Bot",
+    name: "Cryptocurrency Trading Bot",
     description:
       "Automated trading bot using technical analysis indicators and risk management strategies for cryptocurrency markets.",
     academicYear: "2024-2025",
@@ -1071,7 +1071,7 @@ export const projectsData: Project[] = [
     features: [
       {
         date: "Aug 20, 2024",
-        title: "Core Features",
+        name: "Core Features",
         description:
           "Developed workout tracking, nutrition logging, and health metrics dashboard.",
         icon: "i-lucide-activity",
@@ -1079,7 +1079,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Sep 10, 2024",
-        title: "Social Integration",
+        name: "Social Integration",
         description:
           "Added friend connections, workout sharing, and community challenges.",
         icon: "i-lucide-users",
@@ -1087,7 +1087,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Oct 5, 2024",
-        title: "Wearable Sync",
+        name: "Wearable Sync",
         description:
           "Integrated with HealthKit and popular fitness wearables for automatic data sync.",
         icon: "i-lucide-watch",
@@ -1095,7 +1095,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Nov 1, 2024",
-        title: "Launch",
+        name: "Launch",
         description:
           "Final testing, app store submission, and public launch preparation.",
         icon: "i-lucide-rocket",
@@ -1108,7 +1108,7 @@ export const projectsData: Project[] = [
 
   {
     id: 15,
-    title: "Weather Prediction API",
+    name: "Weather Prediction API",
     description:
       "RESTful API service providing accurate weather forecasts using machine learning models trained on historical data.",
     academicYear: "2024-2025",
@@ -1145,7 +1145,7 @@ export const projectsData: Project[] = [
     features: [
       {
         date: "Aug 20, 2024",
-        title: "Core Features",
+        name: "Core Features",
         description:
           "Developed workout tracking, nutrition logging, and health metrics dashboard.",
         icon: "i-lucide-activity",
@@ -1153,7 +1153,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Sep 10, 2024",
-        title: "Social Integration",
+        name: "Social Integration",
         description:
           "Added friend connections, workout sharing, and community challenges.",
         icon: "i-lucide-users",
@@ -1161,7 +1161,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Oct 5, 2024",
-        title: "Wearable Sync",
+        name: "Wearable Sync",
         description:
           "Integrated with HealthKit and popular fitness wearables for automatic data sync.",
         icon: "i-lucide-watch",
@@ -1169,7 +1169,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Nov 1, 2024",
-        title: "Launch",
+        name: "Launch",
         description:
           "Final testing, app store submission, and public launch preparation.",
         icon: "i-lucide-rocket",
@@ -1182,7 +1182,7 @@ export const projectsData: Project[] = [
 
   {
     id: 16,
-    title: "VR Museum Experience",
+    name: "VR Museum Experience",
     description:
       "Immersive virtual reality application allowing users to explore historical artifacts and art collections from around the world.",
     academicYear: "2024-2025",
@@ -1223,7 +1223,7 @@ export const projectsData: Project[] = [
     features: [
       {
         date: "Mar 15, 2024",
-        title: "Project Kickoff",
+        name: "Project Kickoff",
         description:
           "Kicked off the project with team alignment. Set up project milestones and allocated resources.",
         icon: "i-lucide-rocket",
@@ -1231,7 +1231,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Apr 2, 2024",
-        title: "VR Environment Setup",
+        name: "VR Environment Setup",
         description:
           "Configured Unity VR development environment and integrated Oculus SDK for headset compatibility.",
         icon: "i-lucide-headphones",
@@ -1239,7 +1239,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "May 10, 2024",
-        title: "Museum Asset Creation",
+        name: "Museum Asset Creation",
         description:
           "Created 3D models of historical artifacts using Blender. Optimized models for VR performance.",
         icon: "i-lucide-box",
@@ -1247,7 +1247,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Jun 15, 2024",
-        title: "Interactive Systems",
+        name: "Interactive Systems",
         description:
           "Implementing interaction systems for artifact examination and information display panels.",
         icon: "i-lucide-hand",
@@ -1255,7 +1255,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Jul 20, 2024",
-        title: "Multiplayer Integration",
+        name: "Multiplayer Integration",
         description:
           "Adding Photon networking to enable multiple users to explore the museum together.",
         icon: "i-lucide-users",
@@ -1263,7 +1263,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Aug 30, 2024",
-        title: "Final Testing & Polish",
+        name: "Final Testing & Polish",
         description:
           "Comprehensive testing across different VR headsets and final performance optimizations.",
         icon: "i-lucide-check-circle",
@@ -1276,7 +1276,7 @@ export const projectsData: Project[] = [
 
   {
     id: 17,
-    title: "Smart Parking System",
+    name: "Smart Parking System",
     description:
       "IoT-based parking management system with real-time space detection, mobile app booking, and payment integration.",
     academicYear: "2024-2025",
@@ -1319,7 +1319,7 @@ export const projectsData: Project[] = [
     features: [
       {
         date: "Aug 20, 2024",
-        title: "Core Features",
+        name: "Core Features",
         description:
           "Developed workout tracking, nutrition logging, and health metrics dashboard.",
         icon: "i-lucide-activity",
@@ -1327,7 +1327,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Sep 10, 2024",
-        title: "Social Integration",
+        name: "Social Integration",
         description:
           "Added friend connections, workout sharing, and community challenges.",
         icon: "i-lucide-users",
@@ -1335,7 +1335,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Oct 5, 2024",
-        title: "Wearable Sync",
+        name: "Wearable Sync",
         description:
           "Integrated with HealthKit and popular fitness wearables for automatic data sync.",
         icon: "i-lucide-watch",
@@ -1343,7 +1343,7 @@ export const projectsData: Project[] = [
       },
       {
         date: "Nov 1, 2024",
-        title: "Launch",
+        name: "Launch",
         description:
           "Final testing, app store submission, and public launch preparation.",
         icon: "i-lucide-rocket",

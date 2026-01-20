@@ -13,7 +13,7 @@
       ]"
     >
       <!-- Circular featured badge -->
-      <template v-if="isFeatured">
+      <template v-if="project.featured">
         <div class="absolute top-3 left-3 z-50 animate-pulse">
           <UBadge
             icon="i-lucide-rocket"
@@ -227,10 +227,6 @@ import { useAuthStore } from "~/stores/auth";
 const authStore = useAuthStore();
 
 const props = defineProps({
-  isFeatured: {
-    type: Boolean,
-    default: false,
-  },
   baseRoute: {
     type: String,
     default: "/projects",
@@ -297,11 +293,12 @@ const toggleLikeHandler = () => {
   console.log(
     `Toggled like for project ID: ${props.project.id}, new like status: ${
       isLiked.value ? "liked" : "unliked"
-    }`
+    }`,
   );
 };
 
 const formatNumber = (num) => {
+  if (num === undefined || num === null) return "0";
   if (num >= 1000) return (num / 1000).toFixed(1) + "k";
   return num.toString();
 };

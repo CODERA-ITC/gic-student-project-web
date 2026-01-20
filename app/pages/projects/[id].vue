@@ -53,7 +53,7 @@ import { useAuthStore } from "~/stores/auth";
 const route = useRoute();
 const projectStore = useProjectStore();
 const authStore = useAuthStore();
-const projectId = parseInt(route.params.id as string);
+const projectId = route.params.id as string;
 
 // Get project from store
 const project = ref(null);
@@ -95,7 +95,7 @@ watch(
     } else {
       projectStore.clearUserLikedProjects();
     }
-  }
+  },
 );
 
 const isLiked = computed(() => {

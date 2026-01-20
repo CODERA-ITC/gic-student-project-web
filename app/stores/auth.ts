@@ -35,8 +35,9 @@ export interface User {
   avatar?: string;
   program?: string;
   year?: string;
-  firstname?: string;
-  lastname?: string;
+  firstName?: string;
+  lastName?: string;
+  departmentId?: string;
 }
 
 export interface AuthState {
@@ -62,6 +63,7 @@ export const useAuthStore = defineStore("auth", {
     isAdmin: (state) => state.user?.role === "ADMIN",
     currentUser: (state) => state.user,
     userRole: (state) => state.user?.role || null,
+    token: (state) => safeLocalStorage.getItem("access_token"),
   },
 
   actions: {
@@ -171,7 +173,7 @@ export const useAuthStore = defineStore("auth", {
           atob(base64)
             .split("")
             .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-            .join("")
+            .join(""),
         );
         return JSON.parse(jsonPayload);
       } catch (error) {
@@ -226,13 +228,14 @@ export const useAuthStore = defineStore("auth", {
         this.user = {
           id: userData.id,
           email: userData.email,
-          name: `${userData.firstname || ""} ${userData.lastname || userData.email}`.trim(),
-          firstname: userData.firstname,
-          lastname: userData.lastname,
+          name: `${userData.firstName || ""} ${userData.lastName || userData.email}`.trim(),
+          firstName: userData.firstName,
+          lastName: userData.lastName,
           role: userData.role.name,
           avatar: userData.avatar || undefined,
           program: userData.program,
           year: userData.year,
+          departmentId: userData.department.id,
         };
       } catch (error) {
         console.error("Failed to fetch current user:", error);
@@ -248,7 +251,7 @@ export const useAuthStore = defineStore("auth", {
       email: string,
       password: string,
       confirmPassword: string,
-      role: Role
+      role: Role,
     ): Promise<void> {
       this.isLoading = true;
       this.error = null;
@@ -284,8 +287,8 @@ export const useAuthStore = defineStore("auth", {
 
         /**
          * {
-        "firstname": "John",
-        "lastname": "Doe",
+        "firstName": "John",
+        "lastName": "Doe",
         "email": "john@example.com",
         "password": "@password123",
         "departmentCode": "GIC",
@@ -383,7 +386,7 @@ export const useAuthStore = defineStore("auth", {
               Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
-          }
+          },
         );
 
         if (!response.ok) {
@@ -400,9 +403,7 @@ export const useAuthStore = defineStore("auth", {
           id: userData.id,
           name: `${userData.firstname || ""} ${userData.lastname || ""}`.trim(),
           email: userData.email,
-          avatar:
-            userData.avatar ||
-           "" , // default avatar empty string if not provided
+          avatar: userData.avatar || "", // default avatar empty string if not provided
         }));
       } catch (error) {
         console.error("Failed to search users:", error);
@@ -417,7 +418,7 @@ export const useAuthStore = defineStore("auth", {
 
     async handleOAuthCallback(
       token: string,
-      refreshToken?: string
+      refreshToken?: string,
     ): Promise<void> {
       this.isLoading = true;
       this.error = null;
@@ -533,7 +534,7 @@ export const useAuthStore = defineStore("auth", {
         // User can try again on next navigation or refresh
         console.error(
           "Failed to restore auth (keeping tokens for retry):",
-          error
+          error,
         );
 
         // Keep user authenticated if we already have their data
@@ -585,14 +586,14 @@ export const useAuthStore = defineStore("auth", {
         // Store new access token
         safeLocalStorage.setItem(
           "access_token",
-          responseData.data.access_token
+          responseData.data.access_token,
         );
 
         // Update refresh token if provided
         if (responseData.data.refresh_token) {
           safeLocalStorage.setItem(
             "refresh_token",
-            responseData.data.refresh_token
+            responseData.data.refresh_token,
           );
         }
 
@@ -626,7 +627,7 @@ export const useAuthStore = defineStore("auth", {
      */
     async makeAuthRequest(
       url: string,
-      options: RequestInit = {}
+      options: RequestInit = {},
     ): Promise<Response> {
       // Check if token is expired and refresh if needed
       if (this.isTokenExpired()) {
@@ -777,14 +778,14 @@ export const useAuthStore = defineStore("auth", {
             const errorData = await response.json().catch(() => ({}));
             console.log("❌ Error response:", errorData);
             throw new Error(
-              errorData.message || "Failed to save security questions"
+              errorData.message || "Failed to save security questions",
             );
           }
 
           const responseData = await response.json().catch(() => ({}));
           console.log(
             "✅ Security questions saved successfully:",
-            responseData
+            responseData,
           );
         }
 

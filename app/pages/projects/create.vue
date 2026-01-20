@@ -37,8 +37,8 @@
                   isSaving
                     ? "Saving..."
                     : lastSaved
-                    ? `Saved ${formatTimeAgo(lastSaved)}`
-                    : "Auto-save enabled"
+                      ? `Saved ${formatTimeAgo(lastSaved)}`
+                      : "Auto-save enabled"
                 }}
               </span>
             </div>
@@ -70,8 +70,8 @@
                     currentStep > idx
                       ? 'bg-blue-900 text-white'
                       : currentStep === idx
-                      ? 'bg-blue-900 text-white ring-2 ring-blue-800'
-                      : 'bg-gray-300 dark:bg-slate-700 text-gray-600 dark:text-gray-400',
+                        ? 'bg-blue-900 text-white ring-2 ring-blue-800'
+                        : 'bg-gray-300 dark:bg-slate-700 text-gray-600 dark:text-gray-400',
                   ]"
                 >
                   {{ idx + 1 }}
@@ -102,7 +102,7 @@
                   Project Title *
                 </label>
                 <input
-                  v-model="form.title"
+                  v-model="form.name"
                   type="text"
                   placeholder="Enter a descriptive project title"
                   class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
@@ -232,7 +232,9 @@
                         class="relative group"
                       >
                         <img
-                          :src="image"
+                          :src="
+                            typeof image === 'string' ? image : image.preview
+                          "
                           :alt="`Project thumbnail ${index + 1}`"
                           class="w-full h-32 object-cover rounded-lg border border-gray-300 dark:border-slate-600"
                         />
@@ -698,7 +700,7 @@
                   <!-- Feature Details -->
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <input
-                      v-model="featureInput.title"
+                      v-model="featureInput.name"
                       type="text"
                       placeholder="Feature title (e.g., User Authentication)"
                       class="px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
@@ -761,7 +763,7 @@
                       variant="solid"
                       size="lg"
                       :disabled="
-                        !featureInput.title || !featureInput.description
+                        !featureInput.name || !featureInput.description
                       "
                       @click="addFeature"
                     />
@@ -790,7 +792,7 @@
                           />
                           <span
                             class="font-medium text-gray-900 dark:text-white"
-                            >{{ feature.title }}</span
+                            >{{ feature.name }}</span
                           >
                           <UBadge
                             :color="getStatusColor(feature.status)"
@@ -896,13 +898,17 @@
                       <div
                         v-for="(thumbnail, index) in form.thumbnails.slice(
                           0,
-                          3
+                          3,
                         )"
                         :key="index"
                         class="w-12 h-12 rounded-lg overflow-hidden border border-gray-300 dark:border-slate-600"
                       >
                         <img
-                          :src="thumbnail"
+                          :src="
+                            typeof thumbnail === 'string'
+                              ? thumbnail
+                              : thumbnail.preview
+                          "
                           :alt="`Thumbnail ${index + 1}`"
                           class="w-full h-full object-cover"
                         />
@@ -917,7 +923,7 @@
                     <h3
                       class="text-2xl font-bold text-gray-900 dark:text-white"
                     >
-                      {{ form.title }}
+                      {{ form.name }}
                     </h3>
                     <p class="text-gray-600 dark:text-gray-400">
                       {{ form.category }} • {{ form.academicYear }}
@@ -1026,7 +1032,7 @@
                         <span
                           class="text-sm font-medium text-gray-900 dark:text-white"
                         >
-                          {{ feature.title }}
+                          {{ feature.name }}
                         </span>
                         <UBadge
                           :color="getStatusColor(feature.status)"
@@ -1099,8 +1105,8 @@
                         ? "Updating..."
                         : "Creating..."
                       : editMode
-                      ? "Update Project"
-                      : "Create Project"
+                        ? "Update Project"
+                        : "Create Project"
                   }}
                 </ButtonsPresetButton>
               </div>
@@ -1335,7 +1341,7 @@ const loadProjectForEditing = async (projectId) => {
       });
 
       form.value = {
-        title: project.title || "",
+        name: project.name || "",
         description: project.description || "",
         thumbnails: project.images || [],
         category: project.category || "",
@@ -1389,7 +1395,7 @@ const memberSearchQuery = ref("");
 const iconSearchQuery = ref("");
 const editingFeatureIndex = ref(-1);
 const featureInput = ref({
-  title: "",
+  name: "",
   description: "",
   date: "",
   icon: "i-heroicons-star",
@@ -1423,7 +1429,7 @@ const getInitials = (name) => {
 const generateAvatarFromName = (name) => {
   const initials = getInitials(name);
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(
-    name
+    name,
   )}&background=random&color=fff&bold=true&size=128`;
 };
 
@@ -1512,10 +1518,10 @@ const filteredIcons = computed(() => {
 
 // For demo purposes, pre-fill form with sample data
 const form = ref({
-  title: "AI Cat Detection System",
+  name: "AI Cat Detection System",
   description:
     "An AI-powered computer vision system that detects cats in images using deep learning. The project focuses on object detection, dataset preparation, model training, and visualizing detection results with bounding boxes.",
-  thumbnails: [],
+  thumbnails: [], // Array of { preview: string, file: File }
   category: "Artificial Intelligence",
   academicYear: "2024-2025",
   technologies: [],
@@ -1538,7 +1544,7 @@ const form = ref({
   ],
   feature: [
     {
-      title: "Dataset Collection",
+      name: "Dataset Collection",
       description:
         "Collected and filtered cat images from Open Images and removed unlabeled samples.",
       date: "2025-09-01",
@@ -1546,7 +1552,7 @@ const form = ref({
       status: "done",
     },
     {
-      title: "Model Training",
+      name: "Model Training",
       description:
         "Trained a YOLO-based object detection model to detect cats in images.",
       date: "2025-09-19",
@@ -1554,7 +1560,7 @@ const form = ref({
       status: "done",
     },
     {
-      title: "Bounding Box Visualization",
+      name: "Bounding Box Visualization",
       description:
         "Implemented bounding box rendering for detected cats using OpenCV.",
       date: "2025-10-26",
@@ -1562,7 +1568,7 @@ const form = ref({
       status: "done",
     },
     {
-      title: "Evaluation & Deployment",
+      name: "Evaluation & Deployment",
       description:
         "Evaluated model performance and deployed a demo for image-based detection.",
       date: "2025-12-01",
@@ -1606,7 +1612,7 @@ const saveToLocalStorage = () => {
       try {
         localStorage.removeItem(FORM_STORAGE_KEY);
         console.warn(
-          "localStorage quota exceeded. Auto-save disabled for this session."
+          "localStorage quota exceeded. Auto-save disabled for this session.",
         );
       } catch (clearError) {
         console.error("Failed to clear localStorage:", clearError);
@@ -1638,7 +1644,7 @@ const restoreDraft = () => {
   const parsed = draftData.value;
 
   // Restore form data individually (preserving existing thumbnails and reactivity)
-  form.value.title = parsed.title || "";
+  form.value.name = parsed.name || parsed.title || ""; // Support old drafts with 'title'
   form.value.description = parsed.description || "";
   // Don't restore thumbnails - they weren't saved to avoid quota issues
   form.value.category = parsed.category || "";
@@ -1704,7 +1710,7 @@ const techSuggestions = computed(() => {
     .filter(
       (tech) =>
         tech.toLowerCase().includes(input) &&
-        !form.value.technologies.includes(tech)
+        !form.value.technologies.includes(tech),
     )
     .slice(0, 5);
 });
@@ -1749,7 +1755,7 @@ watch(
       }, 2000); // Save 2 seconds after user stops typing
     }
   },
-  { deep: true }
+  { deep: true },
 );
 
 // Watch currentStep changes and save
@@ -1759,7 +1765,7 @@ watch(
     if (!editMode.value) {
       saveToLocalStorage();
     }
-  }
+  },
 );
 
 // Tag suggestions from store
@@ -1772,7 +1778,7 @@ const tagSuggestions = computed(() => {
   return availableTags
     .filter(
       (tag) =>
-        tag.toLowerCase().includes(input) && !form.value.tags.includes(tag)
+        tag.toLowerCase().includes(input) && !form.value.tags.includes(tag),
     )
     .slice(0, 5);
 });
@@ -1833,12 +1839,9 @@ const toggleTeamMember = (member) => {
 };
 
 const addFeature = () => {
-  if (
-    featureInput.value.title.trim() &&
-    featureInput.value.description.trim()
-  ) {
+  if (featureInput.value.name.trim() && featureInput.value.description.trim()) {
     const newFeature = {
-      title: featureInput.value.title.trim(),
+      name: featureInput.value.name.trim(),
       description: featureInput.value.description.trim(),
       date: featureInput.value.date || "",
       icon: featureInput.value.icon || "i-heroicons-star",
@@ -1856,7 +1859,7 @@ const addFeature = () => {
 
     // Reset form
     featureInput.value = {
-      title: "",
+      name: "",
       description: "",
       date: "",
       icon: "i-heroicons-star",
@@ -1868,7 +1871,7 @@ const addFeature = () => {
 const editFeature = (index) => {
   const feature = form.value.feature[index];
   featureInput.value = {
-    title: feature.title,
+    name: feature.name || feature.title, // Support old features with 'title'
     description: feature.description,
     date: feature.date,
     icon: feature.icon,
@@ -1880,7 +1883,7 @@ const editFeature = (index) => {
 const cancelEditFeature = () => {
   editingFeatureIndex.value = -1;
   featureInput.value = {
-    title: "",
+    name: "",
     description: "",
     date: "",
     icon: "i-heroicons-star",
@@ -1963,7 +1966,10 @@ const processThumbnailFiles = (files) => {
       // 5MB limit
       const reader = new FileReader();
       reader.onload = (e) => {
-        form.value.thumbnails.push(e.target.result);
+        form.value.thumbnails.push({
+          preview: e.target.result,
+          file: file,
+        });
       };
       reader.readAsDataURL(file);
       filesProcessed++;
@@ -2025,7 +2031,7 @@ const submitForm = async () => {
 
     // Prepare project data according to Project interface
     const projectData = {
-      title: form.value.title,
+      name: form.value.name,
       description: form.value.description,
       academicYear: form.value.academicYear,
       author: {
@@ -2044,15 +2050,17 @@ const submitForm = async () => {
       visibility: form.value.visibility || "public", // Ensure visibility is included
       demoUrl:
         form.value.demoUrl ||
-        `https://${form.value.title
+        `https://${form.value.name
           .toLowerCase()
           .replace(/\s+/g, "-")}.demo.com`,
       githubUrl:
         form.value.githubUrl ||
         `https://github.com/${
           authStore.user?.username || "user"
-        }/${form.value.title.toLowerCase().replace(/\s+/g, "-")}`,
-      images: form.value.thumbnails,
+        }/${form.value.name.toLowerCase().replace(/\s+/g, "-")}`,
+      images: form.value.thumbnails.map((t) =>
+        typeof t === "string" ? t : t.file,
+      ),
       tags: form.value.tags,
       members: form.value.teamMembers.map((member) => {
         if (typeof member === "string") {
@@ -2073,7 +2081,7 @@ const submitForm = async () => {
     if (editMode.value) {
       result = await projectStore.updateProject(
         parseInt(editProjectId.value),
-        projectData
+        projectData,
       );
     } else {
       // Create new project
@@ -2083,7 +2091,7 @@ const submitForm = async () => {
       // Ensure the new project is in the store's arrays
       // Add to projects array if not already there
       const existsInProjects = projectStore.projects.find(
-        (p) => p.id === result.id
+        (p) => p.id === result.id,
       );
       if (!existsInProjects) {
         projectStore.projects.unshift(result);
@@ -2091,7 +2099,7 @@ const submitForm = async () => {
 
       // Add to userProjects array if not already there
       const existsInUserProjects = projectStore.userProjects.find(
-        (p) => p.id === result.id
+        (p) => p.id === result.id,
       );
       if (!existsInUserProjects) {
         console.log("Adding project to userProjects array");
@@ -2101,20 +2109,8 @@ const submitForm = async () => {
 
     console.log(
       `Project ${editMode.value ? "updated" : "created"} successfully:`,
-      result
+      result,
     );
-
-    // Validate project ID before proceeding
-    if (!result.id || result.id === -Infinity || isNaN(result.id)) {
-      console.error("Invalid project ID:", result.id);
-      const toast = useToast();
-      toast.add({
-        title: "Error",
-        description: "Failed to generate valid project ID. Please try again.",
-        color: "error",
-      });
-      return;
-    }
 
     // Clear localStorage on successful creation
     if (!editMode.value) {
@@ -2138,19 +2134,6 @@ const submitForm = async () => {
     // Navigate to the project details page
     const projectId = editMode.value ? editProjectId.value : result.id;
 
-    // Final validation before navigation
-    if (!projectId || projectId === -Infinity || isNaN(projectId)) {
-      console.error("Cannot navigate with invalid project ID:", projectId);
-      const errorToast = useToast();
-      errorToast.add({
-        title: "Navigation Error",
-        description: "Invalid project ID. Redirecting to projects list.",
-        color: "error",
-      });
-      await navigateTo("/student/my-projects");
-      return;
-    }
-
     // Force refresh the store data before navigating
     await projectStore.fetchUserProjects();
 
@@ -2162,7 +2145,7 @@ const submitForm = async () => {
   } catch (error) {
     console.error(
       `Error ${editMode.value ? "updating" : "creating"} project:`,
-      error
+      error,
     );
     const toast = useToast();
     toast.add({
@@ -2180,7 +2163,7 @@ const canProceedToNextStep = computed(() => {
   switch (currentStep.value) {
     case 0: // Basic Info
       return (
-        form.value.title &&
+        form.value.name &&
         form.value.description &&
         form.value.thumbnails.length >= 1 &&
         form.value.category &&

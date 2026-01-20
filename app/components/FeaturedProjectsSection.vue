@@ -34,7 +34,6 @@
           :key="project.id"
           :project="project"
           :liked-projects="projectStore.likedProjects"
-          :is-featured="true"
           @toggle-like="toggleLike"
         />
       </div>

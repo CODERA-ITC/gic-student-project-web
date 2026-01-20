@@ -36,7 +36,7 @@
  */
 
 interface ViewRecord {
-  projectId: number;
+  projectId: string | number;
   timestamp: number;
   userAgent: string;
 }
@@ -79,14 +79,14 @@ export const useProjectView = () => {
   const cleanupOldRecords = (records: ViewRecord[]): ViewRecord[] => {
     const now = Date.now();
     return records.filter(
-      (record) => now - record.timestamp < VIEW_TIME_WINDOW
+      (record) => now - record.timestamp < VIEW_TIME_WINDOW,
     );
   };
 
   /**
    * Check if a project has been viewed within the time window
    */
-  const hasRecentView = (projectId: number): boolean => {
+  const hasRecentView = (projectId: string | number): boolean => {
     if (typeof window === "undefined") return false;
 
     const records = getViewRecords();
@@ -96,9 +96,9 @@ export const useProjectView = () => {
     // Check if there's a recent view for this project with the same user agent
     const recentView = records.find(
       (record) =>
-        record.projectId === projectId &&
+        record.projectId?.toString() === projectId?.toString() &&
         record.userAgent === userAgent &&
-        now - record.timestamp < VIEW_TIME_WINDOW
+        now - record.timestamp < VIEW_TIME_WINDOW,
     );
 
     return !!recentView;
@@ -107,13 +107,13 @@ export const useProjectView = () => {
   /**
    * Track a project view (returns true if it's a unique view)
    */
-  const trackView = async (projectId: number): Promise<boolean> => {
+  const trackView = async (projectId: string | number): Promise<boolean> => {
     if (typeof window === "undefined") return false;
 
     // Check if already viewed recently
     if (hasRecentView(projectId)) {
       console.log(
-        `🔄 Project ${projectId} - Already viewed within 24 hours (not counting)`
+        `🔄 Project ${projectId} - Already viewed within 24 hours (not counting)`,
       );
       return false;
     }
@@ -140,7 +140,7 @@ export const useProjectView = () => {
     saveViewRecords(records);
 
     console.log(
-      `✅ Project ${projectId} - Unique view tracked! Total tracked: ${records.length}`
+      `✅ Project ${projectId} - Unique view tracked! Total tracked: ${records.length}`,
     );
     return true;
   };
