@@ -71,7 +71,7 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    // apiBase: "", // Backend API base URL (server-side)
+
     public: {
       apiBase: "", // Backend API URL (client-side)
     },
