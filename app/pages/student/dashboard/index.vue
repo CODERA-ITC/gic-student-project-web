@@ -512,15 +512,26 @@ const recentProjects = computed(() => {
     });
   };
 
-  return userProjects.slice(0, 4).map((project) => ({
-    id: project.id,
-    title: project.title,
-    category: project.category,
-    status: project.status,
-    statusColor: getStatusColor(project.status),
-    progress: getProgress(project),
-    updated: formatDate(project.createdAt),
-  }));
+  return userProjects.slice(0, 4).map((project) => {
+    // Ensure ID is always a string or number, not an object
+    const projectId =
+      typeof project.id === "object"
+        ? project.id?.id || project.id?._id || String(project.id)
+        : project.id;
+
+    return {
+      id: projectId,
+      name: project.title,
+      category:
+        typeof project.category === "object"
+          ? project.category
+          : { name: project.category },
+      status: project.status,
+      statusColor: getStatusColor(project.status),
+      progress: getProgress(project),
+      updated: formatDate(project.createdAt),
+    };
+  });
 });
 
 // Updates/Notifications - only project related (approvals, rejections, status changes)

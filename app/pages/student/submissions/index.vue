@@ -107,7 +107,7 @@
                     <p
                       class="text-sm font-semibold text-gray-900 dark:text-white"
                     >
-                      {{ submission.projectTitle }}
+                      {{ submission.projectName }}
                     </p>
                     <p class="text-xs text-gray-500 dark:text-gray-400">
                       {{ submission.category }}
@@ -331,7 +331,7 @@ const itemsPerPage = ref(10);
 
 // Cancel modal state
 const showCancelModal = ref(false);
-const selectedSubmissionId = ref<number | null>(null);
+const selectedSubmissionId = ref<string | null>(null);
 const isCanceling = ref(false);
 
 // Get submitted projects from store
@@ -345,7 +345,7 @@ const submissions = computed(() => {
         project.submissions![project.submissions!.length - 1];
       return {
         id: project.id,
-        projectTitle: project.title,
+        projectName: project.name,
         category: project.category || "General",
         submittedDate: latestSubmission.date || project.createdAt,
         status: latestSubmission.status,
@@ -362,7 +362,7 @@ const filteredSubmissions = computed(() => {
   const query = searchQuery.value.toLowerCase();
   return submissions.value.filter(
     (submission) =>
-      submission.projectTitle.toLowerCase().includes(query) ||
+      submission.projectName.toLowerCase().includes(query) ||
       submission.category.toLowerCase().includes(query) ||
       submission.status.toLowerCase().includes(query)
   );
@@ -425,16 +425,16 @@ const getStatusDotClass = (status: string) => {
   return classes[status] || "bg-gray-600";
 };
 
-const viewSubmission = (id: number) => {
+const viewSubmission = (id: string) => {
   router.push(`/student/my-projects/${id}`);
   console.log("Viewing submission with ID:", id);
 };
 
-const editSubmission = (id: number) => {
+const editSubmission = (id: string) => {
   router.push(`/projects/create?edit=${id}`);
 };
 
-const confirmCancel = (id: number) => {
+const confirmCancel = (id: string) => {
   selectedSubmissionId.value = id;
   showCancelModal.value = true;
 };
@@ -453,7 +453,7 @@ const handleCancelConfirm = async () => {
       project.submissions.pop();
 
       // Save to localStorage
-      projectStore.saveUserCreatedProjects();
+      // projectStore.saveUserCreatedProjects();
 
       // Show success toast
       const toast = useToast();

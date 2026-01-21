@@ -38,8 +38,8 @@
           <!-- Views -->
 
           <img
-            :src="project.images[currentImageIndex]"
-            :alt="project.title"
+            :src="project.images[currentImageIndex].thumbnailUrl.toString()"
+            :alt="project.name"
             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 rounded-lg"
           />
 
@@ -181,9 +181,9 @@
                 />
 
                 <!-- Fallback initial -->
-                <span v-else class="text-sm">
+                <!-- <span v-else class="text-sm">
                   {{ (member.name || member).charAt(0).toUpperCase() }}
-                </span>
+                </span> -->
               </div>
 
               <!-- +X more -->
@@ -245,7 +245,7 @@ const props = defineProps({
     validator: (obj) => {
       return (
         obj.id &&
-        obj.title &&
+        obj.name &&
         obj.description &&
         obj.category &&
         obj.semester &&

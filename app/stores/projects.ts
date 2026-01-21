@@ -3,6 +3,7 @@ import { any } from "zod";
 import { useAuthStore } from "~/stores/auth";
 
 import { projectsData } from "~/constants/projects";
+import type { s, st } from "vue-router/dist/router-CWoNjPRp.mjs";
 
 // Types
 export interface ProjectAuthor {
@@ -20,8 +21,14 @@ export interface FeatureItem {
   status: "pending" | "ongoing" | "done";
 }
 
+export interface ProjectImage {
+  id: string;
+  originalUrl: string;
+  thumbnailUrl: string;
+}
+
 export interface Project {
-  id?: string | number;
+  id?: string;
   name: string;
   description: string;
   departmentId?: "11111111-1111-1111-1111-111111111111"; // GIC Department ID
@@ -35,7 +42,7 @@ export interface Project {
   views: number;
   demoUrl: string;
   githubUrl: string;
-  images: string[];
+  images: ProjectImage[];
   createdAt: string;
   tags: string[];
   members?: { name: string; image: string }[];
@@ -44,7 +51,7 @@ export interface Project {
   course?: string;
   visibility?: "public" | "private";
   submissions?: {
-    id: number;
+    id: string;
     name: string;
     date: string;
     status: string;
@@ -120,7 +127,7 @@ export const useProjectStore = defineStore("projects", {
 
     // Get real-time calculated status for a project based on its features
     getProjectStatus() {
-      return (projectId: number): "Completed" | "In Progress" => {
+      return (projectId: string): "Completed" | "In Progress" => {
         const project = this.projects.find((p) => p.id === projectId);
         if (!project) return "In Progress";
 
@@ -459,23 +466,19 @@ export const useProjectStore = defineStore("projects", {
             const category = project.category.name || "Uncategorized";
 
             // Transform images - fetch full URLs from backend
-            const imagesObj = Array.isArray(project.images)
-              ? project.images.map((img: any) =>
-                  typeof img === "string" ? img : img.id || "",
-                )
-              : [];
+            let images = project.images;
 
-            let images: string[] = [];
+            // let images: string[] = [];
 
-            for (const imgId of imagesObj) {
-              try {
-                const imgData = await fetch(`/api/image/${imgId}`);
-                const imgJson = await imgData.json();
-                images.push(imgJson.thumbnailUrl || imgJson.originalUrl || "");
-              } catch (error) {
-                console.error("Error fetching image:", error);
-              }
-            }
+            // for (const imgId of imagesObj) {
+            //   try {
+            //     const imgData = await fetch(`/api/image/${imgId}`);
+            //     const imgJson = await imgData.json();
+            //     images.push(imgJson.thumbnailUrl || imgJson.originalUrl || "");
+            //   } catch (error) {
+            //     console.error("Error fetching image:", error);
+            //   }
+            // }
 
             // Transform tags (from array of objects to array of strings)
             const tags = Array.isArray(project.tags)
@@ -950,29 +953,28 @@ export const useProjectStore = defineStore("projects", {
     },
     */
         // Transform category (from object to string)
-        const category =
-          typeof project.category === "object"
-            ? project.category?.name || "Other"
-            : project.category || "Other";
+        const category = project.category.name || "Uncategorized";
 
         // Transform images - fetch full URLs from backend
-        const imagesObj = Array.isArray(project.images)
-          ? project.images.map((img: any) =>
-              typeof img === "string" ? img : img.id || "",
-            )
-          : [];
+        // const imagesObj = Array.isArray(project.images)
+        //   ? project.images.map((img: any) =>
+        //       typeof img === "string" ? img : img.id || "",
+        //     )
+        //   : [];
 
-        let images: string[] = [];
+        // let images: string[] = [];
 
-        for (const imgId of imagesObj) {
-          try {
-            const imgData = await fetch(`/api/image/${imgId}`);
-            const imgJson = await imgData.json();
-            images.push(imgJson.thumbnailUrl || imgJson.originalUrl || "");
-          } catch (error) {
-            console.error("Error fetching image:", error);
-          }
-        }
+        // for (const imgId of imagesObj) {
+        //   try {
+        //     const imgData = await fetch(`/api/image/${imgId}`);
+        //     const imgJson = await imgData.json();
+        //     images.push(imgJson.thumbnailUrl || imgJson.originalUrl || "");
+        //   } catch (error) {
+        //     console.error("Error fetching image:", error);
+        //   }
+        // }
+
+        const images = project.images;
 
         // Transform tags (from array of objects to array of strings)
         const tags = Array.isArray(project.tags)
@@ -1484,7 +1486,7 @@ export const useProjectStore = defineStore("projects", {
 
       // If not found, try in all projects
       if (!project) {
-        project = this.projects.find((p) => p.id === parseInt(id.toString()));
+        project = this.projects.find((p) => p.id === id);
       }
 
       return project || null;
@@ -1492,7 +1494,7 @@ export const useProjectStore = defineStore("projects", {
 
     // Update project status
     async updateProjectStatus(
-      projectId: number,
+      projectId: string,
       status: string,
     ): Promise<void> {
       // Update in user projects
@@ -1513,7 +1515,7 @@ export const useProjectStore = defineStore("projects", {
 
     // Update project visibility (for teachers)
     async updateProjectVisibility(
-      projectId: number,
+      projectId: string,
       visibility: "public" | "private",
     ): Promise<void> {
       // Update in user projects
@@ -1545,9 +1547,9 @@ export const useProjectStore = defineStore("projects", {
         projectIds: this.projects.map((p) => p.id),
       });
 
-      // Ensure projectId is a number
-      const numericProjectId =
-        typeof projectId === "string" ? parseInt(projectId) : projectId;
+      // Ensure projectId is a string
+      const stringProjectId =
+        typeof projectId === "number" ? projectId.toString() : projectId;
 
       // If features are being updated, recalculate status
       if (updates.features) {
@@ -1558,7 +1560,7 @@ export const useProjectStore = defineStore("projects", {
 
       // Update in user projects
       const userProjectIndex = this.userProjects.findIndex(
-        (p) => p.id === numericProjectId,
+        (p) => p.id === stringProjectId,
       );
       if (userProjectIndex !== -1) {
         this.userProjects[userProjectIndex] = {
@@ -1577,7 +1579,7 @@ export const useProjectStore = defineStore("projects", {
 
       // Update in all projects
       const projectIndex = this.projects.findIndex(
-        (p) => p.id === numericProjectId,
+        (p) => p.id === stringProjectId,
       );
       if (projectIndex !== -1) {
         this.projects[projectIndex] = {
@@ -1595,27 +1597,27 @@ export const useProjectStore = defineStore("projects", {
 
       if (!updated) {
         console.error("Project not found in any array:", {
-          projectId: numericProjectId,
+          projectId: stringProjectId,
           userProjects: this.userProjects.map((p) => p.id),
           allProjects: this.projects.map((p) => p.id),
         });
-        throw new Error(`Project with ID ${numericProjectId} not found`);
+        throw new Error(`Project with ID ${stringProjectId} not found`);
       }
 
       // In real app, sync with backend
-      // await api.updateProject(numericProjectId, updates);
+      // await api.updateProject(stringProjectId, updates);
 
       // Save to localStorage
       // this.saveUserCreatedProjects();
 
       // Return the updated project
       const updatedProject =
-        this.projects.find((p) => p.id === numericProjectId) ||
-        this.userProjects.find((p) => p.id === numericProjectId);
+        this.projects.find((p) => p.id === stringProjectId) ||
+        this.userProjects.find((p) => p.id === stringProjectId);
 
       if (!updatedProject) {
         throw new Error(
-          `Project with ID ${numericProjectId} not found after update`,
+          `Project with ID ${stringProjectId} not found after update`,
         );
       }
 
@@ -1624,7 +1626,7 @@ export const useProjectStore = defineStore("projects", {
     },
 
     // Delete project
-    async deleteProject(projectId: number): Promise<boolean> {
+    async deleteProject(projectId: string): Promise<boolean> {
       try {
         // Remove from projects array
         const projectIndex = this.projects.findIndex((p) => p.id === projectId);
@@ -1660,7 +1662,7 @@ export const useProjectStore = defineStore("projects", {
     },
 
     // Submit project for review (add to submissions)
-    async submitProjectForReview(projectId: number): Promise<boolean> {
+    async submitProjectForReview(projectId: string): Promise<boolean> {
       try {
         // Find project in user projects
         const userProject = this.userProjects.find((p) => p.id === projectId);

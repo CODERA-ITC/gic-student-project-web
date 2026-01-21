@@ -14,45 +14,48 @@
               <img
                 v-if="project.images && project.images[currentImageIndex]"
                 :key="currentImageIndex"
-                :src="project.images[currentImageIndex]"
-                :alt="`${project.title} - Image ${currentImageIndex + 1}`"
+                :src="project.images[currentImageIndex].originalUrl.toString()"
+                :alt="`${project.name} - Image ${currentImageIndex + 1}`"
                 class="absolute inset-0 w-full h-full object-cover"
               />
 
               <!-- Fallback if no images -->
-              <div
+              <div  
                 v-else
                 key="fallback"
                 class="absolute inset-0 w-full h-full flex items-center justify-center text-8xl bg-gray-100 dark:bg-slate-700"
               >
-                {{ project.emoji || "📁" }}
+                {{ project.name || "📁" }}
               </div>
             </TransitionGroup>
 
-            <!-- Navigation Buttons -->
-            <button
-              v-if="project.images && project.images.length > 1"
-              @click="previousImage"
-              class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-all backdrop-blur-sm z-10"
-            >
-              <UIcon
-                name="i-heroicons-chevron-left"
-                class="w-6 h-6 text-white"
-              />
-            </button>
+            <p>
+              <!-- Navigation Buttons -->
+              <button
+                v-if="project.images && project.images.length > 1"
+                @click="previousImage"
+                class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-all backdrop-blur-sm z-10"
+              >
+                <UIcon
+                  name="i-heroicons-chevron-left"
+                  class="w-6 h-6 text-white"
+                />
+              </button>
 
-            <button
-              v-if="project.images && project.images.length > 1"
-              @click="nextImage"
-              class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-all backdrop-blur-sm z-10"
-            >
-              <UIcon
-                name="i-heroicons-chevron-right"
-                class="w-6 h-6 text-white"
-              />
-            </button>
+              <button
+                v-if="project.images && project.images.length > 1"
+                @click="nextImage"
+                class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-all backdrop-blur-sm z-10"
+              >
+                <UIcon
+                  name="i-heroicons-chevron-right"
+                  class="w-6 h-6 text-white"
+                />
+              </button>
 
-            <!-- Image Indicators -->
+              <!-- Image Indicators -->
+            </p>
+
             <div
               v-if="project.images && project.images.length > 1"
               class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10"
@@ -453,7 +456,7 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Role } from "~/types/roles";
-import { useProjectStore } from "~/stores/projects";
+import { useProjectStore, type Project } from "~/stores/projects";
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
@@ -474,7 +477,7 @@ const skillsRef = ref<HTMLElement | null>(null);
 const scrollY = ref(0);
 
 interface Props {
-  project: any;
+  project: Project;
   isLiked?: boolean;
   userRole?: Role | null;
   isOwner?: boolean;
@@ -517,11 +520,11 @@ const previousImage = () => {
   }
 };
 
-// Timeline items computed property
+// Timeline items computed propertys
 const timelineItems = computed(() => {
-  if (!props.project?.features && !props.project?.feature) return [];
+  if (!props.project?.features && !props.project?.features) return [];
 
-  const features = props.project.features || props.project.feature || [];
+  const features = props.project.features || props.project.features || [];
 
   return features.map((feature: any) => ({
     date: feature.date || "No date",
