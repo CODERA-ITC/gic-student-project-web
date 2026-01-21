@@ -3,7 +3,7 @@ import { any } from "zod";
 import { useAuthStore } from "~/stores/auth";
 
 import { projectsData } from "~/constants/projects";
-import { ca } from "zod/locales";
+
 // Types
 export interface ProjectAuthor {
   name: string;
@@ -458,10 +458,7 @@ export const useProjectStore = defineStore("projects", {
             };
 
             // Transform category (from object to string)
-            const category =
-              typeof project.category === "object"
-                ? project.category?.name || "Other"
-                : project.category || "Other";
+            const category = project.category.name || "Uncategorized";
 
             // Transform images - fetch full URLs from backend
             const imagesObj = Array.isArray(project.images)
@@ -533,8 +530,8 @@ export const useProjectStore = defineStore("projects", {
 
             return {
               id: project.id,
-              title: project.title || project.name || "Untitled Project",
-              description: project.description || "",
+              name: project.name || project.name || "Untitled Project",
+              description: project.description || project.decription || "",
               academicYear: project.academicYear
                 ? project.academicYear.toString()
                 : "",
@@ -1013,7 +1010,7 @@ export const useProjectStore = defineStore("projects", {
         const transformedProject: Project = {
           id: project.id,
           name: project.title || project.name || "Untitled Project",
-          description: project.description || "",
+          description: project.description || project.decription,
           academicYear: project.academicYear
             ? project.academicYear.toString()
             : "",
@@ -1453,11 +1450,17 @@ export const useProjectStore = defineStore("projects", {
     },
 
     // Get project by ID (works for both public and user projects)
-    async getProjectById(id: number): Promise<Project | null> {
+    async getProjectById(id: string): Promise<Project | null> {
       // First try to find in user projects
-      let project = this.userProjects.find(
-        (p) => p.id === parseInt(id.toString()),
-      );
+
+      // This should handle fetch project from api for user projects as well
+
+      // let project = this.userProjects.find(
+      //   (p) => p.id === parseInt(id.toString()),
+      // );
+
+      let project = await this.fetchProjectById(id);
+      console.log("getProjectById fetched for user project:", project);
 
       // If not found, try in all projects
       if (!project) {

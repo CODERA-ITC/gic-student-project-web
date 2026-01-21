@@ -100,7 +100,7 @@
             <h3
               class="text-lg font-semibold text-black dark:text-white transition-colors line-clamp-2 mb-1"
             >
-              {{ project.title }}
+              {{ project.name }}
             </h3>
 
             <!-- Insert the Category and view here -->

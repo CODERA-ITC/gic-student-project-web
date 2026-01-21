@@ -71,10 +71,9 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    apiBase: "https://gic-project.darororo.dev", // Backend API base URL (server-side)
+    apiBase: process.env.API_BASE_URL || "http://localhost:3017", // Backend API base URL (server-side)
     public: {
-      apiUrl:
-        process.env.NUXT_PUBLIC_API_URL || "https://gic-project.darororo.dev", // Backend API URL (client-side)
+      apiUrl: process.env.API_BASE_URL || "http://localhost:3017", // Backend API URL (client-side)
     },
   },
 

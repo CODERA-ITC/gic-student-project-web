@@ -153,7 +153,7 @@ import type { TimelineItem } from "@nuxt/ui";
 const route = useRoute();
 const projectStore = useProjectStore();
 const authStore = useAuthStore();
-const projectId = parseInt(route.params.id as string);
+const projectId = route.params.id as string;
 
 // Student-specific reactive variables
 const project = ref(null);
@@ -197,11 +197,11 @@ onMounted(async () => {
       console.error("Project not found after fetch:", projectId);
       console.error(
         "Available project IDs:",
-        projectStore.projects.map((p) => p.id)
+        projectStore.projects.map((p) => p.id),
       );
       console.error(
         "Available user project IDs:",
-        projectStore.userProjects.map((p) => p.id)
+        projectStore.userProjects.map((p) => p.id),
       );
 
       throw createError({
@@ -419,7 +419,7 @@ watch(
     } else {
       projectStore.clearUserLikedProjects();
     }
-  }
+  },
 );
 
 const isLiked = computed(() => {
@@ -453,7 +453,7 @@ const timelineItems = computed<TimelineItem[]>(() => {
       title: feature.title,
       description: feature.description,
       icon: feature.icon || "i-lucide-star",
-    })
+    }),
   );
 });
 
@@ -490,7 +490,9 @@ useHead({
 
 .modal-enter-active .relative,
 .modal-leave-active .relative {
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
 }
 
 .modal-enter-from .relative,
