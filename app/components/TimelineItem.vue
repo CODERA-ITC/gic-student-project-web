@@ -30,7 +30,7 @@
           </div>
           <div class="flex-1">
             <h3 class="text-xl font-bold text-gray-900 dark:text-white">
-              {{ title }}
+              {{ name }}
             </h3>
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
               {{ date }}
@@ -84,7 +84,7 @@
           </div>
           <div class="flex-1">
             <h3 class="text-xl font-bold text-gray-900 dark:text-white">
-              {{ title }}
+              {{ name }}
             </h3>
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
               {{ date }}
@@ -111,7 +111,7 @@ const itemRef = ref<HTMLElement | null>(null);
 let observer: IntersectionObserver | null = null;
 
 const props = defineProps({
-  title: {
+  name: {
     type: String,
     required: true,
   },
@@ -246,7 +246,7 @@ onMounted(() => {
       {
         threshold: 0.1,
         rootMargin: "0px 0px -50px 0px",
-      }
+      },
     );
 
     observer.observe(itemRef.value);
@@ -262,7 +262,9 @@ onUnmounted(() => {
 
 <style scoped>
 .timeline-item-reveal {
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  transition:
+    opacity 0.6s ease-out,
+    transform 0.6s ease-out;
 }
 
 .timeline-item-reveal.is-visible {

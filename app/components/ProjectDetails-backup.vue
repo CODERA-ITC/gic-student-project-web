@@ -315,10 +315,17 @@
         ]"
       >
         <div class="flex items-start gap-4 md:gap-6">
-          <div>
+          <div
+            :class="[
+              'p-3 rounded-xl bg-purple-500 dark:bg-purple-600',
+              'shadow-lg transition-all duration-500',
+              'scale-100 rotate-0',
+            ]"
+          >
             <UIcon
+              ref="iconRef"
               name="i-heroicons-clock"
-              class="w-6 h-6 text-blue-500 dark:text-blue-400 mt-1"
+              class="w-6 h-6 md:w-8 md:h-8 text-white"
             />
           </div>
           <div class="flex-1">
