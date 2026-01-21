@@ -450,9 +450,7 @@ export const useProjectStore = defineStore("projects", {
               name: project.author
                 ? `${project.author.firstName || ""} ${project.author.lastName || ""}`.trim()
                 : "Unknown",
-              avatar:
-                project.author?.avatar ||
-                "https://randomuser.me/api/portraits/women/50.jpg",
+              avatar: project.author?.avatar || DEFAULT_AVATAR_URL,
               program: project.author?.program || "",
               year: project.author?.year || "",
             };
@@ -517,8 +515,8 @@ export const useProjectStore = defineStore("projects", {
             // Transform features (ensure proper structure)
             const features: FeatureItem[] = Array.isArray(project.features)
               ? project.features.map((feature: any) => ({
-                  date: feature.date || "",
-                  title: feature.title || feature.name || "",
+                  date: feature.date || new Date().toISOString().split("T")[0],
+                  name: feature.name || "",
                   description: feature.description || "",
                   icon: feature.icon || "",
                   status: feature.status || "pending",
@@ -530,7 +528,7 @@ export const useProjectStore = defineStore("projects", {
 
             return {
               id: project.id,
-              name: project.name || project.name || "Untitled Project",
+              name: project.name || "Untitled Project",
               description: project.description || project.decription || "",
               academicYear: project.academicYear
                 ? project.academicYear.toString()
@@ -939,9 +937,7 @@ export const useProjectStore = defineStore("projects", {
           name: project.author
             ? `${project.author.firstName || ""} ${project.author.lastName || ""}`.trim()
             : "Mr. Test ",
-          avatar:
-            project.author?.avatar ||
-            "https://randomuser.me/api/portraits/women/50.jpg",
+          avatar: project.author?.avatar || DEFAULT_AVATAR_URL,
           program: project.author?.program || "Computer Science",
           year: project.author?.year || "4th Year",
         };
@@ -989,15 +985,15 @@ export const useProjectStore = defineStore("projects", {
         const members = Array.isArray(project.members)
           ? project.members.map((member: any) => ({
               name: `${member.firstName || ""} ${member.lastName || ""}`.trim(),
-              image: member.avatar || "/images/default-avatar.png",
+              image: member.avatar || DEFAULT_AVATAR_URL,
             }))
           : [];
 
         // Transform features (ensure proper structure)
         const features: FeatureItem[] = Array.isArray(project.features)
           ? project.features.map((feature: any) => ({
-              date: feature.date || "",
-              title: feature.title || feature.name || "",
+              date: feature.date || new Date().toISOString().split("T")[0],
+              name: feature.name || "",
               description: feature.description || "",
               icon: feature.icon || "",
               status: feature.status || "pending",
@@ -1369,7 +1365,7 @@ export const useProjectStore = defineStore("projects", {
             name:
               authStore.user.name ||
               `${authStore.user.firstName} ${authStore.user.lastName}`,
-            avatar: authStore.user.avatar || "/images/default-avatar.png",
+            avatar: authStore.user.avatar || DEFAULT_AVATAR_URL,
             program: authStore.user.program || "",
             year: authStore.user.year || "",
           },
@@ -1397,7 +1393,7 @@ export const useProjectStore = defineStore("projects", {
           members:
             apiProject.members?.map((member: any) => ({
               name: `${member.firstName || ""} ${member.lastName || ""}`.trim(),
-              image: member.avatar || "/images/default-avatar.png",
+              image: member.avatar || DEFAULT_AVATAR_URL,
             })) || [],
           features: apiProject.features || [],
           duration: apiProject.duration || "",
@@ -1439,9 +1435,33 @@ export const useProjectStore = defineStore("projects", {
 
         // In real app, this would be an API call
         // Filter existing projects by author to show only user-created projects
-        this.userProjects = this.projects.filter(
-          (project) => project.author?.name === authStore.user?.name,
-        );
+
+        if (!authStore.isAuthenticated || !authStore.user) {
+          console.warn("User not authenticated, cannot fetch user projects");
+        }
+
+        const response = await fetch("/api/projects/me", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${authStore.token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          console.error("Failed to fetch user projects from API");
+        } else {
+          console.log("Fetched user projects from API");
+        }
+
+        // this.userProjects = this.projects.filter(
+        //   (project) => project.author?.name === authStore.user?.name,
+        // );
+
+        const dataJson = await response.json();
+        this.userProjects = dataJson;
+
+        console.log("User projects loaded:", this.userProjects);
       } catch (error) {
         console.error("Failed to fetch user projects:", error);
       } finally {

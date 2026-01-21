@@ -45,8 +45,7 @@ const props = defineProps({
   },
   defaultAvatar: {
     type: String,
-    default:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face",
+    default: "https://img.icons8.com/nolan/1200/user-default.jpg",
   },
 });
 

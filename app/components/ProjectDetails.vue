@@ -278,7 +278,10 @@
             </h3>
             <div class="flex items-center gap-4">
               <img
-                :src="project.author.avatar"
+                :src="
+                  project.author?.avatar ||
+                  'https://img.icons8.com/nolan/1200/user-default.jpg'
+                "
                 :alt="project.author.name"
                 class="w-14 h-14 rounded-full object-cover"
               />

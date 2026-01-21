@@ -232,7 +232,7 @@ export const useAuthStore = defineStore("auth", {
           firstName: userData.firstName,
           lastName: userData.lastName,
           role: userData.role.name,
-          avatar: userData.avatar || undefined,
+          avatar: userData.avatar || DEFAULT_AVATAR_URL,
           program: userData.program,
           year: userData.year,
           departmentId: userData.department.id,
@@ -403,7 +403,7 @@ export const useAuthStore = defineStore("auth", {
           id: userData.id,
           name: `${userData.firstname || ""} ${userData.lastname || ""}`.trim(),
           email: userData.email,
-          avatar: userData.avatar || "", // default avatar empty string if not provided
+          avatar: userData.avatar || DEFAULT_AVATAR_URL, // default avatar empty string if not provided
         }));
       } catch (error) {
         console.error("Failed to search users:", error);

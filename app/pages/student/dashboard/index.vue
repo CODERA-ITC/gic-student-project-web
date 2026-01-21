@@ -134,8 +134,8 @@
                       stat.changeColor === 'positive'
                         ? '#3b82f6'
                         : stat.changeColor === 'negative'
-                        ? '#f59e0b'
-                        : '#3b82f6'
+                          ? '#f59e0b'
+                          : '#3b82f6'
                     "
                     :stroke-width="2"
                     :show-area="true"
@@ -155,8 +155,8 @@
                     stat.changeColor === 'positive'
                       ? 'text-blue-500'
                       : stat.changeColor === 'negative'
-                      ? 'text-amber-500'
-                      : 'text-blue-500'
+                        ? 'text-amber-500'
+                        : 'text-blue-500'
                   "
                   class="w-4 h-4"
                 />
@@ -196,10 +196,10 @@
                   <p
                     class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
                   >
-                    {{ project.title }}
+                    {{ project.name }}
                   </p>
                   <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                    {{ project.category }}
+                    {{ project.category.name }}
                   </p>
                 </div>
                 <span
@@ -401,16 +401,16 @@ const stats = computed(() => {
   const userProjects = projectStore.userProjects || [];
   const totalProjects = userProjects.length;
   const completedProjects = userProjects.filter(
-    (p) => p.status === "Completed"
+    (p) => p.status === "Completed",
   ).length;
   const inProgressProjects = userProjects.filter(
-    (p) => p.status === "In Progress"
+    (p) => p.status === "In Progress",
   ).length;
   const inReviewProjects = userProjects.filter(
     (p) =>
       p.submissions &&
       p.submissions.length > 0 &&
-      p.submissions.some((s) => s.status === "Under Review")
+      p.submissions.some((s) => s.status === "Under Review"),
   ).length;
 
   // Generate simple chart data showing project growth over time
@@ -440,10 +440,10 @@ const stats = computed(() => {
   // Get chart data for different project types
   const totalProjectsWeekly = getProjectsChartData();
   const completedProjectsWeekly = getProjectsChartData(
-    (p) => p.status === "Completed"
+    (p) => p.status === "Completed",
   );
   const inProgressProjectsWeekly = getProjectsChartData(
-    (p) => p.status === "In Progress"
+    (p) => p.status === "In Progress",
   );
 
   return [
@@ -460,7 +460,7 @@ const stats = computed(() => {
       value: String(completedProjects),
       icon: "i-heroicons-check-circle",
       change: `${((completedProjects / totalProjects) * 100 || 0).toFixed(
-        0
+        0,
       )}% completion rate`,
       changeColor: "positive",
       chartData: completedProjectsWeekly,
@@ -493,7 +493,7 @@ const recentProjects = computed(() => {
     // Calculate progress based on features completion
     if (project.features && project.features.length > 0) {
       const completedFeatures = project.features.filter(
-        (feature) => feature.status === "done"
+        (feature) => feature.status === "done",
       ).length;
       const totalFeatures = project.features.length;
       return Math.round((completedFeatures / totalFeatures) * 100);
