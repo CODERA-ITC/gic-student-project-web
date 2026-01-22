@@ -1,11 +1,25 @@
 import { defineStore } from 'pinia'
 
 export const useThemeStore = defineStore('theme', {
-  state: () => ({
-    isDark: false,
-    isInitialized: false,
-    isTransitioning: false,
-  }),
+  state: () => {
+    // Initialize state from localStorage/DOM on store creation
+    let initialDark = false
+    if (process.client) {
+      const stored = localStorage.getItem('theme')
+      if (stored) {
+        initialDark = stored === 'dark'
+      } else {
+        // Check if dark class already exists on DOM
+        initialDark = document.documentElement.classList.contains('dark')
+      }
+    }
+
+    return {
+      isDark: initialDark,
+      isInitialized: false,
+      isTransitioning: false,
+    }
+  },
 
   getters: {
     currentTheme: (state) => state.isDark ? 'dark' : 'light',
@@ -29,12 +43,12 @@ export const useThemeStore = defineStore('theme', {
         }
 
         this.applyTheme()
+        this.isInitialized = true
 
         // Remove no-transition class after a brief delay
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             document.documentElement.classList.remove('no-transition')
-            this.isInitialized = true
           })
         })
       }

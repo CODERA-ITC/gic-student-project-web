@@ -1,11 +1,7 @@
 <template>
     <button @click="toggleTheme"
-        class="inline-flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 focus:outline-none hover:opacity-80"
-        :class="[
-            isDark
-                ? 'bg-neutral-800 hover:bg-neutral-700'
-                : 'bg-white hover:bg-neutral-100 border border-neutral-200'
-        ]" :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
+        class="inline-flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 focus:outline-none hover:bg-neutral-200/50 dark:hover:bg-neutral-700/50"
+        :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
 
         <!-- Sun icon for light mode -->
         <svg v-if="!isDark" xmlns="http://www.w3.org/2000/svg"
@@ -27,16 +23,23 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+
 const themeStore = useThemeStore()
-const isDark = computed(() => themeStore.isDark)
+const { isDark } = storeToRefs(themeStore)
 
 const toggleTheme = () => {
     themeStore.toggle()
 }
 
-// Initialize theme on component mount
+// Ensure state is synced on client side
 onMounted(() => {
-    themeStore.initialize()
+    if (process.client) {
+        const stored = localStorage.getItem('theme')
+        if (stored && themeStore.isDark !== (stored === 'dark')) {
+            themeStore.isDark = stored === 'dark'
+        }
+    }
 })
 </script>
 
