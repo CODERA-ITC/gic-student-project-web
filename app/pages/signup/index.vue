@@ -3,6 +3,8 @@
     <!-- Security Questions Modal -->
     <SecurityQuestionsModal :is-open="showSecurityQuestions" :allow-close="false"
       @submit="handleSecurityQuestionsSubmit" />
+    <SecurityQuestionsModal :is-open="showSecurityQuestions" :allow-close="false"
+      @submit="handleSecurityQuestionsSubmit" />
 
     <AuthHero />
 
@@ -94,8 +96,8 @@
 
         <!-- Social Sign Up -->
         <div class="grid grid-cols-2 gap-3">
-          <button type="button"
-            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group">
+          <button type="button" :disabled="isLoading" @click="handleGoogleSignup"
+            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
             <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
               <UIcon name="i-logos-google-icon" class="w-6 h-6" />
             </div>
@@ -103,8 +105,8 @@
               class="text-sm text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors">GOOGLE</span>
           </button>
 
-          <button type="button"
-            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group">
+          <button type="button" :disabled="isLoading" @click="handleGithubSignup"
+            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
             <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
               <UIcon name="i-simple-icons-github"
                 class="w-6 h-6 text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors" />
@@ -215,13 +217,17 @@ const handleSignup = async () => {
 
 // Handle Google OAuth signup
 const handleGoogleSignup = () => {
-  // Redirect to frontend Nuxt server route which proxies to backend
-  window.location.href = "/users/google";
+  // Redirect directly to backend OAuth endpoint
+  const config = useRuntimeConfig();
+  const backendUrl = config.public.apiBase || 'https://gic-project.darororo.dev';
+  window.location.href = `${backendUrl}/users/google`;
 };
 
 // Handle GitHub OAuth signup
 const handleGithubSignup = () => {
-  // Redirect to frontend Nuxt server route which proxies to backend
-  window.location.href = "/users/github";
+  // Redirect directly to backend OAuth endpoint
+  const config = useRuntimeConfig();
+  const backendUrl = config.public.apiBase || 'https://gic-project.darororo.dev';
+  window.location.href = `${backendUrl}/users/github`;
 };
 </script>

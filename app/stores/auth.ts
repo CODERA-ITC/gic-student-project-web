@@ -38,6 +38,7 @@ export interface User {
   firstName?: string;
   lastName?: string;
   departmentId?: string;
+  hasSecurityQuestions?: boolean;
 }
 
 export interface AuthState {
@@ -445,24 +446,23 @@ export const useAuthStore = defineStore("auth", {
 
         console.log("Token of the user", tokenPayload);
 
+        // Fetch complete user details from API first
+        await this.fetchCurrentUser();
+
         // Check if this is a new user (needs security questions)
         // Backend should include hasSecurityQuestions or isNewUser in the JWT
-
-        // Check multiple possible flags from the token
+        // Also check if user already has security questions set from the user object
         const needsQuestions =
           tokenPayload.isNewUser === true ||
           tokenPayload.hasSecurityQuestions === false ||
-          tokenPayload.needsSecurityQuestions === true;
+          tokenPayload.needsSecurityQuestions === true ||
+          (this.user && !this.user.hasSecurityQuestions);
 
-        // TEMPORARY: Always show for OAuth until backend implements the flag
-        // TODO: Remove this override once backend sends proper flag
-        this.needsSecurityQuestions = true; // Override for testing
+        this.needsSecurityQuestions = needsQuestions;
 
         console.log("Token says needs questions:", needsQuestions);
+        console.log("User has security questions:", this.user?.hasSecurityQuestions);
         console.log("Actually showing modal:", this.needsSecurityQuestions);
-
-        // Fetch complete user details from API
-        await this.fetchCurrentUser();
 
         this.isAuthenticated = true;
       } catch (error) {
@@ -677,6 +677,7 @@ export const useAuthStore = defineStore("auth", {
       this.user = null;
       this.isAuthenticated = false;
       this.error = null;
+      this.needsSecurityQuestions = false;
 
       // Clear stored tokens
       safeLocalStorage.removeItem("access_token");

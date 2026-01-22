@@ -3,6 +3,8 @@
     <!-- Security Questions Modal -->
     <SecurityQuestionsModal :is-open="showSecurityQuestions" :allow-close="false"
       @submit="handleSecurityQuestionsSubmit" />
+    <SecurityQuestionsModal :is-open="showSecurityQuestions" :allow-close="false"
+      @submit="handleSecurityQuestionsSubmit" />
 
     <!-- Loading State -->
     <div v-if="isLoading || authStore.isLoading" class="min-h-screen flex items-center justify-center">
@@ -87,10 +89,10 @@
                 <!-- Sparkline Chart -->
                 <div class="w-32 h-12 flex items-center justify-center">
                   <SparklineChart :data="stat.chartData" :width="128" :height="48" :color="stat.changeColor === 'positive'
-                      ? '#3b82f6'
-                      : stat.changeColor === 'negative'
-                        ? '#f59e0b'
-                        : '#3b82f6'
+                    ? '#3b82f6'
+                    : stat.changeColor === 'negative'
+                      ? '#f59e0b'
+                      : '#3b82f6'
                     " :stroke-width="2" :show-area="true" />
                 </div>
               </div>
@@ -98,13 +100,13 @@
               <!-- Change Info below -->
               <div class="flex items-center gap-1">
                 <UIcon :name="stat.changeColor === 'positive'
-                    ? 'i-heroicons-arrow-trending-up'
-                    : 'i-heroicons-arrow-trending-down'
+                  ? 'i-heroicons-arrow-trending-up'
+                  : 'i-heroicons-arrow-trending-down'
                   " :class="stat.changeColor === 'positive'
-                      ? 'text-blue-500'
-                      : stat.changeColor === 'negative'
-                        ? 'text-amber-500'
-                        : 'text-blue-500'
+                    ? 'text-blue-500'
+                    : stat.changeColor === 'negative'
+                      ? 'text-amber-500'
+                      : 'text-blue-500'
                     " class="w-4 h-4" />
                 <p class="text-xs text-gray-600 dark:text-slate-400">
                   {{ stat.change }}
@@ -127,12 +129,13 @@
 
           <div class="grid md:grid-cols-2 gap-4">
             <div v-for="project in recentProjects" :key="project.id"
+              @click="navigateTo(`/student/my-projects/${project.id}`)"
               class="p-4 bg-gray-50 dark:bg-slate-700/30 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700/50 transition-colors group cursor-pointer border border-gray-200 dark:border-slate-600/50 hover:border-blue-500/50 dark:hover:border-blue-500/30">
               <div class="flex items-start justify-between mb-3">
                 <div>
                   <p
                     class="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                    {{ project.title }}
+                    {{ project.name }}
                   </p>
                   <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">
                     {{ project.category.name }}
@@ -244,11 +247,6 @@ onMounted(async () => {
   }
 
   try {
-    // Check if user needs to set up security questions
-    if (authStore.needsSecurityQuestions) {
-      showSecurityQuestions.value = true;
-    }
-
     const token = route.query.token;
     const refreshToken = route.query.refresh_token;
 
@@ -260,8 +258,18 @@ onMounted(async () => {
       const refreshTokenStr = refreshToken ? String(refreshToken) : undefined;
       await authStore.handleOAuthCallback(tokenStr, refreshTokenStr);
 
+      // Check if user needs to set up security questions AFTER OAuth callback
+      if (authStore.needsSecurityQuestions) {
+        showSecurityQuestions.value = true;
+      }
+
       // Remove token from URL
       await router.replace({ query: {} });
+    } else {
+      // For non-OAuth logins, check security questions immediately
+      if (authStore.needsSecurityQuestions) {
+        showSecurityQuestions.value = true;
+      }
     }
 
     // Ensure auth is restored from localStorage
