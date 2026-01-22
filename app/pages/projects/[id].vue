@@ -59,7 +59,7 @@ const projectId = route.params.id as string;
 const project = ref(null);
 const isLoading = ref(true);
 
-const projectData = await projectStore.getProject(projectId);
+const projectData = await projectStore.fetchProjectById(projectId);
 if (!projectData) {
   throw createError({
     statusCode: 404,

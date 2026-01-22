@@ -7,6 +7,7 @@ import type { s, st } from "vue-router/dist/router-CWoNjPRp.mjs";
 
 // Types
 export interface ProjectAuthor {
+  id: string;
   name: string;
   avatar: string;
   program: string;
@@ -454,6 +455,7 @@ export const useProjectStore = defineStore("projects", {
           apiProjects.map(async (project: any) => {
             // Transform author data
             const author: ProjectAuthor = {
+              id: project.author?.id,
               name: project.author
                 ? `${project.author.firstName || ""} ${project.author.lastName || ""}`.trim()
                 : "Unknown",
@@ -604,7 +606,17 @@ export const useProjectStore = defineStore("projects", {
 
       // Check if user is authenticated
       if (!authStore.isAuthenticated || !authStore.user || !authStore.token) {
-        console.warn("User must be authenticated to like projects");
+        console.warn("❌ User must be authenticated to like projects");
+        return false;
+      }
+
+      // Validate token before making request
+      if (!authStore.isTokenValid()) {
+        console.error("❌ Token is invalid or expired. Please log in again.");
+        // Show notification to user (you can add a toast/notification here)
+        alert("Your session has expired. Please log in again.");
+        // Optionally logout and redirect
+        await authStore.logout();
         return false;
       }
 
@@ -612,12 +624,24 @@ export const useProjectStore = defineStore("projects", {
         (p) => p.id?.toString() === projectId.toString(),
       );
       if (!project) {
-        console.warn("Project not found");
+        console.warn("❌ Project not found:", projectId);
         return false;
       }
 
       try {
-        // Toggle like on backend
+        // Decode token to show payload (for debugging)
+        const decoded = authStore.decodeJWT(authStore.token!);
+        console.log("🔄 Toggling like for project:", {
+          projectId,
+          hasToken: !!authStore.token,
+          tokenLength: authStore.token?.length,
+          userId: authStore.user?.id,
+          tokenPayload: decoded,
+          tokenExpiry: decoded?.exp
+            ? new Date(decoded.exp * 1000).toISOString()
+            : "N/A",
+        });
+
         const response = await fetch(`/api/projects/${projectId}/like`, {
           method: "POST",
           headers: {
@@ -627,11 +651,45 @@ export const useProjectStore = defineStore("projects", {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to toggle like");
+          // Get detailed error from backend
+          let errorMessage = `Failed to toggle like (${response.status})`;
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.message || errorData.error || errorMessage;
+            console.error("❌ Backend error:", {
+              status: response.status,
+              statusText: response.statusText,
+              error: errorData,
+              requestUrl: `/api/projects/${projectId}/like`,
+              authHeader: `Bearer ${authStore.token?.substring(0, 20)}...`,
+            });
+          } catch (e) {
+            console.error("❌ HTTP error:", {
+              status: response.status,
+              statusText: response.statusText,
+            });
+          }
+
+          // If 401, token might be expired - suggest re-login
+          if (response.status === 401) {
+            console.warn(
+              "⚠️ Token appears to be invalid or expired. Please log in again.",
+            );
+            alert("Your session has expired. Please log in again.");
+            await authStore.logout();
+          }
+
+          throw new Error(errorMessage);
         }
 
         const data = await response.json();
         const isNowLiked = data.liked;
+
+        console.log("✅ Like toggled successfully:", {
+          projectId,
+          isNowLiked,
+          newLikeCount: isNowLiked ? project.likes + 1 : project.likes - 1,
+        });
 
         // Update local state based on API response
         if (isNowLiked) {
@@ -649,7 +707,7 @@ export const useProjectStore = defineStore("projects", {
 
         return isNowLiked;
       } catch (error) {
-        console.error("Error toggling like:", error);
+        console.error("❌ Error toggling like:", error);
         return false;
       }
     },
@@ -894,25 +952,25 @@ export const useProjectStore = defineStore("projects", {
       return false;
     },
 
-    async getProject(id: number | string): Promise<Project | undefined> {
-      // Try to fetch from API first
-      try {
-        const project = await this.fetchProjectById(id);
-        if (project) return project;
-      } catch (error) {
-        console.warn(
-          "Failed to fetch project from API, checking local store:",
-          error,
-        );
-      }
+    // async getProject(id: string): Promise<Project | undefined> {
+    //   // Try to fetch from API first
+    //   try {
+    //     const project = await this.fetchProjectById(id);
+    //     if (project) return project;
+    //   } catch (error) {
+    //     console.warn(
+    //       "Failed to fetch project from API, checking local store:",
+    //       error,
+    //     );
+    //   }
 
-      // Fallback to local store
-      return this.projects.find(
-        (project) => project.id?.toString() === id.toString(),
-      );
-    },
+    //   // Fallback to local store
+    //   return this.projects.find(
+    //     (project) => project.id?.toString() === id.toString(),
+    //   );
+    // },
 
-    async fetchProjectById(id: number | string): Promise<Project | null> {
+    async fetchProjectById(id: string): Promise<Project | null> {
       this.loading = true;
       try {
         // Fetch from API using proxy
@@ -937,6 +995,7 @@ export const useProjectStore = defineStore("projects", {
 
         // Transform author data
         const author: ProjectAuthor = {
+          id: project.author?.id,
           name: project.author
             ? `${project.author.firstName || ""} ${project.author.lastName || ""}`.trim()
             : "Mr. Test ",
@@ -945,34 +1004,8 @@ export const useProjectStore = defineStore("projects", {
           year: project.author?.year || "4th Year",
         };
 
-        /*   author: {
-      name: "Mr. Test",
-      avatar: "https://randomuser.me/api/portraits/women/50.jpg",
-      program: "Computer Science",
-      year: "4th Year",
-    },
-    */
         // Transform category (from object to string)
-        const category = project.category.name || "Uncategorized";
-
-        // Transform images - fetch full URLs from backend
-        // const imagesObj = Array.isArray(project.images)
-        //   ? project.images.map((img: any) =>
-        //       typeof img === "string" ? img : img.id || "",
-        //     )
-        //   : [];
-
-        // let images: string[] = [];
-
-        // for (const imgId of imagesObj) {
-        //   try {
-        //     const imgData = await fetch(`/api/image/${imgId}`);
-        //     const imgJson = await imgData.json();
-        //     images.push(imgJson.thumbnailUrl || imgJson.originalUrl || "");
-        //   } catch (error) {
-        //     console.error("Error fetching image:", error);
-        //   }
-        // }
+        const category = project.category?.name || "Uncategorized";
 
         const images = project.images;
 
@@ -1007,7 +1040,7 @@ export const useProjectStore = defineStore("projects", {
 
         const transformedProject: Project = {
           id: project.id,
-          name: project.title || project.name || "Untitled Project",
+          name: project.name || "Untitled Project",
           description: project.description || project.decription,
           academicYear: project.academicYear
             ? project.academicYear.toString()
@@ -1364,6 +1397,7 @@ export const useProjectStore = defineStore("projects", {
           description: apiProject.description || "",
           academicYear: apiProject.academicYear?.toString() || "",
           author: {
+            id: authStore.user.id || "",
             name:
               authStore.user.name ||
               `${authStore.user.firstName} ${authStore.user.lastName}`,
@@ -1460,8 +1494,122 @@ export const useProjectStore = defineStore("projects", {
         //   (project) => project.author?.name === authStore.user?.name,
         // );
 
-        const dataJson = await response.json();
-        this.userProjects = dataJson;
+        const apiProjects = await response.json();
+
+        let projects: Project[] = await Promise.all(
+          apiProjects.map(async (project: any) => {
+            // Transform author data
+            const author: ProjectAuthor = {
+              id: project.author?.id,
+              name: project.author
+                ? `${project.author.firstName || ""} ${project.author.lastName || ""}`.trim()
+                : "Unknown",
+              avatar: project.author?.avatar || DEFAULT_AVATAR_URL,
+              program: project.author?.program || "",
+              year: project.author?.year || "",
+            };
+
+            // Transform category (from object to string)
+            const category = project.category.name || "Uncategorized";
+
+            // Transform images - fetch full URLs from backend
+            let images = project.images;
+
+            // let images: string[] = [];
+
+            // for (const imgId of imagesObj) {
+            //   try {
+            //     const imgData = await fetch(`/api/image/${imgId}`);
+            //     const imgJson = await imgData.json();
+            //     images.push(imgJson.thumbnailUrl || imgJson.originalUrl || "");
+            //   } catch (error) {
+            //     console.error("Error fetching image:", error);
+            //   }
+            // }
+
+            // Transform tags (from array of objects to array of strings)
+            const tags = Array.isArray(project.tags)
+              ? project.tags.map((tag: any) =>
+                  typeof tag === "string" ? tag : tag.name || "",
+                )
+              : [];
+
+            // Transform members (map to simpler structure)
+            const members =
+              Array.isArray(project.members) && project.members.length > 0
+                ? project.members.map((member: any) => ({
+                    name: `${member.firstName || ""} ${member.lastName || ""}`.trim(),
+                    image:
+                      member.avatar ||
+                      "https://randomuser.me/api/portraits/women/50.jpg",
+                  }))
+                : [
+                    {
+                      name: "Sarah Chen",
+                      image: "https://randomuser.me/api/portraits/women/11.jpg",
+                    },
+                    {
+                      name: "Alex Park",
+                      image: "https://randomuser.me/api/portraits/men/32.jpg",
+                    },
+                    {
+                      name: "Jordan Lee",
+                      image: "https://randomuser.me/api/portraits/men/54.jpg",
+                    },
+                    {
+                      name: "Emma Davis",
+                      image: "https://randomuser.me/api/portraits/women/78.jpg",
+                    },
+                  ];
+
+            // Transform features (ensure proper structure)
+            const features: FeatureItem[] = Array.isArray(project.features)
+              ? project.features.map((feature: any) => ({
+                  date: feature.date || new Date().toISOString().split("T")[0],
+                  name: feature.name || "",
+                  description: feature.description || "",
+                  icon: feature.icon || "",
+                  status: feature.status || "pending",
+                }))
+              : [];
+
+            // Calculate status based on features
+            const status = this.calculateProjectStatus(features);
+
+            return {
+              id: project.id,
+              name: project.name || "Untitled Project",
+              description: project.description || project.decription || "",
+              academicYear: project.academicYear
+                ? project.academicYear.toString()
+                : "",
+              author,
+              technologies: project.technologies || [],
+              category,
+              status,
+              featured: project.featured || project.isFeatured || false,
+              likes: project.likes || project.likeCount || 0,
+              views: project.views || project.viewCount || 0,
+              demoUrl: project.demoUrl || "",
+              githubUrl: project.githubUrl || project.repoUrl || "",
+              images,
+              createdAt:
+                project.createdAt || new Date().toISOString().split("T")[0],
+              tags,
+              members,
+              features,
+              duration: project.duration || "",
+              course: project.course || "",
+              visibility:
+                project.visibility === "draft"
+                  ? "private"
+                  : project.visibility || "public",
+              submissions: project.submissions || [],
+            };
+          }),
+        );
+
+        this.userProjects = projects;
 
         console.log("User projects loaded:", this.userProjects);
       } catch (error) {

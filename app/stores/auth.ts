@@ -184,6 +184,33 @@ export const useAuthStore = defineStore("auth", {
     },
 
     /**
+     * Validate token structure and expiration
+     */
+    isTokenValid(): boolean {
+      const token = this.getToken();
+
+      if (!token) {
+        console.warn("⚠️ No token found");
+        return false;
+      }
+
+      // Check token format (should have 3 parts)
+      if (token.split(".").length !== 3) {
+        console.warn("⚠️ Invalid token format");
+        return false;
+      }
+
+      // Check if expired
+      if (this.isTokenExpired()) {
+        console.warn("⚠️ Token is expired");
+        return false;
+      }
+
+      console.log("✅ Token is valid");
+      return true;
+    },
+
+    /**
      * Fetch current user details from API by using ID from token
      */
 
@@ -402,7 +429,7 @@ export const useAuthStore = defineStore("auth", {
 
         return responseData.data.map((userData: any) => ({
           id: userData.id,
-          name: `${userData.firstname || ""} ${userData.lastname || ""}`.trim(),
+          name: `${userData.firstName || ""} ${userData.lastName || ""}`.trim(),
           email: userData.email,
           avatar: userData.avatar || DEFAULT_AVATAR_URL, // default avatar empty string if not provided
         }));
@@ -461,7 +488,10 @@ export const useAuthStore = defineStore("auth", {
         this.needsSecurityQuestions = needsQuestions;
 
         console.log("Token says needs questions:", needsQuestions);
-        console.log("User has security questions:", this.user?.hasSecurityQuestions);
+        console.log(
+          "User has security questions:",
+          this.user?.hasSecurityQuestions,
+        );
         console.log("Actually showing modal:", this.needsSecurityQuestions);
 
         this.isAuthenticated = true;

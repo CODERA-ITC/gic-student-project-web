@@ -20,7 +20,7 @@
               />
 
               <!-- Fallback if no images -->
-              <div  
+              <div
                 v-else
                 key="fallback"
                 class="absolute inset-0 w-full h-full flex items-center justify-center text-8xl bg-gray-100 dark:bg-slate-700"
@@ -338,7 +338,6 @@
               :class="[
                 'w-full relative space-y-8 p-4 md:p-6 lg:p-8',
                 'rounded-xl',
-                'bg-purple-50/30 dark:bg-purple-900/10',
               ]"
             >
               <!-- Vertical line with animation -->

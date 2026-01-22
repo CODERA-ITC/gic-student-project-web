@@ -1248,6 +1248,7 @@ import {
   visibilityOptions,
   technologiesOptions,
 } from "~/constants/project-options";
+import { getRandomProject } from "~/lib/RandomProject";
 
 const router = useRouter();
 const route = useRoute();
@@ -1517,68 +1518,7 @@ const filteredIcons = computed(() => {
 });
 
 // For demo purposes, pre-fill form with sample data
-const form = ref({
-  name: "AI Cat Detection System",
-  description:
-    "An AI-powered computer vision system that detects cats in images using deep learning. The project focuses on object detection, dataset preparation, model training, and visualizing detection results with bounding boxes.",
-  thumbnails: [], // Array of { preview: string, file: File }
-  category: "Artificial Intelligence",
-  academicYear: "2024-2025",
-  technologies: [],
-  githubUrl: "https://github.com/sarahchen/ai-cat-detection",
-  demoUrl: "https://ai-cat-detection.demo.com",
-  visibility: "public",
-  duration: "4 months",
-  teamSize: 3,
-  teamMembers: [
-    {
-      name: "Sarah Chen",
-      role: "Frontend Developer",
-      avatar: "https://randomuser.me/api/portraits/women/1.jpg",
-    },
-    {
-      name: "Alex Kumar",
-      role: "Backend Developer",
-      avatar: "https://randomuser.me/api/portraits/men/2.jpg",
-    },
-  ],
-  feature: [
-    {
-      name: "Dataset Collection",
-      description:
-        "Collected and filtered cat images from Open Images and removed unlabeled samples.",
-      date: "2025-09-01",
-      icon: "i-lucide-server",
-      status: "done",
-    },
-    {
-      name: "Model Training",
-      description:
-        "Trained a YOLO-based object detection model to detect cats in images.",
-      date: "2025-09-19",
-      icon: "i-heroicons-star",
-      status: "done",
-    },
-    {
-      name: "Bounding Box Visualization",
-      description:
-        "Implemented bounding box rendering for detected cats using OpenCV.",
-      date: "2025-10-26",
-      icon: "i-heroicons-chart-bar",
-      status: "done",
-    },
-    {
-      name: "Evaluation & Deployment",
-      description:
-        "Evaluated model performance and deployed a demo for image-based detection.",
-      date: "2025-12-01",
-      icon: "i-heroicons-cloud",
-      status: "done",
-    },
-  ],
-  tags: [],
-  course: "Artificial Intelligence & Computer Vision",
-});
+const form = ref(getRandomProject());
 
 // LocalStorage management
 const FORM_STORAGE_KEY = "gic-project-draft";
