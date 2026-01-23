@@ -230,8 +230,8 @@
                   <div class="flex items-center gap-3">
                     <img
                       v-if="project.images && project.images[0]"
-                      :src="project.images[0]"
-                      :alt="project.title"
+                      :src="project.images[0].thumbnailUrl"
+                      :alt="project.name"
                       class="w-12 h-12 rounded-lg object-cover"
                     />
                     <div
@@ -247,7 +247,7 @@
                       <p
                         class="text-sm font-semibold text-gray-900 dark:text-white"
                       >
-                        {{ project.title }}
+                        {{ project.name }}
                       </p>
                       <p
                         class="text-xs text-gray-500 dark:text-gray-400 line-clamp-1"
