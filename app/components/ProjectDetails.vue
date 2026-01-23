@@ -33,7 +33,10 @@
               <!-- Navigation Buttons -->
               <button
                 v-if="project.images && project.images.length > 1"
-                @click="previousImage"
+                @click="
+                  previousImage();
+                  resetAutoplay();
+                "
                 class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-all backdrop-blur-sm z-10"
               >
                 <UIcon
@@ -44,7 +47,10 @@
 
               <button
                 v-if="project.images && project.images.length > 1"
-                @click="nextImage"
+                @click="
+                  nextImage();
+                  resetAutoplay();
+                "
                 class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-all backdrop-blur-sm z-10"
               >
                 <UIcon
@@ -63,7 +69,10 @@
               <button
                 v-for="(img, idx) in project.images || []"
                 :key="idx"
-                @click="currentImageIndex = Number(idx)"
+                @click="
+                  currentImageIndex = Number(idx);
+                  resetAutoplay();
+                "
                 :class="[
                   'w-2 h-2 rounded-full transition-all',
                   currentImageIndex === idx
@@ -503,6 +512,20 @@ const isTimelineInView = ref(false);
 const isScrollLocked = ref(false);
 const scrollPosition = ref(0);
 
+// Reset autoplay interval when user manually navigates
+const resetAutoplay = () => {
+  if (autoPlayInterval.value) {
+    clearInterval(autoPlayInterval.value);
+  }
+
+  // Restart autoplay if there are multiple images
+  if (props.project?.images && props.project.images.length > 1) {
+    autoPlayInterval.value = setInterval(() => {
+      nextImage();
+    }, 5000);
+  }
+};
+
 const nextImage = () => {
   if (props.project?.images) {
     currentImageIndex.value =
@@ -639,18 +662,9 @@ onMounted(() => {
       if (entry.isIntersecting && !isTimelineInView.value) {
         isTimelineInView.value = true;
 
-        // Lock scroll when timeline enters view
-        lockScroll();
-
         // Create a master timeline for timeline section entrance
         const timelineTl = gsap.timeline({
           delay: 0.2,
-          onComplete: () => {
-            // Unlock scroll after all animations complete (after 4 seconds)
-            setTimeout(() => {
-              unlockScroll();
-            }, 2000);
-          },
         });
 
         // 1. Animate the container with scale and fade
@@ -767,23 +781,7 @@ onMounted(() => {
           });
         });
 
-        // 8. Add manual unlock with keyboard (ESC or any scroll attempt)
-        const handleKeyPress = (e: KeyboardEvent) => {
-          if (e.key === "Escape" || e.key === "Space") {
-            unlockScroll();
-            document.removeEventListener("keydown", handleKeyPress);
-          }
-        };
-
-        const handleWheel = () => {
-          if (isScrollLocked.value) {
-            unlockScroll();
-            document.removeEventListener("wheel", handleWheel);
-          }
-        };
-
-        document.addEventListener("keydown", handleKeyPress);
-        document.addEventListener("wheel", handleWheel);
+        // Continue observing for re-entry if needed
       }
     });
   }, observerOptions);
@@ -807,10 +805,6 @@ onMounted(() => {
 onUnmounted(() => {
   if (autoPlayInterval.value) {
     clearInterval(autoPlayInterval.value);
-  }
-  // Ensure scroll is unlocked when component unmounts
-  if (isScrollLocked.value) {
-    unlockScroll();
   }
   // Cleanup scroll listener
   window.removeEventListener("scroll", () => {});
