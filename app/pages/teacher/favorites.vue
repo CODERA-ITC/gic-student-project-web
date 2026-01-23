@@ -164,7 +164,7 @@ const selectedCategory = ref("All");
 // Get favorite projects
 const favoriteProjects = computed(() => {
   return projectStore.projects.filter((project) =>
-    projectStore.likedProjects.has(project.id)
+    projectStore.likedProjects.has(project.id),
   );
 });
 
@@ -183,7 +183,7 @@ const filteredProjects = computed(() => {
     return favoriteProjects.value;
   }
   return favoriteProjects.value.filter(
-    (project) => project.category === selectedCategory.value
+    (project) => project.category === selectedCategory.value,
   );
 });
 
@@ -210,7 +210,7 @@ const exportFavorites = () => {
     favoriteProjects.value
       .map(
         (p) =>
-          `"${p.title}","${p.category}","${p.author.name}","${p.status}",${p.likes},${p.views}`
+          `"${p.name}","${p.category}","${p.author.name}","${p.status}",${p.likes},${p.views}`,
       )
       .join("\n");
 
@@ -228,7 +228,10 @@ const exportFavorites = () => {
 // Load projects and user liked projects on mount
 onMounted(async () => {
   if (projectStore.projects.length === 0) {
-    await projectStore.fetchProjects();
+    await projectStore.fetchProjects(
+      projectStore.pagination.currentPage,
+      projectStore.pagination.itemsPerPage,
+    );
   }
   await projectStore.loadUserLikedProjects();
 });

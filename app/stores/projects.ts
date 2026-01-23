@@ -3,7 +3,7 @@ import { any } from "zod";
 import { useAuthStore } from "~/stores/auth";
 
 import { projectsData } from "~/constants/projects";
-import type { s, st } from "vue-router/dist/router-CWoNjPRp.mjs";
+import type { N, s, st } from "vue-router/dist/router-CWoNjPRp.mjs";
 
 // Types
 export interface ProjectAuthor {
@@ -391,13 +391,20 @@ export const useProjectStore = defineStore("projects", {
 
     // 2. fetch Projects data from server
 
-    async fetchProjects(includePrivate = false): Promise<Project[]> {
+    async fetchProjects(
+      currentPage?: number,
+      itemsPerPage?: number,
+    ): Promise<Project[]> {
       this.loading = true;
       try {
+        // Use provided params or fall back to state
+        const page = currentPage ?? this.pagination.currentPage;
+        const limit = itemsPerPage ?? this.pagination.itemsPerPage;
+
         // Build query parameters
         const params = new URLSearchParams({
-          page: this.pagination.currentPage.toString(),
-          limit: this.pagination.itemsPerPage.toString(),
+          page: page.toString(),
+          limit: limit.toString(),
         });
 
         // Add search parameter if exists
@@ -426,11 +433,6 @@ export const useProjectStore = defineStore("projects", {
         // Add sort parameter
         if (this.filters.sort) {
           params.append("sort", this.filters.sort);
-        }
-
-        // Add visibility parameter
-        if (includePrivate) {
-          params.append("includePrivate", "true");
         }
 
         // Fetch from API using proxy
@@ -563,9 +565,7 @@ export const useProjectStore = defineStore("projects", {
 
         // Update pagination state from API response
         this.pagination.totalItems = response.total || projects.length;
-        this.pagination.totalPages = Math.ceil(
-          this.pagination.totalItems / this.pagination.itemsPerPage,
-        );
+        this.pagination.totalPages = response.lastPage || 1;
         this.pagination.currentPage =
           response.page || this.pagination.currentPage;
 
@@ -574,6 +574,8 @@ export const useProjectStore = defineStore("projects", {
         //   const maxId = Math.max(...projects.map((p) => p.id || 0), 999);
         //   this.nextProjectId = maxId + 1;
         // }
+
+        console.log("Pagination state:", JSON.stringify(this.pagination));
 
         return projects;
       } catch (error) {
@@ -943,7 +945,7 @@ export const useProjectStore = defineStore("projects", {
         console.log("Fetched project details:", response);
 
         // API might return { data: Project } or just Project
-        const project = response?.data || response;
+        const project = response;
 
         if (!project) return null;
 
@@ -1319,7 +1321,6 @@ export const useProjectStore = defineStore("projects", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
-            // Don't set Content-Type for FormData - browser will set it with boundary
           },
           body: formData,
         });
@@ -1336,7 +1337,7 @@ export const useProjectStore = defineStore("projects", {
         console.log("✅ Project created successfully:", data);
 
         // Transform API response to Project interface
-        const apiProject = data.data || data;
+        const apiProject = data;
 
         const newProject: Project = {
           id: apiProject.id,
@@ -1428,7 +1429,6 @@ export const useProjectStore = defineStore("projects", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${authStore.token}`,
-            "Content-Type": "application/json",
           },
         });
 

@@ -222,7 +222,32 @@
       <UContainer
         class="py-9 bg-gradient-to-b via-gray-50 to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
       >
-        <div class="grid lg:grid-cols-4 gap-8">
+        <!-- Error State -->
+        <div v-if="dataFetchError" class="text-center py-20">
+          <div
+            class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-8 max-w-md mx-auto"
+          >
+            <UIcon
+              name="i-heroicons-exclamation-triangle"
+              class="w-16 h-16 text-red-600 dark:text-red-400 mx-auto mb-4"
+            />
+            <h3
+              class="text-xl font-semibold text-red-900 dark:text-red-200 mb-2"
+            >
+              Failed to Load Projects
+            </h3>
+            <p class="text-red-700 dark:text-red-300 mb-4">
+              {{ dataFetchError }}
+            </p>
+            <ButtonsPresetButton
+              label="Try Again"
+              icon="i-heroicons-arrow-path"
+              @click="initializeData"
+            />
+          </div>
+        </div>
+
+        <div v-else class="grid lg:grid-cols-4 gap-8">
           <!-- Projects Grid -->
           <div class="sm:col-span-4">
             <div class="space-y-6">
@@ -237,7 +262,7 @@
                       Showing {{ paginatedProjects.length }} of
                     </template>
                     <span class="font-bold text-blue-900 dark:text-white">{{
-                      filteredProjects.length
+                      projectStore.pagination.totalItems
                     }}</span>
                     projects
                     <template v-if="totalPages > 1">
@@ -263,7 +288,7 @@
                         <UButton
                           @click="
                             selectedCategory = categoryOptions.find(
-                              (c) => c.value === 'All'
+                              (c) => c.value === 'All',
                             )
                           "
                           color="primary"
@@ -341,7 +366,7 @@
                         <UButton
                           @click="
                             selectedSort = sortOptions.find(
-                              (s) => s.value === 'recent'
+                              (s) => s.value === 'recent',
                             )
                           "
                           color="primary"
@@ -379,6 +404,11 @@
                 />
               </div>
 
+              <!-- <p>
+                {{ totalPages }} total pages with
+                {{ filteredProjects.length }} filtered projects
+              </p> -->
+
               <!-- Pagination -->
               <div
                 v-if="totalPages > 1"
@@ -412,22 +442,25 @@
               </div>
 
               <!-- Pagination Info -->
-              <div v-if="filteredProjects.length > 0" class="text-center mt-6">
+              <div
+                v-if="projectStore.pagination.totalItems > 0"
+                class="text-center mt-6"
+              >
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                   Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to
                   {{
                     Math.min(
                       currentPage * itemsPerPage,
-                      filteredProjects.length
+                      projectStore.pagination.totalItems,
                     )
                   }}
-                  of {{ filteredProjects.length }} projects
+                  of {{ projectStore.pagination.totalItems }} projects
                 </p>
               </div>
 
               <!-- Empty State -->
               <div
-                v-if="filteredProjects.length === 0"
+                v-if="projectStore.pagination.totalItems === 0"
                 class="text-center py-20"
               >
                 <UIcon
@@ -589,35 +622,82 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from "vue";
+import {
+  ref,
+  computed,
+  onMounted,
+  onUnmounted,
+  watch,
+  onBeforeMount,
+} from "vue";
 import { useProjectStore } from "~/stores/projects";
+import { useAuthStore } from "~/stores/auth";
 
 const projectStore = useProjectStore();
+const authStore = useAuthStore();
 const isLoadingData = ref(false);
+const dataFetchError = ref<string | null>(null);
+const isInitialized = ref(false);
 
-// Initialize data on component mount
-onMounted(async () => {
+// Initialize data before mount to ensure data is ready
+const initializeData = async () => {
+  if (isInitialized.value && projectStore.projects.length > 0) {
+    // Data already loaded, just refresh liked projects if authenticated
+    if (authStore.isAuthenticated) {
+      await projectStore.loadUserLikedProjects();
+    }
+    return;
+  }
+
   isLoadingData.value = true;
+  dataFetchError.value = null;
+
   try {
-    // Always fetch categories and tags to ensure they're loaded
+    // Always fetch fresh data on navigation/reload
     await Promise.all([
       projectStore.fetchCategories(),
       projectStore.fetchTags(),
+      projectStore.fetchProjects(
+        projectStore.pagination.currentPage,
+        projectStore.pagination.itemsPerPage,
+      ),
     ]);
 
-    // Only fetch projects if not already loaded
-    if (projectStore.projects.length === 0) {
-      await projectStore.fetchProjects();
+    // Load user liked projects if authenticated
+    if (authStore.isAuthenticated) {
+      await projectStore.loadUserLikedProjects();
     }
 
-    // Load user liked projects
-    await projectStore.loadUserLikedProjects();
+    isInitialized.value = true;
   } catch (error) {
     console.error("Error fetching data:", error);
+    dataFetchError.value =
+      error instanceof Error ? error.message : "Failed to load projects";
   } finally {
     isLoadingData.value = false;
   }
+};
+
+// Initialize on before mount (SSR friendly)
+onBeforeMount(async () => {
+  await initializeData();
 });
+
+// Also initialize on mounted for client-side navigation
+onMounted(async () => {
+  await initializeData();
+});
+
+// Watch for route changes and reinitialize
+const route = useRoute();
+watch(
+  () => route.path,
+  async (newPath, oldPath) => {
+    if (newPath === "/projects" && newPath !== oldPath) {
+      await initializeData();
+    }
+  },
+);
 
 // Store computed properties
 const categories = computed(() => {
@@ -635,7 +715,10 @@ const isCategoriesLoaded = computed(() => {
 });
 
 const categoryOptions = computed(() => categories.value.slice(0, 6));
-const projects = computed(() => projectStore.projects || []);
+const projects = computed(() => {
+  // Ensure we always return an array, even during loading
+  return Array.isArray(projectStore.projects) ? projectStore.projects : [];
+});
 
 // Filter state - now using store
 const showFilters = ref(false);
@@ -757,18 +840,27 @@ const currentPage = computed({
 });
 const itemsPerPage = computed(() => projectStore.pagination.itemsPerPage);
 
+// Watch for page changes and fetch new data
+watch(currentPage, async (newPage, oldPage) => {
+  if (newPage !== oldPage) {
+    await projectStore.fetchProjects(newPage, itemsPerPage.value);
+    // Scroll to top on page change
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+});
+
 // Debounced search functionality
 let searchTimeout = null;
 
-// Watch for sort changes to apply sorting
+// Watch for filter changes and refetch from API
 watch(
-  () => selectedSort.value,
-  (newSort) => {
-    if (newSort?.value) {
-      projectStore.setFilter("sort", newSort.value);
-    }
+  () => projectStore.filters,
+  async () => {
+    // Reset to page 1 when filters change
+    projectStore.setCurrentPage(1);
+    await projectStore.fetchProjects(1, itemsPerPage.value);
   },
-  { immediate: true }
+  { deep: true },
 );
 
 watch(categorySearchInput, (newValue) => {
@@ -839,12 +931,31 @@ onUnmounted(() => {
   document.removeEventListener("click", handleClickOutside);
 });
 
-// Computed properties using store methods
-const filteredProjects = computed(() => projectStore.getFilteredProjects());
+// Computed properties using store - use projects directly since API handles pagination
+const filteredProjects = computed(() => {
+  // For displaying total count, use pagination.totalItems from API response
+  return projectStore.projects;
+});
 
-const paginatedProjects = computed(() =>
-  projectStore.getPaginatedFilteredProjects()
-);
+// Validate and sanitize project data before rendering
+const isValidProject = (project: any): boolean => {
+  return !!(
+    project &&
+    project.id &&
+    project.name &&
+    project.description &&
+    project.category &&
+    typeof project.likes === "number" &&
+    typeof project.views === "number" &&
+    (project.images || project.emoji || project.gradient)
+  );
+};
+
+// Use projects directly from store - API already returns paginated data
+const paginatedProjects = computed(() => {
+  // Filter out any invalid projects
+  return projectStore.projects.filter(isValidProject);
+});
 
 const totalPages = computed(() => projectStore.pagination.totalPages);
 
@@ -884,8 +995,6 @@ const clearFilters = () => {
 };
 
 // Like functionality - using store with authentication
-
-const authStore = useAuthStore();
 
 const toggleLike = async (projectId) => {
   if (!authStore.isAuthenticated) {

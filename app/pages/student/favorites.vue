@@ -123,7 +123,7 @@ const showClearConfirm = ref(false);
 // Get favorite projects
 const favoriteProjects = computed(() => {
   return projectStore.projects.filter((project) =>
-    projectStore.likedProjects.has(project.id)
+    projectStore.likedProjects.has(project.id),
   );
 });
 
@@ -146,7 +146,10 @@ const clearAllFavorites = async () => {
 // Load projects and user liked projects on mount
 onMounted(async () => {
   if (projectStore.projects.length === 0) {
-    await projectStore.fetchProjects();
+    await projectStore.fetchProjects(
+      projectStore.pagination.currentPage,
+      projectStore.pagination.itemsPerPage,
+    );
   }
   await projectStore.loadUserLikedProjects();
 });

@@ -74,6 +74,7 @@ isLoading.value = false;
 const showAuthModal = ref(false);
 
 // Load user's liked projects when component mounts
+
 onMounted(async () => {
   isLoading.value = true;
 

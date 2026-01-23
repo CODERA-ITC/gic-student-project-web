@@ -181,7 +181,10 @@ onMounted(async () => {
     // Always fetch fresh data to ensure we have the latest
     console.log("Fetching fresh project data...");
     await projectStore.fetchUserProjects();
-    await projectStore.fetchProjects();
+    await projectStore.fetchProjects(
+      projectStore.pagination.currentPage,
+      projectStore.pagination.itemsPerPage,
+    );
 
     console.log("After fetch:", {
       totalProjects: projectStore.projects.length,

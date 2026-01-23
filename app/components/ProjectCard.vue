@@ -32,14 +32,22 @@
       >
         <!-- Images Carousel -->
         <div
-          v-if="project?.images && project.images.length > 0"
+          v-if="
+            project?.images &&
+            Array.isArray(project.images) &&
+            project.images.length > 0 &&
+            project.images[currentImageIndex]
+          "
           class="relative w-full h-full rounded-lg overflow-hidden hover:shadow-xl p-1"
         >
           <!-- Views -->
 
           <img
-            :src="project.images[currentImageIndex].thumbnailUrl.toString()"
-            :alt="project.name"
+            :src="
+              project.images[currentImageIndex].thumbnailUrl?.toString() ||
+              project.images[currentImageIndex].originalUrl?.toString()
+            "
+            :alt="project.name || 'Project image'"
             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 rounded-lg"
           />
 
@@ -220,7 +228,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted } from "vue";
+import { computed, ref, onMounted, onUnmounted, watch } from "vue";
 import { useAuthStore } from "~/stores/auth";
 
 // Get auth store
@@ -305,10 +313,15 @@ const formatNumber = (num) => {
 
 const startAutoPlay = () => {
   // Only run on client side
-  if (props.project?.images && props.project.images.length > 1) {
+  if (
+    process.client &&
+    props.project?.images &&
+    Array.isArray(props.project.images) &&
+    props.project.images.length > 1
+  ) {
     autoPlayInterval = setInterval(() => {
-      currentImageIndex.value =
-        (currentImageIndex.value + 1) % props.project.images.length;
+      const maxIndex = props.project.images.length - 1;
+      currentImageIndex.value = (currentImageIndex.value + 1) % (maxIndex + 1);
     }, 4000);
   }
 };
@@ -320,14 +333,48 @@ const stopAutoPlay = () => {
   }
 };
 
+// Watch for project changes and reset image index
+watch(
+  () => props.project?.id,
+  (newId, oldId) => {
+    if (newId !== oldId) {
+      // Reset to first image when project changes
+      currentImageIndex.value = 0;
+      // Restart autoplay with new project images
+      stopAutoPlay();
+      startAutoPlay();
+    }
+  },
+);
+// Watch for images array changes (handles async loading)
+watch(
+  () => props.project?.images,
+  (newImages, oldImages) => {
+    // If images changed or loaded after initial render
+    if (newImages && newImages !== oldImages) {
+      // Ensure current index is valid
+      if (currentImageIndex.value >= newImages.length) {
+        currentImageIndex.value = 0;
+      }
+      // Restart autoplay with new images
+      stopAutoPlay();
+      startAutoPlay();
+    }
+  },
+  { deep: true },
+);
 // Only mount on client side
 if (process.client) {
   onMounted(() => {
+    // Reset image index on mount
+    currentImageIndex.value = 0;
     startAutoPlay();
   });
 
   onUnmounted(() => {
     stopAutoPlay();
+    // Reset image index on unmount for cleanup
+    currentImageIndex.value = 0;
   });
 }
 </script>
