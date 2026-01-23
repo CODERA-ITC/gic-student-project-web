@@ -256,13 +256,11 @@ export const useProjectStore = defineStore("projects", {
           "Health Tech",
           "Data Science",
         ];
-        const data = await fetch("/api/categories", {
+        const categories = await $fetch("/api/categories", {
           method: "GET",
-        });
+        }).catch(() => categoriesMock);
 
-        console.log("Fetch categories response:", data);
-
-        const categories = (await data.json()) || categoriesMock;
+        console.log("Fetch categories response:", categories);
 
         console.log("Fetched categories:", categories);
 
@@ -338,11 +336,10 @@ export const useProjectStore = defineStore("projects", {
           "Full Stack",
         ];
 
-        const data = await fetch("/api/tags", {
+        const response = await $fetch("/api/tags", {
           method: "GET",
-        });
+        }).catch(() => tagsMock);
 
-        const response = await data.json();
         // Ensure tags is an array - handle different response structures
         let tags = Array.isArray(response)
           ? response
@@ -437,13 +434,11 @@ export const useProjectStore = defineStore("projects", {
         }
 
         // Fetch from API using proxy
-        const data = await fetch(`/api/projects?${params.toString()}`, {
+        const response = await $fetch(`/api/projects?${params.toString()}`, {
           method: "GET",
         });
 
-        console.log("Fetch projects response:", data);
-
-        const response = await data.json();
+        console.log("Fetch projects response:", response);
 
         console.log("Fetched projects:", response);
 
@@ -642,47 +637,31 @@ export const useProjectStore = defineStore("projects", {
             : "N/A",
         });
 
-        const response = await fetch(`/api/projects/${projectId}/like`, {
+        const data = await $fetch(`/api/projects/${projectId}/like`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${authStore.token}`,
             "Content-Type": "application/json",
           },
-        });
-
-        if (!response.ok) {
-          // Get detailed error from backend
-          let errorMessage = `Failed to toggle like (${response.status})`;
-          try {
-            const errorData = await response.json();
-            errorMessage = errorData.message || errorData.error || errorMessage;
+          onResponseError({ response }) {
             console.error("❌ Backend error:", {
               status: response.status,
               statusText: response.statusText,
-              error: errorData,
+              error: response._data,
               requestUrl: `/api/projects/${projectId}/like`,
               authHeader: `Bearer ${authStore.token?.substring(0, 20)}...`,
             });
-          } catch (e) {
-            console.error("❌ HTTP error:", {
-              status: response.status,
-              statusText: response.statusText,
-            });
-          }
 
-          // If 401, token might be expired - suggest re-login
-          if (response.status === 401) {
-            console.warn(
-              "⚠️ Token appears to be invalid or expired. Please log in again.",
-            );
-            alert("Your session has expired. Please log in again.");
-            await authStore.logout();
-          }
-
-          throw new Error(errorMessage);
-        }
-
-        const data = await response.json();
+            // If 401, token might be expired - suggest re-login
+            if (response.status === 401) {
+              console.warn(
+                "⚠️ Token appears to be invalid or expired. Please log in again.",
+              );
+              alert("Your session has expired. Please log in again.");
+              authStore.logout();
+            }
+          },
+        });
         const isNowLiked = data.liked;
 
         console.log("✅ Like toggled successfully:", {
@@ -714,18 +693,14 @@ export const useProjectStore = defineStore("projects", {
 
     async getProjectLikeCount(projectId: string | number): Promise<number> {
       try {
-        const response = await fetch(`/api/projects/${projectId}/like-count`, {
+        const data = await $fetch(`/api/projects/${projectId}/like-count`, {
           method: "GET",
         });
-
-        if (response.ok) {
-          const data = await response.json();
-          return data.likeCount || 0;
-        }
+        return data.likeCount || 0;
       } catch (error) {
         console.error("Error fetching like count:", error);
+        return 0;
       }
-      return 0;
     },
 
     async hasUserLikedProject(projectId: string | number): Promise<boolean> {
@@ -735,30 +710,27 @@ export const useProjectStore = defineStore("projects", {
 
         if (!token) return false;
 
-        const response = await fetch(`/api/projects/${projectId}/has-liked`, {
+        const data = await $fetch(`/api/projects/${projectId}/has-liked`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          const hasLiked = data.hasLiked || false;
+        const hasLiked = data.hasLiked || false;
 
-          // Update local state
-          if (hasLiked) {
-            this.likedProjects.add(projectId);
-          } else {
-            this.likedProjects.delete(projectId);
-          }
-
-          return hasLiked;
+        // Update local state
+        if (hasLiked) {
+          this.likedProjects.add(projectId);
+        } else {
+          this.likedProjects.delete(projectId);
         }
+
+        return hasLiked;
       } catch (error) {
         console.error("Error checking like status:", error);
+        return false;
       }
-      return false;
     },
 
     // Check if a project is liked by current user
@@ -888,7 +860,7 @@ export const useProjectStore = defineStore("projects", {
         }
 
         // Track view on backend
-        const response = await fetch(`/api/projects/${projectId}/view`, {
+        await $fetch(`/api/projects/${projectId}/view`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -896,16 +868,14 @@ export const useProjectStore = defineStore("projects", {
           },
         });
 
-        if (response.ok) {
-          console.log("✅ View tracked successfully on backend");
+        console.log("✅ View tracked successfully on backend");
 
-          // Update local state
-          const project = this.projects.find(
-            (p) => p.id?.toString() === projectId.toString(),
-          );
-          if (project) {
-            project.views++;
-          }
+        // Update local state
+        const project = this.projects.find(
+          (p) => p.id?.toString() === projectId.toString(),
+        );
+        if (project) {
+          project.views++;
         }
       } catch (error) {
         console.error("Error tracking view:", error);
@@ -914,18 +884,14 @@ export const useProjectStore = defineStore("projects", {
 
     async getProjectViewCount(projectId: string | number): Promise<number> {
       try {
-        const response = await fetch(`/api/projects/${projectId}/view-count`, {
+        const data = await $fetch(`/api/projects/${projectId}/view-count`, {
           method: "GET",
         });
-
-        if (response.ok) {
-          const data = await response.json();
-          return data.viewCount || 0;
-        }
+        return data.viewCount || 0;
       } catch (error) {
         console.error("Error fetching view count:", error);
+        return 0;
       }
-      return 0;
     },
 
     async hasUserViewedProject(projectId: string | number): Promise<boolean> {
@@ -935,21 +901,18 @@ export const useProjectStore = defineStore("projects", {
 
         if (!token) return false;
 
-        const response = await fetch(`/api/projects/${projectId}/has-viewed`, {
+        const data = await $fetch(`/api/projects/${projectId}/has-viewed`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          return data.hasViewed || false;
-        }
+        return data.hasViewed || false;
       } catch (error) {
         console.error("Error checking view status:", error);
+        return false;
       }
-      return false;
     },
 
     // async getProject(id: string): Promise<Project | undefined> {
@@ -969,54 +932,41 @@ export const useProjectStore = defineStore("projects", {
     //     (project) => project.id?.toString() === id.toString(),
     //   );
     // },
-
     async fetchProjectById(id: string): Promise<Project | null> {
       this.loading = true;
+
       try {
-        // Fetch from API using proxy
-        const data = await fetch(`/api/projects/${id}`, {
+        const response = await $fetch<any>(`/api/projects/${id}`, {
           method: "GET",
         });
-
-        if (!data.ok) {
-          throw new Error(`Failed to fetch project: ${data.statusText}`);
-        }
-
-        const response = await data.json();
 
         console.log("Fetched project details:", response);
 
         // API might return { data: Project } or just Project
-        const project = response.data || response;
+        const project = response?.data || response;
 
-        if (!project) {
-          return null;
-        }
+        if (!project) return null;
 
         // Transform author data
         const author: ProjectAuthor = {
           id: project.author?.id,
           name: project.author
             ? `${project.author.firstName || ""} ${project.author.lastName || ""}`.trim()
-            : "Mr. Test ",
+            : "Mr. Test",
           avatar: project.author?.avatar || DEFAULT_AVATAR_URL,
           program: project.author?.program || "Computer Science",
           year: project.author?.year || "4th Year",
         };
 
-        // Transform category (from object to string)
         const category = project.category?.name || "Uncategorized";
-
         const images = project.images;
 
-        // Transform tags (from array of objects to array of strings)
         const tags = Array.isArray(project.tags)
           ? project.tags.map((tag: any) =>
               typeof tag === "string" ? tag : tag.name || "",
             )
           : [];
 
-        // Transform members (map to simpler structure)
         const members = Array.isArray(project.members)
           ? project.members.map((member: any) => ({
               name: `${member.firstName || ""} ${member.lastName || ""}`.trim(),
@@ -1024,7 +974,6 @@ export const useProjectStore = defineStore("projects", {
             }))
           : [];
 
-        // Transform features (ensure proper structure)
         const features: FeatureItem[] = Array.isArray(project.features)
           ? project.features.map((feature: any) => ({
               date: feature.date || new Date().toISOString().split("T")[0],
@@ -1035,7 +984,6 @@ export const useProjectStore = defineStore("projects", {
             }))
           : [];
 
-        // Calculate status based on features
         const status = this.calculateProjectStatus(features);
 
         const transformedProject: Project = {
@@ -1069,10 +1017,10 @@ export const useProjectStore = defineStore("projects", {
           submissions: project.submissions || [],
         };
 
-        // Update local store if project exists, otherwise add it
         const existingIndex = this.projects.findIndex(
           (p) => p.id === transformedProject.id,
         );
+
         if (existingIndex !== -1) {
           this.projects[existingIndex] = transformedProject;
         } else {
@@ -1367,7 +1315,7 @@ export const useProjectStore = defineStore("projects", {
         );
 
         // Call API
-        const response = await fetch("/api/projects", {
+        const response = await $fetch("/api/projects", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -1376,15 +1324,15 @@ export const useProjectStore = defineStore("projects", {
           body: formData,
         });
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(
-            errorData.message ||
-              `Failed to create project: ${response.statusText}`,
-          );
-        }
+        // if (!response.ok) {
+        //   const errorData = await response.json().catch(() => ({}));
+        //   throw new Error(
+        //     errorData.message ||
+        //       `Failed to create project: ${response.statusText}`,
+        //   );
+        // }
 
-        const data = await response.json();
+        const data = await response;
         console.log("✅ Project created successfully:", data);
 
         // Transform API response to Project interface
@@ -1476,7 +1424,7 @@ export const useProjectStore = defineStore("projects", {
           console.warn("User not authenticated, cannot fetch user projects");
         }
 
-        const response = await fetch("/api/projects/me", {
+        const response = await $fetch("/api/projects/me", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${authStore.token}`,
@@ -1484,17 +1432,11 @@ export const useProjectStore = defineStore("projects", {
           },
         });
 
-        if (!response.ok) {
-          console.error("Failed to fetch user projects from API");
-        } else {
-          console.log("Fetched user projects from API");
-        }
-
         // this.userProjects = this.projects.filter(
         //   (project) => project.author?.name === authStore.user?.name,
         // );
 
-        const apiProjects = await response.json();
+        const apiProjects = await response;
 
         let projects: Project[] = await Promise.all(
           apiProjects.map(async (project: any) => {

@@ -3,6 +3,7 @@
  * Handles user login, role assignment (student/teacher), and auth state
  */
 
+import error from "#build/ui/error";
 import { defineStore } from "pinia";
 import { de } from "zod/locales";
 import { Role } from "~/types/roles";
@@ -88,7 +89,7 @@ export const useAuthStore = defineStore("auth", {
         }
 
         // Call real API via proxy
-        const response = await fetch("/api/users/login", {
+        const responseData = await $fetch("/api/users/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -97,18 +98,12 @@ export const useAuthStore = defineStore("auth", {
             email: email.trim().toLowerCase(),
             password,
           }),
-        });
+          onResponseError({ response }) {
+            let errorMessage = "Login failed";
 
-        // Handle different error statuses
-        if (!response.ok) {
-          let errorMessage = "Login failed";
-
-          try {
-            const errorData = await response.json();
-            errorMessage = errorData.message || errorMessage;
-          } catch {
-            // If response is not JSON, use status-based messages
-            if (response.status === 401) {
+            if (response._data?.message) {
+              errorMessage = response._data.message;
+            } else if (response.status === 401) {
               errorMessage = "Invalid email or password";
             } else if (response.status === 404) {
               errorMessage = "User not found";
@@ -117,12 +112,10 @@ export const useAuthStore = defineStore("auth", {
             } else {
               errorMessage = `Login failed: ${response.statusText}`;
             }
-          }
 
-          throw new Error(errorMessage);
-        }
-
-        const responseData = await response.json();
+            throw new Error(errorMessage);
+          },
+        });
 
         // Validate response structure
         if (!responseData.success || !responseData.data) {
@@ -231,19 +224,13 @@ export const useAuthStore = defineStore("auth", {
           throw new Error("User ID not found in token");
         }
 
-        const response = await fetch(`/api/users/${userId}`, {
+        const userData = await $fetch(`/api/users/${userId}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch user details");
-        }
-
-        const userData = await response.json();
 
         // if (!responseData.success || !responseData.data) {
         //   throw new Error("Invalid response from server");
@@ -326,7 +313,7 @@ export const useAuthStore = defineStore("auth", {
            */
 
         // Call real API via proxy
-        const response = await fetch("/api/users/signup", {
+        const responseData = await $fetch("/api/users/signup", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -339,28 +326,22 @@ export const useAuthStore = defineStore("auth", {
             departmentCode: "GIC",
             bio: `${role} at GIC`,
           }),
-        });
+          onResponseError({ response }) {
+            let errorMessage = "Registration failed";
 
-        if (!response.ok) {
-          let errorMessage = "Registration failed";
-
-          try {
-            const errorData = await response.json();
-            errorMessage = errorData.message || errorMessage;
-          } catch {
-            if (response.status === 409 || response.status === 400) {
+            if (response._data?.message) {
+              errorMessage = response._data.message;
+            } else if (response.status === 409 || response.status === 400) {
               errorMessage = "Email already exists";
             } else if (response.status >= 500) {
               errorMessage = "Server error. Please try again later";
             } else {
               errorMessage = `Registration failed: ${response.statusText}`;
             }
-          }
 
-          throw new Error(errorMessage);
-        }
-
-        const responseData = await response.json();
+            throw new Error(errorMessage);
+          },
+        });
 
         // Validate response structure
         if (!responseData.success || !responseData.data) {
@@ -406,7 +387,7 @@ export const useAuthStore = defineStore("auth", {
           throw new Error("No authentication token");
         }
 
-        const response = await fetch(
+        const responseData = await $fetch(
           `/api/users/search?q=${encodeURIComponent(query)}`,
           {
             method: "GET",
@@ -416,12 +397,6 @@ export const useAuthStore = defineStore("auth", {
             },
           },
         );
-
-        if (!response.ok) {
-          throw new Error("Failed to search users");
-        }
-
-        const responseData = await response.json();
 
         if (!responseData.success || !responseData.data) {
           throw new Error("Invalid response from server");
@@ -593,7 +568,7 @@ export const useAuthStore = defineStore("auth", {
       }
 
       try {
-        const response = await fetch("/api/users/refresh", {
+        const responseData = await $fetch("/api/users/refresh", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -601,13 +576,11 @@ export const useAuthStore = defineStore("auth", {
           body: JSON.stringify({
             refresh_token: refreshToken,
           }),
-        });
+        }).catch(() => null);
 
-        if (!response.ok) {
+        if (!responseData) {
           return false;
         }
-
-        const responseData = await response.json();
 
         if (!responseData.success || !responseData.data?.access_token) {
           return false;
@@ -658,7 +631,7 @@ export const useAuthStore = defineStore("auth", {
     async makeAuthRequest(
       url: string,
       options: RequestInit = {},
-    ): Promise<Response> {
+    ): Promise<any> {
       // Check if token is expired and refresh if needed
       if (this.isTokenExpired()) {
         const refreshed = await this.refreshAccessToken();
@@ -670,34 +643,38 @@ export const useAuthStore = defineStore("auth", {
 
       const token = this.getToken();
 
-      const response = await fetch(url, {
-        ...options,
-        headers: {
-          ...options.headers,
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      // If unauthorized, try refreshing token once
-      if (response.status === 401) {
-        const refreshed = await this.refreshAccessToken();
-        if (refreshed) {
-          // Retry request with new token
-          const newToken = this.getToken();
-          return fetch(url, {
-            ...options,
-            headers: {
-              ...options.headers,
-              Authorization: `Bearer ${newToken}`,
-            },
-          });
-        } else {
-          this.logout();
-          throw new Error("Session expired. Please login again.");
+      try {
+        return await $fetch(url, {
+          ...options,
+          method: (options.method as any) || "GET",
+          headers: {
+            ...options.headers,
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } catch (error: any) {
+        // If unauthorized, try refreshing token once
+        // Note: $fetch error has .statusCode or .status, not .response.status
+        if (error?.statusCode === 401 || error?.status === 401) {
+          const refreshed = await this.refreshAccessToken();
+          if (refreshed) {
+            // Retry request with new token
+            const newToken = this.getToken();
+            return await $fetch(url, {
+              ...options,
+              method: (options.method as any) || "GET",
+              headers: {  
+                ...options.headers,
+                Authorization: `Bearer ${newToken}`,
+              },
+            });
+          } else {
+            this.logout();
+            throw new Error("Session expired. Please login again.");
+          }
         }
+        throw error;
       }
-
-      return response;
     },
 
     /**

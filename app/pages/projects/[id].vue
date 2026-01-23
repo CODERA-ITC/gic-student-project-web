@@ -49,6 +49,7 @@
 import { ref, computed, watch, onMounted } from "vue";
 import { useProjectStore } from "~/stores/projects";
 import { useAuthStore } from "~/stores/auth";
+import { is, tr } from "zod/locales";
 
 const route = useRoute();
 const projectStore = useProjectStore();
@@ -59,7 +60,7 @@ const projectId = route.params.id as string;
 const project = ref(null);
 const isLoading = ref(true);
 
-const projectData = await projectStore.fetchProjectById(projectId);
+let projectData = await projectStore.fetchProjectById(projectId);
 if (!projectData) {
   throw createError({
     statusCode: 404,
@@ -74,15 +75,25 @@ const showAuthModal = ref(false);
 
 // Load user's liked projects when component mounts
 onMounted(async () => {
-  await projectStore.loadUserLikedProjects();
+  isLoading.value = true;
 
-  // Track unique view
-  const { trackView } = useProjectView();
-  const isUniqueView = await trackView(projectId);
+  try {
+    await projectStore.loadUserLikedProjects();
+    if (!project.value) {
+      project.value = await projectStore.fetchProjectById(projectId);
+    }
 
-  // Only increment views if it's a unique view
-  if (isUniqueView && project.value) {
-    projectStore.incrementViews(project.value.id);
+    const { trackView } = useProjectView();
+    const isUniqueView = await trackView(projectId);
+
+    // Only increment if project exists
+    if (isUniqueView && project.value?.id) {
+      await projectStore.incrementViews(project.value.id);
+    }
+  } catch (error) {
+    console.error("Error loading project or liked projects:", error);
+  } finally {
+    isLoading.value = false;
   }
 });
 
