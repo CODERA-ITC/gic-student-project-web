@@ -161,7 +161,6 @@ const isLoading = ref(true);
 const showSubmitModal = ref(false);
 const isSubmitting = ref(false);
 const showDeleteModal = ref(false);
-const deleteConfirmText = ref("");
 const isDeleting = ref(false);
 
 // Load user's liked projects and project data when component mounts
@@ -177,21 +176,6 @@ onMounted(async () => {
 
     // Load liked projects first
     await projectStore.loadUserLikedProjects();
-
-    // Always fetch fresh data to ensure we have the latest
-    console.log("Fetching fresh project data...");
-    await projectStore.fetchUserProjects();
-    await projectStore.fetchProjects(
-      projectStore.pagination.currentPage,
-      projectStore.pagination.itemsPerPage,
-    );
-
-    console.log("After fetch:", {
-      totalProjects: projectStore.projects.length,
-      totalUserProjects: projectStore.userProjects.length,
-      projectIds: projectStore.projects.map((p) => p.id),
-      userProjectIds: projectStore.userProjects.map((p) => p.id),
-    });
 
     let projectData = await projectStore.getProjectById(projectId);
 
@@ -286,12 +270,10 @@ const editProject = () => {
 // Close delete modal and reset state
 const closeDeleteModal = () => {
   showDeleteModal.value = false;
-  deleteConfirmText.value = "";
 };
 
 const confirmDelete = async () => {
   console.log("Confirming delete for project:", project.value?.id);
-  if (!project.value || deleteConfirmText.value !== "DELETE") return;
 
   try {
     isDeleting.value = true;

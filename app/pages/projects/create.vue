@@ -1973,7 +1973,11 @@ const submitForm = async () => {
       const currentUserMember = {
         id: authStore.user?.id,
         name: authStore.user?.name || "Current User",
-        avatarUrl: authStore.user?.avatar || DEFAULT_AVATAR_URL,
+        avatarUrl: getAvatarUrl(
+          authStore.user?.avatar,
+          authStore.user?.firstName || "",
+          authStore.user?.lastName || "",
+        ),
       };
 
       if (!form.teamMembers.find((m) => m.name === currentUserMember.name)) {
@@ -1989,7 +1993,11 @@ const submitForm = async () => {
       author: {
         id: authStore.user?.id,
         name: authStore.user?.name || "Current User",
-        avatar: authStore.user?.avatar || DEFAULT_AVATAR_URL,
+        avatar: getAvatarUrl(
+          authStore.user?.avatar,
+          authStore.user?.firstName || "",
+          authStore.user?.lastName || "",
+        ),
         program: authStore.user?.program || "Computer Science",
         year: authStore.user?.year || "4th Year",
       },

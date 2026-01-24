@@ -7,6 +7,7 @@ import error from "#build/ui/error";
 import { defineStore } from "pinia";
 import { de } from "zod/locales";
 import { Role } from "~/types/roles";
+import { getAvatarUrl } from "~/utils/avatar";
 
 // Helper function to safely access localStorage only on client side
 const safeLocalStorage = {
@@ -247,7 +248,11 @@ export const useAuthStore = defineStore("auth", {
           firstName: userData.firstName,
           lastName: userData.lastName,
           role: userData.role.name,
-          avatar: userData.avatar || DEFAULT_AVATAR_URL,
+          avatar: getAvatarUrl(
+            userData.avatar,
+            userData.firstName || "",
+            userData.lastName || "",
+          ),
           program: userData.program,
           year: userData.year,
           departmentId: userData.department.id,
@@ -406,7 +411,11 @@ export const useAuthStore = defineStore("auth", {
           id: userData.id,
           name: `${userData.firstName || ""} ${userData.lastName || ""}`.trim(),
           email: userData.email,
-          avatar: userData.avatar || DEFAULT_AVATAR_URL, // default avatar empty string if not provided
+          avatar: getAvatarUrl(
+            userData.avatar,
+            userData.firstName || "",
+            userData.lastName || "",
+          ),
         }));
       } catch (error) {
         console.error("Failed to search users:", error);
@@ -663,7 +672,7 @@ export const useAuthStore = defineStore("auth", {
             return await $fetch(url, {
               ...options,
               method: (options.method as any) || "GET",
-              headers: {  
+              headers: {
                 ...options.headers,
                 Authorization: `Bearer ${newToken}`,
               },

@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { any } from "zod";
 import { useAuthStore } from "~/stores/auth";
+import { getAvatarUrl } from "~/utils/avatar";
 
 import { projectsData } from "~/constants/projects";
 import type { N, s, st } from "vue-router/dist/router-CWoNjPRp.mjs";
@@ -14,6 +15,19 @@ export interface ProjectAuthor {
   program: string;
   year: string;
 }
+
+export const ProjectDefaultImages = [
+  {
+    id: "1234",
+    originalUrl: `https://www.pixeden.com/media/k2/galleries/856/001-screen-showcase-landing-page-devices-presentation-web-psd-projects.jpg`,
+    thumbnailUrl: `https://www.pixeden.com/media/k2/galleries/856/001-screen-showcase-landing-page-devices-presentation-web-psd-projects.jpg`,
+  },
+  {
+    id: "1235",
+    originalUrl: `https://img.freepik.com/free-photo/elegant-cozy-office-lifestyle_23-2149636247.jpg?semt=ais_user_personalization&w=740&q=80`,
+    thumbnailUrl: `https://img.freepik.com/free-photo/elegant-cozy-office-lifestyle_23-2149636247.jpg?semt=ais_user_personalization&w=740&q=80`,
+  },
+];
 
 export interface FeatureItem {
   date?: string;
@@ -331,29 +345,6 @@ export const useProjectStore = defineStore("projects", {
 
     async fetchTags(): Promise<string[]> {
       this.loading = true;
-      // try {
-      //   // simulate network delay
-      //   // await new Promise((resolve) => setTimeout(resolve, 100));
-
-      //   // for label no need to create value because value will be same as label but in lowercase and replace space with hyphen
-      //   const tagsMock = [
-      //     "Web Development",
-      //     "Mobile App",
-      //     "AI/ML",
-      //     "Data Science",
-      //     "IoT",
-      //     "Blockchain",
-      //     "Machine Learning",
-      //     "Artificial Intelligence",
-      //     "Software Development",
-      //     "Frontend",
-      //     "Backend",
-      //     "Full Stack",
-      //   ];
-
-      //   const response = await $fetch("/api/tags", {
-      //     method: "GET",
-      //   }).catch(() => tagsMock);
 
       const response = await $fetch("/api/tags");
 
@@ -368,30 +359,6 @@ export const useProjectStore = defineStore("projects", {
       this.loading = false;
 
       return (this.availableTags = tagsString);
-
-      // } catch (error) {
-      //   console.error("Error fetching tags, using fallback data:", error);
-      //   // Fallback to mock tags on API failure
-      //   const tagsMock = [
-      //     "Web Development",
-      //     "Mobile App",
-      //     "AI/ML",
-      //     "Data Science",
-      //     "IoT",
-      //     "Blockchain",
-      //     "Machine Learning",
-      //     "Artificial Intelligence",
-      //     "Software Development",
-      //     "Frontend",
-      //     "Backend",
-      //     "Full Stack",
-      //   ];
-      //   this.tagObjects = tagsMock;
-      //   this.availableTags = tagsMock;
-      //   return tagsMock;
-      // } finally {
-      //   this.loading = false;
-      // }
     },
 
     // 2. fetch Projects data from server
@@ -461,7 +428,11 @@ export const useProjectStore = defineStore("projects", {
               name: project.author
                 ? `${project.author.firstName || ""} ${project.author.lastName || ""}`.trim()
                 : "Unknown",
-              avatar: project.author?.avatar || DEFAULT_AVATAR_URL,
+              avatar: getAvatarUrl(
+                project.author?.avatar,
+                project.author?.firstName || "",
+                project.author?.lastName || "",
+              ),
               program: project.author?.program || "",
               year: project.author?.year || "",
             };
@@ -470,7 +441,12 @@ export const useProjectStore = defineStore("projects", {
             const category = project.category.name || "Uncategorized";
 
             // Transform images - fetch full URLs from backend
-            let images = project.images;
+            let images: ProjectImage[] = [];
+            if (project.images && project.images.length > 0) {
+              images = project.images || [];
+            } else {
+              images = ProjectDefaultImages;
+            }
 
             // let images: string[] = [];
 
@@ -496,28 +472,13 @@ export const useProjectStore = defineStore("projects", {
               Array.isArray(project.members) && project.members.length > 0
                 ? project.members.map((member: any) => ({
                     name: `${member.firstName || ""} ${member.lastName || ""}`.trim(),
-                    image:
-                      member.avatar ||
-                      "https://randomuser.me/api/portraits/women/50.jpg",
+                    image: getAvatarUrl(
+                      member.avatar,
+                      member.firstName || "",
+                      member.lastName || "",
+                    ),
                   }))
-                : [
-                    {
-                      name: "Sarah Chen",
-                      image: "https://randomuser.me/api/portraits/women/11.jpg",
-                    },
-                    {
-                      name: "Alex Park",
-                      image: "https://randomuser.me/api/portraits/men/32.jpg",
-                    },
-                    {
-                      name: "Jordan Lee",
-                      image: "https://randomuser.me/api/portraits/men/54.jpg",
-                    },
-                    {
-                      name: "Emma Davis",
-                      image: "https://randomuser.me/api/portraits/women/78.jpg",
-                    },
-                  ];
+                : [];
 
             // Transform features (ensure proper structure)
             const features: FeatureItem[] = Array.isArray(project.features)
@@ -943,13 +904,22 @@ export const useProjectStore = defineStore("projects", {
           name: project.author
             ? `${project.author.firstName || ""} ${project.author.lastName || ""}`.trim()
             : "Mr. Test",
-          avatar: project.author?.avatar || DEFAULT_AVATAR_URL,
+          avatar: getAvatarUrl(
+            project.author?.avatar,
+            project.author?.firstName || "",
+            project.author?.lastName || "",
+          ),
           program: project.author?.program || "Computer Science",
           year: project.author?.year || "4th Year",
         };
 
         const category = project.category?.name || "Uncategorized";
-        const images = project.images;
+        let images: ProjectImage[] = [];
+        if (project.images && project.images.length > 0) {
+          images = project.images || [];
+        } else {
+          images = ProjectDefaultImages;
+        }
 
         const tags = Array.isArray(project.tags)
           ? project.tags.map((tag: any) =>
@@ -960,7 +930,11 @@ export const useProjectStore = defineStore("projects", {
         const members = Array.isArray(project.members)
           ? project.members.map((member: any) => ({
               name: `${member.firstName || ""} ${member.lastName || ""}`.trim(),
-              image: member.avatar || DEFAULT_AVATAR_URL,
+              image: getAvatarUrl(
+                member.avatar,
+                member.firstName || "",
+                member.lastName || "",
+              ),
             }))
           : [];
 
@@ -1338,7 +1312,11 @@ export const useProjectStore = defineStore("projects", {
             name:
               authStore.user.name ||
               `${authStore.user.firstName} ${authStore.user.lastName}`,
-            avatar: authStore.user.avatar || DEFAULT_AVATAR_URL,
+            avatar: getAvatarUrl(
+              authStore.user.avatar,
+              authStore.user.firstName || "",
+              authStore.user.lastName || "",
+            ),
             program: authStore.user.program || "",
             year: authStore.user.year || "",
           },
@@ -1366,7 +1344,11 @@ export const useProjectStore = defineStore("projects", {
           members:
             apiProject.members?.map((member: any) => ({
               name: `${member.firstName || ""} ${member.lastName || ""}`.trim(),
-              image: member.avatar || DEFAULT_AVATAR_URL,
+              image: getAvatarUrl(
+                member.avatar,
+                member.firstName || "",
+                member.lastName || "",
+              ),
             })) || [],
           features: apiProject.features || [],
           duration: apiProject.duration || "",
@@ -1434,7 +1416,11 @@ export const useProjectStore = defineStore("projects", {
               name: project.author
                 ? `${project.author.firstName || ""} ${project.author.lastName || ""}`.trim()
                 : "Unknown",
-              avatar: project.author?.avatar || DEFAULT_AVATAR_URL,
+              avatar: getAvatarUrl(
+                project.author?.avatar,
+                project.author?.firstName || "",
+                project.author?.lastName || "",
+              ),
               program: project.author?.program || "",
               year: project.author?.year || "",
             };
@@ -1443,19 +1429,12 @@ export const useProjectStore = defineStore("projects", {
             const category = project.category.name || "Uncategorized";
 
             // Transform images - fetch full URLs from backend
-            let images = project.images;
-
-            // let images: string[] = [];
-
-            // for (const imgId of imagesObj) {
-            //   try {
-            //     const imgData = await fetch(`/api/image/${imgId}`);
-            //     const imgJson = await imgData.json();
-            //     images.push(imgJson.thumbnailUrl || imgJson.originalUrl || "");
-            //   } catch (error) {
-            //     console.error("Error fetching image:", error);
-            //   }
-            // }
+            let images: ProjectImage[] = [];
+            if (project.images && project.images.length > 0) {
+              images = project.images || [];
+            } else {
+              images = ProjectDefaultImages;
+            }
 
             // Transform tags (from array of objects to array of strings)
             const tags = Array.isArray(project.tags)
@@ -1469,28 +1448,13 @@ export const useProjectStore = defineStore("projects", {
               Array.isArray(project.members) && project.members.length > 0
                 ? project.members.map((member: any) => ({
                     name: `${member.firstName || ""} ${member.lastName || ""}`.trim(),
-                    image:
-                      member.avatar ||
-                      "https://randomuser.me/api/portraits/women/50.jpg",
+                    image: getAvatarUrl(
+                      member.avatar,
+                      member.firstName || "",
+                      member.lastName || "",
+                    ),
                   }))
-                : [
-                    {
-                      name: "Sarah Chen",
-                      image: "https://randomuser.me/api/portraits/women/11.jpg",
-                    },
-                    {
-                      name: "Alex Park",
-                      image: "https://randomuser.me/api/portraits/men/32.jpg",
-                    },
-                    {
-                      name: "Jordan Lee",
-                      image: "https://randomuser.me/api/portraits/men/54.jpg",
-                    },
-                    {
-                      name: "Emma Davis",
-                      image: "https://randomuser.me/api/portraits/women/78.jpg",
-                    },
-                  ];
+                : [];
 
             // Transform features (ensure proper structure)
             const features: FeatureItem[] = Array.isArray(project.features)
@@ -1706,31 +1670,27 @@ export const useProjectStore = defineStore("projects", {
     // Delete project
     async deleteProject(projectId: string): Promise<boolean> {
       try {
-        // Remove from projects array
-        const projectIndex = this.projects.findIndex((p) => p.id === projectId);
-        if (projectIndex !== -1) {
-          this.projects.splice(projectIndex, 1);
-        }
+        await $fetch(`/api/projects/${projectId}`, {
+          method: "DELETE",
+        });
 
-        // Remove from userProjects array
-        const userProjectIndex = this.userProjects.findIndex(
-          (p) => p.id === projectId,
+        console.log("✅ Project deleted successfully");
+
+        // Remove from projects array
+        this.projects = this.projects.filter(
+          (project) => project.id !== projectId,
         );
-        if (userProjectIndex !== -1) {
-          this.userProjects.splice(userProjectIndex, 1);
-        }
+
+        // Remove from user projects array
+        this.userProjects = this.userProjects.filter(
+          (project) => project.id !== projectId,
+        );
 
         // Update pagination
         this.pagination.totalItems = this.projects.length;
         this.pagination.totalPages = Math.ceil(
           this.projects.length / this.pagination.itemsPerPage,
         );
-
-        // Save to localStorage
-        // this.saveUserCreatedProjects();
-
-        // In real app, sync with backend
-        // await api.deleteProject(projectId);
 
         return true;
       } catch (error) {
