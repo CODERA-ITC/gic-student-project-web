@@ -999,7 +999,7 @@ export const useProjectStore = defineStore("projects", {
           members,
           features,
           duration: project.duration || "",
-          course: project.course || "",
+          course: project.course?.name || "",
           visibility:
             project.visibility === "draft"
               ? "private"
