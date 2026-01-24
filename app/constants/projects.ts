@@ -1,5 +1,4 @@
-import type { Project } from "~/stores/projects";
-
+import type { Project } from "~/utils/Interfaces";
 // export const projectsData: Project[] = [
 //   {
 //     id: 1,

@@ -1,126 +1,16 @@
 import { defineStore } from "pinia";
-import { any } from "zod";
 import { useAuthStore } from "~/stores/auth";
 import { getAvatarUrl } from "~/utils/avatar";
+import { projectService } from "~/services/ProjectService";
+import type {
+  CreateProjectDTO,
+  UpdateProjectDTO,
+  ProjectFilters,
+} from "~/services/ProjectService";
 
 import { projectsData } from "~/constants/projects";
-import type { N, s, st } from "vue-router/dist/router-CWoNjPRp.mjs";
-import { ta } from "zod/locales";
 
 // Types
-export interface ProjectAuthor {
-  id: string;
-  name: string;
-  avatar: string;
-  program: string;
-  year: string;
-}
-
-export const ProjectDefaultImages = [
-  {
-    id: "1234",
-    originalUrl: `https://www.pixeden.com/media/k2/galleries/856/001-screen-showcase-landing-page-devices-presentation-web-psd-projects.jpg`,
-    thumbnailUrl: `https://www.pixeden.com/media/k2/galleries/856/001-screen-showcase-landing-page-devices-presentation-web-psd-projects.jpg`,
-  },
-  {
-    id: "1235",
-    originalUrl: `https://img.freepik.com/free-photo/elegant-cozy-office-lifestyle_23-2149636247.jpg?semt=ais_user_personalization&w=740&q=80`,
-    thumbnailUrl: `https://img.freepik.com/free-photo/elegant-cozy-office-lifestyle_23-2149636247.jpg?semt=ais_user_personalization&w=740&q=80`,
-  },
-];
-
-export interface FeatureItem {
-  date?: string;
-  name: string;
-  description: string;
-  icon: string;
-  status: "pending" | "ongoing" | "done";
-}
-
-export interface Course {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-  name: string;
-  description: string;
-  code: string;
-}
-
-export interface ProjectImage {
-  id: string;
-  originalUrl: string;
-  thumbnailUrl: string;
-}
-
-export interface Project {
-  id: string;
-  name: string;
-  description: string;
-  departmentId?: "11111111-1111-1111-1111-111111111111"; // GIC Department ID
-  academicYear?: string;
-  author: ProjectAuthor;
-  technologies: string[];
-  category: string;
-  status: "Completed" | "In Progress";
-  featured: boolean;
-  likes: number;
-  views: number;
-  demoUrl: string;
-  githubUrl: string;
-  images: ProjectImage[];
-  createdAt: string;
-  tags: string[];
-  members?: { name: string; image: string }[];
-  features?: FeatureItem[];
-  duration?: string;
-  course?: string;
-  visibility?: "public" | "private";
-  submissions?: {
-    id: string;
-    name: string;
-    date: string;
-    status: string;
-  }[];
-}
-
-export interface ProjectStats {
-  total: number;
-  completed: number;
-  inProgress: number;
-  totalLikes: number;
-  totalViews: number;
-  totalTeamMembers: number;
-}
-
-export interface PaginationState {
-  currentPage: number;
-  itemsPerPage: number;
-  totalItems: number;
-  totalPages: number;
-}
-
-export interface ProjectState {
-  projects: Project[];
-  userProjects: Project[];
-  availableCategories: string[];
-  availableTags: string[];
-  categoryObjects: any[]; // Store full category objects for ID lookup
-  availableCourses: string[];
-  courseObjects: Course[];
-  tagObjects: any[]; // Store full tag objects for ID lookup
-  likedProjects: Set<string | number>;
-  loading: boolean;
-  pagination: PaginationState;
-  nextProjectId: number; // Track next project ID independently
-  filters: {
-    categories: string[];
-    search: string;
-    tags: any[];
-    year: string;
-    sort: string;
-  };
-}
 
 export const useProjectStore = defineStore("projects", {
   state: (): ProjectState => ({
@@ -229,13 +119,7 @@ export const useProjectStore = defineStore("projects", {
     calculateProjectStatus(
       features?: FeatureItem[],
     ): "Completed" | "In Progress" {
-      if (!features || features.length === 0) {
-        return "In Progress";
-      }
-
-      // Check if all features are done
-      const allDone = features.every((feature) => feature.status === "done");
-      return allDone ? "Completed" : "In Progress";
+      return calculateProjectStatus(features);
     },
 
     // Simulate fetch project state
@@ -292,22 +176,6 @@ export const useProjectStore = defineStore("projects", {
         console.log("Fetch categories response:", categories);
 
         console.log("Fetched categories:", categories);
-
-        // const response = await fetch("/api/users/signup", {
-        //       method: "POST",
-        //       headers: {
-        //         "Content-Type": "application/json",
-        //       },
-        //       body: JSON.stringify({
-        //         firstname,
-        //         lastname,
-        //         email: email.trim().toLowerCase(),
-        //         password,
-        //         departmentCode: "GIC",
-        //         bio: `${role} at
-        // GIC`,
-        //       }),
-        //     });
 
         // Store full category objects for ID lookup, but also keep string names for compatibility
         this.categoryObjects = categories; // Store full objects
@@ -373,173 +241,40 @@ export const useProjectStore = defineStore("projects", {
         const page = currentPage ?? this.pagination.currentPage;
         const limit = itemsPerPage ?? this.pagination.itemsPerPage;
 
-        // Build query parameters
-        const params = new URLSearchParams({
-          page: page.toString(),
-          limit: limit.toString(),
-        });
-
-        // Add search parameter if exists
-        if (this.filters.search) {
-          params.append("search", this.filters.search);
-        }
+        // Build filters object
+        const filters: ProjectFilters = {
+          page,
+          limit,
+          search: this.filters.search || undefined,
+          tags: this.filters.tags.length > 0 ? this.filters.tags : undefined,
+          year: this.filters.year || undefined,
+          sort: this.filters.sort || undefined,
+        };
 
         // Add category filter if not "All"
         if (
           this.filters.categories.length > 0 &&
           !this.filters.categories.includes("All")
         ) {
-          params.append("category", this.filters.categories.join(","));
+          filters.categoryId = this.filters.categories.join(",");
         }
 
-        // Add tags filter if exists
-        if (this.filters.tags.length > 0) {
-          params.append("tags", this.filters.tags.join(","));
-        }
-
-        // Add year filter if exists
-        if (this.filters.year) {
-          params.append("year", this.filters.year);
-        }
-
-        // Add sort parameter
-        if (this.filters.sort) {
-          params.append("sort", this.filters.sort);
-        }
-
-        // Fetch from API using proxy
-        const response = await $fetch(`/api/projects?${params.toString()}`, {
-          method: "GET",
-        });
+        // Use ProjectService to fetch
+        const response = await projectService.fetchAll(filters);
 
         console.log("Fetch projects response:", response);
 
-        console.log("Fetched projects:", response);
-
-        // API returns { data: Project[], total: number, page: number, limit: number, lastPage: number }
-        let apiProjects = response.data || response.projects || response || [];
-
-        // Transform API data to match frontend Project interface
-        let projects: Project[] = await Promise.all(
-          apiProjects.map(async (project: any) => {
-            // Transform author data
-            const author: ProjectAuthor = {
-              id: project.author?.id,
-              name: project.author
-                ? `${project.author.firstName || ""} ${project.author.lastName || ""}`.trim()
-                : "Unknown",
-              avatar: getAvatarUrl(
-                project.author?.avatar,
-                project.author?.firstName || "",
-                project.author?.lastName || "",
-              ),
-              program: project.author?.program || "",
-              year: project.author?.year || "",
-            };
-
-            // Transform category (from object to string)
-            const category = project.category.name || "Uncategorized";
-
-            // Transform images - fetch full URLs from backend
-            let images: ProjectImage[] = [];
-            if (project.images && project.images.length > 0) {
-              images = project.images || [];
-            } else {
-              images = ProjectDefaultImages;
-            }
-
-            // let images: string[] = [];
-
-            // for (const imgId of imagesObj) {
-            //   try {
-            //     const imgData = await fetch(`/api/image/${imgId}`);
-            //     const imgJson = await imgData.json();
-            //     images.push(imgJson.thumbnailUrl || imgJson.originalUrl || "");
-            //   } catch (error) {
-            //     console.error("Error fetching image:", error);
-            //   }
-            // }
-
-            // Transform tags (from array of objects to array of strings)
-            const tags = Array.isArray(project.tags)
-              ? project.tags.map((tag: any) =>
-                  typeof tag === "string" ? tag : tag.name || "",
-                )
-              : [];
-
-            // Transform members (map to simpler structure)
-            const members =
-              Array.isArray(project.members) && project.members.length > 0
-                ? project.members.map((member: any) => ({
-                    name: `${member.firstName || ""} ${member.lastName || ""}`.trim(),
-                    image: getAvatarUrl(
-                      member.avatar,
-                      member.firstName || "",
-                      member.lastName || "",
-                    ),
-                  }))
-                : [];
-
-            // Transform features (ensure proper structure)
-            const features: FeatureItem[] = Array.isArray(project.features)
-              ? project.features.map((feature: any) => ({
-                  date: feature.date || new Date().toISOString().split("T")[0],
-                  name: feature.name || "",
-                  description: feature.description || "",
-                  icon: feature.icon || "",
-                  status: feature.status || "pending",
-                }))
-              : [];
-
-            // Calculate status based on features
-            const status = await this.calculateProjectStatus(features);
-
-            return {
-              id: project.id,
-              name: project.name || "Untitled Project",
-              description: project.description || project.decription || "",
-              academicYear: project.academicYear
-                ? project.academicYear.toString()
-                : "",
-              author,
-              technologies: project.technologies || [],
-              category,
-              status,
-              featured: project.featured || project.isFeatured || false,
-              likes: project.likes || project.likeCount || 0,
-              views: project.views || project.viewCount || 0,
-              demoUrl: project.demoUrl || "",
-              githubUrl: project.githubUrl || project.repoUrl || "",
-              images,
-              createdAt:
-                project.createdAt || new Date().toISOString().split("T")[0],
-              tags,
-              members,
-              features,
-              duration: project.duration || "",
-              course: project.course || "",
-              visibility:
-                project.visibility === "draft"
-                  ? "private"
-                  : project.visibility || "public",
-              submissions: project.submissions || [],
-            };
-          }),
-        );
+        // Transform API response using ProjectTransformer
+        const { projects, pagination } =
+          ProjectTransformer.transformApiResponse(response);
 
         this.projects = projects;
 
         // Update pagination state from API response
-        this.pagination.totalItems = response.total || projects.length;
-        this.pagination.totalPages = response.lastPage || 1;
+        this.pagination.totalItems = pagination.total;
+        this.pagination.totalPages = pagination.lastPage;
         this.pagination.currentPage =
-          response.page || this.pagination.currentPage;
-
-        // // Update nextProjectId to be higher than any existing project ID
-        // if (projects.length > 0) {
-        //   const maxId = Math.max(...projects.map((p) => p.id || 0), 999);
-        //   this.nextProjectId = maxId + 1;
-        // }
+          pagination.page || this.pagination.currentPage;
 
         console.log("Pagination state:", JSON.stringify(this.pagination));
 
@@ -594,49 +329,10 @@ export const useProjectStore = defineStore("projects", {
       try {
         // Decode token to show payload (for debugging)
         const decoded = authStore.decodeJWT(authStore.token!);
-        console.log("🔄 Toggling like for project:", {
-          projectId,
-          hasToken: !!authStore.token,
-          tokenLength: authStore.token?.length,
-          userId: authStore.user?.id,
-          tokenPayload: decoded,
-          tokenExpiry: decoded?.exp
-            ? new Date(decoded.exp * 1000).toISOString()
-            : "N/A",
-        });
 
-        const data = await $fetch(`/api/projects/${projectId}/like`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-            "Content-Type": "application/json",
-          },
-          onResponseError({ response }) {
-            console.error("❌ Backend error:", {
-              status: response.status,
-              statusText: response.statusText,
-              error: response._data,
-              requestUrl: `/api/projects/${projectId}/like`,
-              authHeader: `Bearer ${authStore.token?.substring(0, 20)}...`,
-            });
-
-            // If 401, token might be expired - suggest re-login
-            if (response.status === 401) {
-              console.warn(
-                "⚠️ Token appears to be invalid or expired. Please log in again.",
-              );
-              alert("Your session has expired. Please log in again.");
-              authStore.logout();
-            }
-          },
-        });
+        // Use ProjectService to toggle like
+        const data = await projectService.toggleLike(projectId.toString());
         const isNowLiked = data.liked;
-
-        console.log("✅ Like toggled successfully:", {
-          projectId,
-          isNowLiked,
-          newLikeCount: isNowLiked ? project.likes + 1 : project.likes - 1,
-        });
 
         // Update local state based on API response
         if (isNowLiked) {
@@ -661,10 +357,7 @@ export const useProjectStore = defineStore("projects", {
 
     async getProjectLikeCount(projectId: string | number): Promise<number> {
       try {
-        const data = await $fetch(`/api/projects/${projectId}/like-count`, {
-          method: "GET",
-        });
-        return data.likeCount || 0;
+        return await projectService.getLikeCount(projectId.toString());
       } catch (error) {
         console.error("Error fetching like count:", error);
         return 0;
@@ -674,18 +367,11 @@ export const useProjectStore = defineStore("projects", {
     async hasUserLikedProject(projectId: string | number): Promise<boolean> {
       try {
         const authStore = useAuthStore();
-        const token = authStore.token;
+        if (!authStore.token) return false;
 
-        if (!token) return false;
-
-        const data = await $fetch(`/api/projects/${projectId}/has-liked`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const hasLiked = data.hasLiked || false;
+        const hasLiked = await projectService.hasUserLiked(
+          projectId.toString(),
+        );
 
         // Update local state
         if (hasLiked) {
@@ -820,21 +506,13 @@ export const useProjectStore = defineStore("projects", {
     async incrementViews(projectId: string | number): Promise<void> {
       try {
         const authStore = useAuthStore();
-        const token = authStore.token;
-
-        if (!token) {
+        if (!authStore.token) {
           console.warn("User not authenticated, skipping view tracking");
           return;
         }
 
-        // Track view on backend
-        await $fetch(`/api/projects/${projectId}/view`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
+        // Use ProjectService to track view
+        await projectService.trackView(projectId.toString());
 
         console.log("✅ View tracked successfully on backend");
 
@@ -852,10 +530,7 @@ export const useProjectStore = defineStore("projects", {
 
     async getProjectViewCount(projectId: string | number): Promise<number> {
       try {
-        const data = await $fetch(`/api/projects/${projectId}/view-count`, {
-          method: "GET",
-        });
-        return data.viewCount || 0;
+        return await projectService.getViewCount(projectId.toString());
       } catch (error) {
         console.error("Error fetching view count:", error);
         return 0;
@@ -887,100 +562,17 @@ export const useProjectStore = defineStore("projects", {
       this.loading = true;
 
       try {
-        const response = await $fetch<any>(`/api/projects/${id}`, {
-          method: "GET",
-        });
+        // Use ProjectService to fetch
+        const response = await projectService.fetchById(id);
 
         console.log("Fetched project details:", response);
 
-        // API might return { data: Project } or just Project
-        const project = response;
+        if (!response) return null;
 
-        if (!project) return null;
+        // Transform project using ProjectTransformer
+        const transformedProject = transformProject(response);
 
-        // Transform author data
-        const author: ProjectAuthor = {
-          id: project.author?.id,
-          name: project.author
-            ? `${project.author.firstName || ""} ${project.author.lastName || ""}`.trim()
-            : "Mr. Test",
-          avatar: getAvatarUrl(
-            project.author?.avatar,
-            project.author?.firstName || "",
-            project.author?.lastName || "",
-          ),
-          program: project.author?.program || "Computer Science",
-          year: project.author?.year || "4th Year",
-        };
-
-        const category = project.category?.name || "Uncategorized";
-        let images: ProjectImage[] = [];
-        if (project.images && project.images.length > 0) {
-          images = project.images || [];
-        } else {
-          images = ProjectDefaultImages;
-        }
-
-        const tags = Array.isArray(project.tags)
-          ? project.tags.map((tag: any) =>
-              typeof tag === "string" ? tag : tag.name || "",
-            )
-          : [];
-
-        const members = Array.isArray(project.members)
-          ? project.members.map((member: any) => ({
-              name: `${member.firstName || ""} ${member.lastName || ""}`.trim(),
-              image: getAvatarUrl(
-                member.avatar,
-                member.firstName || "",
-                member.lastName || "",
-              ),
-            }))
-          : [];
-
-        const features: FeatureItem[] = Array.isArray(project.features)
-          ? project.features.map((feature: any) => ({
-              date: feature.date || new Date().toISOString().split("T")[0],
-              name: feature.name || "",
-              description: feature.description || "",
-              icon: feature.icon || "",
-              status: feature.status || "pending",
-            }))
-          : [];
-
-        const status = this.getProjectStatus(features);
-
-        const transformedProject: Project = {
-          id: project.id,
-          name: project.name || "Untitled Project",
-          description: project.description || project.decription,
-          academicYear: project.academicYear
-            ? project.academicYear.toString()
-            : "",
-          author,
-          technologies: project.technologies || [],
-          category,
-          status,
-          featured: project.featured || project.isFeatured || false,
-          likes: project.likes || project.likeCount || 0,
-          views: project.views || project.viewCount || 0,
-          demoUrl: project.demoUrl || "",
-          githubUrl: project.githubUrl || project.repoUrl || "",
-          images,
-          createdAt:
-            project.createdAt || new Date().toISOString().split("T")[0],
-          tags,
-          members,
-          features,
-          duration: project.duration || "",
-          course: project.course?.name || "",
-          visibility:
-            project.visibility === "draft"
-              ? "private"
-              : project.visibility || "public",
-          submissions: project.submissions || [],
-        };
-
+        // Update or add to projects array
         const existingIndex = this.projects.findIndex(
           (p) => p.id === transformedProject.id,
         );
@@ -1180,185 +772,44 @@ export const useProjectStore = defineStore("projects", {
       this.loading = true;
       try {
         const authStore = useAuthStore();
-        const token = authStore.token;
 
-        if (!token || !authStore.user) {
+        if (!authStore.user) {
           throw new Error("User must be authenticated to create projects");
         }
 
-        // Prepare form data for API
-        const formData = new FormData();
-
-        // Required fields
-        formData.append("name", projectData.name || "");
-        formData.append("description", projectData.description || "");
-
-        // Category - lookup ID from category name
-        if (projectData.category) {
-          const categoryId = this.getCategoryIdByName(projectData.category);
-
-          formData.append("categoryId", categoryId);
-        }
-
-        // Course
-        if (projectData.course) {
-          const courseId = this.getCourseIdByName(projectData.course);
-          formData.append("courseId", courseId);
-        }
-
-        // Technologies array - JSON stringify
-        if (projectData.technologies && projectData.technologies.length > 0) {
-          formData.append(
-            "technologies",
-            JSON.stringify(projectData.technologies),
-          );
-        }
-
-        // Tags array - lookup IDs from tag names and JSON stringify
-        if (projectData.tags && projectData.tags.length > 0) {
-          // lowercase issue!
-          formData.append("tags", JSON.stringify(projectData.tags));
-        }
-
-        // Features array - JSON stringify
-        if (projectData.features && projectData.features.length > 0) {
-          formData.append("features", JSON.stringify(projectData.features));
-        }
-
-        // URLs
-        if (projectData.demoUrl) {
-          formData.append("demoUrl", projectData.demoUrl);
-        }
-        if (projectData.githubUrl) {
-          formData.append("repoUrl", projectData.githubUrl);
-        }
-
-        // Author ID (required)
-        if (!authStore.user?.id) {
-          throw new Error("User ID is required to create a project");
-        }
-        formData.append("authorId", authStore.user.id);
-
-        // Department ID (required)
-        if (!authStore.user?.departmentId) {
-          throw new Error("Department ID is required to create a project");
-        }
-        formData.append("departmentId", authStore.user.departmentId);
-
-        // Members IDs - extract IDs and JSON stringify as array
-        if (projectData.members && projectData.members.length > 0) {
-          console.log("Project members data:", projectData.members);
-          const memberIds = projectData.members.map((m: any) => m.id);
-          if (memberIds.length > 0) {
-            formData.append("memberIds", JSON.stringify(memberIds));
-          }
-        }
-
-        // Academic year
-        if (projectData.academicYear) {
-          formData.append("academicYear", projectData.academicYear.toString());
-        }
-
-        // Start date - format as ISO string
-        formData.append("startDate", new Date().toISOString());
-
-        // Images/files - if they exist in projectData
-        if (projectData.images && Array.isArray(projectData.images)) {
-          projectData.images.forEach((image: any) => {
-            if (image instanceof File) {
-              formData.append("files", image);
-            } else if (image instanceof Blob) {
-              formData.append("files", image);
-            }
-          });
-        }
-
-        console.log(
-          "Creating project with data:",
-          Object.fromEntries(formData.entries()),
-        );
-
-        // Call API
-        const response = await $fetch("/api/projects", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        });
-
-        // if (!response.ok) {
-        //   const errorData = await response.json().catch(() => ({}));
-        //   throw new Error(
-        //     errorData.message ||
-        //       `Failed to create project: ${response.statusText}`,
-        //   );
-        // }
-
-        const data = await response;
-        console.log("✅ Project created successfully:", data);
-
-        // Transform API response to Project interface
-        const apiProject = data;
-
-        const newProject: Project = {
-          id: apiProject.id,
-          name: apiProject.name || apiProject.title || "",
-          departmentId: apiProject.departmentId || "",
-          description: apiProject.description || "",
-          academicYear: apiProject.academicYear?.toString() || "",
-          author: {
-            id: authStore.user.id || "",
-            name:
-              authStore.user.name ||
-              `${authStore.user.firstName} ${authStore.user.lastName}`,
-            avatar: getAvatarUrl(
-              authStore.user.avatar,
-              authStore.user.firstName || "",
-              authStore.user.lastName || "",
-            ),
-            program: authStore.user.program || "",
-            year: authStore.user.year || "",
-          },
-          technologies: apiProject.technologies || [],
-          category:
-            typeof apiProject.category === "object"
-              ? apiProject.category.name
-              : apiProject.category || "Other",
-          status: this.calculateProjectStatus(apiProject.features || []),
-          featured: apiProject.featured || apiProject.isFeatured || false,
-          likes: apiProject.likes || apiProject.likeCount || 0,
-          views: apiProject.views || apiProject.viewCount || 0,
-          demoUrl: apiProject.demoUrl || "",
-          githubUrl: apiProject.githubUrl || apiProject.repoUrl || "",
-          images:
-            apiProject.images?.map((img: any) =>
-              typeof img === "string" ? img : img.url || "",
-            ) || [],
-          createdAt:
-            apiProject.createdAt || new Date().toISOString().split("T")[0],
-          tags:
-            apiProject.tags?.map((tag: any) =>
-              typeof tag === "string" ? tag : tag.name || "",
-            ) || [],
-          members:
-            apiProject.members?.map((member: any) => ({
-              name: `${member.firstName || ""} ${member.lastName || ""}`.trim(),
-              image: getAvatarUrl(
-                member.avatar,
-                member.firstName || "",
-                member.lastName || "",
-              ),
-            })) || [],
-          features: apiProject.features || [],
-          duration: apiProject.duration || "",
-          course: apiProject.course || "",
-          visibility:
-            apiProject.visibility === "draft"
-              ? "private"
-              : apiProject.visibility || "public",
-          submissions: apiProject.submissions || [],
+        // Build CreateProjectDTO
+        const createData: CreateProjectDTO = {
+          name: projectData.name || "",
+          description: projectData.description || "",
+          authorId: authStore.user.id,
+          departmentId: authStore.user.departmentId,
+          categoryId: projectData.category
+            ? this.getCategoryIdByName(projectData.category)
+            : undefined,
+          courseId: projectData.course
+            ? this.getCourseIdByName(projectData.course)
+            : undefined,
+          technologies: projectData.technologies,
+          tags: projectData.tags,
+          features: projectData.features,
+          demoUrl: projectData.demoUrl,
+          repoUrl: projectData.githubUrl,
+          memberIds: projectData.members?.map((m: any) => m.id),
+          academicYear: projectData.academicYear,
+          startDate: new Date().toISOString(),
+          // Images will be File[] from form upload, not ProjectImage[]
+          images: (projectData.images as any)?.filter?.(
+            (img: any) => img instanceof File,
+          ) as File[] | undefined,
         };
+
+        // Use ProjectService to create
+        const response = await projectService.create(createData);
+
+        console.log("✅ Project created successfully:", response);
+
+        // Transform API response using ProjectTransformer
+        const newProject = transformProject(response);
 
         // Add to local store
         this.projects.unshift(newProject);
@@ -1388,120 +839,18 @@ export const useProjectStore = defineStore("projects", {
           throw new Error("User not authenticated");
         }
 
-        // In real app, this would be an API call
-        // Filter existing projects by author to show only user-created projects
-
         if (!authStore.isAuthenticated || !authStore.user) {
           console.warn("User not authenticated, cannot fetch user projects");
+          return;
         }
 
-        const response = await $fetch("/api/projects/me", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${authStore.token}`,
-          },
-        });
-
-        // this.userProjects = this.projects.filter(
-        //   (project) => project.author?.name === authStore.user?.name,
-        // );
+        // Use ProjectService to fetch user projects
+        const response = await projectService.fetchUserProjects();
 
         const apiProjects = await response;
 
-        let projects: Project[] = await Promise.all(
-          apiProjects.map(async (project: any) => {
-            // Transform author data
-            const author: ProjectAuthor = {
-              id: project.author?.id,
-              name: project.author
-                ? `${project.author.firstName || ""} ${project.author.lastName || ""}`.trim()
-                : "Unknown",
-              avatar: getAvatarUrl(
-                project.author?.avatar,
-                project.author?.firstName || "",
-                project.author?.lastName || "",
-              ),
-              program: project.author?.program || "",
-              year: project.author?.year || "",
-            };
-
-            // Transform category (from object to string)
-            const category = project.category.name || "Uncategorized";
-
-            // Transform images - fetch full URLs from backend
-            let images: ProjectImage[] = [];
-            if (project.images && project.images.length > 0) {
-              images = project.images || [];
-            } else {
-              images = ProjectDefaultImages;
-            }
-
-            // Transform tags (from array of objects to array of strings)
-            const tags = Array.isArray(project.tags)
-              ? project.tags.map((tag: any) =>
-                  typeof tag === "string" ? tag : tag.name || "",
-                )
-              : [];
-
-            // Transform members (map to simpler structure)
-            const members =
-              Array.isArray(project.members) && project.members.length > 0
-                ? project.members.map((member: any) => ({
-                    name: `${member.firstName || ""} ${member.lastName || ""}`.trim(),
-                    image: getAvatarUrl(
-                      member.avatar,
-                      member.firstName || "",
-                      member.lastName || "",
-                    ),
-                  }))
-                : [];
-
-            // Transform features (ensure proper structure)
-            const features: FeatureItem[] = Array.isArray(project.features)
-              ? project.features.map((feature: any) => ({
-                  date: feature.date || new Date().toISOString().split("T")[0],
-                  name: feature.name || "",
-                  description: feature.description || "",
-                  icon: feature.icon || "",
-                  status: feature.status || "pending",
-                }))
-              : [];
-
-            // Calculate status based on features
-            const status = this.calculateProjectStatus(features);
-
-            return {
-              id: project.id,
-              name: project.name || "Untitled Project",
-              description: project.description || project.decription || "",
-              academicYear: project.academicYear
-                ? project.academicYear.toString()
-                : "",
-              author,
-              technologies: project.technologies || [],
-              category,
-              status,
-              featured: project.featured || project.isFeatured || false,
-              likes: project.likes || project.likeCount || 0,
-              views: project.views || project.viewCount || 0,
-              demoUrl: project.demoUrl || "",
-              githubUrl: project.githubUrl || project.repoUrl || "",
-              images,
-              createdAt:
-                project.createdAt || new Date().toISOString().split("T")[0],
-              tags,
-              members,
-              features,
-              duration: project.duration || "",
-              course: project.course || "",
-              visibility:
-                project.visibility === "draft"
-                  ? "private"
-                  : project.visibility || "public",
-              submissions: project.submissions || [],
-            };
-          }),
-        );
+        // Transform projects using ProjectTransformer
+        const projects = transformProjects(apiProjects);
 
         this.userProjects = projects;
 
@@ -1670,9 +1019,8 @@ export const useProjectStore = defineStore("projects", {
     // Delete project
     async deleteProject(projectId: string): Promise<boolean> {
       try {
-        await $fetch(`/api/projects/${projectId}`, {
-          method: "DELETE",
-        });
+        // Use ProjectService to delete
+        await projectService.delete(projectId);
 
         console.log("✅ Project deleted successfully");
 
