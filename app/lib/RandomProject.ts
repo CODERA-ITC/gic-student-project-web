@@ -38,21 +38,15 @@ export const getRandomProject = () => {
     "AWS",
   ];
 
-  const courses = [
-    "Artificial Intelligence & Computer Vision",
-    "Web Programming",
-    "Database Systems",
-    "Software Engineering",
-    "Machine Learning",
-  ];
+  // const courses = [
+  //   "Artificial Intelligence & Computer Vision",
+  //   "Web Programming",
+  //   "Database Systems",
+  //   "Software Engineering",
+  //   "Machine Learning",
+  // ];
 
-  const membersPool = [
-    { name: "Sarah Chen", role: "Frontend Developer", gender: "women", id: 1 },
-    { name: "Alex Kumar", role: "Backend Developer", gender: "men", id: 2 },
-    { name: "John Lim", role: "ML Engineer", gender: "men", id: 3 },
-    { name: "Sophea Chan", role: "UI/UX Designer", gender: "women", id: 4 },
-    { name: "Dara Sok", role: "DevOps Engineer", gender: "men", id: 5 },
-  ];
+  const membersPool = [];
 
   const randomPick = (arr) => arr[Math.floor(Math.random() * arr.length)];
   const randomInt = (min, max) =>
@@ -81,7 +75,7 @@ export const getRandomProject = () => {
     name: projectName,
     description: `${projectName} is a university project focusing on building a complete system including design, development, and testing.`,
     thumbnails: [],
-    category: randomPick(categories),
+    category: "",
     academicYear: randomPick(academicYears),
     technologies: getRandomTechnologies(),
     githubUrl: `https://github.com/demo/${projectName.toLowerCase().replaceAll(" ", "-")}`,
@@ -122,7 +116,7 @@ export const getRandomProject = () => {
         status: "done",
       },
     ],
+    course: "",
     tags: [],
-    course: randomPick(courses),
   };
 };

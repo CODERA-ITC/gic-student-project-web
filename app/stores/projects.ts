@@ -4,6 +4,7 @@ import { useAuthStore } from "~/stores/auth";
 
 import { projectsData } from "~/constants/projects";
 import type { N, s, st } from "vue-router/dist/router-CWoNjPRp.mjs";
+import { ta } from "zod/locales";
 
 // Types
 export interface ProjectAuthor {
@@ -22,6 +23,16 @@ export interface FeatureItem {
   status: "pending" | "ongoing" | "done";
 }
 
+export interface Course {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  name: string;
+  description: string;
+  code: string;
+}
+
 export interface ProjectImage {
   id: string;
   originalUrl: string;
@@ -29,7 +40,7 @@ export interface ProjectImage {
 }
 
 export interface Project {
-  id?: string;
+  id: string;
   name: string;
   description: string;
   departmentId?: "11111111-1111-1111-1111-111111111111"; // GIC Department ID
@@ -81,6 +92,8 @@ export interface ProjectState {
   availableCategories: string[];
   availableTags: string[];
   categoryObjects: any[]; // Store full category objects for ID lookup
+  availableCourses: string[];
+  courseObjects: Course[];
   tagObjects: any[]; // Store full tag objects for ID lookup
   likedProjects: Set<string | number>;
   loading: boolean;
@@ -103,6 +116,8 @@ export const useProjectStore = defineStore("projects", {
     availableTags: [],
     categoryObjects: [],
     tagObjects: [],
+    availableCourses: [],
+    courseObjects: [],
     likedProjects: new Set(),
     loading: false,
     nextProjectId: 1000, // Start user-created projects from 1000 to avoid conflicts
@@ -122,27 +137,41 @@ export const useProjectStore = defineStore("projects", {
   }),
 
   getters: {
+    getProjectStatus() {
+      return (features?: FeatureItem[]): "Completed" | "In Progress" => {
+        if (!features || features.length === 0) {
+          return "In Progress";
+        }
+
+        // Check if all features are done
+        const allDone = features.every((feature) => feature.status === "done");
+        return allDone ? "Completed" : "In Progress";
+      };
+    },
+
     getFeaturedProjects(): Partial<Project[]> {
       return this.projects.filter((project) => project.featured).slice(0, 3);
     },
 
-    // Get real-time calculated status for a project based on its features
-    getProjectStatus() {
-      return (projectId: string): "Completed" | "In Progress" => {
-        const project = this.projects.find((p) => p.id === projectId);
-        if (!project) return "In Progress";
-
-        // Always calculate status based on current features
-        if (!project.features || project.features.length === 0) {
-          return "In Progress";
-        }
-
-        const allDone = project.features.every(
-          (feature) => feature.status === "done",
+    getCourseIdByName() {
+      return (courseName: string): string | null => {
+        return (
+          this.courseObjects.find((course) => course.name === courseName)?.id ||
+          null
         );
-        return allDone ? "Completed" : "In Progress";
       };
     },
+
+    getCategoryIdByName() {
+      return (categoryName: string): string | null => {
+        return (
+          this.categoryObjects.find(
+            (category) => category.name === categoryName,
+          )?.id || null
+        );
+      };
+    },
+    // Get real-time calculated status for a project based on its features
 
     projectsByCategory(): Record<string, Partial<Project>[]> {
       // it will have a table that store all category
@@ -225,20 +254,6 @@ export const useProjectStore = defineStore("projects", {
       }
     },
 
-    // Helper to get category ID by name
-    getCategoryIdByName(categoryName: string): string | null {
-      const category = this.categoryObjects.find(
-        (cat: any) => cat.name === categoryName,
-      );
-      return category?.id || null;
-    },
-
-    // Helper to get tag ID by name
-    getTagIdByName(tagName: string): string | null {
-      const tag = this.tagObjects.find((t: any) => t.name === tagName);
-      return tag?.id || null;
-    },
-
     async fetchCategories(): Promise<string[]> {
       this.loading = true;
       try {
@@ -316,77 +331,67 @@ export const useProjectStore = defineStore("projects", {
 
     async fetchTags(): Promise<string[]> {
       this.loading = true;
-      try {
-        // simulate network delay
-        await new Promise((resolve) => setTimeout(resolve, 100));
+      // try {
+      //   // simulate network delay
+      //   // await new Promise((resolve) => setTimeout(resolve, 100));
 
-        // for label no need to create value because value will be same as label but in lowercase and replace space with hyphen
-        const tagsMock = [
-          "Web Development",
-          "Mobile App",
-          "AI/ML",
-          "Data Science",
-          "IoT",
-          "Blockchain",
-          "Machine Learning",
-          "Artificial Intelligence",
-          "Software Development",
-          "Frontend",
-          "Backend",
-          "Full Stack",
-        ];
+      //   // for label no need to create value because value will be same as label but in lowercase and replace space with hyphen
+      //   const tagsMock = [
+      //     "Web Development",
+      //     "Mobile App",
+      //     "AI/ML",
+      //     "Data Science",
+      //     "IoT",
+      //     "Blockchain",
+      //     "Machine Learning",
+      //     "Artificial Intelligence",
+      //     "Software Development",
+      //     "Frontend",
+      //     "Backend",
+      //     "Full Stack",
+      //   ];
 
-        const response = await $fetch("/api/tags", {
-          method: "GET",
-        }).catch(() => tagsMock);
+      //   const response = await $fetch("/api/tags", {
+      //     method: "GET",
+      //   }).catch(() => tagsMock);
 
-        // Ensure tags is an array - handle different response structures
-        let tags = Array.isArray(response)
-          ? response
-          : response?.data || response?.tags || tagsMock;
+      const response = await $fetch("/api/tags");
 
-        // Fallback to tagsMock if tags is still not an array
-        if (!Array.isArray(tags)) {
-          console.warn(
-            "Tags response is not an array, using mock data:",
-            response,
-          );
-          tags = tagsMock;
-        }
+      // Ensure tags is an array - handle different response structures
 
-        // Store full tag objects for ID lookup
-        this.tagObjects = tags;
+      let tags = (await response).data || [];
 
-        let tagsString: string[] = Array.from(
-          new Set(
-            tags.map((tag: any) => (typeof tag === "string" ? tag : tag.name)),
-          ),
-        );
+      // Store full tag objects for ID lookup
 
-        return (this.availableTags = tagsString);
-      } catch (error) {
-        console.error("Error fetching tags, using fallback data:", error);
-        // Fallback to mock tags on API failure
-        const tagsMock = [
-          "Web Development",
-          "Mobile App",
-          "AI/ML",
-          "Data Science",
-          "IoT",
-          "Blockchain",
-          "Machine Learning",
-          "Artificial Intelligence",
-          "Software Development",
-          "Frontend",
-          "Backend",
-          "Full Stack",
-        ];
-        this.tagObjects = tagsMock;
-        this.availableTags = tagsMock;
-        return tagsMock;
-      } finally {
-        this.loading = false;
-      }
+      this.tagObjects = tags;
+      let tagsString: string[] = tags.map((tag: any) => tag.name);
+      this.loading = false;
+
+      return (this.availableTags = tagsString);
+
+      // } catch (error) {
+      //   console.error("Error fetching tags, using fallback data:", error);
+      //   // Fallback to mock tags on API failure
+      //   const tagsMock = [
+      //     "Web Development",
+      //     "Mobile App",
+      //     "AI/ML",
+      //     "Data Science",
+      //     "IoT",
+      //     "Blockchain",
+      //     "Machine Learning",
+      //     "Artificial Intelligence",
+      //     "Software Development",
+      //     "Frontend",
+      //     "Backend",
+      //     "Full Stack",
+      //   ];
+      //   this.tagObjects = tagsMock;
+      //   this.availableTags = tagsMock;
+      //   return tagsMock;
+      // } finally {
+      //   this.loading = false;
+      // }
     },
 
     // 2. fetch Projects data from server
@@ -526,7 +531,7 @@ export const useProjectStore = defineStore("projects", {
               : [];
 
             // Calculate status based on features
-            const status = this.calculateProjectStatus(features);
+            const status = await this.calculateProjectStatus(features);
 
             return {
               id: project.id,
@@ -917,23 +922,6 @@ export const useProjectStore = defineStore("projects", {
       }
     },
 
-    // async getProject(id: string): Promise<Project | undefined> {
-    //   // Try to fetch from API first
-    //   try {
-    //     const project = await this.fetchProjectById(id);
-    //     if (project) return project;
-    //   } catch (error) {
-    //     console.warn(
-    //       "Failed to fetch project from API, checking local store:",
-    //       error,
-    //     );
-    //   }
-
-    //   // Fallback to local store
-    //   return this.projects.find(
-    //     (project) => project.id?.toString() === id.toString(),
-    //   );
-    // },
     async fetchProjectById(id: string): Promise<Project | null> {
       this.loading = true;
 
@@ -986,7 +974,7 @@ export const useProjectStore = defineStore("projects", {
             }))
           : [];
 
-        const status = this.calculateProjectStatus(features);
+        const status = this.getProjectStatus(features);
 
         const transformedProject: Project = {
           id: project.id,
@@ -1233,11 +1221,15 @@ export const useProjectStore = defineStore("projects", {
 
         // Category - lookup ID from category name
         if (projectData.category) {
-          const categoryObj = this.categoryObjects.find(
-            (cat: any) => cat.name === projectData.category,
-          );
-          const categoryId = categoryObj?.id || projectData.category;
+          const categoryId = this.getCategoryIdByName(projectData.category);
+
           formData.append("categoryId", categoryId);
+        }
+
+        // Course
+        if (projectData.course) {
+          const courseId = this.getCourseIdByName(projectData.course);
+          formData.append("courseId", courseId);
         }
 
         // Technologies array - JSON stringify
@@ -1250,11 +1242,8 @@ export const useProjectStore = defineStore("projects", {
 
         // Tags array - lookup IDs from tag names and JSON stringify
         if (projectData.tags && projectData.tags.length > 0) {
-          const tagIds = projectData.tags.map((tagName: string) => {
-            const tagObj = this.tagObjects.find((t: any) => t.name === tagName);
-            return tagObj?.id || tagName;
-          });
-          formData.append("tags", JSON.stringify(tagIds));
+          // lowercase issue!
+          formData.append("tags", JSON.stringify(projectData.tags));
         }
 
         // Features array - JSON stringify
@@ -1284,11 +1273,10 @@ export const useProjectStore = defineStore("projects", {
 
         // Members IDs - extract IDs and JSON stringify as array
         if (projectData.members && projectData.members.length > 0) {
-          const memberIds = projectData.members
-            .map((m: any) => m.id)
-            .filter(Boolean);
+          console.log("Project members data:", projectData.members);
+          const memberIds = projectData.members.map((m: any) => m.id);
           if (memberIds.length > 0) {
-            formData.append("membersIds", JSON.stringify(memberIds));
+            formData.append("memberIds", JSON.stringify(memberIds));
           }
         }
 
@@ -1806,9 +1794,17 @@ export const useProjectStore = defineStore("projects", {
       }
     },
 
-    // // Get next available project ID
-    // getNextProjectId(): number {
-    //   return Math.max(...this.projects.map((p) => p.id)) + 1;
-    // },
+    // this will fetch all course details from backend
+    async fetchCourses(): Promise<Course[]> {
+      let response = await $fetch("/api/courses");
+
+      this.courseObjects = (await response).data;
+
+      console.log("Fetched courses:", this.courseObjects);
+
+      this.availableCourses = this.courseObjects.map((course) => course.name);
+
+      return this.courseObjects;
+    },
   },
 });

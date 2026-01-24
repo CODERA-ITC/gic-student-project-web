@@ -287,7 +287,7 @@
                     class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                     required
                   >
-                    <option value="">Select a category</option>
+                    <option disabled value="">Select a category</option>
                     <option
                       v-for="category in availableCategories"
                       :key="category"
@@ -868,13 +868,22 @@
                   >
                     Course / Subject *
                   </label>
-                  <input
+
+                  <select
                     v-model="form.course"
-                    type="text"
-                    placeholder="e.g., Web Development, Mobile Apps"
-                    class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                     required
-                  />
+                    class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  >
+                    <option disabled value="">Select a course</option>
+
+                    <option
+                      v-for="course in availableCourses"
+                      :key="course"
+                      :value="course"
+                    >
+                      {{ course }}
+                    </option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -1239,7 +1248,6 @@ import {
 } from "~/constants/icons";
 import {
   availableStatuses,
-  suggestedMembers as defaultSuggestedMembers,
   getStatusColor,
   getStatusLabel,
   searchTeamMembers,
@@ -1269,7 +1277,18 @@ onMounted(async () => {
   }
 
   // First load categories and tags
-  await Promise.all([projectStore.fetchCategories(), projectStore.fetchTags()]);
+
+  if (
+    !projectStore.availableCategories.length ||
+    !projectStore.availableTags.length ||
+    !projectStore.availableCourses.length
+  ) {
+    await Promise.all([
+      projectStore.fetchCategories(),
+      projectStore.fetchTags(),
+      projectStore.fetchCourses(),
+    ]);
+  }
 
   // Then check for edit mode
   const editId = route.query.edit;
@@ -1341,7 +1360,7 @@ const loadProjectForEditing = async (projectId) => {
         };
       });
 
-      form.value = {
+      form = {
         name: project.name || "",
         description: project.description || "",
         thumbnails: project.images || [],
@@ -1437,7 +1456,7 @@ const generateAvatarFromName = (name) => {
 // Helper functions for team members
 const isTeamMemberSelected = (member) => {
   // Use ID comparison to handle users with same name but different IDs
-  return form.value.teamMembers.some((m) => {
+  return form.teamMembers.some((m) => {
     // If m is a string, it's old data, compare by name
     if (typeof m === "string") {
       const memberName = `${member.firstName} ${member.lastName}`;
@@ -1494,7 +1513,7 @@ watch(memberSearchQuery, async (newValue) => {
       suggestedMembers.value = uniqueResults.map((user, index) => {
         const fullName = user.name || "Unknown User";
         return {
-          id: parseInt(user.id) || index + 1,
+          id: user.id,
           firstName: fullName.split(" ")[0] || "",
           lastName: fullName.split(" ").slice(1).join(" ") || "",
           role: "Team Member",
@@ -1510,6 +1529,8 @@ watch(memberSearchQuery, async (newValue) => {
   }, 300);
 });
 
+const { availableCourses } = storeToRefs(projectStore);
+
 const filteredIcons = computed(() => {
   if (!iconSearchQuery.value) {
     return getFeaturedIcons(15);
@@ -1518,7 +1539,7 @@ const filteredIcons = computed(() => {
 });
 
 // For demo purposes, pre-fill form with sample data
-const form = ref(getRandomProject());
+const form = reactive(getRandomProject());
 
 // LocalStorage management
 const FORM_STORAGE_KEY = "gic-project-draft";
@@ -1529,7 +1550,7 @@ const saveToLocalStorage = () => {
   try {
     isSaving.value = true;
     // Exclude thumbnails (base64 images) from localStorage to avoid quota issues
-    const { thumbnails, ...formDataWithoutImages } = form.value;
+    const { thumbnails, ...formDataWithoutImages } = form;
     const formData = {
       ...formDataWithoutImages,
       thumbnailCount: thumbnails?.length || 0, // Save only the count
@@ -1584,21 +1605,21 @@ const restoreDraft = () => {
   const parsed = draftData.value;
 
   // Restore form data individually (preserving existing thumbnails and reactivity)
-  form.value.name = parsed.name || parsed.title || ""; // Support old drafts with 'title'
-  form.value.description = parsed.description || "";
+  form.name = parsed.name || parsed.title || ""; // Support old drafts with 'title'
+  form.description = parsed.description || "";
   // Don't restore thumbnails - they weren't saved to avoid quota issues
-  form.value.category = parsed.category || "";
-  form.value.academicYear = parsed.academicYear || "";
-  form.value.technologies = parsed.technologies || [];
-  form.value.githubUrl = parsed.githubUrl || "";
-  form.value.demoUrl = parsed.demoUrl || "";
-  form.value.visibility = parsed.visibility || "public";
-  form.value.duration = parsed.duration || "";
-  form.value.teamSize = parsed.teamSize || 1;
-  form.value.teamMembers = parsed.teamMembers || [];
-  form.value.feature = parsed.feature || [];
-  form.value.tags = parsed.tags || [];
-  form.value.course = parsed.course || "";
+  form.category = parsed.category || "";
+  form.academicYear = parsed.academicYear || "";
+  form.technologies = parsed.technologies || [];
+  form.githubUrl = parsed.githubUrl || "";
+  form.demoUrl = parsed.demoUrl || "";
+  form.visibility = parsed.visibility || "public";
+  form.duration = parsed.duration || "";
+  form.teamSize = parsed.teamSize || 1;
+  form.teamMembers = parsed.teamMembers || [];
+  form.feature = parsed.feature || [];
+  form.tags = parsed.tags || [];
+  form.course = parsed.course || "";
 
   currentStep.value = parsed.currentStep || 0;
   lastSaved.value = new Date(parsed.savedAt);
@@ -1649,8 +1670,7 @@ const techSuggestions = computed(() => {
   return technologiesOptions
     .filter(
       (tech) =>
-        tech.toLowerCase().includes(input) &&
-        !form.value.technologies.includes(tech),
+        tech.toLowerCase().includes(input) && !form.technologies.includes(tech),
     )
     .slice(0, 5);
 });
@@ -1665,8 +1685,8 @@ watch(techInput, (newValue) => {
 });
 
 const selectTechSuggestion = (suggestion) => {
-  if (!form.value.technologies.includes(suggestion)) {
-    form.value.technologies.push(suggestion);
+  if (!form.technologies.includes(suggestion)) {
+    form.technologies.push(suggestion);
   }
   techInput.value = "";
   showTechSuggestions.value = false;
@@ -1675,9 +1695,9 @@ const selectTechSuggestion = (suggestion) => {
 const addTechnology = () => {
   if (
     techInput.value.trim() &&
-    !form.value.technologies.includes(techInput.value.trim())
+    !form.technologies.includes(techInput.value.trim())
   ) {
-    form.value.technologies.push(techInput.value.trim());
+    form.technologies.push(techInput.value.trim());
     techInput.value = "";
     showTechSuggestions.value = false;
   }
@@ -1686,7 +1706,7 @@ const addTechnology = () => {
 // Watch form changes and auto-save with debounce
 let saveTimeout = null;
 watch(
-  () => form.value,
+  () => form,
   () => {
     if (!editMode.value) {
       clearTimeout(saveTimeout);
@@ -1713,12 +1733,14 @@ const tagSuggestions = computed(() => {
   if (!debouncedTagInput.value.trim()) return [];
 
   const input = debouncedTagInput.value.toLowerCase();
+
   const availableTags = projectStore.availableTags || [];
+
+  console.log("Available tags for suggestions:", availableTags);
 
   return availableTags
     .filter(
-      (tag) =>
-        tag.toLowerCase().includes(input) && !form.value.tags.includes(tag),
+      (tag) => tag.toLowerCase().includes(input) && !form.tags.includes(tag),
     )
     .slice(0, 5);
 });
@@ -1733,19 +1755,16 @@ watch(tagInput, (newValue) => {
 });
 
 const selectTagSuggestion = (suggestion) => {
-  if (!form.value.tags.includes(suggestion)) {
-    form.value.tags.push(suggestion);
+  if (!form.tags.includes(suggestion)) {
+    form.tags.push(suggestion);
   }
   tagInput.value = "";
   showTagSuggestions.value = false;
 };
 
 const addTag = () => {
-  if (
-    tagInput.value.trim() &&
-    !form.value.tags.includes(tagInput.value.trim())
-  ) {
-    form.value.tags.push(tagInput.value.trim());
+  if (tagInput.value.trim() && !form.tags.includes(tagInput.value.trim())) {
+    form.tags.push(tagInput.value.trim());
     tagInput.value = "";
     showTagSuggestions.value = false;
   }
@@ -1755,7 +1774,7 @@ const toggleTeamMember = (member) => {
   const memberName = `${member.firstName} ${member.lastName}`;
 
   // Use ID for comparison to handle users with same name
-  const existingIndex = form.value.teamMembers.findIndex((m) => {
+  const existingIndex = form.teamMembers.findIndex((m) => {
     // If m is a string, it's old data, use name comparison
     if (typeof m === "string") {
       return m === memberName;
@@ -1766,10 +1785,10 @@ const toggleTeamMember = (member) => {
 
   if (existingIndex >= 0) {
     // Remove member if already selected
-    form.value.teamMembers.splice(existingIndex, 1);
+    form.teamMembers.splice(existingIndex, 1);
   } else {
     // Add member if not selected - include ID
-    form.value.teamMembers.push({
+    form.teamMembers.push({
       id: member.id,
       name: memberName,
       role: member.role,
@@ -1790,11 +1809,11 @@ const addFeature = () => {
 
     if (editingFeatureIndex.value >= 0) {
       // Update existing feature
-      form.value.feature[editingFeatureIndex.value] = newFeature;
+      form.feature[editingFeatureIndex.value] = newFeature;
       editingFeatureIndex.value = -1;
     } else {
       // Add new feature
-      form.value.feature.push(newFeature);
+      form.feature.push(newFeature);
     }
 
     // Reset form
@@ -1809,7 +1828,7 @@ const addFeature = () => {
 };
 
 const editFeature = (index) => {
-  const feature = form.value.feature[index];
+  const feature = form.feature[index];
   featureInput.value = {
     name: feature.name || feature.title, // Support old features with 'title'
     description: feature.description,
@@ -1832,7 +1851,7 @@ const cancelEditFeature = () => {
 };
 
 const removeFeature = (index) => {
-  form.value.feature.splice(index, 1);
+  form.feature.splice(index, 1);
 };
 
 // Thumbnail upload handlers
@@ -1877,7 +1896,7 @@ const handleThumbnailDrop = (event) => {
 
 const processThumbnailFiles = (files) => {
   const MAX_IMAGES = 5;
-  const currentCount = form.value.thumbnails.length;
+  const currentCount = form.thumbnails.length;
   const remainingSlots = MAX_IMAGES - currentCount;
 
   if (remainingSlots <= 0) {
@@ -1906,7 +1925,7 @@ const processThumbnailFiles = (files) => {
       // 5MB limit
       const reader = new FileReader();
       reader.onload = (e) => {
-        form.value.thumbnails.push({
+        form.thumbnails.push({
           preview: e.target.result,
           file: file,
         });
@@ -1920,7 +1939,7 @@ const processThumbnailFiles = (files) => {
 };
 
 const removeThumbnail = (index) => {
-  form.value.thumbnails.splice(index, 1);
+  form.thumbnails.splice(index, 1);
 };
 
 // Generate tags from form data
@@ -1928,12 +1947,12 @@ const generateTags = () => {
   const tags = new Set();
 
   // Add category as tag
-  if (form.value.category) {
-    tags.add(form.value.category.toLowerCase().replace(/\s+/g, "-"));
+  if (form.category) {
+    tags.add(form.category.toLowerCase().replace(/\s+/g, "-"));
   }
 
   // Add some technologies as tags (first 3)
-  form.value.technologies.slice(0, 3).forEach((tech) => {
+  form.technologies.slice(0, 3).forEach((tech) => {
     tags.add(tech.toLowerCase().replace(/\s+/g, "-"));
   });
 
@@ -1947,75 +1966,62 @@ const submitForm = async () => {
     isSubmitting.value = true;
 
     // Generate tags
-    form.value.tags = generateTags();
+    // form.tags = generateTags();
 
     // Add current user as first team member if not already added (only for new projects)
     if (!editMode.value) {
       const currentUserMember = {
+        id: authStore.user?.id,
         name: authStore.user?.name || "Current User",
-        image:
-          authStore.user?.avatar ||
-          `https://randomuser.me/api/portraits/women/50.jpg`,
+        avatarUrl: authStore.user?.avatar || DEFAULT_AVATAR_URL,
       };
 
-      if (
-        !form.value.teamMembers.find((m) => m.name === currentUserMember.name)
-      ) {
-        form.value.teamMembers.unshift(currentUserMember);
+      if (!form.teamMembers.find((m) => m.name === currentUserMember.name)) {
+        form.teamMembers.unshift(currentUserMember);
       }
     }
 
-    console.log("=== PROJECT CREATION DEBUG ===");
-    console.log("Current user from auth store:", authStore.user);
-    console.log("User name:", authStore.user?.name);
-
     // Prepare project data according to Project interface
     const projectData = {
-      name: form.value.name,
-      description: form.value.description,
-      academicYear: form.value.academicYear,
+      name: form.name,
+      description: form.description,
+      academicYear: form.academicYear,
       author: {
         id: authStore.user?.id,
         name: authStore.user?.name || "Current User",
-        avatar:
-          authStore.user?.avatar ||
-          `https://randomuser.me/api/portraits/women/50.jpg`,
+        avatar: authStore.user?.avatar || DEFAULT_AVATAR_URL,
         program: authStore.user?.program || "Computer Science",
         year: authStore.user?.year || "4th Year",
       },
-      technologies: form.value.technologies,
-      category: form.value.category,
+      technologies: form.technologies,
+      category: form.category,
       status: editMode.value ? undefined : "In Progress", // Keep existing status when editing
       featured: false,
-      visibility: form.value.visibility || "public", // Ensure visibility is included
+      visibility: form.visibility || "public", // Ensure visibility is included
       demoUrl:
-        form.value.demoUrl ||
-        `https://${form.value.name
-          .toLowerCase()
-          .replace(/\s+/g, "-")}.demo.com`,
+        form.demoUrl ||
+        `https://${form.name.toLowerCase().replace(/\s+/g, "-")}.demo.com`,
       githubUrl:
-        form.value.githubUrl ||
+        form.githubUrl ||
         `https://github.com/${
           authStore.user?.username || "user"
-        }/${form.value.name.toLowerCase().replace(/\s+/g, "-")}`,
-      images: form.value.thumbnails.map((t) =>
-        typeof t === "string" ? t : t.file,
-      ),
-      tags: form.value.tags,
-      members: form.value.teamMembers.map((member) => {
-        if (typeof member === "string") {
-          return { name: member, role: "", image: "" };
-        }
+        }/${form.name.toLowerCase().replace(/\s+/g, "-")}`,
+      images: form.thumbnails.map((t) => (typeof t === "string" ? t : t.file)),
+      tags: form.tags,
+      members: form.teamMembers.map((member) => {
         return {
+          id: member.id,
           name: member.name || "",
           role: member.role || "",
-          image: member.avatar || member.image || "",
+          avatarUrl: member.avatar || member.image || "",
         };
       }),
-      features: form.value.feature, // Use 'features' to match Project interface
-      duration: form.value.duration || "3 months",
-      course: form.value.course || "Project Development",
+      features: form.feature, // Use 'features' to match Project interface
+      duration: form.duration || "3 months",
+      course: form.course || "Project Development",
     };
+
+    console.log("!!! Submitting project data:", projectData);
 
     let result;
     if (editMode.value) {
@@ -2103,16 +2109,16 @@ const canProceedToNextStep = computed(() => {
   switch (currentStep.value) {
     case 0: // Basic Info
       return (
-        form.value.name &&
-        form.value.description &&
-        form.value.thumbnails.length >= 1 &&
-        form.value.category &&
-        form.value.academicYear
+        form.name &&
+        form.description &&
+        form.thumbnails.length >= 1 &&
+        form.category &&
+        form.academicYear
       );
     case 1: // Technical
-      return form.value.technologies.length > 0;
+      return form.technologies.length > 0;
     case 2: // Details
-      return form.value.duration && form.value.course;
+      return form.duration && form.course;
     case 3: // Review
       return agreedToTerms.value;
     default:

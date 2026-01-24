@@ -581,7 +581,7 @@ const getInitials = (name: string): string => {
 // Real-time status calculation - updates automatically when features change
 const currentStatus = computed(() => {
   return props.project
-    ? projectStore.getProjectStatus(props.project.id)
+    ? projectStore.getProjectStatus(props.project.features)
     : "In Progress";
 });
 
