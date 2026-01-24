@@ -1356,7 +1356,7 @@ const loadProjectForEditing = async (projectId) => {
         return {
           name: member.name || "",
           role: member.role || "",
-          avatar: member.avatar || member.image || "",
+          avatar: getAvatarUrl(member.image || member.avatar, member.name),
         };
       });
 
@@ -2138,6 +2138,12 @@ const nextStep = () => {
   if (currentStep.value < steps.length - 1 && canProceedToNextStep.value) {
     currentStep.value++;
   }
+  // window.scrollTo({
+  //   top: 0,
+  //   behavior: "smooth",
+  // });
+
+  smoothScrollToTop(2000);
 };
 
 const prevStep = () => {

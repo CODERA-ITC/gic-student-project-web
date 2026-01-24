@@ -1023,7 +1023,6 @@ export const useProjectStore = defineStore("projects", {
         await projectService.delete(projectId);
 
         console.log("✅ Project deleted successfully");
-
         // Remove from projects array
         this.projects = this.projects.filter(
           (project) => project.id !== projectId,
