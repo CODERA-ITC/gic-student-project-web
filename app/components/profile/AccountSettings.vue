@@ -32,15 +32,20 @@
 
       <div>
         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-          New Password
+          4. New Password
+          <span class="text-red-500">*</span>
         </label>
-        <UInput v-model="passwordData.new" type="password" placeholder="Enter new password" size="lg" />
+        <UInput v-model="passwordData.new" type="password" placeholder="Enter new password" size="lg" required />
+        <p class="text-xs text-slate-500 dark:text-neutral-500 mt-1">
+          Must be at least 8 characters long
+        </p>
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-          Confirm New Password
+          5. Confirm New Password
+          <span class="text-red-500">*</span>
         </label>
-        <UInput v-model="passwordData.confirm" type="password" placeholder="Confirm new password" size="lg" />
+        <UInput v-model="passwordData.confirm" type="password" placeholder="Confirm new password" size="lg" required />
       </div>
 
       <!-- Error Message -->
@@ -55,12 +60,14 @@
         {{ passwordSuccess }}
       </div>
 
-      <ButtonsPresetButton preset="save" label="Update Password" :loading="isUpdating" :disabled="isUpdating"
-        @click="handleUpdatePassword" />
+      <div class="pt-2">
+        <ButtonsPresetButton preset="submit" label="Update Password" icon="" :loading="isUpdating"
+          :disabled="isUpdating" @click="handleUpdatePassword" />
+      </div>
     </div>
 
     <!-- Two-Factor Authentication -->
-    <div class="border-t border-gray-200 dark:border-slate-700 pt-6">
+    <div class="border-t border-gray-200 dark:border-slate-700 pt-6 mt-6">
       <div class="flex items-center justify-between">
         <div>
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white">

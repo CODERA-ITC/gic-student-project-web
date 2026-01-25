@@ -1,17 +1,8 @@
 <template>
-  <ButtonsAppButton
-    :label="buttonConfig.label"
-    :icon="buttonConfig.icon"
-    :color="buttonConfig.color"
-    :variant="buttonConfig.variant"
-    :size="buttonConfig.size"
-    :textSize="buttonConfig.textSize"
-    :to="buttonConfig.to || props.to"
-    :disabled="disabled"
-    :loading="loading"
-    @click="emit('click', $event)"
-    v-bind="$attrs"
-  />
+  <ButtonsAppButton :label="buttonConfig.label" :icon="buttonConfig.icon" :color="buttonConfig.color"
+    :variant="buttonConfig.variant" :size="buttonConfig.size" :textSize="buttonConfig.textSize"
+    :to="buttonConfig.to || props.to" :disabled="disabled" :loading="loading" @click="emit('click', $event)"
+    v-bind="$attrs" />
 </template>
 
 <script setup lang="ts">
@@ -78,7 +69,7 @@ const buttonConfig = computed<ButtonConfig>(() => {
   if (props.color) config.color = props.color;
   if (props.variant) config.variant = props.variant;
   if (props.size) config.size = props.size;
-  if (props.icon) config.icon = props.icon;
+  if (props.icon !== undefined) config.icon = props.icon;
   if (props.textSize) config.textSize = props.textSize;
 
   // Handle active state
