@@ -58,7 +58,7 @@
             <!-- Profile Information -->
             <ProfileInformation
               v-if="activeTab === 'profile'"
-              :initial-data="StudentProfile"
+              :initial-data="authStore.user"
               @save="handleProfileSave"
             />
 
@@ -108,9 +108,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from "vue";
+import { ref, reactive, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "~/stores/auth";
+import auth from "~/middleware/auth";
+import { useAuthStore, type User } from "~/stores/auth";
 
 definePageMeta({
   middleware: ["auth"],
@@ -119,6 +120,7 @@ definePageMeta({
 const router = useRouter();
 const authStore = useAuthStore();
 const activeTab = ref("profile");
+const isLoading = ref(false);
 
 const goBack = () => {
   // Navigate back to role-specific dashboard
@@ -150,37 +152,206 @@ const tabs = computed(() => {
 
 // Profile data that can be edited and reflected in the public profile
 const StudentProfile = reactive({
-  bio: "Passionate student at GIC, working on exciting projects and learning new technologies. Dedicated to continuous learning and innovation in software development.",
-  skills: ["JavaScript", "TypeScript", "Vue.js", "Node.js", "Python", "React"],
+  bio: "",
+  skills: [] as string[],
   socialLinks: {
     github: "",
     linkedin: "",
     twitter: "",
     portfolio: "",
   },
-  program: "Computer Science",
-  year: "4th Year",
+  program: "",
+  year: "",
   phone: "",
-  studentId: "e2021XXXX",
+  studentId: "",
+  gen: "",
   projectCount: 0,
   achievements: 0,
+});
+
+// Teacher profile data
+const TeacherProfile = reactive({
+  bio: "",
+  skills: [] as string[],
+  socialLinks: {
+    github: "",
+    linkedin: "",
+    twitter: "",
+    portfolio: "",
+  },
+  department: "",
+  position: "",
+  phone: "",
+  teacherId: "",
+  courses: [] as string[],
+  yearsOfExperience: 0,
+});
+
+const AdminProfile = reactive({
+  bio: "",
+  skills: [] as string[],
+  socialLinks: {
+    github: "",
+    linkedin: "",
+    twitter: "",
+    portfolio: "",
+  },
+  adminId: "",
+});
+
+// Fetch profile data on component mount
+onMounted(async () => {
+  isLoading.value = true;
+  try {
+    // TODO: Replace with actual API endpoint
+    const userId = authStore.currentUser?.id;
+    const role = authStore.userRole;
+
+    if (authStore.isStudent) {
+      // Fetch student profile
+      // const response = await $fetch(`/api/students/${userId}/profile`);
+      // For now, using mock data
+      const studentUser = authStore.studentProfile;
+      Object.assign(StudentProfile, {
+        bio:
+          studentUser?.bio ||
+          "Passionate student at GIC, working on exciting projects and learning new technologies.",
+        skills: studentUser?.skills || [
+          "JavaScript",
+          "TypeScript",
+          "Vue.js",
+          "Node.js",
+          "Python",
+        ],
+        program: studentUser?.program || "Computer Science",
+        year: studentUser?.year || "4th Year",
+        studentId: studentUser?.studentId || "e2021XXXX",
+        gen: studentUser?.gen || "25",
+        phone: studentUser?.phone || "",
+        socialLinks: studentUser?.socialLinks || {
+          github: "",
+          linkedin: "",
+          twitter: "",
+          portfolio: "",
+        },
+        projectCount: studentUser?.projectCount || 0,
+        achievements: studentUser?.achievements || 0,
+      });
+    } else if (authStore.isTeacher) {
+      // Fetch teacher profile
+      // const response = await $fetch(`/api/teachers/${userId}/profile`);
+      // For now, using mock data
+      const teacherUser = authStore.teacherProfile;
+      Object.assign(TeacherProfile, {
+        bio:
+          teacherUser?.bio ||
+          "Experienced educator at GIC, passionate about teaching and mentoring students.",
+        skills: teacherUser?.skills || [
+          "Teaching",
+          "Curriculum Development",
+          "JavaScript",
+          "Python",
+        ],
+        department: teacherUser?.department || "Computer Science",
+        position: teacherUser?.position || "Associate Professor",
+        teacherId: teacherUser?.teacherId || "T2021XXXX",
+        phone: teacherUser?.phone || "",
+        courses: teacherUser?.courses || [
+          "Web Development",
+          "Database Systems",
+          "Software Engineering",
+        ],
+        yearsOfExperience: teacherUser?.yearsOfExperience || 5,
+        socialLinks: teacherUser?.socialLinks || {
+          github: "",
+          linkedin: "",
+          twitter: "",
+          portfolio: "",
+        },
+      });
+    } else if (authStore.isAdmin) {
+      // Fetch admin profile
+      // const response = await $fetch(`/api/admins/${userId}/profile`);
+      // For now, using mock data
+      const adminUser = authStore.adminProfile;
+      Object.assign(AdminProfile, {
+        bio:
+          adminUser?.bio ||
+          "Administrator at GIC, managing the platform and ensuring smooth operations.",
+        skills: adminUser?.skills || [
+          "Management",
+          "Security",
+          "Communication",
+        ],
+        adminId: adminUser?.adminId || "A2021XXXX",
+        socialLinks: adminUser?.socialLinks || {
+          github: "",
+          linkedin: "",
+          twitter: "",
+          portfolio: "",
+        },
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching profile data:", error);
+  } finally {
+    isLoading.value = false;
+  }
+});
+
+// Computed property to get the appropriate profile data based on role
+const currentProfile = computed(() => {
+  if (authStore.isStudent) return StudentProfile;
+  if (authStore.isTeacher) return TeacherProfile;
+  return AdminProfile;
 });
 
 // Event handlers
 const handleProfileSave = (data: any) => {
   console.log("Profile saved:", data);
-  // Update profile data with saved information
-  if (data.bio) StudentProfile.bio = data.bio;
-  if (data.skills) StudentProfile.skills = data.skills;
-  if (data.program) StudentProfile.program = data.program;
-  if (data.year) StudentProfile.year = data.year;
-  if (data.phone) StudentProfile.phone = data.phone;
-  if (data.studentId) StudentProfile.studentId = data.studentId;
-  if (data.socialLinks) {
-    StudentProfile.socialLinks = {
-      ...StudentProfile.socialLinks,
-      ...data.socialLinks,
-    };
+
+  if (authStore.isStudent) {
+    // Update student profile data
+    if (data.bio) StudentProfile.bio = data.bio;
+    if (data.skills) StudentProfile.skills = data.skills;
+    if (data.program) StudentProfile.program = data.program;
+    if (data.year) StudentProfile.year = data.year;
+    if (data.phone) StudentProfile.phone = data.phone;
+    if (data.studentId) StudentProfile.studentId = data.studentId;
+    if (data.socialLinks) {
+      StudentProfile.socialLinks = {
+        ...StudentProfile.socialLinks,
+        ...data.socialLinks,
+      };
+    }
+  } else if (authStore.isTeacher) {
+    // Update teacher profile data
+    if (data.bio) TeacherProfile.bio = data.bio;
+    if (data.skills) TeacherProfile.skills = data.skills;
+    if (data.department) TeacherProfile.department = data.department;
+    if (data.position) TeacherProfile.position = data.position;
+    if (data.phone) TeacherProfile.phone = data.phone;
+    if (data.teacherId) TeacherProfile.teacherId = data.teacherId;
+    if (data.courses) TeacherProfile.courses = data.courses;
+    if (data.yearsOfExperience)
+      TeacherProfile.yearsOfExperience = data.yearsOfExperience;
+    if (data.socialLinks) {
+      TeacherProfile.socialLinks = {
+        ...TeacherProfile.socialLinks,
+        ...data.socialLinks,
+      };
+    }
+  } else if (authStore.isAdmin) {
+    // Update admin profile data
+    if (data.bio) AdminProfile.bio = data.bio;
+    if (data.skills) AdminProfile.skills = data.skills;
+    if (data.adminId) AdminProfile.adminId = data.adminId;
+    if (data.socialLinks) {
+      AdminProfile.socialLinks = {
+        ...AdminProfile.socialLinks,
+        ...data.socialLinks,
+      };
+    }
   }
   // TODO: Implement API call
 };

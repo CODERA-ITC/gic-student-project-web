@@ -29,20 +29,56 @@ const safeLocalStorage = {
   },
 };
 
-export interface User {
+// Base User interface with common properties
+export interface BaseUser {
   id: string;
   name: string;
   email: string;
   role: Role;
   avatar?: string;
-  program?: string;
-  year?: string;
   firstName?: string;
   lastName?: string;
   departmentId?: string;
   hasSecurityQuestions?: boolean;
+  phone?: string;
+  bio?: string;
+  skills?: string[];
+  socialLinks?: {
+    github?: string;
+    linkedin?: string;
+    twitter?: string;
+    portfolio?: string;
+  };
 }
 
+// Student-specific interface
+export interface StudentUser extends BaseUser {
+  role: Role.student;
+  studentId: string;
+  program: string;
+  year: string;
+  gen?: string;
+  projectCount?: number;
+  achievements?: number;
+}
+
+// Teacher-specific interface
+export interface TeacherUser extends BaseUser {
+  role: Role.teacher;
+  teacherId: string;
+  department: string;
+  position: string;
+  courses?: string[];
+  yearsOfExperience?: number;
+}
+
+export interface AdminUser extends BaseUser {
+  role: Role.admin;
+  adminId: string;
+}
+
+// Union type for User
+export type User = StudentUser | TeacherUser | AdminUser;
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
@@ -61,12 +97,23 @@ export const useAuthStore = defineStore("auth", {
   }),
 
   getters: {
-    isStudent: (state) => state.user?.role === "STUDENT",
-    isTeacher: (state) => state.user?.role === "TEACHER",
+    isStudent: (state): state is { user: StudentUser } & AuthState =>
+      state.user?.role === "STUDENT",
+    isTeacher: (state): state is { user: TeacherUser } & AuthState =>
+      state.user?.role === "TEACHER",
     isAdmin: (state) => state.user?.role === "ADMIN",
     currentUser: (state) => state.user,
     userRole: (state) => state.user?.role || null,
     token: (state) => safeLocalStorage.getItem("access_token"),
+
+    // Type-safe getters for role-specific data
+    studentProfile: (state): StudentUser | null =>
+      state.user?.role === Role.student ? (state.user as StudentUser) : null,
+    teacherProfile: (state): TeacherUser | null =>
+      state.user?.role === Role.teacher ? (state.user as TeacherUser) : null,
+
+    adminProfile: (state): AdminUser | null =>
+      state.user?.role === Role.admin ? (state.user as AdminUser) : null,
   },
 
   actions: {
@@ -237,11 +284,10 @@ export const useAuthStore = defineStore("auth", {
         //   throw new Error("Invalid response from server");
         // }
 
-        // Map API response to User interface
-
+        // Map API response to User interface based on role
         console.log("Fetched current user data:", userData.role.name);
 
-        this.user = {
+        const baseUserData: BaseUser = {
           id: userData.id,
           email: userData.email,
           name: `${userData.firstName || ""} ${userData.lastName || userData.email}`.trim(),
@@ -253,10 +299,51 @@ export const useAuthStore = defineStore("auth", {
             userData.firstName || "",
             userData.lastName || "",
           ),
-          program: userData.program,
-          year: userData.year,
-          departmentId: userData.department.id,
+          departmentId: userData.department?.id,
+          hasSecurityQuestions: userData.hasSecurityQuestions,
+          phone: userData.phone,
+          bio: userData.bio,
+          skills: userData.skills || [],
+          socialLinks: userData.socialLinks || {
+            github: "",
+            linkedin: "",
+            twitter: "",
+            portfolio: "",
+          },
         };
+
+        // Create role-specific user object
+        if (userData.role.name === "STUDENT") {
+          this.user = {
+            ...baseUserData,
+            role: "STUDENT",
+            studentId: userData.studentId || userData.id,
+            program: userData.program || "",
+            year: userData.year || "",
+            gen: userData.gen || "",
+            projectCount: userData.projectCount || 0,
+            achievements: userData.achievements || 0,
+          } as StudentUser;
+        } else if (userData.role.name === "TEACHER") {
+          this.user = {
+            ...baseUserData,
+            role: "TEACHER",
+            teacherId: userData.teacherId || userData.id,
+            department: userData.department?.name || "",
+            position: userData.position || "",
+            courses: userData.courses || [],
+            yearsOfExperience: userData.yearsOfExperience || 0,
+          } as TeacherUser;
+        } else {
+          // Fallback for other roles (ADMIN, etc.)
+          this.user = {
+            ...baseUserData,
+            role: "STUDENT", // Default fallback
+            studentId: userData.id,
+            program: "",
+            year: "",
+          } as StudentUser;
+        }
       } catch (error) {
         console.error("Failed to fetch current user:", error);
         throw error;
@@ -703,7 +790,7 @@ export const useAuthStore = defineStore("auth", {
     /**
      * Check if user has specific role
      */
-    hasRole(role: "STUDENT" | "TEACHER"): boolean {
+    hasRole(role: Role.student | Role.teacher | Role.admin): boolean {
       return this.user?.role === role;
     },
 
@@ -733,7 +820,7 @@ export const useAuthStore = defineStore("auth", {
      */
     updateUser(updates: Partial<User>): void {
       if (this.user) {
-        this.user = { ...this.user, ...updates };
+        this.user = { ...this.user, ...updates } as User;
       }
     },
 

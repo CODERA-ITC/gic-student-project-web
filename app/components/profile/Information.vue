@@ -102,12 +102,13 @@
         <label
           class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
         >
-          Employee ID
+          Teacher ID
         </label>
         <UInput
-          v-model="formData.employeeId"
-          placeholder="Enter employee ID"
+          v-model="formData.teacherId"
+          placeholder="Enter teacher ID"
           size="lg"
+          :disabled="true"
         />
       </div>
 
@@ -150,6 +151,69 @@
           :items="positionOptions"
           size="lg"
         />
+      </div>
+
+      <!-- Teacher Years of Experience -->
+      <div v-if="userRole === 'TEACHER'">
+        <label
+          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
+        >
+          Years of Experience
+        </label>
+        <UInput
+          v-model="formData.yearsOfExperience"
+          type="number"
+          placeholder="e.g., 5"
+          size="lg"
+        />
+      </div>
+
+      <!-- Teacher Courses -->
+      <div v-if="userRole === 'TEACHER'">
+        <label
+          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
+        >
+          Courses You Teach
+        </label>
+        <p class="text-xs text-gray-500 dark:text-slate-400 mb-2">
+          Add courses one by one. Press Enter or click Add to include each
+          course.
+        </p>
+        <div class="flex gap-2 mb-3">
+          <UInput
+            v-model="newCourse"
+            placeholder="e.g., Web Development, Database Systems..."
+            size="lg"
+            class="flex-1"
+            @keyup.enter="addCourse"
+          />
+          <ButtonsPresetButton
+            preset="secondary"
+            label="Add"
+            icon="i-heroicons-plus"
+            size="sm"
+            @click="addCourse"
+            :disabled="!newCourse.trim()"
+          />
+        </div>
+        <div v-if="formData.courses.length > 0" class="flex gap-2 flex-wrap">
+          <div
+            v-for="(course, index) in formData.courses"
+            :key="index"
+            class="px-3 py-1.5 rounded-full bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium border border-purple-200 dark:border-purple-700 flex items-center gap-2"
+          >
+            {{ course }}
+            <button
+              @click="removeCourse(index)"
+              class="hover:bg-purple-200 dark:hover:bg-purple-800 rounded-full p-0.5 transition-colors"
+            >
+              <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+        <p v-else class="text-sm text-gray-500 dark:text-slate-400 italic">
+          No courses added yet.
+        </p>
       </div>
 
       <!-- Bio/About (both roles) -->
@@ -340,15 +404,18 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import type student from "~/middleware/student";
-import { useAuthStore } from "~/stores/auth";
+import {
+  useAuthStore,
+  type StudentUser,
+  type TeacherUser,
+} from "~/stores/auth";
 
 const authStore = useAuthStore();
 const userRole = computed(() => authStore.userRole);
 const toast = useToast();
 
 interface Props {
-  initialData?: StudentProfile;
+  initialData?: StudentUser | TeacherUser | AdminUser;
 }
 
 const props = defineProps<Props>();
@@ -357,18 +424,22 @@ const emit = defineEmits(["save", "cancel"]);
 const isSaving = ref(false);
 const fileInput = ref<HTMLInputElement | null>(null);
 const newSkill = ref("");
+const newCourse = ref("");
 
 const formData = ref({
   name: authStore.currentUser?.name || "",
   email: authStore.currentUser?.email || "",
   studentId: "",
-  employeeId: "",
+  teacherId: "",
+  adminId: "",
   program: "",
   year: { label: "3rd Year", value: "3" },
   position: { label: "Associate Professor", value: "associate" },
   bio: "",
   avatar: authStore.currentUser?.avatar || undefined,
   skills: [] as string[],
+  courses: [] as string[],
+  yearsOfExperience: 0,
   socialLinks: {
     github: "",
     linkedin: "",
@@ -385,24 +456,48 @@ const initialFormData = ref<any>(null);
 // Load initial data from props
 onMounted(() => {
   if (props.initialData) {
+    // Load common fields
     formData.value.bio = props.initialData.bio || "";
     formData.value.skills = [...(props.initialData.skills || [])];
     formData.value.socialLinks = {
       ...formData.value.socialLinks,
       ...(props.initialData.socialLinks || {}),
     };
-    formData.value.program = props.initialData.program || "";
     formData.value.phone = props.initialData.phone || "";
-    formData.value.studentId = props.initialData.studentId || "";
-    formData.value.gen = props.initialData.gen || "";
 
-    if (props.initialData.year) {
-      const yearMatch = yearOptions.find(
-        (opt) => opt.label === props.initialData.year,
-      );
-      if (yearMatch) {
-        formData.value.year = yearMatch;
+    // Load role-specific fields based on user role
+    if (props.initialData.role === Role.student) {
+      const studentData = props.initialData as StudentUser;
+      formData.value.program = studentData.program || "";
+      formData.value.studentId = studentData.studentId || "";
+      formData.value.gen = studentData.gen || "";
+
+      if (studentData.year) {
+        const yearMatch = yearOptions.find(
+          (opt) => opt.label === studentData.year,
+        );
+        if (yearMatch) {
+          formData.value.year = yearMatch;
+        }
       }
+    } else if (props.initialData.role === Role.teacher) {
+      const teacherData = props.initialData as TeacherUser;
+      formData.value.program = teacherData.department || "";
+      formData.value.teacherId = teacherData.teacherId || "";
+      formData.value.courses = [...(teacherData.courses || [])];
+      formData.value.yearsOfExperience = teacherData.yearsOfExperience || 0;
+
+      if (teacherData.position) {
+        const positionMatch = positionOptions.find(
+          (opt) => opt.label === teacherData.position,
+        );
+        if (positionMatch) {
+          formData.value.position = positionMatch;
+        }
+      }
+    } else if (props.initialData.role === Role.admin) {
+      const adminData = props.initialData as AdminUser;
+      formData.value.adminId = adminData.adminId || "";
     }
   }
 
@@ -488,6 +583,18 @@ const addSkill = () => {
 
 const removeSkill = (index: number) => {
   formData.value.skills.splice(index, 1);
+};
+
+const addCourse = () => {
+  const course = newCourse.value.trim();
+  if (course && !formData.value.courses.includes(course)) {
+    formData.value.courses.push(course);
+    newCourse.value = "";
+  }
+};
+
+const removeCourse = (index: number) => {
+  formData.value.courses.splice(index, 1);
 };
 
 // Check if data has changed
