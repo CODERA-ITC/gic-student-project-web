@@ -14,50 +14,49 @@
       <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
         Change Password
       </h3>
-      <div>
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-        >
-          Current Password
-        </label>
-        <UInput
-          v-model="passwordData.current"
-          type="password"
-          placeholder="Enter current password"
-          size="lg"
-        />
+
+      <!-- Security Questions -->
+      <div v-if="!loadingQuestions" class="space-y-4">
+        <div v-for="(question, index) in securityQuestions" :key="question.id">
+          <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+            {{ index + 1 }}. {{ question.questions }}
+            <span class="text-red-500">*</span>
+          </label>
+          <UInput v-model="securityAnswers[question.id]" type="text" placeholder="Enter your answer" size="lg"
+            required />
+        </div>
       </div>
+      <div v-else class="flex justify-center py-4">
+        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-900 dark:border-blue-400"></div>
+      </div>
+
       <div>
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-        >
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           New Password
         </label>
-        <UInput
-          v-model="passwordData.new"
-          type="password"
-          placeholder="Enter new password"
-          size="lg"
-        />
+        <UInput v-model="passwordData.new" type="password" placeholder="Enter new password" size="lg" />
       </div>
       <div>
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-        >
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           Confirm New Password
         </label>
-        <UInput
-          v-model="passwordData.confirm"
-          type="password"
-          placeholder="Confirm new password"
-          size="lg"
-        />
+        <UInput v-model="passwordData.confirm" type="password" placeholder="Confirm new password" size="lg" />
       </div>
-      <ButtonsPresetButton
-        preset="save"
-        label="Update Password"
-        @click="handleUpdatePassword"
-      />
+
+      <!-- Error Message -->
+      <div v-if="passwordError"
+        class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400">
+        {{ passwordError }}
+      </div>
+
+      <!-- Success Message -->
+      <div v-if="passwordSuccess"
+        class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 text-sm text-green-700 dark:text-green-400">
+        {{ passwordSuccess }}
+      </div>
+
+      <ButtonsPresetButton preset="save" label="Update Password" :loading="isUpdating" :disabled="isUpdating"
+        @click="handleUpdatePassword" />
     </div>
 
     <!-- Two-Factor Authentication -->
@@ -71,11 +70,8 @@
             Add an extra layer of security to your account
           </p>
         </div>
-        <ButtonsPresetButton
-          :preset="twoFactorEnabled ? 'delete' : 'save'"
-          :label="twoFactorEnabled ? 'Disable' : 'Enable'"
-          @click="toggleTwoFactor"
-        />
+        <ButtonsPresetButton :preset="twoFactorEnabled ? 'delete' : 'save'"
+          :label="twoFactorEnabled ? 'Disable' : 'Enable'" @click="toggleTwoFactor" />
       </div>
     </div>
 
@@ -85,16 +81,10 @@
         Active Sessions
       </h3>
       <div class="space-y-3">
-        <div
-          v-for="session in activeSessions"
-          :key="session.id"
-          class="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-700/30 rounded-lg"
-        >
+        <div v-for="session in activeSessions" :key="session.id"
+          class="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-700/30 rounded-lg">
           <div class="flex items-center gap-3">
-            <UIcon
-              :name="session.icon"
-              class="w-5 h-5 text-gray-600 dark:text-slate-400"
-            />
+            <UIcon :name="session.icon" class="w-5 h-5 text-gray-600 dark:text-slate-400" />
             <div>
               <p class="text-sm font-medium text-gray-900 dark:text-white">
                 {{ session.device }}
@@ -104,17 +94,9 @@
               </p>
             </div>
           </div>
-          <ButtonsPresetButton
-            v-if="!session.current"
-            preset="delete"
-            label="Revoke"
-            size="xs"
-            @click="revokeSession(session.id)"
-          />
-          <span
-            v-else
-            class="text-xs font-semibold text-green-600 dark:text-green-400"
-          >
+          <ButtonsPresetButton v-if="!session.current" preset="delete" label="Revoke" size="xs"
+            @click="revokeSession(session.id)" />
+          <span v-else class="text-xs font-semibold text-green-600 dark:text-green-400">
             Current
           </span>
         </div>
@@ -124,15 +106,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import type { SecurityQuestion } from "~/composables/useSecurityQuestions";
 
 const emit = defineEmits(["update-password", "toggle-2fa", "revoke-session"]);
 
+const { fetchSecurityQuestions } = useSecurityQuestions();
 const isUpdating = ref(false);
 const twoFactorEnabled = ref(false);
+const loadingQuestions = ref(false);
+const securityQuestions = ref<SecurityQuestion[]>([]);
+const securityAnswers = ref<Record<string, string>>({});
+const passwordError = ref("");
+const passwordSuccess = ref("");
 
 const passwordData = ref({
-  current: "",
   new: "",
   confirm: "",
 });
@@ -156,25 +144,70 @@ const activeSessions = ref([
   },
 ]);
 
+// Fetch security questions on mount
+onMounted(async () => {
+  try {
+    loadingQuestions.value = true;
+    securityQuestions.value = await fetchSecurityQuestions();
+  } catch (err) {
+    console.error("Failed to load security questions:", err);
+    passwordError.value = "Failed to load security questions";
+  } finally {
+    loadingQuestions.value = false;
+  }
+});
+
 const handleUpdatePassword = async () => {
-  if (!passwordData.value.current || !passwordData.value.new) {
+  passwordError.value = "";
+  passwordSuccess.value = "";
+
+  // Validation
+  if (!passwordData.value.new || !passwordData.value.confirm) {
+    passwordError.value = "Please fill in all password fields";
     return;
   }
+
   if (passwordData.value.new !== passwordData.value.confirm) {
-    // TODO: Show error toast
+    passwordError.value = "New passwords do not match";
     return;
+  }
+
+  if (passwordData.value.new.length < 8) {
+    passwordError.value = "Password must be at least 8 characters long";
+    return;
+  }
+
+  // Validate security question answers
+  for (const question of securityQuestions.value) {
+    if (!securityAnswers.value[question.id] || securityAnswers.value[question.id].trim().length < 2) {
+      passwordError.value = "Please answer all security questions (minimum 2 characters each)";
+      return;
+    }
   }
 
   isUpdating.value = true;
   try {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    emit("update-password", passwordData.value);
+    // Prepare answers array for API
+    const answers = securityQuestions.value.map(question => ({
+      questionId: question.id,
+      answer: securityAnswers.value[question.id]
+    }));
+
+    await emit("update-password", {
+      answers: answers,
+      newPassword: passwordData.value.new
+    });
+
+    passwordSuccess.value = "Password updated successfully!";
+
     // Reset form
     passwordData.value = {
-      current: "",
       new: "",
       confirm: "",
     };
+    securityAnswers.value = {};
+  } catch (error: any) {
+    passwordError.value = error.message || "Failed to update password";
   } finally {
     isUpdating.value = false;
   }
