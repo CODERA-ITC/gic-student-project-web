@@ -107,12 +107,12 @@
                 <UIcon name="i-heroicons-chart-bar-square-20-solid" class="w-4 h-4" />
                 Teacher Dashboard
               </NuxtLink>
-              <NuxtLink to="/teacher/manage-projects"
+              <!-- <NuxtLink to="/teacher/manage-projects"
                 class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                 @click="closeMenu">
                 <UIcon name="i-heroicons-document-check-20-solid" class="w-4 h-4" />
                 Manage Projects
-              </NuxtLink>
+              </NuxtLink> -->
               <NuxtLink to="/teacher/submissions"
                 class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
                 @click="closeMenu">

@@ -282,7 +282,7 @@
       </div>
 
       <!-- Phone & GPA (Student) -->
-      <div v-if="userRole === 'STUDENT'" class="grid grid-cols-2 gap-4">
+      <div v-if="userRole === 'STUDENT'" class="grid grid-cols-3 gap-4">
         <div>
           <label
             class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
@@ -299,16 +299,30 @@
           <label
             class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
           >
-            GPA
+            Student ID
           </label>
           <UInput
-            v-model="formData.gpa"
-            type="number"
-            step="0.01"
-            min="0"
-            max="4.0"
-            placeholder="3.85"
+            v-model="formData.studentId"
+            type="text"
+            :disabled="true"
+            placeholder="123456"
             size="lg"
+          />
+        </div>
+
+        <div>
+          <label
+            class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
+          >
+            Gen
+          </label>
+          <UInput
+            v-model="formData.gen"
+            type="text"
+            :disabled="true"
+            placeholder="25"
+            size="lg"
+            class="font-bold"
           />
         </div>
       </div>
@@ -326,29 +340,15 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
+import type student from "~/middleware/student";
 import { useAuthStore } from "~/stores/auth";
 
 const authStore = useAuthStore();
 const userRole = computed(() => authStore.userRole);
 const toast = useToast();
 
-interface ProfileData {
-  bio?: string;
-  skills?: string[];
-  socialLinks?: {
-    github?: string;
-    linkedin?: string;
-    twitter?: string;
-    portfolio?: string;
-  };
-  program?: string;
-  year?: string;
-  phone?: string;
-  gpa?: string;
-}
-
 interface Props {
-  initialData?: ProfileData;
+  initialData?: StudentProfile;
 }
 
 const props = defineProps<Props>();
@@ -376,7 +376,7 @@ const formData = ref({
     portfolio: "",
   },
   phone: "",
-  gpa: "",
+  gen: "",
 });
 
 // Store the initial state for change detection
@@ -393,11 +393,12 @@ onMounted(() => {
     };
     formData.value.program = props.initialData.program || "";
     formData.value.phone = props.initialData.phone || "";
-    formData.value.gpa = props.initialData.gpa || "";
+    formData.value.studentId = props.initialData.studentId || "";
+    formData.value.gen = props.initialData.gen || "";
 
     if (props.initialData.year) {
       const yearMatch = yearOptions.find(
-        (opt) => opt.label === props.initialData.year
+        (opt) => opt.label === props.initialData.year,
       );
       if (yearMatch) {
         formData.value.year = yearMatch;
@@ -411,7 +412,7 @@ onMounted(() => {
       ...formData.value,
       year: formData.value.year.label,
       position: formData.value.position.label,
-    })
+    }),
   );
 });
 

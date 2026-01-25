@@ -58,24 +58,26 @@
             <!-- Profile Information -->
             <ProfileInformation
               v-if="activeTab === 'profile'"
-              :initial-data="profileData"
+              :initial-data="StudentProfile"
               @save="handleProfileSave"
             />
 
             <!-- Public Profile Preview -->
-            <ProfilePublicProfilePreview
-              v-if="activeTab === 'public'"
-              :user="authStore.user"
-              :bio="profileData.bio"
-              :skills="profileData.skills"
-              :social-links="profileData.socialLinks"
-              :program="profileData.program"
-              :year="profileData.year"
-              :phone="profileData.phone"
-              :gpa="profileData.gpa"
-              :project-count="profileData.projectCount"
-              :achievements="profileData.achievements"
-            />
+            <template v-if="authStore.isStudent">
+              <ProfilePublicProfilePreview
+                v-if="activeTab === 'public'"
+                :user="authStore.user"
+                :bio="StudentProfile.bio"
+                :skills="StudentProfile.skills"
+                :social-links="StudentProfile.socialLinks"
+                :program="StudentProfile.program"
+                :year="StudentProfile.year"
+                :phone="StudentProfile.phone"
+                :student-id="StudentProfile.studentId"
+                :project-count="StudentProfile.projectCount"
+                :achievements="StudentProfile.achievements"
+              />
+            </template>
 
             <!-- Account Settings -->
             <ProfileAccountSettings
@@ -106,7 +108,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "~/stores/auth";
 
@@ -129,16 +131,25 @@ const goBack = () => {
   }
 };
 
-const tabs = ref([
-  { id: "profile", label: "Profile", icon: "i-heroicons-user" },
-  { id: "public", label: "Public Profile", icon: "i-heroicons-eye" },
-  { id: "account", label: "Account", icon: "i-heroicons-lock-closed" },
-  { id: "notifications", label: "Notifications", icon: "i-heroicons-bell" },
-  { id: "privacy", label: "Privacy", icon: "i-heroicons-shield-check" },
-]);
+const tabs = computed(() => {
+  const allTabs = [
+    { id: "profile", label: "Profile", icon: "i-heroicons-user" },
+    { id: "public", label: "Public Profile", icon: "i-heroicons-eye" },
+    { id: "account", label: "Account", icon: "i-heroicons-lock-closed" },
+    { id: "notifications", label: "Notifications", icon: "i-heroicons-bell" },
+    { id: "privacy", label: "Privacy", icon: "i-heroicons-shield-check" },
+  ];
+
+  // Filter out public profile tab if not a student
+  if (!authStore.isStudent) {
+    return allTabs.filter((tab) => tab.id !== "public");
+  }
+
+  return allTabs;
+});
 
 // Profile data that can be edited and reflected in the public profile
-const profileData = reactive({
+const StudentProfile = reactive({
   bio: "Passionate student at GIC, working on exciting projects and learning new technologies. Dedicated to continuous learning and innovation in software development.",
   skills: ["JavaScript", "TypeScript", "Vue.js", "Node.js", "Python", "React"],
   socialLinks: {
@@ -150,7 +161,7 @@ const profileData = reactive({
   program: "Computer Science",
   year: "4th Year",
   phone: "",
-  gpa: "3.85",
+  studentId: "e2021XXXX",
   projectCount: 0,
   achievements: 0,
 });
@@ -159,15 +170,15 @@ const profileData = reactive({
 const handleProfileSave = (data: any) => {
   console.log("Profile saved:", data);
   // Update profile data with saved information
-  if (data.bio) profileData.bio = data.bio;
-  if (data.skills) profileData.skills = data.skills;
-  if (data.program) profileData.program = data.program;
-  if (data.year) profileData.year = data.year;
-  if (data.phone) profileData.phone = data.phone;
-  if (data.gpa) profileData.gpa = data.gpa;
+  if (data.bio) StudentProfile.bio = data.bio;
+  if (data.skills) StudentProfile.skills = data.skills;
+  if (data.program) StudentProfile.program = data.program;
+  if (data.year) StudentProfile.year = data.year;
+  if (data.phone) StudentProfile.phone = data.phone;
+  if (data.studentId) StudentProfile.studentId = data.studentId;
   if (data.socialLinks) {
-    profileData.socialLinks = {
-      ...profileData.socialLinks,
+    StudentProfile.socialLinks = {
+      ...StudentProfile.socialLinks,
       ...data.socialLinks,
     };
   }

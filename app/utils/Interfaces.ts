@@ -14,6 +14,25 @@ export interface FeatureItem {
   status: "pending" | "ongoing" | "done";
 }
 
+export interface StudentProfile {
+  id?: string;
+  bio?: string;
+  skills?: string[];
+  socialLinks?: {
+    github?: string;
+    linkedin?: string;
+    twitter?: string;
+    portfolio?: string;
+  };
+  program?: string;
+  year?: string;
+  phone?: string;
+  studentId?: string;
+  gen?: string;
+}
+
+export interface TeacherProfile {}
+
 export interface Course {
   id: string;
   createdAt: string;
