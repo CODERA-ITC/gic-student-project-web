@@ -323,14 +323,25 @@ const handleProfileSave = (data: any) => {
 const handlePasswordUpdate = async (data: any) => {
   try {
     const token = authStore.token;
+    
+    console.log("=== Password Change Debug ===");
+    console.log("Token exists:", !!token);
+    console.log("Token length:", token?.length);
+    console.log("User:", authStore.user?.email);
+    console.log("Request data:", data);
+    
     if (!token) {
-      throw new Error("No authentication token found");
+      throw new Error("No authentication token found. Please log in again.");
     }
 
     const apiBaseUrl = useRuntimeConfig().public.apiBase;
+    const url = `${apiBaseUrl}/users/change-password`;
+    
+    console.log("API URL:", url);
+    console.log("Authorization header:", `Bearer ${token.substring(0, 20)}...`);
 
     // Call API to change password
-    const response = await $fetch(`${apiBaseUrl}/users/change-password`, {
+    const response = await $fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -347,7 +358,17 @@ const handlePasswordUpdate = async (data: any) => {
     return response;
   } catch (error: any) {
     console.error("Password change error:", error);
-    const errorMessage = error?.data?.message || error?.message || "Failed to change password";
+    console.error("Error status:", error?.statusCode);
+    console.error("Error data:", error?.data);
+    
+    let errorMessage = "Failed to change password";
+    
+    if (error?.statusCode === 401) {
+      errorMessage = "Unauthorized. Your session may have expired. Please log in again.";
+    } else {
+      errorMessage = error?.data?.message || error?.message || errorMessage;
+    }
+    
     // TODO: Show error toast
     throw new Error(errorMessage);
   }
