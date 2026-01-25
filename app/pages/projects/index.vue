@@ -1,5 +1,7 @@
 <template>
   <div class="min-h-screen bg-white dark:bg-slate-900">
+    <ScrollToTop />
+
     <!-- Header Section -->
     <div
       class="hero-nodes py-20 border-b border-blue-800/30 dark:border-slate-700"

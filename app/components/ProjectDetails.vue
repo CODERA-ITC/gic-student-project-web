@@ -313,72 +313,18 @@
       <!-- <div>Section test</div> -->
     </div>
 
-    <!-- Project Timeline - Animated inline -->
-    <section
-      ref="sectionRef"
-      :class="[
-        'transition-all duration-700 ease-out',
-        isTimelineInView ? 'scale-100 opacity-100' : 'scale-95 opacity-0',
-      ]"
-    >
-      <div
-        :class="[
-          'bg-white/80 dark:bg-slate-800/80',
-          'backdrop-blur-lg border-2 border-gray-200 dark:border-slate-700 rounded-2xl',
-          'hover:shadow-3xl transition-all duration-500',
-          'p-6 md:p-8 lg:p-10 space-y-6',
-        ]"
+    <div>
+      <!-- Project Timeline - Animated inline -->
+      <UContainer
+        class="min-h-screen bg-background py-12 bg-white bg-white/50 dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-6 space-y-6 transform transition-all"
       >
-        <div class="flex items-start gap-4 md:gap-6">
-          <div>
-            <UIcon
-              name="i-heroicons-clock"
-              class="w-6 h-6 text-blue-500 dark:text-blue-400 mt-1"
-            />
-          </div>
-          <div class="flex-1">
-            <h3
-              ref="titleRef"
-              class="text-lg font-semibold text-gray-900 dark:text-white mb-2"
-            >
-              Project Timeline
-            </h3>
-            <div
-              :class="[
-                'w-full relative space-y-8 p-4 md:p-6 lg:p-8',
-                'rounded-xl',
-              ]"
-            >
-              <!-- Vertical line with animation -->
-              <div
-                :class="[
-                  'absolute left-6 md:left-1/2 top-0 bottom-0 w-1 rounded-full',
-                  'bg-purple-500 dark:bg-purple-400',
-                  'transform md:-translate-x-1/2 transition-all duration-1000',
-                  'opacity-100 scale-y-100',
-                ]"
-                :style="{ transformOrigin: 'top' }"
-              />
-
-              <!-- Timeline items -->
-              <TimelineItem
-                v-for="(item, index) in timelineItems"
-                :key="index"
-                :name="item.name"
-                :description="item.description"
-                :date="item.date"
-                :status="item.status"
-                :icon="item.icon"
-                :index="Number(index)"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Team Members -->
-
+        <h3 class="text-3xl font-bold mb-6 text-white">
+          Project Development Roadmap
+        </h3>
+        <RoadmapInfographic :milestones="roadmap" />
+      </UContainer>
+      <!-- Team Members -->
+    </div>
     <div
       ref="teamRef"
       class="bg-white/50 dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-6 space-y-6 transform transition-all duration-700 opacity-0 translate-y-8"
@@ -389,9 +335,7 @@
           class="w-6 h-6 text-cyan-500 dark:text-cyan-400 mt-1 flex-shrink-0"
         />
         <div class="flex-1">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Project Team
-          </h3>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Project Team</h3>
           <div
             v-if="filteredMembers.length > 0"
             class="grid sm:grid-cols-2 gap-4"
@@ -464,7 +408,7 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Role } from "~/types/roles";
-import { useProjectStore, type Project } from "~/stores/projects";
+import { useProjectStore } from "~/stores/projects";
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
@@ -543,7 +487,7 @@ const previousImage = () => {
 };
 
 // Timeline items computed propertys
-const timelineItems = computed(() => {
+const roadmap = computed(() => {
   if (!props.project?.features && !props.project?.features) return [];
 
   const features = props.project.features || props.project.features || [];

@@ -2,6 +2,8 @@
   <div
     class="min-h-screen bg-gray-50 dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
   >
+    <ScrollToTop />
+
     <!-- Back Button -->
     <div
       class="top-20 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur border-b border-gray-200 dark:border-slate-700"

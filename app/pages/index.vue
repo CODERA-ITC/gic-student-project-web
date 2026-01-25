@@ -4,6 +4,8 @@
 
     <FeaturedProjectsSection />
     <CTASection />
+
+    <ScrollToTop />
   </div>
 </template>
 

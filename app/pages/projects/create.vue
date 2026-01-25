@@ -147,6 +147,7 @@
                 <div class="space-y-4">
                   <!-- Image Upload Area -->
                   <div
+                    v-if="form.thumbnails.length < 5"
                     @drop="handleThumbnailDrop"
                     @dragover.prevent="handleDragOver"
                     @dragenter.prevent="handleDragEnter"
@@ -1794,6 +1795,10 @@ const toggleTeamMember = (member) => {
       role: member.role,
       avatar: member.avatar,
     });
+
+    suggestedMembers.value = [];
+    memberSearchQuery.value = "";
+    debouncedMemberSearchQuery.value = "";
   }
 };
 
@@ -1815,6 +1820,14 @@ const addFeature = () => {
       // Add new feature
       form.feature.push(newFeature);
     }
+
+    // Sort features by date (earliest first, empty dates last)
+    form.feature.sort((a, b) => {
+      if (!a.date && !b.date) return 0;
+      if (!a.date) return 1;
+      if (!b.date) return -1;
+      return new Date(a.date) - new Date(b.date);
+    });
 
     // Reset form
     featureInput.value = {
@@ -1969,21 +1982,21 @@ const submitForm = async () => {
     // form.tags = generateTags();
 
     // Add current user as first team member if not already added (only for new projects)
-    if (!editMode.value) {
-      const currentUserMember = {
-        id: authStore.user?.id,
-        name: authStore.user?.name || "Current User",
-        avatarUrl: getAvatarUrl(
-          authStore.user?.avatar,
-          authStore.user?.firstName || "",
-          authStore.user?.lastName || "",
-        ),
-      };
+    // if (!editMode.value) {
+    //   const currentUserMember = {
+    //     id: authStore.user?.id,
+    //     name: authStore.user?.name || "Current User",
+    //     avatarUrl: getAvatarUrl(
+    //       authStore.user?.avatar,
+    //       authStore.user?.firstName || "",
+    //       authStore.user?.lastName || "",
+    //     ),
+    //   };
 
-      if (!form.teamMembers.find((m) => m.name === currentUserMember.name)) {
-        form.teamMembers.unshift(currentUserMember);
-      }
-    }
+    //   if (!form.teamMembers.find((m) => m.name === currentUserMember.name)) {
+    //     form.teamMembers.unshift(currentUserMember);
+    //   }
+    // }
 
     // Prepare project data according to Project interface
     const projectData = {
@@ -2143,7 +2156,7 @@ const nextStep = () => {
   //   behavior: "smooth",
   // });
 
-  smoothScrollToTop(2000);
+  smoothScrollToTop(1500);
 };
 
 const prevStep = () => {

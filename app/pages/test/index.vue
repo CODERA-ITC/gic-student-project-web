@@ -30,7 +30,7 @@ const roadmap = [
       "Implemented core features, integrated backend APIs, and handled authentication.",
     date: "Nov 2025",
     icon: "i-lucide-code",
-    status: "in-progress" as const,
+    status: "done" as const,
   },
   {
     name: "Testing",
@@ -38,7 +38,7 @@ const roadmap = [
       "Fixed bugs, improved performance, and tested across devices and browsers.",
     date: "Dec 2025",
     icon: "i-lucide-bug",
-    status: "in-progress" as const,
+    status: "done" as const,
   },
   {
     name: "Launch & Optimization",
@@ -46,13 +46,15 @@ const roadmap = [
       "Deployed the app, monitored metrics, and improved features based on feedback.",
     date: "Jan 2026",
     icon: "i-lucide-rocket",
-    status: "pending" as const,
+    status: "ongoing" as const,
   },
 ];
 </script>
 
 <template>
-  <UContainer class="my-12 bg-white p-8 rounded-lg shadow-md">
+  <UContainer
+    class="min-h-screen bg-background py-12 bg-white dark:bg-slate-900"
+  >
     <h1 class="text-3xl font-bold mb-6">Project Development Roadmap</h1>
     <RoadmapInfographic :milestones="roadmap" />
   </UContainer>

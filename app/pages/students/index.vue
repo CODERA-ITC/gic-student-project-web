@@ -1,5 +1,7 @@
 <template>
   <div class="min-h-screen bg-white dark:bg-slate-900">
+    <ScrollToTop />
+
     <!-- Header Section -->
     <div
       class="hero-nodes py-20 border-b border-blue-800/30 dark:border-slate-700"
@@ -286,7 +288,7 @@
               {{
                 Math.min(
                   currentPage * itemsPerPage,
-                  studentStore.filteredStudents.length
+                  studentStore.filteredStudents.length,
                 )
               }}
               of {{ studentStore.filteredStudents.length }} students
@@ -372,7 +374,7 @@ const selectedProgram = ref(programOptions.value[0]);
 
 // Skill options for mobile select
 const skillOptions = computed(() =>
-  topSkills.map((skill) => ({ label: skill, value: skill }))
+  topSkills.map((skill) => ({ label: skill, value: skill })),
 );
 
 const selectedSkillObj = computed({
@@ -451,7 +453,7 @@ watch(
   ],
   () => {
     currentPage.value = 1;
-  }
+  },
 );
 
 // Watch for sort changes

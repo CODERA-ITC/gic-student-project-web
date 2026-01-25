@@ -1,18 +1,8 @@
 <script setup lang="ts">
-import { computed, h, resolveComponent } from "vue";
-import {
-  MapPin,
-  Mail,
-  Home,
-  Settings,
-  MessageCircle,
-  Lightbulb,
-  Check,
-  Clock,
-  Circle,
-} from "lucide-vue-next";
+import { computed, h, resolveComponent, onMounted, ref } from "vue";
+import { Check, Clock, Circle } from "lucide-vue-next";
 
-type MilestoneStatus = "done" | "in-progress" | "pending";
+type MilestoneStatus = "done" | "ongoing" | "pending";
 
 interface MilestoneData {
   number?: string;
@@ -56,7 +46,7 @@ const props = withDefaults(
           "Build and implement the solution following best practices.",
         icon: "i-lucide-home",
         date: "Jun 2024",
-        status: "in-progress",
+        status: "ongoing",
       },
       {
         number: "04",
@@ -105,12 +95,12 @@ const milestoneColors = [
 ];
 
 const milestoneTextColors = [
-  "text-milestone-1",
-  "text-milestone-2",
-  "text-milestone-3",
-  "text-milestone-4",
-  "text-milestone-5",
-  "text-milestone-6",
+  "text-milestone-1 dark:text-blue-400",
+  "text-milestone-2 dark:text-purple-400",
+  "text-milestone-3 dark:text-pink-400",
+  "text-milestone-4 dark:text-orange-400",
+  "text-milestone-5 dark:text-emerald-400",
+  "text-milestone-6 dark:text-yellow-400",
 ];
 
 const milestoneShadowColors = [
@@ -131,12 +121,134 @@ const milestoneRingColors = [
   "border-milestone-6",
 ];
 
-const positions = ["8%", "26%", "45%", "64%", "82%"];
+// Positions calculated from SVG coordinates (100/1200 = 8.33%, 280/1200 = 23.33%, etc.)
+const positions = ["8.33%", "23.33%", "38.33%", "53.33%", "68.33%", "83.33%"];
 
-const sliceDesktopMilestones = computed(() => props.milestones.slice(0, 5));
+const sliceDesktopMilestones = computed(() => props.milestones);
+
+// Dynamic bullet positions based on number of milestones
+const bulletData = computed(() => {
+  const count = Math.min(sliceDesktopMilestones.value.length, 6);
+  const bullets = [];
+  const colors = [
+    {
+      fill: "#3b82f6",
+      darkFill: "blue-400",
+      bg: "bg-blue-500/20",
+      darkBg: "bg-blue-500/30",
+    },
+    {
+      fill: "#8b5cf6",
+      darkFill: "purple-400",
+      bg: "bg-purple-500/20",
+      darkBg: "bg-purple-500/30",
+    },
+    {
+      fill: "#ec4899",
+      darkFill: "pink-400",
+      bg: "bg-pink-500/20",
+      darkBg: "bg-pink-500/30",
+    },
+    {
+      fill: "#f97316",
+      darkFill: "orange-400",
+      bg: "bg-orange-500/20",
+      darkBg: "bg-orange-500/30",
+    },
+    {
+      fill: "#10b981",
+      darkFill: "emerald-400",
+      bg: "bg-emerald-500/20",
+      darkBg: "bg-emerald-500/30",
+    },
+    {
+      fill: "#eab308",
+      darkFill: "yellow-400",
+      bg: "bg-yellow-500/20",
+      darkBg: "bg-yellow-500/30",
+    },
+  ];
+
+  for (let i = 0; i < count; i++) {
+    const x = 100 + (i * 1000) / (count - 1);
+    const isTop = i % 2 === 0;
+
+    // Calculate Y position on the S-curve road
+    // Road path: M0,120 C80,120 100,30 180,30 C260,30 280,210 360,210 C440,210 460,25 540,25 C620,25 640,215 720,215 C800,215 820,30 900,30 C980,30 1000,120 1200,120
+    let y = 120; // default center
+    if (x <= 180) {
+      // First curve: from 120 down to 30
+      y = 120 - (x / 180) * 90;
+    } else if (x <= 360) {
+      // Second curve: from 30 up to 210
+      y = 30 + ((x - 180) / 180) * 180;
+    } else if (x <= 540) {
+      // Third curve: from 210 down to 25
+      y = 210 - ((x - 360) / 180) * 185;
+    } else if (x <= 720) {
+      // Fourth curve: from 25 up to 215
+      y = 25 + ((x - 540) / 180) * 190;
+    } else if (x <= 900) {
+      // Fifth curve: from 215 down to 30
+      y = 215 - ((x - 720) / 180) * 185;
+    } else {
+      // Last curve: from 30 back to 120
+      y = 30 + ((x - 900) / 300) * 90;
+    }
+
+    bullets.push({
+      x,
+      y,
+      isTop,
+      position: `${(x / 1200) * 100}%`,
+      ...colors[i],
+    });
+  }
+  return bullets;
+});
 
 const cls = (...classes: Array<string | false | null | undefined>) =>
   classes.filter(Boolean).join(" ");
+
+// Refs for scroll animations
+const mobileContainer = ref<HTMLElement | null>(null);
+const desktopContainer = ref<HTMLElement | null>(null);
+const milestoneRefs = ref<HTMLElement[]>([]);
+
+// Setup intersection observer for scroll animations
+onMounted(() => {
+  if (typeof window === "undefined") return;
+
+  const observerOptions = {
+    root: null,
+    rootMargin: "0px",
+    threshold: 0.1,
+  };
+
+  const observerCallback = (entries: IntersectionObserverEntry[]) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-visible");
+      }
+    });
+  };
+
+  const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+  // Observe mobile milestones
+  if (mobileContainer.value) {
+    const milestones =
+      mobileContainer.value.querySelectorAll(".milestone-item");
+    milestones.forEach((milestone) => observer.observe(milestone));
+  }
+
+  // Observe desktop milestones
+  if (desktopContainer.value) {
+    const milestones =
+      desktopContainer.value.querySelectorAll(".milestone-item");
+    milestones.forEach((milestone) => observer.observe(milestone));
+  }
+});
 
 // StatusBadge component
 const StatusBadge = (props: { status: MilestoneStatus }) => {
@@ -144,19 +256,20 @@ const StatusBadge = (props: { status: MilestoneStatus }) => {
     done: {
       label: "Done",
       icon: () => h(Check, { class: "w-3 h-3" }),
-      className: "bg-status-done/15 text-status-done border-status-done/30",
+      className:
+        "bg-status-done/15 text-status-done dark:text-green-400 border-status-done/30 dark:border-green-400/30",
     },
-    "in-progress": {
-      label: "In Progress",
+    ongoing: {
+      label: "Ongoing",
       icon: () => h(Clock, { class: "w-3 h-3 animate-pulse" }),
       className:
-        "bg-status-progress/15 text-status-progress border-status-progress/30",
+        "bg-status-progress/15 text-status-progress dark:text-blue-400 border-status-progress/30 dark:border-blue-400/30",
     },
     pending: {
       label: "Pending",
       icon: () => h(Circle, { class: "w-3 h-3" }),
       className:
-        "bg-status-pending/15 text-status-pending border-status-pending/30",
+        "bg-status-pending/15 text-status-pending dark:text-gray-400 border-status-pending/30 dark:border-gray-400/30",
     },
   };
 
@@ -172,6 +285,13 @@ const StatusBadge = (props: { status: MilestoneStatus }) => {
     },
     [config.icon(), config.label],
   );
+};
+
+// Helper to get card background classes
+const getCardBgClasses = (index: number) => {
+  const bullet = bulletData.value[index];
+  if (!bullet) return "bg-blue-50 dark:bg-blue-900/30";
+  return `${bullet.bg} dark:${bullet.darkBg}`;
 };
 
 // IconCircle component
@@ -190,26 +310,39 @@ const IconCircle = (props: {
   // Render icon - use UIcon component from Nuxt UI with milestone color
   const iconContent = h(resolveComponent("UIcon"), {
     name: props.icon,
-    class: ["w-6 h-6 shrink-0", milestoneTextColors[props.index]],
+    class: [
+      "w-6 h-6 shrink-0",
+      milestoneTextColors[props.index],
+      "dark:text-white",
+    ],
   });
 
   return h("div", { class: ["relative group", opacityClass] }, [
     h("div", {
       class: [
-        "absolute rounded-full border-2 border-dotted transition-transform duration-300 group-hover:scale-110",
+        "absolute rounded-full border-2 border-dotted transition-all duration-500 group-hover:scale-125 group-hover:rotate-180",
         ringOffset,
         milestoneRingColors[props.index],
       ],
     }),
+    // Outer glow for ongoing status
+    props.status === "ongoing"
+      ? h("div", {
+          class: [
+            "absolute rounded-full bg-blue-400 dark:bg-blue-500 opacity-30 animate-ping",
+            "-inset-4",
+          ],
+        })
+      : null,
     h(
       "div",
       {
         class: [
-          "rounded-full flex items-center justify-center text-primary-foreground shadow-lg transition-transform duration-300 group-hover:scale-105",
+          "rounded-full flex items-center justify-center shadow-xl transition-all duration-500 ease-in-out group-hover:shadow-2xl group-hover:scale-110",
           sizeClasses,
-          milestoneColors[props.index],
-          props.status === "in-progress"
-            ? "ring-2 ring-status-progress ring-offset-2 ring-offset-background"
+          getCardBgClasses(props.index),
+          props.status === "ongoing"
+            ? "ring-2 ring-blue-400 ring-offset-2 ring-offset-white dark:ring-offset-gray-900 animate-pulse"
             : "",
         ],
       },
@@ -221,93 +354,199 @@ const IconCircle = (props: {
 
 <template>
   <div
-    class="w-full py-10 md:py-16 px-4 overflow-hidden min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
+    class="w-full py-10 md:py-16 px-4 overflow-x-hidden min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
   >
     <!-- Desktop Layout -->
-    <div class="hidden lg:block relative max-w-6xl mx-auto mt-10">
-      <!-- Road SVG -->
-      <div class="relative h-32 flex items-center my-40">
+    <div
+      ref="desktopContainer"
+      class="hidden lg:block relative max-w-6xl mx-auto mt-20 mb-20 pt-10"
+    >
+      <!-- Special layout for single milestone -->
+      <div
+        v-if="sliceDesktopMilestones.length === 1"
+        class="flex flex-col items-center justify-center min-h-[400px]"
+      >
+        <div
+          class="milestone-item flex flex-col items-center gap-4 opacity-0 transition-all duration-700"
+        >
+          <div
+            class="rounded-xl p-6 border-2 max-w-[300px] text-center transition-all duration-500 ease-in-out cursor-pointer shadow-lg backdrop-blur-sm hover:shadow-2xl hover:scale-105 group"
+            :class="[
+              milestoneShadowColors[0],
+              sliceDesktopMilestones[0].status === 'pending'
+                ? 'opacity-60 grayscale-[0.3]'
+                : '',
+              sliceDesktopMilestones[0].status === 'ongoing'
+                ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-900'
+                : '',
+              getCardBgClasses(0),
+            ]"
+            :style="{
+              borderColor: bulletData[0]?.fill || '#3b82f6',
+            }"
+          >
+            <!-- Progress indicator for ongoing -->
+            <div
+              v-if="sliceDesktopMilestones[0].status === 'ongoing'"
+              class="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full animate-ping"
+            />
+            <div
+              v-if="sliceDesktopMilestones[0].status === 'ongoing'"
+              class="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full"
+            />
+
+            <div class="flex items-center justify-center gap-2 mb-3">
+              <span
+                class="text-xs text-blue-700 dark:text-blue-300 font-medium"
+              >
+                {{ sliceDesktopMilestones[0].date }}
+              </span>
+              <StatusBadge :status="sliceDesktopMilestones[0].status" />
+            </div>
+            <h3
+              class="font-bold text-base mb-2"
+              :class="milestoneTextColors[0]"
+            >
+              {{ getMilestoneTitle(sliceDesktopMilestones[0]) }}
+            </h3>
+            <p
+              class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed"
+            >
+              {{ sliceDesktopMilestones[0].description }}
+            </p>
+          </div>
+
+          <IconCircle
+            :icon="sliceDesktopMilestones[0].icon"
+            :index="0"
+            :status="sliceDesktopMilestones[0].status"
+            size="lg"
+          />
+        </div>
+      </div>
+
+      <!-- Road SVG for multiple milestones -->
+      <div v-else class="relative h-64 flex items-center my-56">
         <svg
-          viewBox="0 0 1200 120"
+          viewBox="0 0 1200 240"
           class="w-full h-full"
           preserveAspectRatio="none"
         >
           <!-- Gray outline -->
           <path
-            d="M0,60 C100,60 150,25 250,25 C350,25 400,95 500,95 C600,95 650,25 750,25 C850,25 900,95 1000,95 C1100,95 1150,60 1200,60"
+            d="M0,120 C80,120 100,30 180,30 C260,30 280,210 360,210 C440,210 460,25 540,25 C620,25 640,215 720,215 C800,215 820,30 900,30 C980,30 1000,120 1200,120"
             fill="none"
             stroke="#cbd5e1"
+            class="dark:stroke-gray-600"
             stroke-width="50"
             stroke-linecap="round"
           />
           <!-- Dark road -->
           <path
-            d="M0,60 C100,60 150,25 250,25 C350,25 400,95 500,95 C600,95 650,25 750,25 C850,25 900,95 1000,95 C1100,95 1150,60 1200,60"
+            d="M0,120 C80,120 100,30 180,30 C260,30 280,210 360,210 C440,210 460,25 540,25 C620,25 640,215 720,215 C800,215 820,30 900,30 C980,30 1000,120 1200,120"
             fill="none"
             stroke="#475569"
+            class="dark:stroke-gray-700"
             stroke-width="40"
             stroke-linecap="round"
           />
           <!-- Yellow center line -->
           <path
-            d="M0,60 C100,60 150,25 250,25 C350,25 400,95 500,95 C600,95 650,25 750,25 C850,25 900,95 1000,95 C1100,95 1150,60 1200,60"
+            d="M0,120 C80,120 100,30 180,30 C260,30 280,210 360,210 C440,210 460,25 540,25 C620,25 640,215 720,215 C800,215 820,30 900,30 C980,30 1000,120 1200,120"
             fill="none"
             stroke="#fbbf24"
+            class="dark:stroke-yellow-500"
             stroke-width="3"
             stroke-dasharray="20,15"
             stroke-linecap="round"
           />
 
-          <!-- Road dots -->
-          <circle cx="100" cy="55" r="6" fill="#3b82f6" />
-          <circle cx="320" cy="35" r="6" fill="#8b5cf6" />
-          <circle cx="550" cy="85" r="6" fill="#ec4899" />
-          <circle cx="780" cy="35" r="6" fill="#f97316" />
-          <circle cx="1000" cy="85" r="6" fill="#10b981" />
+          <!-- Dynamic Road dots and connector lines -->
+          <template v-for="(bullet, index) in bulletData" :key="index">
+            <!-- Bullet dot -->
+            <circle
+              :cx="bullet.x"
+              :cy="bullet.y"
+              r="7"
+              :fill="bullet.fill"
+              :class="`dark:fill-${bullet.darkFill}`"
+            />
+
+            <!-- Dashed connector line -->
+            <line
+              :x1="bullet.x"
+              :y1="bullet.y"
+              :x2="bullet.x"
+              :y2="bullet.isTop ? -50 : 290"
+              :stroke="bullet.fill"
+              stroke-width="2"
+              stroke-dasharray="5,5"
+              :class="`dark:stroke-${bullet.darkFill}`"
+              opacity="0.7"
+            />
+          </template>
         </svg>
 
         <!-- Milestone items -->
         <div
           v-for="(milestone, index) in sliceDesktopMilestones"
           :key="getMilestoneKey(milestone, index)"
-          class="absolute flex flex-col items-center gap-2"
-          :class="index % 2 === 1 ? 'bottom-full mb-4' : 'top-full mt-4'"
-          :style="{ left: positions[index], transform: 'translateX(-50%)' }"
+          class="milestone-item absolute flex flex-col items-center gap-4 opacity-0 transition-all duration-700"
+          :class="
+            bulletData[index]?.isTop
+              ? 'bottom-full mb-[20px]'
+              : 'top-full mt-[20px]'
+          "
+          :style="{
+            left: bulletData[index]?.position || '0',
+            marginLeft: '-100px',
+            transitionDelay: `${index * 100}ms`,
+          }"
         >
-          <template v-if="index % 2 === 1">
+          <template v-if="bulletData[index]?.isTop">
             <!-- Card first for top -->
             <div
-              class="rounded-xl p-4 border max-w-[180px] text-center transition-all duration-300 cursor-pointer hover:-translate-y-1"
+              class="rounded-xl p-4 border-2 max-w-[200px] text-center transition-all duration-500 ease-in-out cursor-pointer shadow-lg backdrop-blur-sm hover:shadow-2xl hover:scale-105 group"
               :class="[
                 milestoneShadowColors[index],
-                milestone.status === 'pending' ? 'opacity-60' : '',
-                index === 0
-                  ? 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800'
-                  : index === 1
-                    ? 'bg-purple-50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-800'
-                    : index === 2
-                      ? 'bg-pink-50 dark:bg-pink-950/30 border-pink-200 dark:border-pink-800'
-                      : index === 3
-                        ? 'bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800'
-                        : 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800',
+                milestone.status === 'pending'
+                  ? 'opacity-60 grayscale-[0.3]'
+                  : '',
+                milestone.status === 'ongoing'
+                  ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-900'
+                  : '',
+                getCardBgClasses(index),
               ]"
+              :style="{
+                borderColor: bulletData[index]?.fill || '#3b82f6',
+              }"
             >
-              <div class="flex items-center justify-center gap-2 mb-2">
+              <!-- Progress indicator for ongoing -->
+              <div
+                v-if="milestone.status === 'ongoing'"
+                class="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full animate-ping"
+              />
+              <div
+                v-if="milestone.status === 'ongoing'"
+                class="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full"
+              />
+
+              <div class="flex items-center justify-center gap-2 mb-3">
                 <span
-                  class="text-xs text-gray-700 dark:text-gray-300 font-medium"
+                  class="text-xs font-semibold text-blue-800 dark:text-blue-200 tracking-wide"
                 >
                   {{ milestone.date }}
                 </span>
                 <StatusBadge :status="milestone.status" />
               </div>
               <h3
-                class="font-bold text-sm mb-1"
+                class="font-bold text-base mb-2 group-hover:scale-105 transition-transform duration-300"
                 :class="milestoneTextColors[index]"
               >
                 {{ getMilestoneTitle(milestone) }}
               </h3>
               <p
-                class="text-gray-700 dark:text-gray-300 text-xs leading-relaxed"
+                class="text-slate-600 dark:text-slate-400 text-xs leading-relaxed"
               >
                 {{ milestone.description }}
               </p>
@@ -319,17 +558,10 @@ const IconCircle = (props: {
               :status="milestone.status"
             />
             <!-- Connector -->
-            <div
-              class="w-px h-6 border-l-2 border-dashed"
-              :class="milestoneRingColors[index]"
-            />
           </template>
           <template v-else>
             <!-- Connector -->
-            <div
-              class="w-px h-6 border-l-2 border-dashed"
-              :class="milestoneRingColors[index]"
-            />
+
             <!-- Icon -->
             <IconCircle
               :icon="milestone.icon"
@@ -338,24 +570,24 @@ const IconCircle = (props: {
             />
             <!-- Card -->
             <div
-              class="rounded-xl p-4 border max-w-[180px] text-center transition-all duration-300 cursor-pointer hover:-translate-y-1"
+              class="rounded-xl p-4 border-2 max-w-[200px] text-center transition-all duration-500 ease-in-out cursor-pointer shadow-lg backdrop-blur-sm hover:shadow-2xl hover:scale-105 group"
               :class="[
                 milestoneShadowColors[index],
-                milestone.status === 'pending' ? 'opacity-60' : '',
-                index === 0
-                  ? 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800'
-                  : index === 1
-                    ? 'bg-purple-50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-800'
-                    : index === 2
-                      ? 'bg-pink-50 dark:bg-pink-950/30 border-pink-200 dark:border-pink-800'
-                      : index === 3
-                        ? 'bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800'
-                        : 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800',
+                milestone.status === 'pending'
+                  ? 'opacity-60 grayscale-[0.3]'
+                  : '',
+                milestone.status === 'ongoing'
+                  ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-900'
+                  : '',
+                getCardBgClasses(index),
               ]"
+              :style="{
+                borderColor: bulletData[index]?.fill || '#3b82f6',
+              }"
             >
               <div class="flex items-center justify-center gap-2 mb-2">
                 <span
-                  class="text-xs text-gray-700 dark:text-gray-300 font-medium"
+                  class="text-xs text-blue-700 dark:text-blue-300 font-medium"
                 >
                   {{ milestone.date }}
                 </span>
@@ -368,7 +600,7 @@ const IconCircle = (props: {
                 {{ getMilestoneTitle(milestone) }}
               </h3>
               <p
-                class="text-gray-700 dark:text-gray-300 text-xs leading-relaxed"
+                class="text-slate-700 dark:text-slate-300 text-xs leading-relaxed"
               >
                 {{ milestone.description }}
               </p>
@@ -379,55 +611,40 @@ const IconCircle = (props: {
     </div>
 
     <!-- Mobile/Tablet Layout -->
-    <div class="lg:hidden relative max-w-md mx-auto px-4 mt-10">
+    <div
+      ref="mobileContainer"
+      class="lg:hidden relative max-w-md mx-auto px-4 mt-10 min-h-[1200px]"
+    >
       <!-- Vertical road SVG -->
       <svg
         viewBox="0 0 300 1300"
-        class="absolute left-1/2 -translate-x-1/2 h-full w-[300px] top-0"
+        class="absolute left-1/2 -translate-x-1/2 h-full w-[300px] top-0 z-0"
         preserveAspectRatio="xMidYMin slice"
       >
         <!-- Gray outline -->
         <path
-          d="M150,0 
-             C150,40 240,70 240,130 
-             C240,190 60,220 60,280 
-             C60,340 240,370 240,430 
-             C240,490 60,520 60,580 
-             C60,640 240,670 240,730 
-             C240,790 60,820 60,880
-             C60,940 150,970 150,1300"
+          d="M150,0 C150,50 170,80 210,130 C250,180 250,220 210,270 C170,320 150,360 190,420 C230,480 250,520 210,580 C170,640 150,680 190,740 C230,800 250,840 210,900 C170,960 150,1000 150,1100 C150,1200 150,1250 150,1300"
           fill="none"
           stroke="#cbd5e1"
+          class="dark:stroke-gray-600"
           stroke-width="45"
           stroke-linecap="round"
         />
         <!-- Dark road -->
         <path
-          d="M150,0 
-             C150,40 240,70 240,130 
-             C240,190 60,220 60,280 
-             C60,340 240,370 240,430 
-             C240,490 60,520 60,580 
-             C60,640 240,670 240,730 
-             C240,790 60,820 60,880
-             C60,940 150,970 150,1300"
+          d="M150,0 C150,50 170,80 210,130 C250,180 250,220 210,270 C170,320 150,360 190,420 C230,480 250,520 210,580 C170,640 150,680 190,740 C230,800 250,840 210,900 C170,960 150,1000 150,1100 C150,1200 150,1250 150,1300"
           fill="none"
           stroke="#475569"
+          class="dark:stroke-gray-700"
           stroke-width="35"
           stroke-linecap="round"
         />
         <!-- Yellow center line -->
         <path
-          d="M150,0 
-             C150,40 240,70 240,130 
-             C240,190 60,220 60,280 
-             C60,340 240,370 240,430 
-             C240,490 60,520 60,580 
-             C60,640 240,670 240,730 
-             C240,790 60,820 60,880
-             C60,940 150,970 150,1300"
+          d="M150,0 C150,50 170,80 210,130 C250,180 250,220 210,270 C170,320 150,360 190,420 C230,480 250,520 210,580 C170,640 150,680 190,740 C230,800 250,840 210,900 C170,960 150,1000 150,1100 C150,1200 150,1250 150,1300"
           fill="none"
           stroke="#fbbf24"
+          class="dark:stroke-yellow-500"
           stroke-width="2.5"
           stroke-dasharray="12,10"
           stroke-linecap="round"
@@ -435,40 +652,32 @@ const IconCircle = (props: {
       </svg>
 
       <!-- Milestones -->
-      <div class="relative z-10 space-y-6 py-8">
+      <div class="relative z-20 space-y-6 py-8">
         <div
           v-for="(milestone, index) in props.milestones"
           :key="getMilestoneKey(milestone, index)"
-          class="flex items-center gap-3 opacity-0 animate-fade-in-up"
+          class="milestone-item flex items-center gap-3 opacity-0"
           :class="index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'"
-          :style="{ animationDelay: `${index * 0.12}s` }"
         >
           <!-- Content Card -->
           <div
-            class="flex-1 rounded-xl p-3 sm:p-4 border transition-all duration-300 cursor-pointer hover:-translate-y-1"
+            class="flex-1 rounded-xl p-3 sm:p-4 border transition-all duration-300 cursor-pointer shadow-sm backdrop-blur-sm"
             :class="[
               milestoneShadowColors[index],
               index % 2 === 0 ? 'text-right' : 'text-left',
               milestone.status === 'pending' ? 'opacity-60' : '',
-              index === 0
-                ? 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800'
-                : index === 1
-                  ? 'bg-purple-50 dark:bg-purple-950/30 border-purple-200 dark:border-purple-800'
-                  : index === 2
-                    ? 'bg-pink-50 dark:bg-pink-950/30 border-pink-200 dark:border-pink-800'
-                    : index === 3
-                      ? 'bg-orange-50 dark:bg-orange-950/30 border-orange-200 dark:border-orange-800'
-                      : index === 4
-                        ? 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800'
-                        : 'bg-yellow-50 dark:bg-yellow-950/30 border-yellow-200 dark:border-yellow-800',
+              getCardBgClasses(index),
             ]"
+            :style="{
+              borderColor: bulletData[index]?.fill || '#3b82f6',
+            }"
           >
             <div
               class="flex items-center gap-2 mb-2"
               :class="index % 2 === 0 ? 'justify-end' : 'justify-start'"
             >
               <span
-                class="text-[10px] sm:text-xs text-gray-700 dark:text-gray-300 font-medium"
+                class="text-[10px] sm:text-xs text-blue-700 dark:text-blue-300 font-medium"
               >
                 {{ milestone.date }}
               </span>
@@ -481,14 +690,14 @@ const IconCircle = (props: {
               {{ getMilestoneTitle(milestone) }}
             </h3>
             <p
-              class="text-gray-700 dark:text-gray-300 text-xs sm:text-sm leading-relaxed"
+              class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed"
             >
               {{ milestone.description }}
             </p>
           </div>
 
           <!-- Icon with dotted border -->
-          <div class="flex-shrink-0">
+          <div class="flex-shrink-0 relative z-30">
             <IconCircle
               :icon="milestone.icon"
               :index="index"
@@ -504,3 +713,97 @@ const IconCircle = (props: {
     </div>
   </div>
 </template>
+
+<style scoped>
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+  animation-fill-mode: both;
+}
+
+/* Scroll-triggered animation */
+.milestone-item {
+  transition: all 0.5s ease-in-out;
+}
+
+.milestone-item.is-visible {
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) !important;
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Hover state for cards */
+.milestone-item:hover {
+  z-index: 50;
+}
+
+/* Dark mode transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+</style>

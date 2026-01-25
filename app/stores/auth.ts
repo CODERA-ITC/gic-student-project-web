@@ -665,13 +665,13 @@ export const useAuthStore = defineStore("auth", {
 
       try {
         const responseData = await $fetch("/api/users/refresh", {
-          method: "POST",
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
+          body: {
             refresh_token: refreshToken,
-          }),
+          },
         }).catch(() => null);
 
         if (!responseData) {
