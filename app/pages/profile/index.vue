@@ -2,18 +2,12 @@
   <div class="min-h-screen bg-gray-50 dark:bg-slate-900">
     <!-- Header Section -->
     <div
-      class="py-16 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900 border-b border-blue-700/30 dark:border-slate-700"
-    >
+      class="py-16 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900 border-b border-blue-700/30 dark:border-slate-700">
       <UContainer>
         <div class="flex items-center gap-4 mb-4">
           <div
-            class="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-lg p-1 hover:bg-white/20 dark:hover:bg-white/10 transition-colors"
-          >
-            <ButtonsPresetButton
-              preset="back"
-              @click="goBack"
-              class="!text-white"
-            />
+            class="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-lg p-1 hover:bg-white/20 dark:hover:bg-white/10 transition-colors">
+            <ButtonsPresetButton preset="back" @click="goBack" class="!text-white" />
           </div>
         </div>
         <div class="space-y-2">
@@ -31,19 +25,13 @@
         <!-- Sidebar Navigation -->
         <div class="lg:col-span-1">
           <div
-            class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-4 space-y-1 sticky top-20"
-          >
-            <button
-              v-for="tab in tabs"
-              :key="tab.id"
-              @click="activeTab = tab.id"
-              :class="[
-                activeTab === tab.id
-                  ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
-                  : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700',
-                'w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left',
-              ]"
-            >
+            class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-4 space-y-1 sticky top-20">
+            <button v-for="tab in tabs" :key="tab.id" @click="activeTab = tab.id" :class="[
+              activeTab === tab.id
+                ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700',
+              'w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left',
+            ]">
               <UIcon :name="tab.icon" class="w-5 h-5" />
               <span class="font-medium">{{ tab.label }}</span>
             </button>
@@ -52,54 +40,30 @@
 
         <!-- Content Area -->
         <div class="lg:col-span-2">
-          <div
-            class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700"
-          >
+          <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700">
             <!-- Profile Information -->
-            <ProfileInformation
-              v-if="activeTab === 'profile'"
-              :initial-data="authStore.user"
-              @save="handleProfileSave"
-            />
+            <ProfileInformation v-if="activeTab === 'profile'" :initial-data="authStore.user"
+              @save="handleProfileSave" />
 
             <!-- Public Profile Preview -->
             <template v-if="authStore.isStudent">
-              <ProfilePublicProfilePreview
-                v-if="activeTab === 'public'"
-                :user="authStore.user"
-                :bio="StudentProfile.bio"
-                :skills="StudentProfile.skills"
-                :social-links="StudentProfile.socialLinks"
-                :program="StudentProfile.program"
-                :year="StudentProfile.year"
-                :phone="StudentProfile.phone"
-                :student-id="StudentProfile.studentId"
-                :project-count="StudentProfile.projectCount"
-                :achievements="StudentProfile.achievements"
-              />
+              <ProfilePublicProfilePreview v-if="activeTab === 'public'" :user="authStore.user"
+                :bio="StudentProfile.bio" :skills="StudentProfile.skills" :social-links="StudentProfile.socialLinks"
+                :program="StudentProfile.program" :year="StudentProfile.year" :phone="StudentProfile.phone"
+                :student-id="StudentProfile.studentId" :project-count="StudentProfile.projectCount"
+                :achievements="StudentProfile.achievements" />
             </template>
 
             <!-- Account Settings -->
-            <ProfileAccountSettings
-              v-if="activeTab === 'account'"
-              @update-password="handlePasswordUpdate"
-              @toggle-2fa="handleToggle2FA"
-              @revoke-session="handleRevokeSession"
-            />
+            <ProfileAccountSettings v-if="activeTab === 'account'" @update-password="handlePasswordUpdate"
+              @toggle-2fa="handleToggle2FA" @revoke-session="handleRevokeSession" />
 
             <!-- Notifications -->
-            <ProfileNotificationSettings
-              v-if="activeTab === 'notifications'"
-              @save="handleNotificationsSave"
-            />
+            <ProfileNotificationSettings v-if="activeTab === 'notifications'" @save="handleNotificationsSave" />
 
             <!-- Privacy -->
-            <ProfilePrivacySettings
-              v-if="activeTab === 'privacy'"
-              @save="handlePrivacySave"
-              @data-request="handleDataRequest"
-              @delete-account="handleDeleteAccount"
-            />
+            <ProfilePrivacySettings v-if="activeTab === 'privacy'" @save="handlePrivacySave"
+              @data-request="handleDataRequest" @delete-account="handleDeleteAccount" />
           </div>
         </div>
       </div>
@@ -356,9 +320,37 @@ const handleProfileSave = (data: any) => {
   // TODO: Implement API call
 };
 
-const handlePasswordUpdate = (data: any) => {
-  console.log("Password update:", data);
-  // TODO: Implement API call
+const handlePasswordUpdate = async (data: any) => {
+  try {
+    const token = authStore.token;
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    const apiBaseUrl = useRuntimeConfig().public.apiBase;
+
+    // Call API to change password
+    const response = await $fetch(`${apiBaseUrl}/users/change-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: {
+        answers: data.answers,
+        newPassword: data.newPassword,
+      },
+    });
+
+    console.log("Password changed successfully:", response);
+    // TODO: Show success toast
+    return response;
+  } catch (error: any) {
+    console.error("Password change error:", error);
+    const errorMessage = error?.data?.message || error?.message || "Failed to change password";
+    // TODO: Show error toast
+    throw new Error(errorMessage);
+  }
 };
 
 const handleToggle2FA = (enabled: boolean) => {
