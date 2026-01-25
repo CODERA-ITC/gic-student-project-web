@@ -29,8 +29,8 @@
                         </div>
 
                         <!-- Continue Button -->
-                        <ButtonsPresetButton preset="primary" label="CONTINUE" :loading="isLoading"
-                            :disabled="isLoading" size="lg" class="w-full" type="submit" />
+                        <ButtonsPresetButton preset="submit" label="CONTINUE" :loading="isLoading" :disabled="isLoading"
+                            size="lg" class="w-full" type="submit" />
 
                         <!-- Error Message -->
                         <div v-if="error"
@@ -52,36 +52,20 @@
                         </p>
                     </div>
 
-                    <form @submit.prevent="handleSecurityQuestionsSubmit" class="space-y-6">
-                        <!-- Question 1 -->
-                        <div>
-                            <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-                                1. What is your mother's name?
-                                <span class="text-red-500">*</span>
-                            </label>
-                            <input v-model="securityAnswers.question1" type="text" required :disabled="isLoading"
-                                placeholder="Enter your answer"
-                                class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed" />
+                    <!-- Loading State -->
+                    <div v-if="loadingQuestions" class="flex justify-center py-8">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-900 dark:border-blue-400">
                         </div>
+                    </div>
 
-                        <!-- Question 2 -->
-                        <div>
+                    <form v-else @submit.prevent="handleSecurityQuestionsSubmit" class="space-y-6">
+                        <!-- Dynamic Questions -->
+                        <div v-for="(question, index) in securityQuestions" :key="question.id">
                             <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-                                2. What was the name of your first pet?
+                                {{ index + 1 }}. {{ question.questions }}
                                 <span class="text-red-500">*</span>
                             </label>
-                            <input v-model="securityAnswers.question2" type="text" required :disabled="isLoading"
-                                placeholder="Enter your answer"
-                                class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed" />
-                        </div>
-
-                        <!-- Question 3 -->
-                        <div>
-                            <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-                                3. What city were you born in?
-                                <span class="text-red-500">*</span>
-                            </label>
-                            <input v-model="securityAnswers.question3" type="text" required :disabled="isLoading"
+                            <input v-model="securityAnswers[question.id]" type="text" required :disabled="isLoading"
                                 placeholder="Enter your answer"
                                 class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed" />
                         </div>
@@ -92,13 +76,13 @@
                             {{ error }}
                         </div>
 
-                        <!-- Verify Button -->
-                        <ButtonsPresetButton preset="primary" label="VERIFY ANSWERS" :loading="isLoading"
-                            :disabled="isLoading" size="lg" class="w-full" type="submit" />
+                        <!-- Continue Button (changed from Verify) -->
+                        <ButtonsPresetButton preset="submit" label="CONTINUE" :loading="isLoading" :disabled="isLoading"
+                            size="lg" class="w-full" type="submit" />
 
                         <!-- Back Link -->
                         <div class="text-center">
-                            <button type="button" @click="resetForm" :disabled="isLoading"
+                            <button type="button" @click="goBackToEmail" :disabled="isLoading"
                                 class="text-sm text-blue-900 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors inline-flex items-center gap-2 disabled:opacity-50">
                                 <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" />
                                 Back to Email
@@ -144,7 +128,7 @@
                         </div>
 
                         <!-- Reset Button -->
-                        <ButtonsPresetButton preset="primary" label="RESET PASSWORD" :loading="isLoading"
+                        <ButtonsPresetButton preset="submit" label="RESET PASSWORD" :loading="isLoading"
                             :disabled="isLoading" size="lg" class="w-full" type="submit" />
 
                         <!-- Success Message -->
@@ -182,38 +166,51 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({
     layout: "auth",
 });
 
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import type { SecurityQuestion } from "~/composables/useSecurityQuestions";
 
 const router = useRouter();
+const { fetchSecurityQuestions } = useSecurityQuestions();
 
 const step = ref(1); // 1: Email, 2: Security Questions, 3: New Password
 const email = ref("");
 const newPassword = ref("");
 const confirmPassword = ref("");
-const securityAnswers = ref({
-    question1: "",
-    question2: "",
-    question3: "",
-});
+const securityQuestions = ref<SecurityQuestion[]>([]);
+const securityAnswers = ref<Record<string, string>>({});
 const isLoading = ref(false);
+const loadingQuestions = ref(false);
 const error = ref("");
 const success = ref("");
 
-// Step 1: Submit email to check if user exists
+// Fetch security questions on mount
+onMounted(async () => {
+    try {
+        loadingQuestions.value = true;
+        securityQuestions.value = await fetchSecurityQuestions();
+    } catch (err) {
+        console.error("Failed to load security questions:", err);
+    } finally {
+        loadingQuestions.value = false;
+    }
+});
+
+// Step 1: Submit email to move to security questions
 const handleEmailSubmit = async () => {
     error.value = "";
     isLoading.value = true;
 
     try {
-        // TODO: Call API to verify email exists
-        // For now, just move to next step after validation
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Basic email validation
+        if (!email.value || !email.value.includes("@")) {
+            throw new Error("Please enter a valid email address");
+        }
 
         // Move to security questions step
         step.value = 2;
@@ -224,25 +221,23 @@ const handleEmailSubmit = async () => {
     }
 };
 
-// Step 2: Verify security questions
+// Step 2: Continue to password reset
 const handleSecurityQuestionsSubmit = async () => {
     error.value = "";
     isLoading.value = true;
 
     try {
-        // TODO: Call API to verify security questions
-        // For now, simulate verification
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // Simulate validation - in real app, this would be done by backend
-        if (!securityAnswers.value.question1 || !securityAnswers.value.question2 || !securityAnswers.value.question3) {
-            throw new Error("Please answer all security questions");
+        // Validate all questions are answered
+        for (const question of securityQuestions.value) {
+            if (!securityAnswers.value[question.id] || securityAnswers.value[question.id].trim().length < 2) {
+                throw new Error("Please answer all security questions (minimum 2 characters each)");
+            }
         }
 
         // Move to password reset step
         step.value = 3;
     } catch (err) {
-        error.value = err instanceof Error ? err.message : "Security verification failed. Please try again.";
+        error.value = err instanceof Error ? err.message : "Please complete all security questions.";
     } finally {
         isLoading.value = false;
     }
@@ -264,8 +259,31 @@ const handlePasswordReset = async () => {
             throw new Error("Password must be at least 8 characters long");
         }
 
-        // TODO: Call API to reset password
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        // Prepare answers array for API
+        const answers = securityQuestions.value.map(question => ({
+            questionId: question.id,
+            answer: securityAnswers.value[question.id]
+        }));
+
+        const requestBody = {
+            email: email.value,
+            answers: answers,
+            newPassword: newPassword.value
+        };
+
+        console.log('Request body:', JSON.stringify(requestBody, null, 2));
+
+        // Call API to reset password directly (bypassing proxy)
+        const apiBaseUrl = useRuntimeConfig().public.apiBase;
+        const response = await $fetch(`${apiBaseUrl}/users/forgot-password`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: requestBody
+        });
+
+        console.log('Response:', response);
 
         success.value = "Password reset successful! Redirecting to login...";
 
@@ -273,11 +291,22 @@ const handlePasswordReset = async () => {
         setTimeout(() => {
             router.push('/login');
         }, 2000);
-    } catch (err) {
-        error.value = err instanceof Error ? err.message : "Failed to reset password. Please try again.";
+    } catch (err: any) {
+        console.error('Full error:', err);
+        console.error('Error data:', err?.data);
+        console.error('Error message:', err?.message);
+        console.error('Error status:', err?.statusCode);
+
+        const errorMessage = err?.data?.message || err?.message || "Failed to reset password. Please check your answers and try again.";
+        error.value = errorMessage;
     } finally {
         isLoading.value = false;
     }
+};
+
+const goBackToEmail = () => {
+    step.value = 1;
+    error.value = "";
 };
 
 const resetForm = () => {
@@ -285,11 +314,7 @@ const resetForm = () => {
     email.value = "";
     newPassword.value = "";
     confirmPassword.value = "";
-    securityAnswers.value = {
-        question1: "",
-        question2: "",
-        question3: "",
-    };
+    securityAnswers.value = {};
     error.value = "";
     success.value = "";
 };
