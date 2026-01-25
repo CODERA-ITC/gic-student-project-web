@@ -29,8 +29,8 @@
                         </div>
 
                         <!-- Continue Button -->
-                        <ButtonsPresetButton preset="submit" label="CONTINUE" :loading="isLoading" :disabled="isLoading"
-                            size="lg" class="w-full" type="submit" />
+                        <ButtonsPresetButton preset="submit" label="CONTINUE" icon="" :loading="isLoading"
+                            :disabled="isLoading" size="lg" class="w-full" type="submit" />
 
                         <!-- Error Message -->
                         <div v-if="error"
@@ -77,8 +77,8 @@
                         </div>
 
                         <!-- Continue Button (changed from Verify) -->
-                        <ButtonsPresetButton preset="submit" label="CONTINUE" :loading="isLoading" :disabled="isLoading"
-                            size="lg" class="w-full" type="submit" />
+                        <ButtonsPresetButton preset="submit" label="CONTINUE" icon="" :loading="isLoading"
+                            :disabled="isLoading" size="lg" class="w-full" type="submit" />
 
                         <!-- Back Link -->
                         <div class="text-center">
@@ -128,7 +128,7 @@
                         </div>
 
                         <!-- Reset Button -->
-                        <ButtonsPresetButton preset="submit" label="RESET PASSWORD" :loading="isLoading"
+                        <ButtonsPresetButton preset="submit" label="RESET PASSWORD" icon="" :loading="isLoading"
                             :disabled="isLoading" size="lg" class="w-full" type="submit" />
 
                         <!-- Success Message -->
