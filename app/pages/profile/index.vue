@@ -55,8 +55,7 @@
             </template>
 
             <!-- Account Settings -->
-            <ProfileAccountSettings v-if="activeTab === 'account'" @update-password="handlePasswordUpdate"
-              @toggle-2fa="handleToggle2FA" @revoke-session="handleRevokeSession" />
+            <ProfileAccountSettings v-if="activeTab === 'account'" @update-password="handlePasswordUpdate" />
 
             <!-- Notifications -->
             <ProfileNotificationSettings v-if="activeTab === 'notifications'" @save="handleNotificationsSave" />
@@ -323,20 +322,20 @@ const handleProfileSave = (data: any) => {
 const handlePasswordUpdate = async (data: any) => {
   try {
     const token = authStore.token;
-    
+
     console.log("=== Password Change Debug ===");
     console.log("Token exists:", !!token);
     console.log("Token length:", token?.length);
     console.log("User:", authStore.user?.email);
     console.log("Request data:", data);
-    
+
     if (!token) {
       throw new Error("No authentication token found. Please log in again.");
     }
 
     const apiBaseUrl = useRuntimeConfig().public.apiBase;
     const url = `${apiBaseUrl}/users/change-password`;
-    
+
     console.log("API URL:", url);
     console.log("Authorization header:", `Bearer ${token.substring(0, 20)}...`);
 
@@ -360,28 +359,18 @@ const handlePasswordUpdate = async (data: any) => {
     console.error("Password change error:", error);
     console.error("Error status:", error?.statusCode);
     console.error("Error data:", error?.data);
-    
+
     let errorMessage = "Failed to change password";
-    
+
     if (error?.statusCode === 401) {
       errorMessage = "Unauthorized. Your session may have expired. Please log in again.";
     } else {
       errorMessage = error?.data?.message || error?.message || errorMessage;
     }
-    
+
     // TODO: Show error toast
     throw new Error(errorMessage);
   }
-};
-
-const handleToggle2FA = (enabled: boolean) => {
-  console.log("2FA toggled:", enabled);
-  // TODO: Implement API call
-};
-
-const handleRevokeSession = (sessionId: number) => {
-  console.log("Session revoked:", sessionId);
-  // TODO: Implement API call
 };
 
 const handleNotificationsSave = (data: any) => {
