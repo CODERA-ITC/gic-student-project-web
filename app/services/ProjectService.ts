@@ -51,7 +51,7 @@ export interface ProjectFilters {
  * Following Single Responsibility Principle
  */
 export class ProjectService {
-    // static instance: ProjectService;
+  // static instance: ProjectService;
   private baseUrl = "/api/projects";
 
   /**
@@ -178,11 +178,14 @@ export class ProjectService {
       }
 
       const token = this.getAuthToken();
-      return await $fetch(this.baseUrl, {
+
+      let response = await $fetch(this.baseUrl, {
         method: "POST",
         headers: token ? { Authorization: `Bearer ${token}` } : {},
         body: formData,
       });
+
+      return response;
     } catch (error) {
       console.error("ProjectService: Failed to create project", error);
       throw error;
@@ -203,6 +206,44 @@ export class ProjectService {
     } catch (error) {
       console.error(
         `ProjectService: Failed to update project ${projectId}`,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Accept a project (Teacher only)
+   */
+  async acceptProject(projectId: string): Promise<any> {
+    try {
+      const response = await $fetch(`${this.baseUrl}/accept/${projectId}`, {
+        method: "PATCH",
+        headers: this.getAuthHeaders(),
+      });
+      return response;
+    } catch (error) {
+      console.error(
+        `ProjectService: Failed to accept project ${projectId}`,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Reject a project (Teacher only)
+   */
+  async rejectProject(projectId: string): Promise<any> {
+    try {
+      const response = await $fetch(`${this.baseUrl}/reject/${projectId}`, {
+        method: "PATCH",
+        headers: this.getAuthHeaders(),
+      });
+      return response;
+    } catch (error) {
+      console.error(
+        `ProjectService: Failed to reject project ${projectId}`,
         error,
       );
       throw error;
@@ -331,6 +372,20 @@ export class ProjectService {
     } catch (error) {
       console.error(
         `ProjectService: Failed to submit project ${projectId}`,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async fetchSubmissionProjectForTeacher(): Promise<Project[]> {
+    try {
+      return await $fetch(`${this.baseUrl}/submissions/teacher`, {
+        headers: this.getAuthHeaders(),
+      });
+    } catch (error) {
+      console.error(
+        `ProjectService: Failed to fetch submission projects for teacher`,
         error,
       );
       throw error;
