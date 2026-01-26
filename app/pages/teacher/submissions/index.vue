@@ -15,6 +15,25 @@
 
     <!-- Manage Projects Content -->
     <div v-else>
+      <!-- Back Button -->
+      <div
+        class="top-20 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur border-b border-gray-200 dark:border-slate-700"
+      >
+        <div
+          class="w-full max-w-(--ui-container) mx-auto px-4 sm:px-6 lg:px-8 py-4"
+        >
+          <div class="flex items-center justify-between">
+            <NuxtLink
+              to="/teacher/dashboard"
+              class="inline-flex items-center font-medium justify-center gap-2 rounded-md transition-all duration-300 focus:outline-none touch-manipulation select-none active:scale-95 text-indigo-900 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/20 hover:cursor-pointer px-4 py-2.5 text-base min-h-[44px]"
+            >
+              <UIcon name="i-heroicons-arrow-left" class="w-5 h-5" />
+              <span class="truncate">Back</span>
+            </NuxtLink>
+          </div>
+        </div>
+      </div>
+
       <!-- Header Section -->
       <div
         class="py-16 bg-gray-100 dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700"
@@ -79,6 +98,14 @@
                   <div class="flex gap-2">
                     <ButtonsPresetButton
                       preset="primary"
+                      label="All Projects"
+                      icon="i-heroicons-list-bullet"
+                      size="sm"
+                      @click="setActiveFilter('all')"
+                      :class="{ 'bg-blue-800': activeFilter === 'all' }"
+                    />
+                    <ButtonsPresetButton
+                      preset="primary"
                       label="Completed Project"
                       icon="i-heroicons-check-circle"
                       size="sm"
@@ -115,9 +142,9 @@
                     class="w-full sm:w-auto px-3 py-1.5 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-md text-black dark:text-white text-sm min-w-40 focus:outline-none"
                   >
                     <option value="">All Years</option>
-                    <option value="gen-2024">2024</option>
-                    <option value="gen-2025">2025</option>
-                    <option value="gen-2026">2026</option>
+                    <option value="gen-2024">2024-2025</option>
+                    <option value="gen-2025">2025-2026</option>
+                    <option value="gen-2026">2026-2027</option>
                   </select>
                 </div>
               </div>
@@ -132,7 +159,7 @@
                     <th
                       class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
                     >
-                      Project Title
+                      Project Name
                     </th>
                     <th
                       class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700 hidden md:table-cell"
@@ -170,12 +197,17 @@
                     <td class="p-3 text-slate-100 align-top text-xs">
                       <div class="flex items-center gap-3">
                         <div
-                          v-if="project.studentAvatar"
+                          v-if="project.author.avatar"
                           class="w-8 h-8 rounded-full overflow-hidden shrink-0"
                         >
                           <img
-                            :src="project.studentAvatar"
-                            :alt="project.studentName"
+                            :src="
+                              getAvatarUrl(
+                                project.author.avatar,
+                                project.author.name,
+                              )
+                            "
+                            :alt="project.author.name"
                             class="w-full h-full object-cover"
                           />
                         </div>
@@ -184,19 +216,23 @@
                           class="w-8 h-8 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center shrink-0"
                         >
                           <span class="text-xs font-semibold text-white">{{
-                            project.studentInitials
+                            project.author.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")
+                              .toUpperCase()
                           }}</span>
                         </div>
                         <div>
                           <div
                             class="font-semibold text-black dark:text-white text-xs"
                           >
-                            {{ project.studentName }}
+                            {{ project.author.name }}
                           </div>
                           <div
                             class="text-xs text-gray-600 dark:text-slate-400"
                           >
-                            {{ project.studentEmail }}
+                            {{ project.author.program }}
                           </div>
                         </div>
                       </div>
@@ -205,7 +241,7 @@
                       <div
                         class="font-semibold text-black dark:text-white text-xs mb-1"
                       >
-                        {{ project.title }}
+                        {{ project.name }}
                       </div>
                       <div
                         class="text-xs text-gray-600 dark:text-slate-400 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap"
@@ -224,19 +260,19 @@
                     <td
                       class="p-3 text-black dark:text-slate-100 align-top text-xs hidden md:table-cell"
                     >
-                      {{ project.generation }}
+                      {{ project.academicYear }}
                     </td>
                     <td class="p-3 text-slate-100 align-top text-xs">
                       <span
                         :class="
-                          project.status === 'completed'
+                          project.status === 'Completed'
                             ? 'bg-green-600 text-white'
                             : 'bg-yellow-600 text-white'
                         "
                         class="px-2 py-1 rounded text-xs font-semibold inline-block"
                       >
                         {{
-                          project.status === "completed"
+                          project.status === "Completed"
                             ? "Completed"
                             : "Pending"
                         }}
@@ -245,7 +281,7 @@
                     <td
                       class="p-3 text-black dark:text-slate-100 align-top text-xs hidden md:table-cell"
                     >
-                      {{ project.submittedDate }}
+                      {{ project.submissions.date }}
                     </td>
                     <td class="p-3 text-slate-100 align-top text-xs">
                       <div class="flex gap-2 flex-wrap">
@@ -338,94 +374,30 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useAuthStore } from "~/stores/auth";
-import { projectsData } from "~/constants/projects";
+import { useProjectStore } from "~/stores/projects";
+import { getAvatarUrl } from "~/utils/avatar";
 import ButtonsPresetButton from "~/components/buttons/PresetButton.vue";
+
+const projectsStore = useProjectStore();
 
 const authStore = useAuthStore();
 
 definePageMeta({
   middleware: ["auth", "teacher"],
 });
+const projects = computed(() => projectsStore.projects);
 
-// Transform projectsData to match teacher dashboard structure
-const projects = computed(() => {
-  return projectsData.map((project) => {
-    // Generate email from name
-    const emailName = project.author.name.toLowerCase().replace(" ", ".");
-    const studentEmail = `${emailName}@student.edu`;
-
-    // Generate initials
-    const nameParts = project.author.name.split(" ");
-    const studentInitials = nameParts
-      .map((part) => part.charAt(0))
-      .join("")
-      .toUpperCase();
-
-    // Map categories from projects.ts to teacher dashboard categories
-    const categoryMapping = {
-      "Artificial Intelligence": "AI/ML",
-      "Mobile Development": "Mobile App",
-      "Web Development": "Web Development",
-      "Environmental Tech": "Other",
-      "Data Science": "Data Science",
-      IoT: "Other",
-      Blockchain: "Other",
-      "Augmented Reality": "Mobile App",
-      "Machine Learning": "AI/ML",
-      "Data Analytics": "Other",
-      EdTech: "Other",
-      FinTech: "Other",
-      APIs: "Web Development",
-      "Virtual Reality": "Game Development",
-      "Smart Cities": "Other",
-    };
-
-    const mappedCategory = categoryMapping[project.category] || "Other";
-
-    // Map semester to generation
-    const generationMapping = {
-      "Fall 2024": "2024",
-      "Spring 2025": "2025",
-    };
-
-    const mappedGeneration = generationMapping[project.semester] || "2024";
-
-    // Map status
-    const mappedStatus =
-      project.status === "Completed" ? "completed" : "pending";
-
-    // Calculate due date (add some days to createdAt)
-    const createdDate = new Date(project.createdAt);
-    const dueDate = new Date(createdDate);
-    dueDate.setDate(dueDate.getDate() + 60); // Add 60 days
-    const dueDateString = dueDate.toISOString().split("T")[0];
-
-    // Check if overdue
-    const currentDate = new Date();
-    const isOverdue = currentDate > dueDate;
-
-    return {
-      id: project.id,
-      studentName: project.author.name,
-      studentEmail: studentEmail,
-      studentInitials: studentInitials,
-      studentAvatar: project.author.avatar,
-      title: project.title,
-      description: project.description,
-      category: mappedCategory,
-      generation: mappedGeneration,
-      status: mappedStatus,
-      submittedDate: project.createdAt,
-      dueDate: dueDateString,
-      isOverdue: isOverdue,
-    };
-  });
+// Fetch projects on mount
+onMounted(async () => {
+  if (projectsStore.projects.length === 0) {
+    await projectsStore.fetchProjects();
+  }
 });
 
 // Filter and search state
-const activeFilter = ref("completed");
+const activeFilter = ref("all");
 const searchQuery = ref("");
 const selectedCategory = ref("");
 const selectedGeneration = ref("");
@@ -438,7 +410,10 @@ const itemsPerPage = ref(8);
 const filteredProjects = computed(() => {
   let filtered = projects.value.filter((project) => {
     // Filter by active/pending status
-    if (activeFilter.value !== "all" && project.status !== activeFilter.value) {
+    if (activeFilter.value === "completed" && project.status !== "Completed") {
+      return false;
+    }
+    if (activeFilter.value === "pending" && project.status !== "In Progress") {
       return false;
     }
 
@@ -446,8 +421,8 @@ const filteredProjects = computed(() => {
     if (searchQuery.value) {
       const query = searchQuery.value.toLowerCase();
       const matchesSearch =
-        project.studentName.toLowerCase().includes(query) ||
-        project.title.toLowerCase().includes(query) ||
+        project.author.name.toLowerCase().includes(query) ||
+        project.name.toLowerCase().includes(query) ||
         project.description.toLowerCase().includes(query) ||
         project.category.toLowerCase().includes(query);
       if (!matchesSearch) {
@@ -474,19 +449,18 @@ const filteredProjects = computed(() => {
     // Filter by generation
     if (selectedGeneration.value) {
       const generationMap = {
-        "gen-2024": "2024",
-        "gen-2025": "2025",
-        "gen-2026": "2026",
+        "gen-2024": "2024-2025",
+        "gen-2025": "2025-2026",
+        "gen-2026": "2026-2027",
       };
       const expectedGeneration = generationMap[selectedGeneration.value];
-      if (project.generation !== expectedGeneration) {
+      if (project.academicYear !== expectedGeneration) {
         return false;
       }
     }
 
     return true;
   });
-
   return filtered;
 });
 
@@ -575,6 +549,6 @@ const prevPage = () => {
 // Action methods for project buttons
 const viewProject = (project) => {
   // TODO: Implement view project functionality
-  console.log("View project:", project);
+  navigateTo(`/teacher/submissions/${project.id}`);
 };
 </script>
