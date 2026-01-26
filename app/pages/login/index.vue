@@ -82,25 +82,23 @@
 
         <!-- Social Login -->
         <div class="grid grid-cols-2 gap-3">
-          <button type="button" :disabled="authStore.isLoading" @click="handleGoogleLogin"
-            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+          <button type="button" disabled
+            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 group opacity-50 cursor-not-allowed">
             <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
               <UIcon name="i-logos-google-icon" class="w-6 h-6" />
             </div>
-            <span
-              class="text-sm text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors">
+            <span class="text-sm text-slate-700 dark:text-neutral-300 transition-colors">
               GOOGLE
             </span>
           </button>
 
-          <button type="button" :disabled="authStore.isLoading" @click="handleGithubLogin"
-            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+          <button type="button" disabled
+            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 group opacity-50 cursor-not-allowed">
             <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
               <UIcon name="i-simple-icons-github"
-                class="w-6 h-6 text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors" />
+                class="w-6 h-6 text-slate-700 dark:text-neutral-300 transition-colors" />
             </div>
-            <span
-              class="text-sm text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors">
+            <span class="text-sm text-slate-700 dark:text-neutral-300 transition-colors">
               GITHUB
             </span>
           </button>
