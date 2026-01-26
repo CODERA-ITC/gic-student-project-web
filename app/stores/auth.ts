@@ -825,6 +825,47 @@ export const useAuthStore = defineStore("auth", {
     },
 
     /**
+     * Upload user avatar
+     */
+    async uploadAvatar(file: File): Promise<{ avatar: string }> {
+      this.isLoading = true;
+      this.error = null;
+
+      try {
+        const token = this.getToken();
+        if (!token) {
+          throw new Error("Not authenticated");
+        }
+
+        const formData = new FormData();
+        formData.append("files", file); // must match FileInterceptor('files')
+
+        const response = await $fetch("/api/users/avatar", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            // DO NOT set Content-Type manually - browser sets it correctly
+          },
+          body: formData,
+        });
+
+        // Update user avatar in store
+        if (response && response.avatar && this.user) {
+          this.user.avatar = response.avatar;
+        }
+
+        return response;
+      } catch (error) {
+        console.error("Avatar upload error:", error);
+        this.error =
+          error instanceof Error ? error.message : "Failed to upload avatar";
+        throw error;
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    /**
      * Submit security question answers for new OAuth users
      */
     async submitSecurityQuestions(
