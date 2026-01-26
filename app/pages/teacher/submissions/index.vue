@@ -265,14 +265,14 @@
                     <td class="p-3 text-slate-100 align-top text-xs">
                       <span
                         :class="
-                          project.status === 'Completed'
+                          project.status === 'completed'
                             ? 'bg-green-600 text-white'
                             : 'bg-yellow-600 text-white'
                         "
                         class="px-2 py-1 rounded text-xs font-semibold inline-block"
                       >
                         {{
-                          project.status === "Completed"
+                          project.status === "completed"
                             ? "Completed"
                             : "Pending"
                         }}
@@ -291,6 +291,24 @@
                           icon="i-heroicons-eye"
                           size="xs"
                           @click="viewProject(project)"
+                        />
+                        <ButtonsPresetButton
+                          v-if="project.status === 'In Progress'"
+                          label="Accept"
+                          icon="i-heroicons-check-circle"
+                          color="success"
+                          size="xs"
+                          @click="acceptProject(project)"
+                          :loading="acceptingId === project.id"
+                        />
+                        <ButtonsPresetButton
+                          v-if="project.status === 'In Progress'"
+                          label="Reject"
+                          icon="i-heroicons-x-circle"
+                          color="danger"
+                          size="xs"
+                          @click="rejectProject(project)"
+                          :loading="rejectingId === project.id"
                         />
                       </div>
                     </td>
@@ -401,6 +419,10 @@ const activeFilter = ref("all");
 const searchQuery = ref("");
 const selectedCategory = ref("");
 const selectedGeneration = ref("");
+
+// Loading states for accept/reject actions
+const acceptingId = ref(null);
+const rejectingId = ref(null);
 
 // Pagination state
 const currentPage = ref(1);
@@ -550,5 +572,35 @@ const prevPage = () => {
 const viewProject = (project) => {
   // TODO: Implement view project functionality
   navigateTo(`/teacher/submissions/${project.id}`);
+};
+
+const acceptProject = async (project) => {
+  if (confirm(`Accept "${project.name}"?`)) {
+    try {
+      acceptingId.value = project.id;
+      await projectsStore.acceptProject(project.id);
+      await projectsStore.fetchProjects();
+    } catch (error) {
+      console.error("Accept failed:", error);
+      alert("Failed to accept project");
+    } finally {
+      acceptingId.value = null;
+    }
+  }
+};
+
+const rejectProject = async (project) => {
+  if (confirm(`Reject "${project.name}"?`)) {
+    try {
+      rejectingId.value = project.id;
+      await projectsStore.rejectProject(project.id);
+      await projectsStore.fetchProjects();
+    } catch (error) {
+      console.error("Reject failed:", error);
+      alert("Failed to reject project");
+    } finally {
+      rejectingId.value = null;
+    }
+  }
 };
 </script>
