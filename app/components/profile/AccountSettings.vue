@@ -167,6 +167,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import type { SecurityQuestion } from "~/composables/useSecurityQuestions";
+import { useAuthStore } from "~/stores/auth";
 
 const emit = defineEmits(["update-password", "toggle-2fa", "revoke-session"]);
 
@@ -250,17 +251,45 @@ const handleUpdatePassword = async () => {
 
   isUpdating.value = true;
   try {
+    // Get auth store and token
+    const authStore = useAuthStore();
+    const token = authStore.token;
+
+    console.log("=== Password Change Debug ===");
+    console.log("Token exists:", !!token);
+    console.log("User:", authStore.user?.email);
+
+    if (!token) {
+      throw new Error("No authentication token found. Please log in again.");
+    }
+
     // Prepare answers array for API
     const answers = securityQuestions.value.map((question) => ({
       questionId: question.id,
       answer: securityAnswers.value[question.id],
     }));
 
-    await emit("update-password", {
-      answers: answers,
-      newPassword: passwordData.value.new,
+    const apiBaseUrl = useRuntimeConfig().public.apiBase;
+    const url = `${apiBaseUrl}/users/change-password`;
+
+    console.log("API URL:", url);
+
+    // Call the API and wait for the result
+    const result = await $fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: {
+        answers: answers,
+        newPassword: passwordData.value.new,
+      },
     });
 
+    console.log("Password changed successfully:", result);
+
+    // Only show success if the API call was successful
     passwordSuccess.value = "Password updated successfully!";
 
     // Reset form
@@ -270,7 +299,34 @@ const handleUpdatePassword = async () => {
     };
     securityAnswers.value = {};
   } catch (error: any) {
-    passwordError.value = error.message || "Failed to update password";
+    console.error("Password change error:", error);
+    console.error("Error status:", error?.statusCode);
+    console.error("Error data:", error?.data);
+
+    // Handle different error types
+    let errorMessage = "Failed to update password";
+
+    // First, check if there's a specific message from the backend
+    if (error?.data?.message) {
+      errorMessage = error.data.message;
+    } else if (error?.statusCode === 400) {
+      errorMessage = "Incorrect security question answers";
+    } else if (error?.statusCode === 401) {
+      // Check if it's actually a token issue or wrong answers
+      if (
+        error?.data?.message?.toLowerCase().includes("token") ||
+        error?.data?.message?.toLowerCase().includes("unauthorized")
+      ) {
+        errorMessage = "Your session has expired. Please log in again.";
+      } else {
+        errorMessage =
+          error?.data?.message || "Incorrect security question answers";
+      }
+    } else if (error?.message) {
+      errorMessage = error.message;
+    }
+
+    passwordError.value = errorMessage;
   } finally {
     isUpdating.value = false;
   }
