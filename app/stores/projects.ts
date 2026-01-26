@@ -66,6 +66,15 @@ export const useProjectStore = defineStore("projects", {
       };
     },
 
+    getStudentProjects(): Project[] {
+      let projects: Project[] = [];
+      projects = this.projects.slice(0, 6);
+
+      console.log("getStudentProjects called, returning:", projects);
+
+      return projects;
+    },
+
     getCategoryIdByName() {
       return (categoryName: string): string | null => {
         return (
@@ -635,7 +644,7 @@ export const useProjectStore = defineStore("projects", {
       // Search project titles
       this.projects.forEach((project) => {
         if (project.name.toLowerCase().includes(searchTerm)) {
-          const key = `name-${project.name}`;
+          const key = `title-${project.name}`;
           if (!addedItems.has(key) && results.length < 10) {
             addedItems.add(key);
             results.push({
@@ -643,7 +652,7 @@ export const useProjectStore = defineStore("projects", {
               icon: "i-heroicons-document-text-20-solid",
               value: project.name,
               label: project.name,
-              subtitle: "Project Title",
+              subtitle: "Project Name",
               category: project.category,
             });
           }
@@ -1112,6 +1121,33 @@ export const useProjectStore = defineStore("projects", {
       this.availableCourses = this.courseObjects.map((course) => course.name);
 
       return this.courseObjects;
+    },
+
+    async fetchSubmissionProjects(): Promise<Project[]> {
+      let projects: Project[] = [];
+      projects = await projectService.fetchSubmissionProjectForTeacher();
+      return projects;
+    },
+
+    // Accept project submission
+    async acceptProject(projectId: string): Promise<void> {
+      try {
+        await projectService.acceptProject(projectId);
+        console.log(`Project ${projectId} accepted successfully`);
+      } catch (error) {
+        console.error(`Failed to accept project ${projectId}`, error);
+        throw error;
+      }
+    },
+
+    async rejectProject(projectId: string): Promise<void> {
+      try {
+        await projectService.rejectProject(projectId);
+        console.log(`Project ${projectId} rejected successfully`);
+      } catch (error) {
+        console.error(`Failed to reject project ${projectId}`, error);
+        throw error;
+      }
     },
   },
 });
