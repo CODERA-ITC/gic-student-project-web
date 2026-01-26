@@ -318,7 +318,7 @@
       <UContainer
         class="min-h-screen bg-background py-12 bg-white bg-white/50 dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-6 space-y-6 transform transition-all"
       >
-        <h3 class="text-3xl font-bold mb-6 text-white">
+        <h3 class="text-3xl font-bold mb-6 text-gray-900 dark:text-gray-200">
           Project Development Roadmap
         </h3>
         <RoadmapInfographic :milestones="roadmap" />

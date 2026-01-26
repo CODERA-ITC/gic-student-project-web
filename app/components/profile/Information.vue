@@ -540,7 +540,7 @@ const triggerFileInput = () => {
   fileInput.value?.click();
 };
 
-const handleFileChange = (event: Event) => {
+const handleFileChange = async (event: Event) => {
   const target = event.target as HTMLInputElement;
   const file = target.files?.[0];
 
@@ -549,23 +549,75 @@ const handleFileChange = (event: Event) => {
   // Validate file type
   const validTypes = ["image/jpeg", "image/png", "image/gif"];
   if (!validTypes.includes(file.type)) {
-    alert("Please upload a valid image file (JPG, PNG, or GIF)");
+    toast.add({
+      title: "Invalid File Type",
+      description: "Please upload a valid image file (JPG, PNG, or GIF)",
+      icon: "i-heroicons-exclamation-triangle",
+      color: "warning",
+    });
     return;
   }
 
   // Validate file size (2MB)
   const maxSize = 2 * 1024 * 1024; // 2MB in bytes
   if (file.size > maxSize) {
-    alert("File size must be less than 2MB");
+    toast.add({
+      title: "File Too Large",
+      description: "File size must be less than 2MB",
+      icon: "i-heroicons-exclamation-triangle",
+      color: "warning",
+    });
     return;
   }
 
-  // Create preview URL
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    formData.value.avatar = e.target?.result as string;
-  };
-  reader.readAsDataURL(file);
+  // Show loading state
+  const loadingToast = toast.add({
+    title: "Uploading...",
+    description: "Please wait while we upload your avatar",
+    icon: "i-heroicons-arrow-path",
+  });
+
+  try {
+    // Upload to server via auth store
+    const response = await authStore.uploadAvatar(file);
+
+    // Update avatar preview with uploaded URL
+    if (response && response.avatar) {
+      formData.value.avatar = response.avatar;
+
+      toast.add({
+        title: "Success",
+        description: "Avatar uploaded successfully!",
+        icon: "i-heroicons-check-circle",
+        color: "success",
+      });
+    } else {
+      // Fallback: Create local preview if server doesn't return URL immediately
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        formData.value.avatar = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+
+      toast.add({
+        title: "Avatar Updated",
+        description: "Your avatar preview has been updated",
+        icon: "i-heroicons-check-circle",
+        color: "success",
+      });
+    }
+  } catch (error) {
+    console.error("Failed to upload avatar:", error);
+    toast.add({
+      title: "Upload Failed",
+      description: "Failed to upload avatar. Please try again.",
+      icon: "i-heroicons-x-circle",
+      color: "error",
+    });
+  } finally {
+    // Clear file input
+    if (target) target.value = "";
+  }
 };
 
 const handleAvatarChange = () => {
@@ -653,7 +705,7 @@ const handleSave = async () => {
       title: "Error",
       description: "Failed to update profile. Please try again.",
       icon: "i-heroicons-x-circle",
-      class: "bg-red-50 dark:bg-red-900/30",
+      color: "error",
     });
   } finally {
     isSaving.value = false;
