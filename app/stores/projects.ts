@@ -1064,18 +1064,22 @@ export const useProjectStore = defineStore("projects", {
     async submitProjectForReview(projectId: string): Promise<boolean> {
       try {
         // Find project in user projects
-        const userProject = this.userProjects.find((p) => p.id === projectId);
-        if (!userProject) {
-          console.error("Project not found in user projects");
-          return false;
-        }
+        // const userProject = this.userProjects.find((p) => p.id === projectId);
+        // if (!userProject) {
+        //   console.error("Project not found in user projects");
+        //   return false;
+        // }
 
         // // Initialize submissions array if it doesn't exist
         // if (!userProject.submissions) {
         //   userProject.submissions = [];
         // }
+        // // Initialize submissions array if it doesn't exist
+        // if (!userProject.submissions) {
+        //   userProject.submissions = [];
+        // }
 
-        // Check if already submitted
+        // // Check if already submitted
         // const alreadySubmitted = userProject.submissions.some(
         //   (sub) => sub.id === projectId,
         // );
@@ -1084,7 +1088,7 @@ export const useProjectStore = defineStore("projects", {
         //   return false;
         // }
 
-        // Add new submission
+        // // Add new submission
         // const newSubmission = {
         //   id: projectId,
         //   name: userProject.name,
@@ -1093,7 +1097,7 @@ export const useProjectStore = defineStore("projects", {
         // };
         // userProject.submissions.push(newSubmission);
 
-        // Also update in all projects if it exists there
+        // // Also update in all projects if it exists there
         // const project = this.projects.find((p) => p.id === projectId);
         // if (project) {
         //   if (!project.submissions) {

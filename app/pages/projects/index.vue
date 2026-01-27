@@ -241,11 +241,11 @@
             <p class="text-red-700 dark:text-red-300 mb-4">
               {{ dataFetchError }}
             </p>
-            <ButtonsPresetButton
+            <!-- <ButtonsPresetButton
               label="Try Again"
               icon="i-heroicons-arrow-path"
               @click="initializeData"
-            />
+            /> -->
           </div>
         </div>
 
@@ -658,12 +658,10 @@ const initializeData = async () => {
       projectStore.availableTags.length === 0
         ? projectStore.fetchTags()
         : Promise.resolve(),
-      projectStore.projects.length === 0
-        ? projectStore.fetchProjects(
-            projectStore.pagination.currentPage,
-            projectStore.pagination.itemsPerPage,
-          )
-        : Promise.resolve(),
+      projectStore.fetchProjects(
+        projectStore.pagination.currentPage,
+        projectStore.pagination.itemsPerPage,
+      ),
     ]);
 
     // Load user liked projects if authenticated
@@ -945,7 +943,7 @@ const isValidProject = (project: any): boolean => {
   return !!(
     project &&
     project.id &&
-    project.title &&
+    project.name &&
     project.description &&
     project.category &&
     typeof project.likes === "number" &&
