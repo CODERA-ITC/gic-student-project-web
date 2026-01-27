@@ -1,1359 +1,882 @@
 import type { Project } from "~/utils/Interfaces";
-// export const projectsData: Project[] = [
-//   {
-//     id: 1,
-//     name: "AI Chat Assistant",
-//     description:
-//       "An intelligent chatbot powered by GPT-3 for customer support. This project aims to enhance user experience by providing instant and accurate responses to common inquiries.",
-//     academicYear: "2024-2025",
-//     author: {
-//       name: "Mr. Test",
-//       avatar: "https://randomuser.me/api/portraits/women/50.jpg",
-//       program: "Computer Science",
-//       year: "4th Year",
-//     },
-//     technologies: ["Python", "GPT-3", "React", "Node.js", "MongoDB"],
-//     category: "Artificial Intelligence",
-//     status: "Completed",
-//     featured: true,
-//     likes: 342,
-//     views: 2500,
-//     demoUrl: "https://ai-chat-assistant.demo.com",
-//     githubUrl: "https://github.com/sarahchen/ai-chat-assistant",
-//     images: [
-//       "https://images.unsplash.com/photo-1763182198113-a9a8d0fe3144?w=900&auto=format&fit=crop&q=60",
-//       "https://images.unsplash.com/photo-1763669029223-74f911a9e08b?w=900&auto=format&fit=crop&q=60",
-//       "https://plus.unsplash.com/premium_photo-1731286446855-c0bd3d23af46?w=900&auto=format&fit=crop&q=60",
-//     ],
-//     createdAt: "2024-10-15",
-//     tags: ["ai", "chatbot", "customer-support"],
-//     members: [
-//       {
-//         name: "Sarah Chen",
-//         image: "https://randomuser.me/api/portraits/women/11.jpg",
-//       },
-//       {
-//         name: "Alex Park",
-//         image: "https://randomuser.me/api/portraits/men/32.jpg",
-//       },
-//       {
-//         name: "Jordan Lee",
-//         image: "https://randomuser.me/api/portraits/men/54.jpg",
-//       },
-//       {
-//         name: "Emma Davis",
-//         image: "https://randomuser.me/api/portraits/women/78.jpg",
-//       },
-//     ],
-//     features: [
-//       {
-//         date: "Sep 1, 2024",
-//         name: "GPT-3 Integration",
-//         description:
-//           "Set up GPT-3 API integration and basic chatbot framework with Python backend.",
-//         icon: "i-lucide-brain",
-//         status: "done",
-//       },
-//       {
-//         date: "Sep 15, 2024",
-//         name: "Conversation History",
-//         description:
-//           "Implemented conversation persistence and user session management with MongoDB.",
-//         icon: "i-lucide-message-circle",
-//         status: "ongoing",
-//       },
-//       {
-//         date: "Oct 1, 2024",
-//         name: "Multi-language Support",
-//         description:
-//           "Added support for multiple languages and improved response accuracy.",
-//         icon: "i-lucide-globe",
-//         status: "pending",
-//       },
-//       {
-//         date: "Oct 15, 2024",
-//         name: "Production Deployment",
-//         description:
-//           "Successfully deployed to production with monitoring and analytics dashboard.",
-//         icon: "i-lucide-rocket",
-//         status: "done",
-//       },
-//     ],
-//     duration: "3 months",
-//     course: "Advanced AI & Machine Learning",
-//     visibility: "public",
-//   },
-//   {
-//     id: 2,
-//     name: "Mobile Fitness App",
-//     description: "Track workouts, nutrition, and health metrics on the go.",
-//     academicYear: "2024-2025",
-//     author: {
-//       name: "Mr. Test",
-//       avatar: "https://randomuser.me/api/portraits/women/50.jpg",
-//       program: "Computer Science",
-//       year: "4th Year",
-//     },
-//     technologies: ["React Native", "Firebase", "Redux", "HealthKit"],
-//     category: "Mobile Development",
-//     status: "In Progress",
-//     featured: false,
-//     likes: 256,
-//     views: 1800,
-//     demoUrl: "https://fitness-app.demo.com",
-//     githubUrl: "https://github.com/arodriguez/fitness-app",
-//     images: [
-//       "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=500&fit=crop",
-//       "https://images.unsplash.com/photo-1763854492937-fb7ae2f601f3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyMXx8fGVufDB8fHx8fA%3D%3D",
-//       "https://images.unsplash.com/photo-1763667309360-30d7e3779382?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0MHx8fGVufDB8fHx8fA%3D%3D",
-//     ],
-//     createdAt: "2024-09-22",
-//     tags: ["fitness", "mobile", "health"],
-//     members: [
-//       {
-//         name: "Alex Rodriguez",
-//         image: "https://randomuser.me/api/portraits/men/21.jpg",
-//       },
-//       {
-//         name: "Maria Garcia",
-//         image: "https://randomuser.me/api/portraits/women/45.jpg",
-//       },
-//       {
-//         name: "Sam Wilson",
-//         image: "https://randomuser.me/api/portraits/men/67.jpg",
-//       },
-//     ],
-//     features: [
-//       {
-//         date: "Aug 20, 2024",
-//         name: "Core Features",
-//         description:
-//           "Developed workout tracking, nutrition logging, and health metrics dashboard.",
-//         icon: "i-lucide-activity",
-//         status: "done",
-//       },
-//       {
-//         date: "Sep 10, 2024",
-//         name: "Social Integration",
-//         description:
-//           "Added friend connections, workout sharing, and community challenges.",
-//         icon: "i-lucide-users",
-//         status: "done",
-//       },
-//       {
-//         date: "Oct 5, 2024",
-//         name: "Wearable Sync",
-//         description:
-//           "Integrated with HealthKit and popular fitness wearables for automatic data sync.",
-//         icon: "i-lucide-watch",
-//         status: "ongoing",
-//       },
-//       {
-//         date: "Nov 1, 2024",
-//         name: "Launch",
-//         description:
-//           "Final testing, app store submission, and public launch preparation.",
-//         icon: "i-lucide-rocket",
-//         status: "pending",
-//       },
-//     ],
-//     duration: "4 months",
-//     course: "Mobile App Development",
-//     visibility: "public",
-//   },
-//   {
-//     id: 3,
-//     name: "E-Commerce Platform",
-//     description:
-//       "Full-stack online store with payment integration and analytics.",
-//     academicYear: "2024-2025",
-//     author: {
-//       name: "Mr. Test",
-//       avatar: "https://randomuser.me/api/portraits/women/50.jpg",
-//       program: "Computer Science",
-//       year: "4th Year",
-//     },
-//     technologies: ["Next.js", "Stripe", "PostgreSQL", "Tailwind", "Vercel"],
-//     category: "Web Development",
-//     status: "Completed",
-//     featured: true,
-//     likes: 489,
-//     views: 3200,
-//     demoUrl: "https://ecommerce-platform.demo.com",
-//     githubUrl: "https://github.com/ppatel/ecommerce-platform",
-//     images: [
-//       "https://images.unsplash.com/photo-1557821552-17105176677c?w=500&fit=crop",
-//       "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&fit=crop",
-//       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&fit=crop",
-//     ],
-//     createdAt: "2024-08-10",
-//     tags: ["ecommerce", "payment", "analytics"],
-//     members: [
-//       {
-//         name: "Priya Patel",
-//         image: "https://randomuser.me/api/portraits/women/90.jpg",
-//       },
-//       {
-//         name: "David Chen",
-//         image: "https://randomuser.me/api/portraits/men/34.jpg",
-//       },
-//       {
-//         name: "Lisa Brown",
-//         image: "https://randomuser.me/api/portraits/women/23.jpg",
-//       },
-//       {
-//         name: "Tom Anderson",
-//         image: "https://randomuser.me/api/portraits/men/56.jpg",
-//       },
-//       {
-//         name: "Sarah White",
-//         image: "https://randomuser.me/api/portraits/women/12.jpg",
-//       },
-//     ],
-//     features: [
-//       {
-//         date: "May 1, 2024",
-//         name: "Product Catalog",
-//         description:
-//           "Built product management system with categories, search, and inventory tracking.",
-//         icon: "i-lucide-package",
-//         status: "done",
-//       },
-//       {
-//         date: "Jun 15, 2024",
-//         name: "Payment Integration",
-//         description:
-//           "Integrated Stripe payment processing with cart management and order flow.",
-//         icon: "i-lucide-credit-card",
-//         status: "done",
-//       },
-//       {
-//         date: "Jul 20, 2024",
-//         name: "Analytics Dashboard",
-//         description:
-//           "Developed admin dashboard with sales analytics, user insights, and reporting.",
-//         icon: "i-lucide-bar-chart",
-//         status: "done",
-//       },
-//       {
-//         date: "Aug 10, 2024",
-//         name: "Production Launch",
-//         description:
-//           "Deployed to production with monitoring, security hardening, and performance optimization.",
-//         icon: "i-lucide-globe",
-//         status: "done",
-//       },
-//     ],
-//     duration: "6 months",
-//     course: "Full Stack Web Development",
-//     visibility: "public",
-//   },
+export const projectsData: Project[] = [
+  {
+    id: "1",
+    name: "AI Chat Assistant",
+    description:
+      "An intelligent chatbot powered by GPT-3 for customer support. This project aims to enhance user experience by providing instant and accurate responses to common inquiries.",
+    academicYear: "2024-2025",
+    author: {
+      id: "1",
+      name: "Mr. Test",
+      avatar: "https://randomuser.me/api/portraits/women/50.jpg",
+      program: "Computer Science",
+      year: "4th Year",
+    },
+    technologies: ["Python", "GPT-3", "React", "Node.js", "MongoDB"],
+    category: "Artificial Intelligence",
+    status: "Completed",
+    featured: true,
+    likes: 342,
+    views: 2500,
+    demoUrl: "https://ai-chat-assistant.demo.com",
+    githubUrl: "https://github.com/sarahchen/ai-chat-assistant",
+    images: [
+      {
+        id: "1234",
+        originalUrl: `https://www.pixeden.com/media/k2/galleries/856/001-screen-showcase-landing-page-devices-presentation-web-psd-projects.jpg`,
+        thumbnailUrl: `https://www.pixeden.com/media/k2/galleries/856/001-screen-showcase-landing-page-devices-presentation-web-psd-projects.jpg`,
+      },
+      {
+        id: "1235",
+        originalUrl: `https://img.freepik.com/free-photo/elegant-cozy-office-lifestyle_23-2149636247.jpg?semt=ais_user_personalization&w=740&q=80`,
+        thumbnailUrl: `https://img.freepik.com/free-photo/elegant-cozy-office-lifestyle_23-2149636247.jpg?semt=ais_user_personalization&w=740&q=80`,
+      },
+    ],
+    createdAt: "2024-10-15",
+    tags: ["ai", "chatbot", "customer-support"],
+    members: [
+      {
+        name: "Sarah Chen",
+        image: "https://randomuser.me/api/portraits/women/11.jpg",
+      },
+      {
+        name: "Alex Park",
+        image: "https://randomuser.me/api/portraits/men/32.jpg",
+      },
+      {
+        name: "Jordan Lee",
+        image: "https://randomuser.me/api/portraits/men/54.jpg",
+      },
+      {
+        name: "Emma Davis",
+        image: "https://randomuser.me/api/portraits/women/78.jpg",
+      },
+    ],
+    features: [
+      {
+        date: "Sep 1, 2024",
+        name: "GPT-3 Integration",
+        description:
+          "Set up GPT-3 API integration and basic chatbot framework with Python backend.",
+        icon: "i-lucide-brain",
+        status: "done",
+      },
+      {
+        date: "Sep 15, 2024",
+        name: "Conversation History",
+        description:
+          "Implemented conversation persistence and user session management with MongoDB.",
+        icon: "i-lucide-message-circle",
+        status: "ongoing",
+      },
+      {
+        date: "Oct 1, 2024",
+        name: "Multi-language Support",
+        description:
+          "Added support for multiple languages and improved response accuracy.",
+        icon: "i-lucide-globe",
+        status: "pending",
+      },
+      {
+        date: "Oct 15, 2024",
+        name: "Production Deployment",
+        description:
+          "Successfully deployed to production with monitoring and analytics dashboard.",
+        icon: "i-lucide-rocket",
+        status: "done",
+      },
+    ],
+    duration: "3 months",
+    course: "Advanced AI & Machine Learning",
+    visibility: "public",
+  },
+  {
+    id: "2",
+    name: "Mobile Fitness App",
+    description: "Track workouts, nutrition, and health metrics on the go.",
+    academicYear: "2024-2025",
+    author: {
+      id: "2",
+      name: "Mr. Test",
+      avatar: "https://randomuser.me/api/portraits/women/50.jpg",
+      program: "Computer Science",
+      year: "4th Year",
+    },
+    technologies: ["React Native", "Firebase", "Redux", "HealthKit"],
+    category: "Mobile Development",
+    status: "In Progress",
+    featured: false,
+    likes: 256,
+    views: 1800,
+    demoUrl: "https://fitness-app.demo.com",
+    githubUrl: "https://github.com/arodriguez/fitness-app",
+    images: [
+      {
+        id: "img1",
+        originalUrl:
+          "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=500&fit=crop",
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=500&fit=crop",
+      },
+      {
+        id: "img2",
+        originalUrl:
+          "https://images.unsplash.com/photo-1763854492937-fb7ae2f601f3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyMXx8fGVufDB8fHx8fA%3D%3D",
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1763854492937-fb7ae2f601f3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwyMXx8fGVufDB8fHx8fA%3D%3D",
+      },
+      {
+        id: "img3",
+        originalUrl:
+          "https://images.unsplash.com/photo-1763667309360-30d7e3779382?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0MHx8fGVufDB8fHx8fA%3D%3D",
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1763667309360-30d7e3779382?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw0MHx8fGVufDB8fHx8fA%3D%3D",
+      },
+    ],
+    createdAt: "2024-09-22",
+    tags: ["fitness", "mobile", "health"],
+    members: [
+      {
+        name: "Alex Rodriguez",
+        image: "https://randomuser.me/api/portraits/men/21.jpg",
+      },
+      {
+        name: "Maria Garcia",
+        image: "https://randomuser.me/api/portraits/women/45.jpg",
+      },
+      {
+        name: "Sam Wilson",
+        image: "https://randomuser.me/api/portraits/men/67.jpg",
+      },
+    ],
+    features: [
+      {
+        date: "Aug 20, 2024",
+        name: "Core Features",
+        description:
+          "Developed workout tracking, nutrition logging, and health metrics dashboard.",
+        icon: "i-lucide-activity",
+        status: "done",
+      },
+      {
+        date: "Sep 10, 2024",
+        name: "Social Integration",
+        description:
+          "Added friend connections, workout sharing, and community challenges.",
+        icon: "i-lucide-users",
+        status: "done",
+      },
+      {
+        date: "Oct 5, 2024",
+        name: "Wearable Sync",
+        description:
+          "Integrated with HealthKit and popular fitness wearables for automatic data sync.",
+        icon: "i-lucide-watch",
+        status: "ongoing",
+      },
+      {
+        date: "Nov 1, 2024",
+        name: "Launch",
+        description:
+          "Final testing, app store submission, and public launch preparation.",
+        icon: "i-lucide-rocket",
+        status: "pending",
+      },
+    ],
+    duration: "4 months",
+    course: "Mobile App Development",
+    visibility: "public",
+  },
+  {
+    id: "3",
+    name: "E-Commerce Platform",
+    description:
+      "Full-stack online store with payment integration and analytics.",
+    academicYear: "2024-2025",
+    author: {
+      id: "3",
+      name: "Mr. Test",
+      avatar: "https://randomuser.me/api/portraits/women/50.jpg",
+      program: "Computer Science",
+      year: "4th Year",
+    },
+    technologies: ["Next.js", "Stripe", "PostgreSQL", "Tailwind", "Vercel"],
+    category: "Web Development",
+    status: "Completed",
+    featured: true,
+    likes: 489,
+    views: 3200,
+    demoUrl: "https://ecommerce-platform.demo.com",
+    githubUrl: "https://github.com/ppatel/ecommerce-platform",
+    images: [
+      {
+        id: "img1",
+        originalUrl:
+          "https://images.unsplash.com/photo-1557821552-17105176677c?w=500&fit=crop",
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1557821552-17105176677c?w=500&fit=crop",
+      },
+      {
+        id: "img2",
+        originalUrl:
+          "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&fit=crop",
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=500&fit=crop",
+      },
+      {
+        id: "img3",
+        originalUrl:
+          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&fit=crop",
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&fit=crop",
+      },
+    ],
+    createdAt: "2024-08-10",
+    tags: ["ecommerce", "payment", "analytics"],
+    members: [
+      {
+        name: "Priya Patel",
+        image: "https://randomuser.me/api/portraits/women/90.jpg",
+      },
+      {
+        name: "David Chen",
+        image: "https://randomuser.me/api/portraits/men/34.jpg",
+      },
+      {
+        name: "Lisa Brown",
+        image: "https://randomuser.me/api/portraits/women/23.jpg",
+      },
+      {
+        name: "Tom Anderson",
+        image: "https://randomuser.me/api/portraits/men/56.jpg",
+      },
+      {
+        name: "Sarah White",
+        image: "https://randomuser.me/api/portraits/women/12.jpg",
+      },
+    ],
+    features: [
+      {
+        date: "May 1, 2024",
+        name: "Product Catalog",
+        description:
+          "Built product management system with categories, search, and inventory tracking.",
+        icon: "i-lucide-package",
+        status: "done",
+      },
+      {
+        date: "Jun 15, 2024",
+        name: "Payment Integration",
+        description:
+          "Integrated Stripe payment processing with cart management and order flow.",
+        icon: "i-lucide-credit-card",
+        status: "done",
+      },
+      {
+        date: "Jul 20, 2024",
+        name: "Analytics Dashboard",
+        description:
+          "Developed admin dashboard with sales analytics, user insights, and reporting.",
+        icon: "i-lucide-bar-chart",
+        status: "done",
+      },
+      {
+        date: "Aug 10, 2024",
+        name: "Production Launch",
+        description:
+          "Deployed to production with monitoring, security hardening, and performance optimization.",
+        icon: "i-lucide-globe",
+        status: "done",
+      },
+    ],
+    duration: "6 months",
+    course: "Full Stack Web Development",
+    visibility: "public",
+  },
 
-//   {
-//     id: 4,
-//     name: "Climate Monitoring IoT",
-//     description: "IoT sensors and dashboard for environmental monitoring.",
-//     academicYear: "2024-2025",
-//     author: {
-//       name: "Jordan Kim",
-//       avatar: "https://randomuser.me/api/portraits/men/88.jpg",
-//       program: "Environmental Science",
-//       year: "4th Year",
-//     },
-//     technologies: ["Arduino", "Node.js", "MQTT", "Chart.js", "Raspberry Pi"],
-//     category: "Environmental Tech",
-//     status: "Completed",
-//     featured: false,
-//     likes: 178,
-//     views: 1200,
-//     demoUrl: "https://climate-iot.demo.com",
-//     githubUrl: "https://github.com/jkim/climate-iot",
-//     images: [
-//       "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&fit=crop",
-//       "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=500&fit=crop",
-//       "https://images.unsplash.com/photo-1615906655593-ad0386982a0f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWVjaGFuaWNzfGVufDB8fDB8fHww",
-//     ],
-//     createdAt: "2024-05-20",
-//     tags: ["iot", "environment", "sensors"],
-//     members: [
-//       {
-//         name: "Jordan Kim",
-//         image: "https://randomuser.me/api/portraits/men/88.jpg",
-//       },
-//       {
-//         name: "Nina Patel",
-//         image: "https://randomuser.me/api/portraits/women/41.jpg",
-//       },
-//       {
-//         name: "Chris Lee",
-//         image: "https://randomuser.me/api/portraits/men/25.jpg",
-//       },
-//     ],
-//     features: [
-//       {
-//         date: "Feb 1, 2024",
-//         name: "Sensor Setup",
-//         description:
-//           "Deployed IoT sensors for temperature, humidity, and air quality monitoring.",
-//         icon: "i-lucide-thermometer",
-//         status: "done",
-//       },
-//       {
-//         date: "Mar 15, 2024",
-//         name: "Data Collection",
-//         description:
-//           "Implemented data aggregation system with real-time sensor data streaming.",
-//         icon: "i-lucide-database",
-//         status: "done",
-//       },
-//       {
-//         date: "Apr 20, 2024",
-//         name: "Dashboard",
-//         description:
-//           "Built interactive dashboard with data visualization and alert system.",
-//         icon: "i-lucide-monitor",
-//         status: "ongoing",
-//       },
-//       {
-//         date: "May 30, 2024",
-//         name: "Deployment",
-//         description:
-//           "System deployment and integration with environmental monitoring networks.",
-//         icon: "i-lucide-cloud",
-//         status: "pending",
-//       },
-//     ],
-//     duration: "5 months",
-//     course: "IoT & Environmental Tech",
-//     visibility: "private",
-//   },
+  {
+    id: "4",
+    name: "Climate Monitoring IoT",
+    description: "IoT sensors and dashboard for environmental monitoring.",
+    academicYear: "2024-2025",
+    author: {
+      id: "4",
+      name: "Jordan Kim",
+      avatar: "https://randomuser.me/api/portraits/men/88.jpg",
+      program: "Environmental Science",
+      year: "4th Year",
+    },
+    technologies: ["Arduino", "Node.js", "MQTT", "Chart.js", "Raspberry Pi"],
+    category: "Environmental Tech",
+    status: "Completed",
+    featured: false,
+    likes: 178,
+    views: 1200,
+    demoUrl: "https://climate-iot.demo.com",
+    githubUrl: "https://github.com/jkim/climate-iot",
+    images: [
+      {
+        id: "img1",
+        originalUrl:
+          "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&fit=crop",
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&fit=crop",
+      },
+      {
+        id: "img2",
+        originalUrl:
+          "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=500&fit=crop",
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=500&fit=crop",
+      },
+      {
+        id: "img3",
+        originalUrl:
+          "https://images.unsplash.com/photo-1615906655593-ad0386982a0f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWVjaGFuaWNzfGVufDB8fDB8fHww",
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1615906655593-ad0386982a0f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWVjaGFuaWNzfGVufDB8fDB8fHww",
+      },
+    ],
+    createdAt: "2024-05-20",
+    tags: ["iot", "environment", "sensors"],
+    members: [
+      {
+        name: "Jordan Kim",
+        image: "https://randomuser.me/api/portraits/men/88.jpg",
+      },
+      {
+        name: "Nina Patel",
+        image: "https://randomuser.me/api/portraits/women/41.jpg",
+      },
+      {
+        name: "Chris Lee",
+        image: "https://randomuser.me/api/portraits/men/25.jpg",
+      },
+    ],
+    features: [
+      {
+        date: "Feb 1, 2024",
+        name: "Sensor Setup",
+        description:
+          "Deployed IoT sensors for temperature, humidity, and air quality monitoring.",
+        icon: "i-lucide-thermometer",
+        status: "done",
+      },
+      {
+        date: "Mar 15, 2024",
+        name: "Data Collection",
+        description:
+          "Implemented data aggregation system with real-time sensor data streaming.",
+        icon: "i-lucide-database",
+        status: "done",
+      },
+      {
+        date: "Apr 20, 2024",
+        name: "Dashboard",
+        description:
+          "Built interactive dashboard with data visualization and alert system.",
+        icon: "i-lucide-monitor",
+        status: "ongoing",
+      },
+      {
+        date: "May 30, 2024",
+        name: "Deployment",
+        description:
+          "System deployment and integration with environmental monitoring networks.",
+        icon: "i-lucide-cloud",
+        status: "pending",
+      },
+    ],
+    duration: "5 months",
+    course: "IoT & Environmental Tech",
+    visibility: "private",
+  },
 
-//   {
-//     id: 5,
-//     name: "Machine Learning Pipeline",
-//     description: "Automated data processing and model training framework.",
-//     academicYear: "2024-2025",
-//     author: {
-//       name: "Emma Watson",
-//       avatar: "https://randomuser.me/api/portraits/women/16.jpg",
-//       program: "Data Science",
-//       year: "4th Year",
-//     },
-//     technologies: ["Python", "TensorFlow", "Docker", "Airflow", "MLflow"],
-//     category: "Artificial Intelligence",
-//     status: "Completed",
-//     featured: false,
-//     likes: 312,
-//     views: 2100,
-//     demoUrl: "https://ml-pipeline.demo.com",
-//     githubUrl: "https://github.com/ewatson/ml-pipeline",
-//     images: [
-//       "https://plus.unsplash.com/premium_photo-1664701474750-e3b51072957e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FtYXJhJTIwbWFufGVufDB8fDB8fHww",
-//       "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=500&fit=crop",
-//       "https://images.unsplash.com/photo-1577918248023-62b9a2748a22?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2FtYXJhJTIwbWFufGVufDB8fDB8fHww",
-//     ],
-//     createdAt: "2024-04-15",
-//     tags: ["machine-learning", "automation", "data-processing"],
-//     members: [
-//       {
-//         name: "Emma Watson",
-//         image: "https://randomuser.me/api/portraits/women/16.jpg",
-//       },
-//       {
-//         name: "Robert Chang",
-//         image: "https://randomuser.me/api/portraits/men/52.jpg",
-//       },
-//       {
-//         name: "Maya Singh",
-//         image: "https://randomuser.me/api/portraits/women/33.jpg",
-//       },
-//       {
-//         name: "James Miller",
-//         image: "https://randomuser.me/api/portraits/men/44.jpg",
-//       },
-//     ],
-//     features: [
-//       {
-//         date: "Jan 15, 2024",
-//         name: "Pipeline Architecture",
-//         description:
-//           "Designed scalable ML pipeline architecture using Apache Airflow and Docker.",
-//         icon: "i-lucide-git-branch",
-//         status: "done",
-//       },
-//       {
-//         date: "Feb 20, 2024",
-//         name: "Data Processing",
-//         description:
-//           "Implemented automated data cleaning, validation, and feature engineering modules.",
-//         icon: "i-lucide-filter",
-//         status: "done",
-//       },
-//       {
-//         date: "Mar 25, 2024",
-//         name: "Model Training",
-//         description:
-//           "Built automated model training with hyperparameter tuning and validation.",
-//         icon: "i-lucide-brain",
-//         status: "done",
-//       },
-//       {
-//         date: "Apr 30, 2024",
-//         name: "Deployment",
-//         description:
-//           "Deployed ML pipeline to production with monitoring and automated retraining.",
-//         icon: "i-lucide-server",
-//         status: "done",
-//       },
-//     ],
-//     duration: "5 months",
-//     course: "Machine Learning Systems",
-//   },
+  {
+    id: "5",
+    name: "Machine Learning Pipeline",
+    description: "Automated data processing and model training framework.",
+    academicYear: "2024-2025",
+    author: {
+      id: "5",
+      name: "Emma Watson",
+      avatar: "https://randomuser.me/api/portraits/women/16.jpg",
+      program: "Data Science",
+      year: "4th Year",
+    },
+    technologies: ["Python", "TensorFlow", "Docker", "Airflow", "MLflow"],
+    category: "Artificial Intelligence",
+    status: "Completed",
+    featured: false,
+    likes: 312,
+    views: 2100,
+    demoUrl: "https://ml-pipeline.demo.com",
+    githubUrl: "https://github.com/ewatson/ml-pipeline",
+    images: [
+      {
+        id: "img1",
+        originalUrl:
+          "https://plus.unsplash.com/premium_photo-1664701474750-e3b51072957e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FtYXJhJTIwbWFufGVufDB8fDB8fHww",
+        thumbnailUrl:
+          "https://plus.unsplash.com/premium_photo-1664701474750-e3b51072957e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2FtYXJhJTIwbWFufGVufDB8fDB8fHww",
+      },
+      {
+        id: "img2",
+        originalUrl:
+          "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=500&fit=crop",
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=500&fit=crop",
+      },
+      {
+        id: "img3",
+        originalUrl:
+          "https://images.unsplash.com/photo-1577918248023-62b9a2748a22?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2FtYXJhJTIwbWFufGVufDB8fDB8fHww",
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1577918248023-62b9a2748a22?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2FtYXJhJTIwbWFufGVufDB8fDB8fHww",
+      },
+    ],
+    createdAt: "2024-04-15",
+    tags: ["machine-learning", "automation", "data-processing"],
+    members: [
+      {
+        name: "Emma Watson",
+        image: "https://randomuser.me/api/portraits/women/16.jpg",
+      },
+      {
+        name: "Robert Chang",
+        image: "https://randomuser.me/api/portraits/men/52.jpg",
+      },
+      {
+        name: "Maya Singh",
+        image: "https://randomuser.me/api/portraits/women/33.jpg",
+      },
+      {
+        name: "James Miller",
+        image: "https://randomuser.me/api/portraits/men/44.jpg",
+      },
+    ],
+    features: [
+      {
+        date: "Jan 15, 2024",
+        name: "Pipeline Architecture",
+        description:
+          "Designed scalable ML pipeline architecture using Apache Airflow and Docker.",
+        icon: "i-lucide-git-branch",
+        status: "done",
+      },
+      {
+        date: "Feb 20, 2024",
+        name: "Data Processing",
+        description:
+          "Implemented automated data cleaning, validation, and feature engineering modules.",
+        icon: "i-lucide-filter",
+        status: "done",
+      },
+      {
+        date: "Mar 25, 2024",
+        name: "Model Training",
+        description:
+          "Built automated model training with hyperparameter tuning and validation.",
+        icon: "i-lucide-brain",
+        status: "done",
+      },
+      {
+        date: "Apr 30, 2024",
+        name: "Deployment",
+        description:
+          "Deployed ML pipeline to production with monitoring and automated retraining.",
+        icon: "i-lucide-server",
+        status: "done",
+      },
+    ],
+    duration: "5 months",
+    course: "Machine Learning Systems",
+    visibility: "public",
+  },
 
-//   {
-//     id: 6,
-//     name: "Social Media Dashboard",
-//     description: "Manage and monitor multiple social accounts in one place.",
-//     academicYear: "2024-2025",
-//     author: {
-//       name: "Mike Johnson",
-//       avatar: "https://randomuser.me/api/portraits/men/11.jpg",
-//       program: "Web Development",
-//       year: "3rd Year",
-//     },
-//     technologies: ["Vue.js", "Express", "OAuth", "MongoDB", "Socket.io"],
-//     category: "Web Development",
-//     status: "Completed",
-//     featured: false,
-//     likes: 142,
-//     views: 890,
-//     demoUrl: "https://social-dashboard.demo.com",
-//     githubUrl: "https://github.com/mjohnson/social-dashboard",
-//     images: [
-//       "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&fit=crop",
-//       "https://plus.unsplash.com/premium_photo-1661764256397-af154e87b1b3?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-//     ],
-//     createdAt: "2023-11-08",
-//     tags: ["social-media", "dashboard", "analytics"],
-//     members: [
-//       {
-//         name: "Mike Johnson",
-//         image: "https://randomuser.me/api/portraits/men/11.jpg",
-//       },
-//       {
-//         name: "Jessica Lee",
-//         image: "https://randomuser.me/api/portraits/women/29.jpg",
-//       },
-//       {
-//         name: "Kevin Chen",
-//         image: "https://randomuser.me/api/portraits/men/75.jpg",
-//       },
-//     ],
-//     features: [
-//       {
-//         date: "Aug 1, 2023",
-//         name: "OAuth Integration",
-//         description:
-//           "Implemented OAuth authentication for major social media platforms.",
-//         icon: "i-lucide-key",
-//         status: "done",
-//       },
-//       {
-//         date: "Sep 15, 2023",
-//         name: "Multi-platform Support",
-//         description:
-//           "Added support for Twitter, Facebook, Instagram, and LinkedIn APIs.",
-//         icon: "i-lucide-share-2",
-//         status: "done",
-//       },
-//       {
-//         date: "Oct 20, 2023",
-//         name: "Analytics",
-//         description:
-//           "Built engagement analytics and performance tracking dashboard.",
-//         icon: "i-lucide-trending-up",
-//         status: "done",
-//       },
-//       {
-//         date: "Nov 30, 2023",
-//         name: "Launch",
-//         description:
-//           "Public launch with user onboarding and customer support system.",
-//         icon: "i-lucide-rocket",
-//         status: "done",
-//       },
-//     ],
-//     duration: "4 months",
-//     course: "Advanced Web Applications",
-//   },
+  {
+    id: "6",
+    name: "Social Media Dashboard",
+    description: "Manage and monitor multiple social accounts in one place.",
+    academicYear: "2024-2025",
+    author: {
+      id: "6",
+      name: "Mike Johnson",
+      avatar: "https://randomuser.me/api/portraits/men/11.jpg",
+      program: "Web Development",
+      year: "3rd Year",
+    },
+    technologies: ["Vue.js", "Express", "OAuth", "MongoDB", "Socket.io"],
+    category: "Web Development",
+    status: "Completed",
+    featured: false,
+    likes: 142,
+    views: 890,
+    demoUrl: "https://social-dashboard.demo.com",
+    githubUrl: "https://github.com/mjohnson/social-dashboard",
+    images: [
+      {
+        id: "img1",
+        originalUrl:
+          "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      },
+      {
+        id: "img2",
+        originalUrl:
+          "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&fit=crop",
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&fit=crop",
+      },
+      {
+        id: "img3",
+        originalUrl:
+          "https://plus.unsplash.com/premium_photo-1661764256397-af154e87b1b3?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        thumbnailUrl:
+          "https://plus.unsplash.com/premium_photo-1661764256397-af154e87b1b3?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      },
+    ],
+    createdAt: "2023-11-08",
+    tags: ["social-media", "dashboard", "analytics"],
+    members: [
+      {
+        name: "Mike Johnson",
+        image: "https://randomuser.me/api/portraits/men/11.jpg",
+      },
+      {
+        name: "Jessica Lee",
+        image: "https://randomuser.me/api/portraits/women/29.jpg",
+      },
+      {
+        name: "Kevin Chen",
+        image: "https://randomuser.me/api/portraits/men/75.jpg",
+      },
+    ],
+    features: [
+      {
+        date: "Aug 1, 2023",
+        name: "OAuth Integration",
+        description:
+          "Implemented OAuth authentication for major social media platforms.",
+        icon: "i-lucide-key",
+        status: "done",
+      },
+      {
+        date: "Sep 15, 2023",
+        name: "Multi-platform Support",
+        description:
+          "Added support for Twitter, Facebook, Instagram, and LinkedIn APIs.",
+        icon: "i-lucide-share-2",
+        status: "done",
+      },
+      {
+        date: "Oct 20, 2023",
+        name: "Analytics",
+        description:
+          "Built engagement analytics and performance tracking dashboard.",
+        icon: "i-lucide-trending-up",
+        status: "done",
+      },
+      {
+        date: "Nov 30, 2023",
+        name: "Launch",
+        description:
+          "Public launch with user onboarding and customer support system.",
+        icon: "i-lucide-rocket",
+        status: "done",
+      },
+    ],
+    duration: "4 months",
+    course: "Advanced Web Applications",
+    visibility: "public",
+  },
 
-//   {
-//     id: 7,
-//     name: "Data Analytics Platform",
-//     description: "Real-time data visualization and reporting tool.",
-//     academicYear: "2024-2025",
-//     author: {
-//       name: "Lisa Wong",
-//       avatar: "https://randomuser.me/api/portraits/women/18.jpg",
-//       program: "Data Science",
-//       year: "4th Year",
-//     },
-//     technologies: ["D3.js", "React", "Python", "Pandas", "PostgreSQL"],
-//     category: "Data Science",
-//     status: "Completed",
-//     featured: false,
-//     likes: 201,
-//     views: 1500,
-//     demoUrl: "https://analytics-platform.demo.com",
-//     githubUrl: "https://github.com/lwong/analytics-platform",
-//     images: [
-//       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&fit=crop",
-//       "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGJ1c2luZXNzfGVufDB8fDB8fHww",
-//       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJ1c2luZXNzfGVufDB8fDB8fHww",
-//     ],
-//     createdAt: "2023-08-15",
-//     tags: ["data-viz", "analytics", "reporting"],
-//     members: [
-//       {
-//         name: "Lisa Wong",
-//         image: "https://randomuser.me/api/portraits/women/18.jpg",
-//       },
-//       {
-//         name: "Marcus Johnson",
-//         image: "https://randomuser.me/api/portraits/men/24.jpg",
-//       },
-//       {
-//         name: "Patricia Green",
-//         image: "https://randomuser.me/api/portraits/women/53.jpg",
-//       },
-//       {
-//         name: "Daniel White",
-//         image: "https://randomuser.me/api/portraits/men/36.jpg",
-//       },
-//     ],
-//     features: [
-//       {
-//         date: "May 1, 2023",
-//         name: "Data Connectors",
-//         description:
-//           "Built connectors for databases, APIs, and file sources with real-time sync.",
-//         icon: "i-lucide-plug",
-//         status: "done",
-//       },
-//       {
-//         date: "Jun 15, 2023",
-//         name: "Visualization Engine",
-//         description:
-//           "Developed interactive charts, graphs, and custom visualization components.",
-//         icon: "i-lucide-bar-chart-3",
-//         status: "done",
-//       },
-//       {
-//         date: "Jul 30, 2023",
-//         name: "Report Builder",
-//         description:
-//           "Created drag-and-drop report builder with automated scheduling.",
-//         icon: "i-lucide-file-text",
-//         status: "done",
-//       },
-//       {
-//         date: "Aug 31, 2023",
-//         name: "Production",
-//         description:
-//           "Deployed platform with enterprise security and scalability features.",
-//         icon: "i-lucide-server",
-//         status: "done",
-//       },
-//     ],
-//     duration: "5 months",
-//     course: "Data Visualization & Analytics",
-//   },
+  {
+    id: "7",
+    name: "Data Analytics Platform",
+    description: "Real-time data visualization and reporting tool.",
+    academicYear: "2024-2025",
+    author: {
+      id: "7",
+      name: "Lisa Wong",
+      avatar: "https://randomuser.me/api/portraits/women/18.jpg",
+      program: "Data Science",
+      year: "4th Year",
+    },
+    technologies: ["D3.js", "React", "Python", "Pandas", "PostgreSQL"],
+    category: "Data Science",
+    status: "Completed",
+    featured: false,
+    likes: 201,
+    views: 1500,
+    demoUrl: "https://analytics-platform.demo.com",
+    githubUrl: "https://github.com/lwong/analytics-platform",
+    images: [
+      {
+        id: "img1",
+        originalUrl:
+          "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&fit=crop",
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&fit=crop",
+      },
+      {
+        id: "img2",
+        originalUrl:
+          "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGJ1c2luZXNzfGVufDB8fDB8fHww",
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGJ1c2luZXNzfGVufDB8fDB8fHww",
+      },
+      {
+        id: "img3",
+        originalUrl:
+          "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJ1c2luZXNzfGVufDB8fDB8fHww",
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGJ1c2luZXNzfGVufDB8fDB8fHww",
+      },
+    ],
+    createdAt: "2023-08-15",
+    tags: ["data-viz", "analytics", "reporting"],
+    members: [
+      {
+        name: "Lisa Wong",
+        image: "https://randomuser.me/api/portraits/women/18.jpg",
+      },
+      {
+        name: "Marcus Johnson",
+        image: "https://randomuser.me/api/portraits/men/24.jpg",
+      },
+      {
+        name: "Patricia Green",
+        image: "https://randomuser.me/api/portraits/women/53.jpg",
+      },
+      {
+        name: "Daniel White",
+        image: "https://randomuser.me/api/portraits/men/36.jpg",
+      },
+    ],
+    features: [
+      {
+        date: "May 1, 2023",
+        name: "Data Connectors",
+        description:
+          "Built connectors for databases, APIs, and file sources with real-time sync.",
+        icon: "i-lucide-plug",
+        status: "done",
+      },
+      {
+        date: "Jun 15, 2023",
+        name: "Visualization Engine",
+        description:
+          "Developed interactive charts, graphs, and custom visualization components.",
+        icon: "i-lucide-bar-chart-3",
+        status: "done",
+      },
+      {
+        date: "Jul 30, 2023",
+        name: "Report Builder",
+        description:
+          "Created drag-and-drop report builder with automated scheduling.",
+        icon: "i-lucide-file-text",
+        status: "done",
+      },
+      {
+        date: "Aug 31, 2023",
+        name: "Production",
+        description:
+          "Deployed platform with enterprise security and scalability features.",
+        icon: "i-lucide-server",
+        status: "done",
+      },
+    ],
+    duration: "5 months",
+    course: "Data Visualization & Analytics",
+    visibility: "public",
+  },
 
-//   // Additional projects for pagination testing
-//   {
-//     id: 8,
-//     name: "IoT Home Automation",
-//     description:
-//       "Smart home system controlling lights, temperature, and security using IoT sensors and mobile app integration.",
-//     academicYear: "2024-2025",
-//     author: {
-//       name: "David Park",
-//       avatar: "https://randomuser.me/api/portraits/men/41.jpg",
-//       program: "Electrical Engineering",
-//       year: "4th Year",
-//     },
-//     technologies: ["Arduino", "React Native", "Node.js", "MQTT", "Firebase"],
-//     category: "IoT",
-//     status: "Completed",
-//     featured: true,
-//     likes: 198,
-//     views: 1650,
-//     demoUrl: "https://iot-home.demo.com",
-//     githubUrl: "https://github.com/dpark/iot-home",
-//     images: [
-//       "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&auto=format&fit=crop&q=60",
-//       "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=500&auto=format&fit=crop&q=60",
-//     ],
-//     createdAt: "2024-05-20",
-//     tags: ["iot", "automation", "smart-home"],
-//     members: [
-//       {
-//         name: "David Park",
-//         image: "https://randomuser.me/api/portraits/men/41.jpg",
-//       },
-//       {
-//         name: "Sophie Chen",
-//         image: "https://randomuser.me/api/portraits/women/33.jpg",
-//       },
-//     ],
-//     features: [
-//       {
-//         date: "Feb 1, 2024",
-//         name: "Hardware Setup",
-//         description:
-//           "Set up Arduino controllers, sensors, and smart device integration framework.",
-//         icon: "i-lucide-cpu",
-//         status: "done",
-//       },
-//       {
-//         date: "Mar 15, 2024",
-//         name: "Mobile App Development",
-//         description:
-//           "Built React Native app for remote control and monitoring of home systems.",
-//         icon: "i-lucide-smartphone",
-//         status: "done",
-//       },
-//       {
-//         date: "Apr 20, 2024",
-//         name: "MQTT Integration",
-//         description:
-//           "Implemented real-time communication between devices using MQTT protocol.",
-//         icon: "i-lucide-wifi",
-//         status: "done",
-//       },
-//       {
-//         date: "May 20, 2024",
-//         name: "System Deployment",
-//         description:
-//           "Deployed complete home automation system with cloud monitoring.",
-//         icon: "i-lucide-home",
-//         status: "done",
-//       },
-//     ],
-//     duration: "4 months",
-//     course: "IoT Systems Design",
-//   },
+  // Additional projects for pagination testing
+  {
+    id: "8",
+    name: "IoT Home Automation",
+    description:
+      "Smart home system controlling lights, temperature, and security using IoT sensors and mobile app integration.",
+    academicYear: "2024-2025",
+    author: {
+      id: "8",
+      name: "David Park",
+      avatar: "https://randomuser.me/api/portraits/men/41.jpg",
+      program: "Electrical Engineering",
+      year: "4th Year",
+    },
+    technologies: ["Arduino", "React Native", "Node.js", "MQTT", "Firebase"],
+    category: "IoT",
+    status: "Completed",
+    featured: true,
+    likes: 198,
+    views: 1650,
+    demoUrl: "https://iot-home.demo.com",
+    githubUrl: "https://github.com/dpark/iot-home",
+    images: [
+      {
+        id: "img1",
+        originalUrl:
+          "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&auto=format&fit=crop&q=60",
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&auto=format&fit=crop&q=60",
+      },
+      {
+        id: "img2",
+        originalUrl:
+          "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=500&auto=format&fit=crop&q=60",
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=500&auto=format&fit=crop&q=60",
+      },
+    ],
+    createdAt: "2024-05-20",
+    tags: ["iot", "automation", "smart-home"],
+    members: [
+      {
+        name: "David Park",
+        image: "https://randomuser.me/api/portraits/men/41.jpg",
+      },
+      {
+        name: "Sophie Chen",
+        image: "https://randomuser.me/api/portraits/women/33.jpg",
+      },
+    ],
+    features: [
+      {
+        date: "Feb 1, 2024",
+        name: "Hardware Setup",
+        description:
+          "Set up Arduino controllers, sensors, and smart device integration framework.",
+        icon: "i-lucide-cpu",
+        status: "done",
+      },
+      {
+        date: "Mar 15, 2024",
+        name: "Mobile App Development",
+        description:
+          "Built React Native app for remote control and monitoring of home systems.",
+        icon: "i-lucide-smartphone",
+        status: "done",
+      },
+      {
+        date: "Apr 20, 2024",
+        name: "MQTT Integration",
+        description:
+          "Implemented real-time communication between devices using MQTT protocol.",
+        icon: "i-lucide-wifi",
+        status: "done",
+      },
+      {
+        date: "May 20, 2024",
+        name: "System Deployment",
+        description:
+          "Deployed complete home automation system with cloud monitoring.",
+        icon: "i-lucide-home",
+        status: "done",
+      },
+    ],
+    duration: "4 months",
+    course: "IoT Systems Design",
+    visibility: "public",
+  },
 
-//   {
-//     id: 9,
-//     name: "Blockchain Voting System",
-//     description:
-//       "Secure and transparent voting platform built on Ethereum blockchain ensuring vote integrity and anonymity.",
-//     academicYear: "2024-2025",
-//     author: {
-//       name: "Michael Torres",
-//       avatar: "https://randomuser.me/api/portraits/men/55.jpg",
-//       program: "Computer Science",
-//       year: "4th Year",
-//     },
-//     technologies: ["Solidity", "Web3.js", "React", "Ethereum", "IPFS"],
-//     category: "Blockchain",
-//     status: "Completed",
-//     featured: false,
-//     likes: 287,
-//     views: 2100,
-//     demoUrl: "https://blockchain-voting.demo.com",
-//     githubUrl: "https://github.com/mtorres/blockchain-voting",
-//     images: [
-//       "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60",
-//       "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=500&auto=format&fit=crop&q=60",
-//     ],
-//     createdAt: "2023-12-10",
-//     tags: ["blockchain", "voting", "ethereum"],
-//     members: [
-//       {
-//         name: "Michael Torres",
-//         image: "https://randomuser.me/api/portraits/men/55.jpg",
-//       },
-//       {
-//         name: "Anna Kim",
-//         image: "https://randomuser.me/api/portraits/women/45.jpg",
-//       },
-//       {
-//         name: "James Wilson",
-//         image: "https://randomuser.me/api/portraits/men/29.jpg",
-//       },
-//     ],
-//     features: [
-//       {
-//         date: "Aug 1, 2023",
-//         name: "Smart Contract Development",
-//         description:
-//           "Developed secure voting smart contracts using Solidity with vote verification.",
-//         icon: "i-lucide-shield-check",
-//         status: "done",
-//       },
-//       {
-//         date: "Sep 15, 2023",
-//         name: "Web3 Integration",
-//         description:
-//           "Integrated Web3.js for blockchain interaction and wallet connectivity.",
-//         icon: "i-lucide-link",
-//         status: "done",
-//       },
-//       {
-//         date: "Oct 30, 2023",
-//         name: "IPFS Storage",
-//         description:
-//           "Implemented decentralized storage for candidate information and voting records.",
-//         icon: "i-lucide-database",
-//         status: "done",
-//       },
-//       {
-//         date: "Dec 10, 2023",
-//         name: "Security Audit",
-//         description:
-//           "Completed comprehensive security testing and deployed to Ethereum testnet.",
-//         icon: "i-lucide-lock",
-//         status: "done",
-//       },
-//     ],
-//     duration: "6 months",
-//     course: "Distributed Systems",
-//   },
+  {
+    id: "9",
+    name: "Blockchain Voting System",
+    description:
+      "Secure and transparent voting platform built on Ethereum blockchain ensuring vote integrity and anonymity.",
+    academicYear: "2024-2025",
+    author: {
+      id: "9",
+      name: "Michael Torres",
+      avatar: "https://randomuser.me/api/portraits/men/55.jpg",
+      program: "Computer Science",
+      year: "4th Year",
+    },
+    technologies: ["Solidity", "Web3.js", "React", "Ethereum", "IPFS"],
+    category: "Blockchain",
+    status: "Completed",
+    featured: false,
+    likes: 287,
+    views: 2100,
+    demoUrl: "https://blockchain-voting.demo.com",
+    githubUrl: "https://github.com/mtorres/blockchain-voting",
+    images: [
+      {
+        id: "img1",
+        originalUrl:
+          "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60",
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=500&auto=format&fit=crop&q=60",
+      },
+      {
+        id: "img2",
+        originalUrl:
+          "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=500&auto=format&fit=crop&q=60",
+        thumbnailUrl:
+          "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=500&auto=format&fit=crop&q=60",
+      },
+    ],
+    createdAt: "2023-12-10",
+    tags: ["blockchain", "voting", "ethereum"],
+    members: [
+      {
+        name: "Michael Torres",
+        image: "https://randomuser.me/api/portraits/men/55.jpg",
+      },
+      {
+        name: "Anna Kim",
+        image: "https://randomuser.me/api/portraits/women/45.jpg",
+      },
+      {
+        name: "James Wilson",
+        image: "https://randomuser.me/api/portraits/men/29.jpg",
+      },
+    ],
+    features: [
+      {
+        date: "Aug 1, 2023",
+        name: "Smart Contract Development",
+        description:
+          "Developed secure voting smart contracts using Solidity with vote verification.",
+        icon: "i-lucide-shield-check",
+        status: "done",
+      },
+      {
+        date: "Sep 15, 2023",
+        name: "Web3 Integration",
+        description:
+          "Integrated Web3.js for blockchain interaction and wallet connectivity.",
+        icon: "i-lucide-link",
+        status: "done",
+      },
+      {
+        date: "Oct 30, 2023",
+        name: "IPFS Storage",
+        description:
+          "Implemented decentralized storage for candidate information and voting records.",
+        icon: "i-lucide-database",
+        status: "done",
+      },
+      {
+        date: "Dec 10, 2023",
+        name: "Security Audit",
+        description:
+          "Completed comprehensive security testing and deployed to Ethereum testnet.",
+        icon: "i-lucide-lock",
+        status: "done",
+      },
+    ],
+    duration: "6 months",
+    course: "Distributed Systems",
+    visibility: "public",
+  },
+];
 
-//   {
-//     id: 10,
-//     name: "AR Shopping Experience",
-//     description:
-//       "Augmented reality mobile app allowing users to virtually try products before purchasing online.",
-//     academicYear: "2024-2025",
-//     author: {
-//       name: "Rachel Green",
-//       avatar: "https://randomuser.me/api/portraits/women/67.jpg",
-//       program: "Interactive Media",
-//       year: "3rd Year",
-//     },
-//     technologies: ["Unity", "ARCore", "C#", "Firebase", "Blender"],
-//     category: "Augmented Reality",
-//     status: "In Progress",
-//     featured: true,
-//     likes: 234,
-//     views: 1890,
-//     demoUrl: "https://ar-shopping.demo.com",
-//     githubUrl: "https://github.com/rgreen/ar-shopping",
-//     images: [
-//       "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?w=500&auto=format&fit=crop&q=60",
-//       "https://images.unsplash.com/photo-1633356122102-3fe601e05bd2?w=500&auto=format&fit=crop&q=60",
-//     ],
-//     createdAt: "2024-03-15",
-//     tags: ["ar", "shopping", "mobile"],
-//     members: [
-//       {
-//         name: "Rachel Green",
-//         image: "https://randomuser.me/api/portraits/women/67.jpg",
-//       },
-//       {
-//         name: "Tom Anderson",
-//         image: "https://randomuser.me/api/portraits/men/48.jpg",
-//       },
-//       {
-//         name: "Lisa Wang",
-//         image: "https://randomuser.me/api/portraits/women/52.jpg",
-//       },
-//     ],
-//     features: [
-//       {
-//         date: "Jan 15, 2024",
-//         name: "AR Foundation Setup",
-//         description:
-//           "Set up Unity AR Foundation with ARCore for Android device compatibility.",
-//         icon: "i-lucide-eye",
-//         status: "done",
-//       },
-//       {
-//         date: "Feb 20, 2024",
-//         name: "3D Model Integration",
-//         description:
-//           "Created and integrated 3D product models with realistic textures and lighting.",
-//         icon: "i-lucide-box",
-//         status: "done",
-//       },
-//       {
-//         date: "Mar 15, 2024",
-//         name: "Try-On Features",
-//         description:
-//           "Implementing virtual try-on functionality for clothing and accessories.",
-//         icon: "i-lucide-user",
-//         status: "ongoing",
-//       },
-//       {
-//         date: "Apr 30, 2024",
-//         name: "E-commerce Integration",
-//         description:
-//           "Integration with shopping platforms for seamless purchase experience.",
-//         icon: "i-lucide-shopping-cart",
-//         status: "pending",
-//       },
-//     ],
-//     duration: "5 months",
-//     course: "AR/VR Development",
-//   },
-
-//   {
-//     id: 11,
-//     name: "Machine Learning Stock Predictor",
-//     description:
-//       "AI-powered platform that analyzes market trends and predicts stock prices using multiple ML algorithms.",
-//     academicYear: "2024-2025",
-//     author: {
-//       name: "Kevin Liu",
-//       avatar: "https://randomuser.me/api/portraits/men/72.jpg",
-//       program: "Data Science",
-//       year: "4th Year",
-//     },
-//     technologies: ["Python", "TensorFlow", "Pandas", "Django", "PostgreSQL"],
-//     category: "Machine Learning",
-//     status: "Completed",
-//     featured: false,
-//     likes: 412,
-//     views: 3200,
-//     demoUrl: "https://ml-stocks.demo.com",
-//     githubUrl: "https://github.com/kliu/ml-stock-predictor",
-//     images: [
-//       "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=500&auto=format&fit=crop&q=60",
-//       "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=500&auto=format&fit=crop&q=60",
-//     ],
-//     createdAt: "2024-11-05",
-//     tags: ["ml", "stocks", "prediction"],
-//     members: [
-//       {
-//         name: "Kevin Liu",
-//         image: "https://randomuser.me/api/portraits/men/72.jpg",
-//       },
-//       {
-//         name: "Isabella Garcia",
-//         image: "https://randomuser.me/api/portraits/women/28.jpg",
-//       },
-//       {
-//         name: "Thomas Anderson",
-//         image: "https://randomuser.me/api/portraits/men/47.jpg",
-//       },
-//     ],
-//     features: [
-//       {
-//         date: "Aug 1, 2024",
-//         name: "Data Collection",
-//         description:
-//           "Set up data pipelines to collect stock market data and financial indicators.",
-//         icon: "i-lucide-database",
-//         status: "done",
-//       },
-//       {
-//         date: "Sep 15, 2024",
-//         name: "Algorithm Development",
-//         description:
-//           "Developed LSTM and Random Forest models for price prediction analysis.",
-//         icon: "i-lucide-brain",
-//         status: "ongoing",
-//       },
-//       {
-//         date: "Oct 20, 2024",
-//         name: "Model Training",
-//         description:
-//           "Trained models on historical data with hyperparameter optimization.",
-//         icon: "i-lucide-trending-up",
-//         status: "pending",
-//       },
-//       {
-//         date: "Nov 5, 2024",
-//         name: "Dashboard Launch",
-//         description:
-//           "Deployed prediction dashboard with real-time market analysis.",
-//         icon: "i-lucide-monitor",
-//         status: "pending",
-//       },
-//     ],
-//     duration: "4 months",
-//     course: "Advanced Machine Learning",
-//   },
-
-//   {
-//     id: 12,
-//     name: "Social Media Analytics Dashboard",
-//     description:
-//       "Comprehensive dashboard analyzing social media engagement across multiple platforms with real-time insights.",
-//     academicYear: "2024-2025",
-//     author: {
-//       name: "Amanda Johnson",
-//       avatar: "https://randomuser.me/api/portraits/women/89.jpg",
-//       program: "Marketing Technology",
-//       year: "3rd Year",
-//     },
-//     technologies: ["Vue.js", "D3.js", "Node.js", "MongoDB", "Redis"],
-//     category: "Data Analytics",
-//     status: "Completed",
-//     featured: false,
-//     likes: 178,
-//     views: 1420,
-//     demoUrl: "https://social-analytics.demo.com",
-//     githubUrl: "https://github.com/ajohnson/social-analytics",
-//     images: [
-//       "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=500&auto=format&fit=crop&q=60",
-//       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=500&auto=format&fit=crop&q=60",
-//     ],
-//     createdAt: "2024-06-12",
-//     tags: ["analytics", "social-media", "dashboard"],
-//     members: [
-//       {
-//         name: "Amanda Johnson",
-//         image: "https://randomuser.me/api/portraits/women/89.jpg",
-//       },
-//       {
-//         name: "Ryan Murphy",
-//         image: "https://randomuser.me/api/portraits/men/63.jpg",
-//       },
-//     ],
-//     features: [
-//       {
-//         date: "Aug 20, 2024",
-//         name: "Core Features",
-//         description:
-//           "Developed workout tracking, nutrition logging, and health metrics dashboard.",
-//         icon: "i-lucide-activity",
-//         status: "done",
-//       },
-//       {
-//         date: "Sep 10, 2024",
-//         name: "Social Integration",
-//         description:
-//           "Added friend connections, workout sharing, and community challenges.",
-//         icon: "i-lucide-users",
-//         status: "done",
-//       },
-//       {
-//         date: "Oct 5, 2024",
-//         name: "Wearable Sync",
-//         description:
-//           "Integrated with HealthKit and popular fitness wearables for automatic data sync.",
-//         icon: "i-lucide-watch",
-//         status: "ongoing",
-//       },
-//       {
-//         date: "Nov 1, 2024",
-//         name: "Launch",
-//         description:
-//           "Final testing, app store submission, and public launch preparation.",
-//         icon: "i-lucide-rocket",
-//         status: "pending",
-//       },
-//     ],
-//     duration: "3 months",
-//     course: "Digital Marketing Analytics",
-//   },
-
-//   {
-//     id: 13,
-//     name: "Virtual Classroom Platform",
-//     description:
-//       "Interactive online learning platform with video conferencing, whiteboard, and collaborative tools for remote education.",
-//     academicYear: "2024-2025",
-//     author: {
-//       name: "Jennifer Walsh",
-//       avatar: "https://randomuser.me/api/portraits/women/42.jpg",
-//       program: "Educational Technology",
-//       year: "4th Year",
-//     },
-//     technologies: ["React", "WebRTC", "Socket.io", "Express", "AWS"],
-//     category: "EdTech",
-//     status: "In Progress",
-//     featured: true,
-//     likes: 298,
-//     views: 2350,
-//     demoUrl: "https://virtual-classroom.demo.com",
-//     githubUrl: "https://github.com/jwalsh/virtual-classroom",
-//     images: [
-//       "https://images.unsplash.com/photo-1588072432836-e10032774350?w=500&auto=format&fit=crop&q=60",
-//       "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500&auto=format&fit=crop&q=60",
-//     ],
-//     createdAt: "2024-09-18",
-//     tags: ["education", "video-conference", "collaboration"],
-//     members: [
-//       {
-//         name: "Jennifer Walsh",
-//         image: "https://randomuser.me/api/portraits/women/42.jpg",
-//       },
-//       {
-//         name: "Carlos Mendez",
-//         image: "https://randomuser.me/api/portraits/men/51.jpg",
-//       },
-//       {
-//         name: "Grace Taylor",
-//         image: "https://randomuser.me/api/portraits/women/76.jpg",
-//       },
-//     ],
-//     features: [
-//       {
-//         date: "Aug 20, 2024",
-//         name: "Core Features",
-//         description:
-//           "Developed workout tracking, nutrition logging, and health metrics dashboard.",
-//         icon: "i-lucide-activity",
-//         status: "done",
-//       },
-//       {
-//         date: "Sep 10, 2024",
-//         name: "Social Integration",
-//         description:
-//           "Added friend connections, workout sharing, and community challenges.",
-//         icon: "i-lucide-users",
-//         status: "done",
-//       },
-//       {
-//         date: "Oct 5, 2024",
-//         name: "Wearable Sync",
-//         description:
-//           "Integrated with HealthKit and popular fitness wearables for automatic data sync.",
-//         icon: "i-lucide-watch",
-//         status: "ongoing",
-//       },
-//       {
-//         date: "Nov 1, 2024",
-//         name: "Launch",
-//         description:
-//           "Final testing, app store submission, and public launch preparation.",
-//         icon: "i-lucide-rocket",
-//         status: "pending",
-//       },
-//     ],
-//     duration: "6 months",
-//     course: "Educational Technology Design",
-//   },
-
-//   {
-//     id: 14,
-//     name: "Cryptocurrency Trading Bot",
-//     description:
-//       "Automated trading bot using technical analysis indicators and risk management strategies for cryptocurrency markets.",
-//     academicYear: "2024-2025",
-//     author: {
-//       name: "Brian Cooper",
-//       avatar: "https://randomuser.me/api/portraits/men/84.jpg",
-//       program: "Financial Engineering",
-//       year: "4th Year",
-//     },
-//     technologies: ["Python", "Pandas", "Binance API", "PostgreSQL", "Docker"],
-//     category: "FinTech",
-//     status: "Completed",
-//     featured: false,
-//     likes: 356,
-//     views: 2780,
-//     demoUrl: "https://crypto-bot.demo.com",
-//     githubUrl: "https://github.com/bcooper/crypto-trading-bot",
-//     images: [
-//       "https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=500&auto=format&fit=crop&q=60",
-//       "https://images.unsplash.com/photo-1640340434855-6084b1f4901c?w=500&auto=format&fit=crop&q=60",
-//     ],
-//     createdAt: "2024-04-22",
-//     tags: ["crypto", "trading", "automation"],
-//     members: [
-//       {
-//         name: "Brian Cooper",
-//         image: "https://randomuser.me/api/portraits/men/84.jpg",
-//       },
-//       {
-//         name: "Maya Patel",
-//         image: "https://randomuser.me/api/portraits/women/91.jpg",
-//       },
-//     ],
-//     features: [
-//       {
-//         date: "Aug 20, 2024",
-//         name: "Core Features",
-//         description:
-//           "Developed workout tracking, nutrition logging, and health metrics dashboard.",
-//         icon: "i-lucide-activity",
-//         status: "done",
-//       },
-//       {
-//         date: "Sep 10, 2024",
-//         name: "Social Integration",
-//         description:
-//           "Added friend connections, workout sharing, and community challenges.",
-//         icon: "i-lucide-users",
-//         status: "done",
-//       },
-//       {
-//         date: "Oct 5, 2024",
-//         name: "Wearable Sync",
-//         description:
-//           "Integrated with HealthKit and popular fitness wearables for automatic data sync.",
-//         icon: "i-lucide-watch",
-//         status: "ongoing",
-//       },
-//       {
-//         date: "Nov 1, 2024",
-//         name: "Launch",
-//         description:
-//           "Final testing, app store submission, and public launch preparation.",
-//         icon: "i-lucide-rocket",
-//         status: "pending",
-//       },
-//     ],
-//     duration: "3 months",
-//     course: "Algorithmic Trading",
-//   },
-
-//   {
-//     id: 15,
-//     name: "Weather Prediction API",
-//     description:
-//       "RESTful API service providing accurate weather forecasts using machine learning models trained on historical data.",
-//     academicYear: "2024-2025",
-//     author: {
-//       name: "Nicole Zhang",
-//       avatar: "https://randomuser.me/api/portraits/women/15.jpg",
-//       program: "Meteorology & CS",
-//       year: "4th Year",
-//     },
-//     technologies: ["Python", "FastAPI", "Scikit-learn", "Redis", "Docker"],
-//     category: "APIs",
-//     status: "Completed",
-//     featured: false,
-//     likes: 145,
-//     views: 1230,
-//     demoUrl: "https://weather-api.demo.com",
-//     githubUrl: "https://github.com/nzhang/weather-prediction-api",
-//     images: [
-//       "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=500&auto=format&fit=crop&q=60",
-//       "https://images.unsplash.com/photo-1601134467661-3d775b999c8b?w=500&auto=format&fit=crop&q=60",
-//     ],
-//     createdAt: "2023-11-28",
-//     tags: ["api", "weather", "prediction"],
-//     members: [
-//       {
-//         name: "Nicole Zhang",
-//         image: "https://randomuser.me/api/portraits/women/15.jpg",
-//       },
-//       {
-//         name: "Eric Kim",
-//         image: "https://randomuser.me/api/portraits/men/27.jpg",
-//       },
-//     ],
-//     features: [
-//       {
-//         date: "Aug 20, 2024",
-//         name: "Core Features",
-//         description:
-//           "Developed workout tracking, nutrition logging, and health metrics dashboard.",
-//         icon: "i-lucide-activity",
-//         status: "done",
-//       },
-//       {
-//         date: "Sep 10, 2024",
-//         name: "Social Integration",
-//         description:
-//           "Added friend connections, workout sharing, and community challenges.",
-//         icon: "i-lucide-users",
-//         status: "done",
-//       },
-//       {
-//         date: "Oct 5, 2024",
-//         name: "Wearable Sync",
-//         description:
-//           "Integrated with HealthKit and popular fitness wearables for automatic data sync.",
-//         icon: "i-lucide-watch",
-//         status: "ongoing",
-//       },
-//       {
-//         date: "Nov 1, 2024",
-//         name: "Launch",
-//         description:
-//           "Final testing, app store submission, and public launch preparation.",
-//         icon: "i-lucide-rocket",
-//         status: "pending",
-//       },
-//     ],
-//     duration: "4 months",
-//     course: "Applied Meteorology",
-//   },
-
-//   {
-//     id: 16,
-//     name: "VR Museum Experience",
-//     description:
-//       "Immersive virtual reality application allowing users to explore historical artifacts and art collections from around the world.",
-//     academicYear: "2024-2025",
-//     author: {
-//       name: "Marco Silva",
-//       avatar: "https://randomuser.me/api/portraits/men/19.jpg",
-//       program: "Digital Arts",
-//       year: "3rd Year",
-//     },
-//     technologies: ["Unity", "C#", "Oculus SDK", "Photon", "Blender"],
-//     category: "Virtual Reality",
-//     status: "In Progress",
-//     featured: true,
-//     likes: 267,
-//     views: 1950,
-//     demoUrl: "https://vr-museum.demo.com",
-//     githubUrl: "https://github.com/msilva/vr-museum",
-//     images: [
-//       "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=500&auto=format&fit=crop&q=60",
-//       "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=500&auto=format&fit=crop&q=60",
-//     ],
-//     createdAt: "2024-02-14",
-//     tags: ["vr", "museum", "education"],
-//     members: [
-//       {
-//         name: "Marco Silva",
-//         image: "https://randomuser.me/api/portraits/men/19.jpg",
-//       },
-//       {
-//         name: "Luna Rodriguez",
-//         image: "https://randomuser.me/api/portraits/women/56.jpg",
-//       },
-//       {
-//         name: "Alex Thompson",
-//         image: "https://randomuser.me/api/portraits/men/31.jpg",
-//       },
-//     ],
-//     features: [
-//       {
-//         date: "Mar 15, 2024",
-//         name: "Project Kickoff",
-//         description:
-//           "Kicked off the project with team alignment. Set up project milestones and allocated resources.",
-//         icon: "i-lucide-rocket",
-//         status: "done",
-//       },
-//       {
-//         date: "Apr 2, 2024",
-//         name: "VR Environment Setup",
-//         description:
-//           "Configured Unity VR development environment and integrated Oculus SDK for headset compatibility.",
-//         icon: "i-lucide-headphones",
-//         status: "done",
-//       },
-//       {
-//         date: "May 10, 2024",
-//         name: "Museum Asset Creation",
-//         description:
-//           "Created 3D models of historical artifacts using Blender. Optimized models for VR performance.",
-//         icon: "i-lucide-box",
-//         status: "done",
-//       },
-//       {
-//         date: "Jun 15, 2024",
-//         name: "Interactive Systems",
-//         description:
-//           "Implementing interaction systems for artifact examination and information display panels.",
-//         icon: "i-lucide-hand",
-//         status: "ongoing",
-//       },
-//       {
-//         date: "Jul 20, 2024",
-//         name: "Multiplayer Integration",
-//         description:
-//           "Adding Photon networking to enable multiple users to explore the museum together.",
-//         icon: "i-lucide-users",
-//         status: "pending",
-//       },
-//       {
-//         date: "Aug 30, 2024",
-//         name: "Final Testing & Polish",
-//         description:
-//           "Comprehensive testing across different VR headsets and final performance optimizations.",
-//         icon: "i-lucide-check-circle",
-//         status: "pending",
-//       },
-//     ],
-//     duration: "5 months",
-//     course: "Immersive Media Design",
-//   },
-
-//   {
-//     id: 17,
-//     name: "Smart Parking System",
-//     description:
-//       "IoT-based parking management system with real-time space detection, mobile app booking, and payment integration.",
-//     academicYear: "2024-2025",
-//     author: {
-//       name: "Samantha Lee",
-//       avatar: "https://randomuser.me/api/portraits/women/23.jpg",
-//       program: "Urban Planning & Tech",
-//       year: "4th Year",
-//     },
-//     technologies: [
-//       "React Native",
-//       "Node.js",
-//       "IoT Sensors",
-//       "MongoDB",
-//       "Stripe",
-//     ],
-//     category: "Smart Cities",
-//     status: "Completed",
-//     featured: false,
-//     likes: 189,
-//     views: 1567,
-//     demoUrl: "https://smart-parking.demo.com",
-//     githubUrl: "https://github.com/slee/smart-parking",
-//     images: [
-//       "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=500&auto=format&fit=crop&q=60",
-//       "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=500&auto=format&fit=crop&q=60",
-//     ],
-//     createdAt: "2024-10-30",
-//     tags: ["iot", "parking", "smart-city"],
-//     members: [
-//       {
-//         name: "Samantha Lee",
-//         image: "https://randomuser.me/api/portraits/women/23.jpg",
-//       },
-//       {
-//         name: "Diego Martinez",
-//         image: "https://randomuser.me/api/portraits/men/66.jpg",
-//       },
-//     ],
-//     features: [
-//       {
-//         date: "Aug 20, 2024",
-//         name: "Core Features",
-//         description:
-//           "Developed workout tracking, nutrition logging, and health metrics dashboard.",
-//         icon: "i-lucide-activity",
-//         status: "done",
-//       },
-//       {
-//         date: "Sep 10, 2024",
-//         name: "Social Integration",
-//         description:
-//           "Added friend connections, workout sharing, and community challenges.",
-//         icon: "i-lucide-users",
-//         status: "done",
-//       },
-//       {
-//         date: "Oct 5, 2024",
-//         name: "Wearable Sync",
-//         description:
-//           "Integrated with HealthKit and popular fitness wearables for automatic data sync.",
-//         icon: "i-lucide-watch",
-//         status: "ongoing",
-//       },
-//       {
-//         date: "Nov 1, 2024",
-//         name: "Launch",
-//         description:
-//           "Final testing, app store submission, and public launch preparation.",
-//         icon: "i-lucide-rocket",
-//         status: "pending",
-//       },
-//     ],
-//     duration: "4 months",
-//     course: "Smart Cities Technology",
-//   },
-// ];
-
-export const projectsData: Project[] = [];
+// export const projectsData: Project[] = [];
 
 export default projectsData;
