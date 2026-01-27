@@ -495,18 +495,18 @@ export const useAuthStore = defineStore("auth", {
         }
 
         return responseData.data
-          .filter((userData: any) => userData.id !== this.user?.id)
+        .filter((userData: any) => userData.id !== this.user?.id)
 
-          .map((userData: any) => ({
-            id: userData.id,
-            name: `${userData.firstName || ""} ${userData.lastName || ""}`.trim(),
-            email: userData.email,
-            avatar: getAvatarUrl(
-              userData.avatar,
-              userData.firstName || "",
-              userData.lastName || "",
-            ),
-          }));
+        .map((userData: any) => ({
+          id: userData.id,
+          name: `${userData.firstName || ""} ${userData.lastName || ""}`.trim(),
+          email: userData.email,
+          avatar: getAvatarUrl(
+            userData.avatar,
+            userData.firstName || "",
+            userData.lastName || "",
+          ),
+        }));
       } catch (error) {
         console.error("Failed to search users:", error);
         throw error;

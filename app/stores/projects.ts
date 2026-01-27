@@ -1072,37 +1072,37 @@ export const useProjectStore = defineStore("projects", {
           return false;
         }
 
-        // Initialize submissions array if it doesn't exist
-        if (!userProject.submissions) {
-          userProject.submissions = [];
-        }
+        // // Initialize submissions array if it doesn't exist
+        // if (!userProject.submissions) {
+        //   userProject.submissions = [];
+        // }
 
         // Check if already submitted
-        const alreadySubmitted = userProject.submissions.some(
-          (sub) => sub.id === projectId,
-        );
-        if (alreadySubmitted) {
-          console.warn("Project already submitted");
-          return false;
-        }
+        // const alreadySubmitted = userProject.submissions.some(
+        //   (sub) => sub.id === projectId,
+        // );
+        // if (alreadySubmitted) {
+        //   console.warn("Project already submitted");
+        //   return false;
+        // }
 
         // Add new submission
-        const newSubmission = {
-          id: projectId,
-          name: userProject.name,
-          date: new Date().toISOString(),
-          status: "Under Review",
-        };
-        userProject.submissions.push(newSubmission);
+        // const newSubmission = {
+        //   id: projectId,
+        //   name: userProject.name,
+        //   date: new Date().toISOString(),
+        //   status: "Under Review",
+        // };
+        // userProject.submissions.push(newSubmission);
 
         // Also update in all projects if it exists there
-        const project = this.projects.find((p) => p.id === projectId);
-        if (project) {
-          if (!project.submissions) {
-            project.submissions = [];
-          }
-          project.submissions.push(newSubmission);
-        }
+        // const project = this.projects.find((p) => p.id === projectId);
+        // if (project) {
+        //   if (!project.submissions) {
+        //     project.submissions = [];
+        //   }
+        //   project.submissions.push(newSubmission);
+        // }
 
         // Save to localStorage
         // this.saveUserCreatedProjects();
