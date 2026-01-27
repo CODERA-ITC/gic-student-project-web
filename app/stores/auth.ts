@@ -173,20 +173,20 @@ export const useAuthStore = defineStore("auth", {
         const { data } = responseData;
 
         // Store tokens
-        if (data.access_token) {
+        if (
+          responseData.success &&
+          data.access_token &&
+          data.access_token.length
+        ) {
           safeLocalStorage.setItem("access_token", data.access_token);
+          safeLocalStorage.setItem("refresh_token", data.refresh_token);
+
+          await this.fetchCurrentUser();
+
+          this.isAuthenticated = true;
         } else {
           throw new Error("No access token received from server");
         }
-
-        if (data.refresh_token) {
-          safeLocalStorage.setItem("refresh_token", data.refresh_token);
-        }
-
-        // Fetch complete user details from API
-        await this.fetchCurrentUser();
-
-        this.isAuthenticated = true;
       } catch (error) {
         // Reset auth state on error
         this.user = null;
@@ -285,7 +285,7 @@ export const useAuthStore = defineStore("auth", {
         // }
 
         // Map API response to User interface based on role
-        console.log("Fetched current user data:", userData.role.name);
+        console.log("Fetched current user data:", userData.role);
 
         const baseUserData: BaseUser = {
           id: userData.id,
@@ -293,7 +293,7 @@ export const useAuthStore = defineStore("auth", {
           name: `${userData.firstName || ""} ${userData.lastName || userData.email}`.trim(),
           firstName: userData.firstName,
           lastName: userData.lastName,
-          role: userData.role.name,
+          role: userData.role,
           avatar: getAvatarUrl(
             userData.avatar,
             userData.firstName || "",
@@ -313,7 +313,7 @@ export const useAuthStore = defineStore("auth", {
         };
 
         // Create role-specific user object
-        if (userData.role.name === "STUDENT") {
+        if (userData.role === "STUDENT") {
           this.user = {
             ...baseUserData,
             role: "STUDENT",
@@ -324,7 +324,7 @@ export const useAuthStore = defineStore("auth", {
             projectCount: userData.projectCount || 0,
             achievements: userData.achievements || 0,
           } as StudentUser;
-        } else if (userData.role.name === "TEACHER") {
+        } else if (userData.role === "TEACHER") {
           this.user = {
             ...baseUserData,
             role: "TEACHER",
