@@ -258,6 +258,7 @@ export const useProjectStore = defineStore("projects", {
           tags: this.filters.tags.length > 0 ? this.filters.tags : undefined,
           year: this.filters.year || undefined,
           sort: this.filters.sort || undefined,
+          categoryId: "", // will be set below if needed
         };
 
         // Add category filter if not "All"
@@ -265,7 +266,11 @@ export const useProjectStore = defineStore("projects", {
           this.filters.categories.length > 0 &&
           !this.filters.categories.includes("All")
         ) {
-          filters.categoryId = this.filters.categories.join(",");
+          // use function map to convert category names to IDs
+
+          filters.categoryId = this.getCategoryIdByName(
+            this.filters.categories[0],
+          ); // always take the first category for filtering
         }
 
         // Use ProjectService to fetch
@@ -581,16 +586,9 @@ export const useProjectStore = defineStore("projects", {
         // Transform project using ProjectTransformer
         const transformedProject = transformProject(response);
 
-        // Update or add to projects array
-        const existingIndex = this.projects.findIndex(
-          (p) => p.id === transformedProject.id,
-        );
-
-        if (existingIndex !== -1) {
-          this.projects[existingIndex] = transformedProject;
-        } else {
-          this.projects.push(transformedProject);
-        }
+        // Don't update the main projects array to avoid mixing list and detail data
+        // The projects array should only be updated by fetchProjects() for consistency
+        // Just return the transformed project for display on detail page
 
         return transformedProject;
       } catch (error) {

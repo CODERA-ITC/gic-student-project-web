@@ -643,32 +643,28 @@ const isInitialized = ref(false);
 
 // Initialize data before mount to ensure data is ready
 const initializeData = async () => {
-  if (isInitialized.value && projectStore.projects.length > 0) {
-    // Data already loaded, just refresh liked projects if authenticated
-    if (authStore.isAuthenticated) {
-      await projectStore.loadUserLikedProjects();
-    }
-    return;
-  }
+  // Prevent multiple simultaneous fetches
+  if (isLoadingData.value) return;
 
   isLoadingData.value = true;
   dataFetchError.value = null;
 
   try {
-    // Always fetch fresh data on navigation/reload
-
-    if (projectStore.projects.length > 0 && projectStore.availableCategories.length > 0 && projectStore.availableTags.length > 0) {
-      return;
-    } else {
-      await Promise.all([
-        projectStore.fetchCategories(),
-        projectStore.fetchTags(),
-        projectStore.fetchProjects(
-          projectStore.pagination.currentPage,
-          projectStore.pagination.itemsPerPage,
-        ),
-      ]);
-    }
+    // Fetch categories, tags, and projects in parallel
+    await Promise.all([
+      projectStore.availableCategories.length === 0
+        ? projectStore.fetchCategories()
+        : Promise.resolve(),
+      projectStore.availableTags.length === 0
+        ? projectStore.fetchTags()
+        : Promise.resolve(),
+      projectStore.projects.length === 0
+        ? projectStore.fetchProjects(
+            projectStore.pagination.currentPage,
+            projectStore.pagination.itemsPerPage,
+          )
+        : Promise.resolve(),
+    ]);
 
     // Load user liked projects if authenticated
     if (authStore.isAuthenticated) {

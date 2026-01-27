@@ -32,23 +32,16 @@
       >
         <!-- Images Carousel -->
         <div
-          v-if="
-            project?.images &&
-            Array.isArray(project.images) &&
-            project.images.length > 0 &&
-            project.images[currentImageIndex]
-          "
+          v-if="hasValidImages"
           class="relative w-full h-full rounded-lg overflow-hidden hover:shadow-xl p-1"
         >
           <!-- Views -->
 
           <img
-            :src="
-              project.images[currentImageIndex].thumbnailUrl?.toString() ||
-              project.images[currentImageIndex].originalUrl?.toString()
-            "
+            :src="currentImageUrl"
             :alt="project.name || 'Project image'"
             class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 rounded-lg"
+            @error="handleImageError"
           />
 
           <!-- Animated overlay on hover -->
@@ -276,6 +269,38 @@ const emit = defineEmits(["toggle-like", "edit", "delete"]);
 const currentImageIndex = ref(0);
 let autoPlayInterval = null;
 
+// Computed property to get the current valid image URL
+const currentImageUrl = computed(() => {
+  if (
+    !props.project?.images ||
+    !Array.isArray(props.project.images) ||
+    props.project.images.length === 0
+  ) {
+    return null;
+  }
+
+  const currentImage = props.project.images[currentImageIndex.value];
+  if (!currentImage) {
+    return null;
+  }
+
+  const thumbnailUrl = currentImage.thumbnailUrl?.toString().trim();
+  const originalUrl = currentImage.originalUrl?.toString().trim();
+
+  // Return first valid URL found, or null if both are empty
+  return thumbnailUrl || originalUrl || null;
+});
+
+// Computed to check if we have valid images to display
+const hasValidImages = computed(() => {
+  return (
+    props.project?.images &&
+    Array.isArray(props.project.images) &&
+    props.project.images.length > 0 &&
+    currentImageUrl.value !== null
+  );
+});
+
 const isLiked = computed(() => {
   // Check if likedProjects is a Set or an object
   if (props.likedProjects instanceof Set) {
@@ -309,6 +334,19 @@ const formatNumber = (num) => {
   if (num === undefined || num === null) return "0";
   if (num >= 1000) return (num / 1000).toFixed(1) + "k";
   return num.toString();
+};
+
+const handleImageError = (event) => {
+  console.error("Image failed to load:", event.target.src);
+  // If current image fails, try to move to next valid image
+  const images = props.project?.images || [];
+  if (images.length > 1) {
+    // Try next image
+    const nextIndex = (currentImageIndex.value + 1) % images.length;
+    if (nextIndex !== currentImageIndex.value) {
+      currentImageIndex.value = nextIndex;
+    }
+  }
 };
 
 const startAutoPlay = () => {
@@ -352,8 +390,13 @@ watch(
   (newImages, oldImages) => {
     // If images changed or loaded after initial render
     if (newImages && newImages !== oldImages) {
-      // Ensure current index is valid
-      if (currentImageIndex.value >= newImages.length) {
+      // Ensure current index is valid - reset if out of bounds or if no valid image at current index
+      if (
+        currentImageIndex.value >= newImages.length ||
+        !newImages[currentImageIndex.value] ||
+        (!newImages[currentImageIndex.value].thumbnailUrl &&
+          !newImages[currentImageIndex.value].originalUrl)
+      ) {
         currentImageIndex.value = 0;
       }
       // Restart autoplay with new images
@@ -361,7 +404,7 @@ watch(
       startAutoPlay();
     }
   },
-  { deep: true },
+  { deep: true, immediate: true },
 );
 // Only mount on client side
 if (process.client) {
