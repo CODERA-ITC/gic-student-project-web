@@ -370,17 +370,17 @@ onMounted(async () => {
       }
     }
 
-    // Ensure auth is restored from localStorage only if not already authenticated
-    if (!authStore.isAuthenticated) {
-      const authRestored = await authStore.restoreAuth();
+    // // Ensure auth is restored from localStorage only if not already authenticated
+    // if (!authStore.isAuthenticated) {
+    //   const authRestored = await authStore.restoreAuth();
 
-      // Check authentication after restore attempt
-      if (!authRestored || !authStore.isAuthenticated) {
-        console.log("Authentication failed - redirecting to login");
-        await navigateTo("/login");
-        return;
-      }
-    }
+    //   // Check authentication after restore attempt
+    //   if (!authRestored || !authStore.isAuthenticated) {
+    //     console.log("Authentication failed - redirecting to login");
+    //     await navigateTo("/login");
+    //     return;
+    //   }
+    // }
 
     console.log("✅ User authenticated:", authStore.currentUser?.email);
 

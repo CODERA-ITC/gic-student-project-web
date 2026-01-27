@@ -23,17 +23,40 @@ export default defineNuxtRouteMiddleware((to, from) => {
   // Allow refresh_token URLs as well (for OAuth flow)
   if (to.query.refresh_token) {
     console.log(
-      "Auth middleware: Refresh token found in URL, allowing through"
+      "Auth middleware: Refresh token found in URL, allowing through",
     );
     return;
   }
 
-  // PRIORITY CHECK: If token exists in localStorage, always allow through
+  // PRIORITY CHECK: If token exists in localStorage, check if it's valid
   // This runs BEFORE checking isLoading or isAuthenticated to prevent race conditions
   const token = localStorage.getItem("access_token");
   if (token) {
+    // Check if token is expired
+    if (authStore.isTokenExpired()) {
+      console.log("Auth middleware: Token expired, attempting refresh...");
+
+      // Try to refresh the token
+      const refreshed = authStore.refreshAccessToken().catch(() => false);
+
+      if (!refreshed) {
+        console.log(
+          "Auth middleware: Token refresh failed, redirecting to login",
+        );
+        return navigateTo({
+          path: "/login",
+          query: { redirect: to.path },
+        });
+      }
+
+      console.log(
+        "Auth middleware: Token refreshed successfully, allowing through",
+      );
+      return;
+    }
+
     console.log(
-      "Auth middleware: Token exists in localStorage, allowing through"
+      "Auth middleware: Valid token exists in localStorage, allowing through",
     );
     return;
   }
