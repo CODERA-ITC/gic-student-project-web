@@ -70,20 +70,27 @@ export class ProjectTransformer {
    */
   static transformImages(imagesData: any): ProjectImage[] {
     if (imagesData && Array.isArray(imagesData) && imagesData.length > 0) {
-      return imagesData.map((img: any) => {
-        if (typeof img === "string") {
+      const validImages = imagesData
+        .map((img: any) => {
+          const originalUrl = img.originalUrl || img.url || "";
+          const thumbnailUrl = img.thumbnailUrl || img.url || "";
+
+          // Only return valid image objects with actual URLs
+          if (!originalUrl && !thumbnailUrl) {
+            return null;
+          }
+
           return {
-            id: Math.random().toString(),
-            originalUrl: img,
-            thumbnailUrl: img,
+            id: img.id || Math.random().toString(),
+            originalUrl,
+            thumbnailUrl,
           };
-        }
-        return {
-          id: img.id || Math.random().toString(),
-          originalUrl: img.originalUrl || img.url || "",
-          thumbnailUrl: img.thumbnailUrl || img.url || "",
-        };
-      });
+        })
+        .filter((img) => img !== null); // Remove null entries
+
+      // If we have at least one valid image, return the array
+      // Otherwise, fall back to default images
+      return validImages.length > 0 ? validImages : ProjectDefaultImages;
     }
     return ProjectDefaultImages;
   }

@@ -93,7 +93,8 @@ export class ProjectService {
         // Normal filtering mode - apply all filters
         if (filters?.page) params.append("page", filters.page.toString());
         if (filters?.limit) params.append("limit", filters.limit.toString());
-        if (filters?.categoryId) params.append("category", filters.categoryId);
+        if (filters?.categoryId)
+          params.append("categoryId", filters.categoryId);
         if (filters?.tags?.length)
           params.append("tags", filters.tags.join(","));
         if (filters?.year) params.append("year", filters.year);
