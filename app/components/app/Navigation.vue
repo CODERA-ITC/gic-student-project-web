@@ -94,7 +94,13 @@
 
         <!-- User Menu (Desktop Only) -->
         <div class="hidden lg:block">
+          <!-- Show skeleton loader while auth is loading or during initial load -->
+          <div
+            v-if="authStore.isLoading || isInitialLoad"
+            class="w-10 h-10 rounded-full bg-gray-200 dark:bg-neutral-700 animate-pulse"
+          ></div>
           <UserMenu
+            v-else
             :is-authenticated="isAuthenticated"
             :user="user"
             @logout="handleLogout"

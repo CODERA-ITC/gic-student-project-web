@@ -657,7 +657,7 @@ const initializeData = async () => {
   try {
     // Always fetch fresh data on navigation/reload
 
-    if (projectStore.projects.length > 0) {
+    if (projectStore.projects.length > 0 && projectStore.availableCategories.length > 0 && projectStore.availableTags.length > 0) {
       return;
     } else {
       await Promise.all([
