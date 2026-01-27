@@ -485,12 +485,14 @@ const handleCancelConfirm = async () => {
 
 // Load user projects on mount
 onMounted(async () => {
-  // Restore authentication state from localStorage
-  await authStore.restoreAuth();
-
+  // Restore authentication state from localStorage only if not already authenticated
   if (!authStore.isAuthenticated) {
-    await navigateTo("/login");
-    return;
+    await authStore.restoreAuth();
+
+    if (!authStore.isAuthenticated) {
+      await navigateTo("/login");
+      return;
+    }
   }
 
   // Fetch user's projects to get submitted ones

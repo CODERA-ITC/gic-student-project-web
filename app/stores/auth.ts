@@ -495,18 +495,18 @@ export const useAuthStore = defineStore("auth", {
         }
 
         return responseData.data
-        .filter((userData: any) => userData.id !== this.user?.id)
+          .filter((userData: any) => userData.id !== this.user?.id)
 
-        .map((userData: any) => ({
-          id: userData.id,
-          name: `${userData.firstName || ""} ${userData.lastName || ""}`.trim(),
-          email: userData.email,
-          avatar: getAvatarUrl(
-            userData.avatar,
-            userData.firstName || "",
-            userData.lastName || "",
-          ),
-        }));
+          .map((userData: any) => ({
+            id: userData.id,
+            name: `${userData.firstName || ""} ${userData.lastName || ""}`.trim(),
+            email: userData.email,
+            avatar: getAvatarUrl(
+              userData.avatar,
+              userData.firstName || "",
+              userData.lastName || "",
+            ),
+          }));
       } catch (error) {
         console.error("Failed to search users:", error);
         throw error;
@@ -628,7 +628,7 @@ export const useAuthStore = defineStore("auth", {
           return true;
         }
 
-        // Token is valid, fetch current user from API
+        // // Token is valid, fetch current user from API
         await this.fetchCurrentUser();
 
         this.isAuthenticated = true;
@@ -663,48 +663,48 @@ export const useAuthStore = defineStore("auth", {
       const refreshToken = safeLocalStorage.getItem("refresh_token");
 
       if (!refreshToken) {
+        console.warn("No refresh token available");
         return false;
       }
 
       try {
+        console.log("🔄 Attempting to refresh access token...");
+
         const responseData = await $fetch("/api/users/refresh", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
           body: {
             refresh_token: refreshToken,
           },
-        }).catch(() => null);
+        }).catch((err) => {
+          console.error("Token refresh API error:", err);
+          return null;
+        });
 
         if (!responseData) {
+          console.error("❌ No response from refresh endpoint");
           return false;
         }
 
-        if (!responseData.success || !responseData.data?.access_token) {
+        if (!responseData.access_token && !responseData.refresh_token) {
+          console.error("❌ No access token in refresh response");
           return false;
         }
 
         // Store new access token
-        safeLocalStorage.setItem(
-          "access_token",
-          responseData.data.access_token,
-        );
+        safeLocalStorage.setItem("access_token", responseData.access_token);
 
         // Update refresh token if provided
-        if (responseData.data.refresh_token) {
-          safeLocalStorage.setItem(
-            "refresh_token",
-            responseData.data.refresh_token,
-          );
+        if (responseData.refresh_token) {
+          safeLocalStorage.setItem("refresh_token", responseData.refresh_token);
         }
+
+        console.log("✅ Token refreshed successfully");
 
         // Fetch complete user details from API
         await this.fetchCurrentUser();
 
         return true;
       } catch (error) {
-        console.error("Failed to refresh token:", error);
+        console.error("❌ Failed to refresh token:", error);
         return false;
       }
     },

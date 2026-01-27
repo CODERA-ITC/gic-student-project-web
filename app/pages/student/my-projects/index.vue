@@ -271,8 +271,8 @@
                       project.status === 'Completed'
                         ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
                         : project.status === 'In Review'
-                        ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-                        : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300',
+                          ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+                          : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300',
                     ]"
                   >
                     {{ project.status }}
@@ -405,7 +405,7 @@ watch(
       localStorage.setItem("likedProjects", JSON.stringify(newLikes));
     }
   },
-  { deep: true }
+  { deep: true },
 );
 
 // Handle like toggle
@@ -493,12 +493,14 @@ const confirmDelete = async () => {
 
 // Check authentication
 onMounted(async () => {
-  // Restore authentication state from localStorage
-  await authStore.restoreAuth();
-
+  // Restore authentication state from localStorage only if not already authenticated
   if (!authStore.isAuthenticated) {
-    await navigateTo("/login");
-    return;
+    await authStore.restoreAuth();
+
+    if (!authStore.isAuthenticated) {
+      await navigateTo("/login");
+      return;
+    }
   }
 
   console.log("=== MY-PROJECTS PAGE MOUNTED ===");
@@ -591,15 +593,15 @@ const filteredProjects = computed(() => {
           p.members.some((member) =>
             (typeof member === "string" ? member : member.name)
               .toLowerCase()
-              .includes(query)
-          ))
+              .includes(query),
+          )),
     );
   }
 
   // Filter by tag
   if (selectedTag.value && selectedTag.value !== "All Tags") {
     projects = projects.filter(
-      (p) => p.tags && p.tags.includes(selectedTag.value)
+      (p) => p.tags && p.tags.includes(selectedTag.value),
     );
   }
 
@@ -623,7 +625,7 @@ const startIndex = computed(() => (currentPage.value - 1) * pageSize.value);
 const endIndex = computed(() => startIndex.value + pageSize.value);
 
 const totalPages = computed(() =>
-  Math.ceil(totalProjects.value / pageSize.value)
+  Math.ceil(totalProjects.value / pageSize.value),
 );
 
 const displayedPages = computed(() => {
@@ -659,7 +661,7 @@ const categoryOptions = computed(() => {
     return ["All Categories"];
   }
   const categories = projectStore.availableCategories.filter(
-    (c) => c !== "All"
+    (c) => c !== "All",
   );
   return ["All Categories", ...categories];
 });
