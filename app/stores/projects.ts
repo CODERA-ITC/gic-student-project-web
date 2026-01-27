@@ -607,10 +607,11 @@ export const useProjectStore = defineStore("projects", {
       );
     },
 
-    searchProjects(query: string) {
+    async searchProjects(query: string) {
       if (!query.trim()) return [];
 
       const searchTerm = query.toLowerCase();
+      // Search Result Format
       const results: Array<{
         type: "category" | "name" | "description";
         icon: string;
@@ -619,65 +620,71 @@ export const useProjectStore = defineStore("projects", {
         subtitle: string;
         count?: number;
         category?: string;
+        projectId?: string;
       }> = [];
       const addedItems = new Set<string>();
 
-      // Search categories
-      this.filters.categories.forEach((category) => {
-        if (category.toLowerCase().includes(searchTerm) && category !== "All") {
-          const key = `category-${category}`;
-          if (!addedItems.has(key)) {
-            addedItems.add(key);
-            results.push({
-              type: "category",
-              icon: "i-heroicons-folder-20-solid",
-              value: category,
-              label: category,
-              subtitle: "Category",
-              count: this.projects.filter((p) => p.category === category)
-                .length,
-            });
-          }
-        }
-      });
+      try {
+        // Fetch search results from backend with only search parameter
+        const response = await projectService.fetchAll({
+          search: query,
+          limit: 8, // Get more results for better filtering
+        });
 
-      // Search project titles
-      this.projects.forEach((project) => {
-        if (project.name.toLowerCase().includes(searchTerm)) {
-          const key = `title-${project.name}`;
-          if (!addedItems.has(key) && results.length < 10) {
-            addedItems.add(key);
+        // Transform API response
+        const { projects } = ProjectTransformer.transformApiResponse(response);
+
+        // Search categories from available categories
+        this.filters.categories.forEach((category) => {
+          if (
+            category.toLowerCase().includes(searchTerm) &&
+            category !== "All"
+          ) {
+            const key = `category-${category}`;
+            if (!addedItems.has(key)) {
+              addedItems.add(key);
+              results.push({
+                type: "category",
+                icon: "i-heroicons-folder-20-solid",
+                value: category,
+                label: category,
+                subtitle: "Category",
+                count: projects.filter((p) => p.category === category).length,
+              });
+            }
+          }
+        });
+
+        // Process projects from backend search results
+        projects.forEach((project) => {
+          // Use project ID as unique key to prevent duplicates
+          const projectKey = `project-${project.id}`;
+
+          // Skip if this project is already added or if we have enough results
+          if (addedItems.has(projectKey) || results.length >= 10) {
+            return;
+          }
+
+          // Add project by title match
+          if (project.name.toLowerCase().includes(searchTerm)) {
+            addedItems.add(projectKey);
             results.push({
               type: "name",
               icon: "i-heroicons-document-text-20-solid",
               value: project.name,
               label: project.name,
-              subtitle: "Project Name",
+              subtitle: project.description,
               category: project.category,
+              projectId: project.id,
             });
           }
-        }
-      });
+        });
 
-      // Search project descriptions
-      this.projects.forEach((project) => {
-        if (project.description.toLowerCase().includes(searchTerm)) {
-          const key = `desc-${project.name}`;
-          if (!addedItems.has(key) && results.length < 10) {
-            addedItems.add(key);
-            results.push({
-              type: "description",
-              icon: "i-heroicons-chat-bubble-left-right-20-solid",
-              value: project.name,
-              label: project.name,
-              subtitle: `"${project.description.substring(0, 50)}..."`,
-              category: project.category,
-            });
-          }
-        }
-      });
-
-      return results.slice(0, 8);
+        return results;
+      } catch (error) {
+        console.error("Error searching projects from backend:", error);
+        return [];
+      }
     },
 
     // Filter management methods

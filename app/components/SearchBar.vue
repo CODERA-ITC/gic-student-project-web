@@ -45,7 +45,7 @@
     >
       <div
         v-if="isOpen"
-        class="fixed left-0 right-0 top-16 z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
+        class="fixed left-0 right-0 top-16 z-50 px-4 sm:px-6 lg:px-8"
       >
         <div
           class="bg-white dark:bg-neutral-900 rounded-xl shadow-2xl border border-gray-200 dark:border-neutral-800 overflow-hidden"
@@ -138,24 +138,63 @@ const emit = defineEmits(["search", "clear"]);
 const localQuery = ref("");
 const debouncedQuery = ref("");
 const isOpen = ref(false);
+const searchResults = ref([]);
 const projectStore = useProjectStore();
 const studentStore = useStudentStore();
 
-// Debounce search input
+// Debounce search input and fetch results
 let debounceTimer = null;
 watch(localQuery, (newValue) => {
   if (debounceTimer) clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(() => {
+
+  // Clear results if query is empty
+  if (!newValue.trim()) {
+    searchResults.value = [];
+    return;
+  }
+
+  debounceTimer = setTimeout(async () => {
     debouncedQuery.value = newValue;
+
+    // Fetch search results based on context
+    try {
+      if (props.context === "students") {
+        searchResults.value = studentStore.searchStudentsWithResults(
+          debouncedQuery.value,
+        );
+      } else {
+        searchResults.value = await projectStore.searchProjects(
+          debouncedQuery.value,
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+      searchResults.value = [];
+    }
   }, 300); // 300ms delay
 });
 
-// Dynamic search results based on context
-const searchResults = computed(() => {
-  if (props.context === "students") {
-    return studentStore.searchStudentsWithResults(debouncedQuery.value);
+// Handle scroll to close search
+const handleScroll = () => {
+  if (isOpen.value) {
+    closeSearch();
   }
-  return projectStore.searchProjects(debouncedQuery.value);
+};
+
+onMounted(() => {
+  // Close search on route change
+  useRouter().afterEach(() => {
+    closeSearch();
+    searchResults.value = [];
+  });
+
+  // Add scroll listener
+  window.addEventListener("scroll", handleScroll, { passive: true });
+});
+
+onUnmounted(() => {
+  // Remove scroll listener
+  window.removeEventListener("scroll", handleScroll);
 });
 
 // Dynamic placeholder based on context
@@ -193,7 +232,7 @@ const selectResult = (result) => {
   if (props.context === "students") {
     if (result.type === "category") {
       navigateTo(
-        `/students/search?program=${encodeURIComponent(result.value)}`
+        `/students/search?program=${encodeURIComponent(result.value)}`,
       );
     } else {
       navigateTo(`/students/search?search=${encodeURIComponent(result.value)}`);
@@ -201,12 +240,14 @@ const selectResult = (result) => {
   } else {
     if (result.type === "category") {
       navigateTo(
-        `/projects/search?category=${encodeURIComponent(result.value)}`
+        `/projects/search?category=${encodeURIComponent(result.value)}`,
       );
-    } else if (result.type === "title" || result.type === "description") {
-      const searchTerm =
-        result.type === "title" ? result.value : localQuery.value;
-      navigateTo(`/projects/search?search=${encodeURIComponent(searchTerm)}`);
+    } else if (
+      (result.type === "name" || result.type === "description") &&
+      result.projectId
+    ) {
+      // Navigate directly to project details page
+      navigateTo(`/projects/${result.projectId}`);
     }
   }
   closeSearch();
