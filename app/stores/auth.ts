@@ -494,7 +494,10 @@ export const useAuthStore = defineStore("auth", {
           throw new Error("Invalid response from server");
         }
 
-        return responseData.data.map((userData: any) => ({
+        return responseData.data
+        .filter((userData: any) => userData.id !== this.user?.id)
+
+        .map((userData: any) => ({
           id: userData.id,
           name: `${userData.firstName || ""} ${userData.lastName || ""}`.trim(),
           email: userData.email,

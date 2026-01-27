@@ -12,7 +12,7 @@
                 name="i-heroicons-academic-cap"
                 class="w-8 h-8 text-slate-900 dark:text-slate-100"
               />
-              <span class="text-2xl font-bold">GIC Student Portal</span>
+              <span class="text-2xl font-semibold">GIC Student Portal</span>
             </div>
             <p class="text-gray-600 dark:text-gray-400 mb-3 max-w-md">
               A showcase platform for student projects and achievements across

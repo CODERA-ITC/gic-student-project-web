@@ -10,7 +10,7 @@
         <div class="space-y-6">
           <div class="text-center space-y-4 max-w-2xl mx-auto">
             <h1
-              class="text-4xl lg:text-6xl font-bold tracking-tight leading-tight text-blue-900 dark:text-white"
+              class="text-4xl lg:text-6xl font-semibold tracking-tight leading-tight text-blue-900 dark:text-white"
             >
               Meet Our Students
             </h1>
@@ -155,7 +155,7 @@
                 <template v-if="totalPages > 1">
                   Showing {{ paginatedStudents.length }} of
                 </template>
-                <span class="font-bold text-blue-900 dark:text-white">{{
+                <span class="font-semibold text-blue-900 dark:text-white">{{
                   studentStore.filteredStudents.length
                 }}</span>
                 students

@@ -67,7 +67,9 @@
           <div class="p-6 flex flex-col flex-grow">
             <!-- Title and Category -->
             <div class="mb-4">
-              <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              <h3
+                class="text-xl font-semibold text-gray-900 dark:text-white mb-2"
+              >
                 {{ project.title }}
               </h3>
               <p class="text-sm text-gray-600 dark:text-gray-400">
@@ -127,14 +129,14 @@
                 <div
                   v-for="(member, idx) in project.members.slice(0, 3)"
                   :key="idx"
-                  class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-xs font-bold border-2 border-white dark:border-slate-800"
+                  class="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-xs font-semibold border-2 border-white dark:border-slate-800"
                   :title="member"
                 >
                   {{ member.charAt(0) }}
                 </div>
                 <div
                   v-if="project.members.length > 3"
-                  class="w-8 h-8 rounded-full bg-gray-300 dark:bg-slate-700 flex items-center justify-center text-gray-700 dark:text-white text-xs font-bold border-2 border-white dark:border-slate-800"
+                  class="w-8 h-8 rounded-full bg-gray-300 dark:bg-slate-700 flex items-center justify-center text-gray-700 dark:text-white text-xs font-semibold border-2 border-white dark:border-slate-800"
                   :title="`+${project.members.length - 3} more`"
                 >
                   +{{ project.members.length - 3 }}

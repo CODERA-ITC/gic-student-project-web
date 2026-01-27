@@ -42,7 +42,7 @@
       <UContainer class="py-12 mx-auto">
         <!-- Activity Overview Title -->
         <div class="mb-6">
-          <h2 class="text-xl font-bold text-black dark:text-white">
+          <h2 class="text-xl font-semibold text-black dark:text-white">
             Activity Overview
           </h2>
           <p class="text-xs text-gray-600 dark:text-slate-400 mt-1">
@@ -74,7 +74,7 @@
             >
               <!-- Value and Graph on same line -->
               <div class="flex items-start justify-between gap-4 mb-3">
-                <div class="text-3xl font-bold text-black dark:text-white">
+                <div class="text-3xl font-semibold text-black dark:text-white">
                   {{ stat.value }}
                 </div>
                 <!-- Sparkline Chart -->
@@ -87,8 +87,8 @@
                       stat.changeColor === 'positive'
                         ? '#3b82f6'
                         : stat.changeColor === 'negative'
-                        ? '#f59e0b'
-                        : '#3b82f6'
+                          ? '#f59e0b'
+                          : '#3b82f6'
                     "
                     :stroke-width="2"
                     :show-area="true"
@@ -108,8 +108,8 @@
                     stat.changeColor === 'positive'
                       ? 'text-blue-500'
                       : stat.changeColor === 'negative'
-                      ? 'text-amber-500'
-                      : 'text-blue-500'
+                        ? 'text-amber-500'
+                        : 'text-blue-500'
                   "
                   class="w-4 h-4"
                 />
@@ -125,7 +125,7 @@
         <div class="mb-8">
           <div class="flex items-center justify-between mb-6">
             <div>
-              <h2 class="text-xl font-bold text-black dark:text-white">
+              <h2 class="text-xl font-semibold text-black dark:text-white">
                 Recent Projects
               </h2>
               <p class="text-xs text-gray-600 dark:text-slate-400 mt-1">
@@ -182,7 +182,7 @@
                     v-else
                     class="w-12 h-12 rounded-full bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center shrink-0 ring-2 ring-gray-100 dark:ring-slate-700"
                   >
-                    <span class="text-sm font-bold text-white">{{
+                    <span class="text-sm font-semibold text-white">{{
                       project.studentInitials
                     }}</span>
                   </div>
@@ -203,7 +203,7 @@
                 <!-- Project Title & Description -->
                 <div class="mb-4">
                   <h3
-                    class="font-bold text-base text-black dark:text-white mb-2 line-clamp-1"
+                    class="font-semibold text-base text-black dark:text-white mb-2 line-clamp-1"
                   >
                     {{ project.title }}
                   </h3>

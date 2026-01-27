@@ -3,7 +3,7 @@
     <!-- Hero Section -->
     <div class="bg-slate-900 text-white py-12 px-4 sm:px-6 lg:px-8">
       <div class="max-w-7xl mx-auto">
-        <h1 class="text-4xl font-bold mb-2">Notification & Auth Demo</h1>
+        <h1 class="text-4xl font-semibold mb-2">Notification & Auth Demo</h1>
         <p class="text-slate-300">
           Test the dynamic navbar and notification system
         </p>
@@ -15,7 +15,9 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <!-- Authentication Controls -->
         <div class="bg-white rounded-lg shadow-lg p-6">
-          <h2 class="text-2xl font-bold text-gray-900 mb-4">Authentication</h2>
+          <h2 class="text-2xl font-semibold text-gray-900 mb-4">
+            Authentication
+          </h2>
           <p class="text-gray-600 mb-6">
             Test logging in as different user roles to see how the navbar and
             menu change
@@ -72,7 +74,7 @@
             <div
               class="bg-slate-100 border border-slate-300 rounded-lg p-4 mt-4"
             >
-              <p class="text-xs font-bold text-slate-700 mb-2 uppercase">
+              <p class="text-xs font-semibold text-slate-700 mb-2 uppercase">
                 Demo Credentials:
               </p>
               <div class="space-y-2 text-xs text-slate-600">
@@ -126,7 +128,9 @@
 
         <!-- Notification Controls -->
         <div class="bg-white rounded-lg shadow-lg p-6">
-          <h2 class="text-2xl font-bold text-gray-900 mb-4">Notifications</h2>
+          <h2 class="text-2xl font-semibold text-gray-900 mb-4">
+            Notifications
+          </h2>
           <p class="text-gray-600 mb-6">
             Trigger different types of notifications to see them in the
             notification bell
@@ -140,7 +144,7 @@
                 () =>
                   notify.notifySuccess(
                     'Success!',
-                    'Operation completed successfully'
+                    'Operation completed successfully',
                   )
               "
             >
@@ -154,7 +158,7 @@
                 () =>
                   notify.notifyError(
                     'Error!',
-                    'Something went wrong. Please try again.'
+                    'Something went wrong. Please try again.',
                   )
               "
             >
@@ -168,7 +172,7 @@
                 () =>
                   notify.notifyWarning(
                     'Warning!',
-                    'Please review this important message'
+                    'Please review this important message',
                   )
               "
             >
@@ -193,7 +197,7 @@
           v-if="authStore.isStudent"
           class="bg-white rounded-lg shadow-lg p-6"
         >
-          <h2 class="text-2xl font-bold text-gray-900 mb-4">
+          <h2 class="text-2xl font-semibold text-gray-900 mb-4">
             Project Notifications
           </h2>
           <p class="text-gray-600 mb-6">Available for students</p>
@@ -222,7 +226,7 @@
                 () =>
                   notify.notifyProjectRejected(
                     'Web App Project',
-                    'Please fix the layout issues'
+                    'Please fix the layout issues',
                   )
               "
             >
@@ -236,7 +240,7 @@
                 () =>
                   notify.notifyProjectCommentReceived(
                     'Web App Project',
-                    'Dr. Sarah'
+                    'Dr. Sarah',
                   )
               "
             >
@@ -250,7 +254,7 @@
           v-if="authStore.isTeacher"
           class="bg-white rounded-lg shadow-lg p-6"
         >
-          <h2 class="text-2xl font-bold text-gray-900 mb-4">
+          <h2 class="text-2xl font-semibold text-gray-900 mb-4">
             Teacher Notifications
           </h2>
           <p class="text-gray-600 mb-6">Available for teachers</p>
@@ -263,7 +267,7 @@
                 () =>
                   notify.notifyStudentSubmitted(
                     'Sarah Chen',
-                    'AI Learning System'
+                    'AI Learning System',
                   )
               "
             >
@@ -277,7 +281,7 @@
                 () =>
                   notify.notifyTeacherFeedback(
                     'Prof. Johnson',
-                    'AI Learning System'
+                    'AI Learning System',
                   )
               "
             >
@@ -288,12 +292,14 @@
 
         <!-- Notification History -->
         <div class="md:col-span-2 bg-white rounded-lg shadow-lg p-6">
-          <h2 class="text-2xl font-bold text-gray-900 mb-4">
+          <h2 class="text-2xl font-semibold text-gray-900 mb-4">
             Notification History
           </h2>
           <p class="text-gray-600 mb-6">
             Current notifications:
-            <span class="font-bold">{{ uiStore.notifications.length }}</span>
+            <span class="font-semibold">{{
+              uiStore.notifications.length
+            }}</span>
           </p>
 
           <div

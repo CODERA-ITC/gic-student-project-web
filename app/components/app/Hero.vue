@@ -1,4 +1,4 @@
- <script setup>
+<script setup>
 import { motion, useTime, useTransform } from "motion-v";
 import { useHeroRotation } from "~/composables/rotation-cordonate";
 
@@ -28,7 +28,7 @@ const techDescriptions = {
   torch: "Deep learning framework",
   mysql: "Relational database management system",
   postgres: "Advanced open-source relational database",
-  mongo: "NoSQL document database"
+  mongo: "NoSQL document database",
 };
 
 // Animation configuration
@@ -184,7 +184,7 @@ const outerOrbit9 = useHeroRotation({
   >
     <!-- Central content -->
     <div class="relative z-10 text-center">
-      <h1 class="text-3xl mb-2 font-bold text-slate-100">TechHub</h1>
+      <h1 class="text-3xl mb-2 font-semibold text-slate-100">TechHub</h1>
       <p class="text-l text-slate-200">
         Showcasing student <br />tech brilliance
       </p>
@@ -204,7 +204,10 @@ const outerOrbit9 = useHeroRotation({
     <!-- Inner orbit icons -->
     <motion.div
       class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-      :style="{ ...innerOrbit1, zIndex: hoveredTech === 'javascript' ? 10000 : 1 }"
+      :style="{
+        ...innerOrbit1,
+        zIndex: hoveredTech === 'javascript' ? 10000 : 1,
+      }"
       @mouseenter="hoveredTech = 'javascript'"
       @mouseleave="hoveredTech = null"
     >
@@ -226,7 +229,11 @@ const outerOrbit9 = useHeroRotation({
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/vue-logo.png" alt="Vue" class="unhighlightable-image" />
+        <img
+          src="/images/tech/vue-logo.png"
+          alt="Vue"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'vue'" class="tech-tooltip">
           {{ techDescriptions.vue }}
         </div>
@@ -240,7 +247,11 @@ const outerOrbit9 = useHeroRotation({
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/react-logo.png" alt="React" class="unhighlightable-image" />
+        <img
+          src="/images/tech/react-logo.png"
+          alt="React"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'react'" class="tech-tooltip">
           {{ techDescriptions.react }}
         </div>
@@ -254,7 +265,11 @@ const outerOrbit9 = useHeroRotation({
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/linux-logo.png" alt="Linux" class="unhighlightable-image" />
+        <img
+          src="/images/tech/linux-logo.png"
+          alt="Linux"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'linux'" class="tech-tooltip">
           {{ techDescriptions.linux }}
         </div>
@@ -263,14 +278,21 @@ const outerOrbit9 = useHeroRotation({
 
     <motion.div
       class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-      :style="{ ...innerOrbit5, zIndex: hoveredTech === 'cisco-pt' ? 10000 : 1 }"
+      :style="{
+        ...innerOrbit5,
+        zIndex: hoveredTech === 'cisco-pt' ? 10000 : 1,
+      }"
       @mouseenter="hoveredTech = 'cisco-pt'"
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/cisco-pt-logo.png" alt="Cisco Packet Tracer" class="unhighlightable-image" />
+        <img
+          src="/images/tech/cisco-pt-logo.png"
+          alt="Cisco Packet Tracer"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'cisco-pt'" class="tech-tooltip">
-          {{ techDescriptions['cisco-pt'] }}
+          {{ techDescriptions["cisco-pt"] }}
         </div>
       </div>
     </motion.div>
@@ -283,7 +305,11 @@ const outerOrbit9 = useHeroRotation({
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/php-logo.png" alt="PHP" class="unhighlightable-image" />
+        <img
+          src="/images/tech/php-logo.png"
+          alt="PHP"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'php'" class="tech-tooltip">
           {{ techDescriptions.php }}
         </div>
@@ -292,12 +318,19 @@ const outerOrbit9 = useHeroRotation({
 
     <motion.div
       class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-      :style="{ ...middleOrbit2, zIndex: hoveredTech === 'laravel' ? 10000 : 1 }"
+      :style="{
+        ...middleOrbit2,
+        zIndex: hoveredTech === 'laravel' ? 10000 : 1,
+      }"
       @mouseenter="hoveredTech = 'laravel'"
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/laravel-logo.png" alt="Laravel" class="unhighlightable-image" />
+        <img
+          src="/images/tech/laravel-logo.png"
+          alt="Laravel"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'laravel'" class="tech-tooltip">
           {{ techDescriptions.laravel }}
         </div>
@@ -311,7 +344,11 @@ const outerOrbit9 = useHeroRotation({
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/java-logo.png" alt="Java" class="unhighlightable-image"/>
+        <img
+          src="/images/tech/java-logo.png"
+          alt="Java"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'java'" class="tech-tooltip">
           {{ techDescriptions.java }}
         </div>
@@ -325,7 +362,11 @@ const outerOrbit9 = useHeroRotation({
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/spring-logo.png" alt="Spring" class="unhighlightable-image"/>
+        <img
+          src="/images/tech/spring-logo.png"
+          alt="Spring"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'spring'" class="tech-tooltip">
           {{ techDescriptions.spring }}
         </div>
@@ -339,7 +380,11 @@ const outerOrbit9 = useHeroRotation({
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/go-logo.png" alt="Go" class="unhighlightable-image" />
+        <img
+          src="/images/tech/go-logo.png"
+          alt="Go"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'go'" class="tech-tooltip">
           {{ techDescriptions.go }}
         </div>
@@ -353,7 +398,11 @@ const outerOrbit9 = useHeroRotation({
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/c-logo.png" alt="C" class="unhighlightable-image"/>
+        <img
+          src="/images/tech/c-logo.png"
+          alt="C"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'c'" class="tech-tooltip">
           {{ techDescriptions.c }}
         </div>
@@ -367,7 +416,11 @@ const outerOrbit9 = useHeroRotation({
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/unity-logo.png" alt="Unity" class="unhighlightable-image"/>
+        <img
+          src="/images/tech/unity-logo.png"
+          alt="Unity"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'unity'" class="tech-tooltip">
           {{ techDescriptions.unity }}
         </div>
@@ -381,7 +434,11 @@ const outerOrbit9 = useHeroRotation({
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/elixir-logo.png" alt="Elixir" class="unhighlightable-image"/>
+        <img
+          src="/images/tech/elixir-logo.png"
+          alt="Elixir"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'elixir'" class="tech-tooltip">
           {{ techDescriptions.elixir }}
         </div>
@@ -396,7 +453,11 @@ const outerOrbit9 = useHeroRotation({
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/docker-logo.png" alt="Docker" class="unhighlightable-image"/>
+        <img
+          src="/images/tech/docker-logo.png"
+          alt="Docker"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'docker'" class="tech-tooltip">
           {{ techDescriptions.docker }}
         </div>
@@ -405,12 +466,19 @@ const outerOrbit9 = useHeroRotation({
 
     <motion.div
       class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-      :style="{ ...outerOrbit2, zIndex: hoveredTech === 'kubernetes' ? 10000 : 1 }"
+      :style="{
+        ...outerOrbit2,
+        zIndex: hoveredTech === 'kubernetes' ? 10000 : 1,
+      }"
       @mouseenter="hoveredTech = 'kubernetes'"
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/kubernetes-logo.png" alt="Kubernetes" class="unhighlightable-image"/>
+        <img
+          src="/images/tech/kubernetes-logo.png"
+          alt="Kubernetes"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'kubernetes'" class="tech-tooltip">
           {{ techDescriptions.kubernetes }}
         </div>
@@ -424,7 +492,11 @@ const outerOrbit9 = useHeroRotation({
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/vmware-logo.png" alt="VMware" class="unhighlightable-image"/>
+        <img
+          src="/images/tech/vmware-logo.png"
+          alt="VMware"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'vmware'" class="tech-tooltip">
           {{ techDescriptions.vmware }}
         </div>
@@ -438,7 +510,11 @@ const outerOrbit9 = useHeroRotation({
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/python-logo.png" alt="Python" class="unhighlightable-image"/>
+        <img
+          src="/images/tech/python-logo.png"
+          alt="Python"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'python'" class="tech-tooltip">
           {{ techDescriptions.python }}
         </div>
@@ -447,12 +523,19 @@ const outerOrbit9 = useHeroRotation({
 
     <motion.div
       class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-      :style="{ ...outerOrbit5, zIndex: hoveredTech === 'tensorflow' ? 10000 : 1 }"
+      :style="{
+        ...outerOrbit5,
+        zIndex: hoveredTech === 'tensorflow' ? 10000 : 1,
+      }"
       @mouseenter="hoveredTech = 'tensorflow'"
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/tensorflow-logo.png" alt="TensorFlow" class="unhighlightable-image"/>
+        <img
+          src="/images/tech/tensorflow-logo.png"
+          alt="TensorFlow"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'tensorflow'" class="tech-tooltip">
           {{ techDescriptions.tensorflow }}
         </div>
@@ -466,7 +549,11 @@ const outerOrbit9 = useHeroRotation({
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/torch-logo.png" alt="PyTorch" class="unhighlightable-image"/>
+        <img
+          src="/images/tech/torch-logo.png"
+          alt="PyTorch"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'torch'" class="tech-tooltip">
           {{ techDescriptions.torch }}
         </div>
@@ -480,7 +567,11 @@ const outerOrbit9 = useHeroRotation({
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/mysql-logo.png" alt="MySQL" class="unhighlightable-image"/>
+        <img
+          src="/images/tech/mysql-logo.png"
+          alt="MySQL"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'mysql'" class="tech-tooltip">
           {{ techDescriptions.mysql }}
         </div>
@@ -489,12 +580,19 @@ const outerOrbit9 = useHeroRotation({
 
     <motion.div
       class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-      :style="{ ...outerOrbit8, zIndex: hoveredTech === 'postgres' ? 10000 : 1 }"
+      :style="{
+        ...outerOrbit8,
+        zIndex: hoveredTech === 'postgres' ? 10000 : 1,
+      }"
       @mouseenter="hoveredTech = 'postgres'"
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/postgres-logo.png" alt="PostgreSQL" class="unhighlightable-image"/>
+        <img
+          src="/images/tech/postgres-logo.png"
+          alt="PostgreSQL"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'postgres'" class="tech-tooltip">
           {{ techDescriptions.postgres }}
         </div>
@@ -508,7 +606,11 @@ const outerOrbit9 = useHeroRotation({
       @mouseleave="hoveredTech = null"
     >
       <div class="w-12 h-12 rounded-2xl p-2 shadow-lg relative">
-        <img src="/images/tech/mongo-logo.png" alt="MongoDB" class="unhighlightable-image"/>
+        <img
+          src="/images/tech/mongo-logo.png"
+          alt="MongoDB"
+          class="unhighlightable-image"
+        />
         <div v-show="hoveredTech === 'mongo'" class="tech-tooltip">
           {{ techDescriptions.mongo }}
         </div>
@@ -565,11 +667,11 @@ const outerOrbit9 = useHeroRotation({
 
 .unhighlightable-image {
   -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none;   /* Safari */
-  -khtml-user-select: none;    /* Konqueror HTML */
-  -moz-user-select: none;      /* Old versions of Firefox */
-  -ms-user-select: none;       /* Internet Explorer/Edge */
-  user-select: none;           /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
 }
 
 @keyframes glow {
@@ -603,7 +705,7 @@ const outerOrbit9 = useHeroRotation({
 }
 
 .tech-tooltip::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 100%;
   left: 50%;

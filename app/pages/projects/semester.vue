@@ -48,7 +48,7 @@
           >
             <div class="flex items-center gap-3 pb-4 border-b border-slate-700">
               <div class="w-1 h-6 bg-blue-500 rounded"></div>
-              <h2 class="text-2xl font-bold text-white">{{ category }}</h2>
+              <h2 class="text-2xl font-semibold text-white">{{ category }}</h2>
               <span class="ml-auto text-gray-400">
                 {{ projectsByCategory(category).length }} projects
               </span>
@@ -79,7 +79,7 @@
                   <div class="p-6 space-y-4">
                     <div>
                       <h3
-                        class="text-lg font-bold text-white group-hover:text-blue-300 transition-colors line-clamp-2"
+                        class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors line-clamp-2"
                       >
                         {{ project.title }}
                       </h3>
@@ -151,7 +151,7 @@
             :key="stat.label"
             class="bg-slate-900/50 backdrop-blur border border-slate-700 rounded-xl p-6 text-center"
           >
-            <p class="text-3xl font-bold text-blue-400">{{ stat.value }}</p>
+            <p class="text-3xl font-semibold text-blue-400">{{ stat.value }}</p>
             <p class="text-gray-400 text-sm mt-2">{{ stat.label }}</p>
           </div>
         </div>
@@ -268,7 +268,7 @@ const categoriesInSemester = computed(() => {
 
 const projectsByCategory = (category) => {
   return projectsBySemester(selectedSemester.value).filter(
-    (p) => p.category === category
+    (p) => p.category === category,
   );
 };
 
@@ -285,7 +285,7 @@ const statistics = computed(() => {
         .reduce(
           (sum, p) =>
             sum + parseInt(p.likes.replace("K", "000").replace(",", "")),
-          0
+          0,
         )
         .toLocaleString(),
     },
@@ -295,7 +295,7 @@ const statistics = computed(() => {
         .reduce(
           (sum, p) =>
             sum + parseInt(p.views.replace("K", "000").replace(",", "")),
-          0
+          0,
         )
         .toLocaleString(),
     },

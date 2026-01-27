@@ -3,11 +3,15 @@
     <AuthHero />
 
     <!-- Right Side - Login Form -->
-    <div class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-neutral-900">
+    <div
+      class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-neutral-900"
+    >
       <div class="w-full max-w-md">
         <!-- Header -->
         <div class="mb-8">
-          <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+          <h1
+            class="text-3xl font-semibold text-slate-900 dark:text-white mb-2"
+          >
             Sign In or Create an account
           </h1>
         </div>
@@ -15,26 +19,49 @@
         <form @submit.prevent="handleLogin" class="space-y-4">
           <!-- Email Input -->
           <div>
-            <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
+            <label
+              class="block text-sm font-medium text-slate-900 dark:text-white mb-2"
+            >
               Email address
             </label>
-            <input v-model="email" type="email" placeholder="your.email@example.com" required autofocus
-              :disabled="authStore.isLoading" @blur="validateEmail"
-              class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed" />
-            <div v-if="emailError" class="text-xs text-red-600 dark:text-red-400 mt-1">
+            <input
+              v-model="email"
+              type="email"
+              placeholder="your.email@example.com"
+              required
+              autofocus
+              :disabled="authStore.isLoading"
+              @blur="validateEmail"
+              class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            />
+            <div
+              v-if="emailError"
+              class="text-xs text-red-600 dark:text-red-400 mt-1"
+            >
               {{ emailError }}
             </div>
           </div>
 
           <!-- Password Input -->
           <div>
-            <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
+            <label
+              class="block text-sm font-medium text-slate-900 dark:text-white mb-2"
+            >
               Password
             </label>
-            <input v-model="password" type="password" placeholder="••••••••" required :disabled="authStore.isLoading"
+            <input
+              v-model="password"
+              type="password"
+              placeholder="••••••••"
+              required
+              :disabled="authStore.isLoading"
               @blur="validatePassword"
-              class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed" />
-            <div v-if="passwordError" class="text-xs text-red-600 dark:text-red-400 mt-1">
+              class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            />
+            <div
+              v-if="passwordError"
+              class="text-xs text-red-600 dark:text-red-400 mt-1"
+            >
               {{ passwordError }}
             </div>
           </div>
@@ -42,65 +69,100 @@
           <!-- Remember & Forgot -->
           <div class="flex items-center justify-between text-sm">
             <label class="flex items-center gap-2 cursor-pointer group">
-              <input v-model="rememberMe" type="checkbox" :disabled="authStore.isLoading"
-                class="w-4 h-4 rounded border-slate-300 dark:border-neutral-600 text-blue-900 focus:ring-blue-900 focus:ring-offset-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" />
+              <input
+                v-model="rememberMe"
+                type="checkbox"
+                :disabled="authStore.isLoading"
+                class="w-4 h-4 rounded border-slate-300 dark:border-neutral-600 text-blue-900 focus:ring-blue-900 focus:ring-offset-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              />
               <span
-                class="text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors">
+                class="text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors"
+              >
                 Remember me
               </span>
             </label>
-            <NuxtLink to="/forgot-password"
-              class="text-blue-900 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors">
+            <NuxtLink
+              to="/forgot-password"
+              class="text-blue-900 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors"
+            >
               Forgot password?
             </NuxtLink>
           </div>
 
           <!-- Error Message -->
-          <div v-if="authStore.error"
-            class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400">
+          <div
+            v-if="authStore.error"
+            class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400"
+          >
             {{ authStore.error }}
           </div>
 
           <!-- Login Button using PresetButton -->
-          <ButtonsPresetButton preset="primary" label="CONTINUE WITH EMAIL" :loading="authStore.isLoading" :disabled="authStore.isLoading ||
-            !email ||
-            !password ||
-            !!emailError ||
-            !!passwordError
-            " size="lg" class="w-full" type="submit" />
+          <ButtonsPresetButton
+            preset="primary"
+            label="CONTINUE WITH EMAIL"
+            :loading="authStore.isLoading"
+            :disabled="
+              authStore.isLoading ||
+              !email ||
+              !password ||
+              !!emailError ||
+              !!passwordError
+            "
+            size="lg"
+            class="w-full"
+            type="submit"
+          />
         </form>
 
         <!-- Divider -->
         <div class="relative my-6">
           <div class="absolute inset-0 flex items-center">
-            <div class="w-full border-t border-slate-200 dark:border-neutral-700"></div>
+            <div
+              class="w-full border-t border-slate-200 dark:border-neutral-700"
+            ></div>
           </div>
           <div class="relative flex justify-center text-sm">
-            <span class="px-4 bg-white dark:bg-neutral-900 text-slate-500 dark:text-neutral-400">or</span>
+            <span
+              class="px-4 bg-white dark:bg-neutral-900 text-slate-500 dark:text-neutral-400"
+              >or</span
+            >
           </div>
         </div>
 
         <!-- Social Login -->
         <div class="grid grid-cols-2 gap-3">
-          <button type="button" :disabled="authStore.isLoading" @click="handleGoogleLogin"
-            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+          <button
+            type="button"
+            :disabled="authStore.isLoading"
+            @click="handleGoogleLogin"
+            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
               <UIcon name="i-logos-google-icon" class="w-6 h-6" />
             </div>
             <span
-              class="text-sm text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors">
+              class="text-sm text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors"
+            >
               GOOGLE
             </span>
           </button>
 
-          <button type="button" :disabled="authStore.isLoading" @click="handleGithubLogin"
-            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+          <button
+            type="button"
+            :disabled="authStore.isLoading"
+            @click="handleGithubLogin"
+            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
-              <UIcon name="i-simple-icons-github"
-                class="w-6 h-6 text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors" />
+              <UIcon
+                name="i-simple-icons-github"
+                class="w-6 h-6 text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors"
+              />
             </div>
             <span
-              class="text-sm text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors">
+              class="text-sm text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors"
+            >
               GITHUB
             </span>
           </button>
@@ -110,8 +172,10 @@
         <div class="text-center mt-6">
           <p class="text-sm text-slate-600 dark:text-neutral-400">
             Don't have an account?
-            <NuxtLink to="/signup"
-              class="text-blue-900 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-semibold transition-colors">
+            <NuxtLink
+              to="/signup"
+              class="text-blue-900 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-semibold transition-colors"
+            >
               Sign up here
             </NuxtLink>
           </p>
@@ -216,7 +280,7 @@ const handleLogin = async () => {
       "isAdmin:",
       authStore.isAdmin,
       "isStudent:",
-      authStore.isStudent
+      authStore.isStudent,
     );
 
     if (authStore.isTeacher || authStore.isAdmin) {
@@ -242,7 +306,8 @@ const handleLogin = async () => {
 const handleGoogleLogin = () => {
   // Redirect directly to backend OAuth endpoint
   const config = useRuntimeConfig();
-  const backendUrl = config.public.apiBase || 'https://gic-project.darororo.dev';
+  const backendUrl =
+    config.public.apiBase || "https://gic-project.darororo.dev";
   window.location.href = `${backendUrl}/users/google`;
 };
 
@@ -250,7 +315,8 @@ const handleGoogleLogin = () => {
 const handleGithubLogin = () => {
   // Redirect directly to backend OAuth endpoint
   const config = useRuntimeConfig();
-  const backendUrl = config.public.apiBase || 'https://gic-project.darororo.dev';
+  const backendUrl =
+    config.public.apiBase || "https://gic-project.darororo.dev";
   window.location.href = `${backendUrl}/users/github`;
 };
 

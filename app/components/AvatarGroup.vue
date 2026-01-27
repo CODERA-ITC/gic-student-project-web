@@ -15,7 +15,7 @@
       <div
         v-if="hasMore"
         :title="`+${remainingCount} more`"
-        class="w-10 h-10 rounded-full border-2 border-slate-900 bg-slate-700 flex items-center justify-center text-xs font-bold text-white hover:bg-slate-600 cursor-pointer transition-colors"
+        class="w-10 h-10 rounded-full border-2 border-slate-900 bg-slate-700 flex items-center justify-center text-xs font-semibold text-white hover:bg-slate-600 cursor-pointer transition-colors"
       >
         +{{ remainingCount }}
       </div>

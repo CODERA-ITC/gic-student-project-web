@@ -29,7 +29,7 @@
           />
           <div
             v-else
-            class="w-full h-full flex items-center justify-center text-3xl font-bold text-gray-400 dark:text-gray-500"
+            class="w-full h-full flex items-center justify-center text-3xl font-semibold text-gray-400 dark:text-gray-500"
           >
             {{ initials }}
           </div>
@@ -39,7 +39,7 @@
       <!-- Student Info -->
       <div class="text-center mb-4">
         <h3
-          class="text-xl font-bold text-gray-900 dark:text-white mb-1 line-clamp-1"
+          class="text-xl font-semibold text-gray-900 dark:text-white mb-1 line-clamp-1"
         >
           {{ name }}
         </h3>
@@ -95,19 +95,19 @@
         class="flex items-center justify-around py-3 mb-4 border-t border-b border-gray-200 dark:border-slate-700"
       >
         <div class="text-center">
-          <div class="text-lg font-bold text-gray-900 dark:text-white">
+          <div class="text-lg font-semibold text-gray-900 dark:text-white">
             {{ projectCount }}
           </div>
           <div class="text-xs text-gray-500 dark:text-gray-400">Projects</div>
         </div>
         <div class="text-center">
-          <div class="text-lg font-bold text-gray-900 dark:text-white">
+          <div class="text-lg font-semibold text-gray-900 dark:text-white">
             {{ joined || "2026" }}
           </div>
           <div class="text-xs text-gray-500 dark:text-gray-400">Joined</div>
         </div>
         <div class="text-center">
-          <div class="text-lg font-bold text-gray-900 dark:text-white">
+          <div class="text-lg font-semibold text-gray-900 dark:text-white">
             {{ gen }}
           </div>
           <div class="text-xs text-gray-500 dark:text-gray-400">Gen</div>

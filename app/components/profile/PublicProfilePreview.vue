@@ -3,7 +3,7 @@
     <div class="p-6 border-b border-gray-200 dark:border-slate-700">
       <div class="flex items-center justify-between">
         <div>
-          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
             Public Profile Preview
           </h2>
           <p class="text-gray-600 dark:text-gray-400">
@@ -31,7 +31,7 @@
           >
             <!-- Avatar -->
             <div
-              class="w-28 h-28 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-5xl font-bold border-4 border-white/30 shadow-xl"
+              class="w-28 h-28 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-5xl font-semibold border-4 border-white/30 shadow-xl"
             >
               {{ user?.name?.charAt(0).toUpperCase() || "S" }}
             </div>
@@ -39,7 +39,7 @@
             <!-- Profile Info -->
             <div class="flex-1">
               <h1
-                class="text-3xl md:text-4xl font-bold text-white mb-2 drop-shadow-lg"
+                class="text-3xl md:text-4xl font-semibold text-white mb-2 drop-shadow-lg"
               >
                 {{ user?.name || "Student Name" }}
               </h1>
@@ -82,7 +82,7 @@
                   name="i-heroicons-information-circle"
                   class="w-5 h-5 text-blue-600 dark:text-blue-400"
                 />
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                   About
                 </h3>
               </div>
@@ -98,7 +98,7 @@
                   name="i-heroicons-wrench-screwdriver"
                   class="w-5 h-5 text-blue-600 dark:text-blue-400"
                 />
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                   Skills & Expertise
                 </h3>
               </div>
@@ -120,7 +120,7 @@
                   name="i-heroicons-briefcase"
                   class="w-5 h-5 text-blue-600 dark:text-blue-400"
                 />
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                   Projects ({{ projectCount }})
                 </h3>
               </div>

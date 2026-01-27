@@ -404,7 +404,7 @@ const IconCircle = (props: {
               <StatusBadge :status="sliceDesktopMilestones[0].status" />
             </div>
             <h3
-              class="font-bold text-base mb-2"
+              class="font-semibold text-base mb-2"
               :class="milestoneTextColors[0]"
             >
               {{ getMilestoneTitle(sliceDesktopMilestones[0]) }}
@@ -540,7 +540,7 @@ const IconCircle = (props: {
                 <StatusBadge :status="milestone.status" />
               </div>
               <h3
-                class="font-bold text-base mb-2 group-hover:scale-105 transition-transform duration-300"
+                class="font-semibold text-base mb-2 group-hover:scale-105 transition-transform duration-300"
                 :class="milestoneTextColors[index]"
               >
                 {{ getMilestoneTitle(milestone) }}
@@ -594,7 +594,7 @@ const IconCircle = (props: {
                 <StatusBadge :status="milestone.status" />
               </div>
               <h3
-                class="font-bold text-sm mb-1"
+                class="font-semibold text-sm mb-1"
                 :class="milestoneTextColors[index]"
               >
                 {{ getMilestoneTitle(milestone) }}
@@ -684,7 +684,7 @@ const IconCircle = (props: {
               <StatusBadge :status="milestone.status" />
             </div>
             <h3
-              class="font-bold text-sm sm:text-base mb-1"
+              class="font-semibold text-sm sm:text-base mb-1"
               :class="milestoneTextColors[index]"
             >
               {{ getMilestoneTitle(milestone) }}

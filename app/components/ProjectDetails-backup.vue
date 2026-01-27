@@ -407,7 +407,7 @@
                 v-if="!member.image"
                 class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0"
               >
-                <span class="text-white text-sm font-bold">
+                <span class="text-white text-sm font-semibold">
                   {{ getInitials(member.name) }}
                 </span>
               </div>

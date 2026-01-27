@@ -30,7 +30,7 @@
             />
             <div
               v-else
-              class="h-full w-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center text-white text-2xl font-bold"
+              class="h-full w-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center text-white text-2xl font-semibold"
             >
               {{ name.charAt(0) }}
             </div>
@@ -40,7 +40,7 @@
         <!-- Name and Main Skill -->
         <div class="text-left -mt-4">
           <h2
-            class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight leading-tight group-hover:text-blue-800 dark:group-hover:text-blue-800 transition-colors duration-300"
+            class="text-2xl font-semibold text-gray-900 dark:text-white tracking-tight leading-tight group-hover:text-blue-800 dark:group-hover:text-blue-800 transition-colors duration-300"
           >
             {{ name }}
           </h2>
@@ -96,7 +96,7 @@
                 />
               </div>
               <div
-                class="text-lg font-bold text-gray-900 dark:text-white group-hover/stat:text-blue-600 dark:group-hover/stat:text-blue-400 transition-colors duration-300"
+                class="text-lg font-semibold text-gray-900 dark:text-white group-hover/stat:text-blue-600 dark:group-hover/stat:text-blue-400 transition-colors duration-300"
               >
                 {{ projects }}
               </div>
@@ -122,7 +122,7 @@
                 />
               </div>
               <div
-                class="text-lg font-bold text-gray-900 dark:text-white group-hover/stat:text-purple-600 dark:group-hover/stat:text-purple-400 transition-colors duration-300"
+                class="text-lg font-semibold text-gray-900 dark:text-white group-hover/stat:text-purple-600 dark:group-hover/stat:text-purple-400 transition-colors duration-300"
               >
                 {{ generation }}
               </div>
@@ -148,7 +148,7 @@
                 />
               </div>
               <div
-                class="text-lg font-bold text-gray-900 dark:text-white group-hover/stat:text-green-600 dark:group-hover/stat:text-green-400 transition-colors duration-300"
+                class="text-lg font-semibold text-gray-900 dark:text-white group-hover/stat:text-green-600 dark:group-hover/stat:text-green-400 transition-colors duration-300"
               >
                 {{ joinedYear }}
               </div>
@@ -201,7 +201,7 @@ const emit = defineEmits<{
 
 const displayedTech = computed(() => props.techSkills.slice(0, props.maxTech));
 const remainingTechCount = computed(() =>
-  Math.max(0, props.techSkills.length - props.maxTech)
+  Math.max(0, props.techSkills.length - props.maxTech),
 );
 
 const handleViewProfile = () => {

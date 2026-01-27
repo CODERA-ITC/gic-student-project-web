@@ -177,7 +177,7 @@
               <div
                 v-for="(member, idx) in project.members.slice(0, 3)"
                 :key="idx"
-                class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-blue-900/80 dark:bg-blue-600/80 text-white text-xs font-bold cursor-pointer transition-transform hover:scale-110 hover:bg-blue-800 dark:hover:bg-blue-500"
+                class="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-blue-900/80 dark:bg-blue-600/80 text-white text-xs font-semibold cursor-pointer transition-transform hover:scale-110 hover:bg-blue-800 dark:hover:bg-blue-500"
                 :title="member.name"
               >
                 <!-- Profile photo available -->
