@@ -465,6 +465,10 @@ const handleSignup = async () => {
     const config = useRuntimeConfig();
     const apiBase = config.public.apiBase || 'https://gic-project.darororo.dev';
 
+    // Format dob from yyyy-mm-dd to dd/mm/yyyy
+    const dobDate = new Date(dob.value);
+    const formattedDob = `${String(dobDate.getDate()).padStart(2, '0')}/${String(dobDate.getMonth() + 1).padStart(2, '0')}/${dobDate.getFullYear()}`;
+
     const response = await $fetch(`${apiBase}/users/signup`, {
       method: 'POST',
       body: {
@@ -476,8 +480,8 @@ const handleSignup = async () => {
         bio: "Student at GIC",
         studentId: studentId.value,
         nameKh: `${familyNameKh.value} ${givenNameKh.value}`,
-        dob: dob.value,
-        phoneNumber: phone.value
+        dob: formattedDob,
+        phoneNumber: parseInt(phone.value.replace(/\s/g, ''))
       }
     });
 
