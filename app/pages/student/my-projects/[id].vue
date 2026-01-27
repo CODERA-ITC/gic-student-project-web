@@ -39,6 +39,70 @@
         @hide="toggleVisibility"
       >
         <template #submit-button>
+          <!-- Status message for already submitted projects -->
+          <div
+            v-if="getSubmissionStatusMessage"
+            :class="[
+              'p-4 rounded-lg border flex items-start gap-3',
+              project.visibility === 'reviewing'
+                ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800'
+                : project.visibility === 'accepted'
+                  ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
+                  : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800',
+            ]"
+          >
+            <UIcon
+              :name="
+                project.visibility === 'reviewing'
+                  ? 'i-heroicons-clock'
+                  : project.visibility === 'accepted'
+                    ? 'i-heroicons-check-circle'
+                    : 'i-heroicons-x-circle'
+              "
+              :class="[
+                'w-5 h-5 mt-0.5',
+                project.visibility === 'reviewing'
+                  ? 'text-yellow-600 dark:text-yellow-400'
+                  : project.visibility === 'accepted'
+                    ? 'text-green-600 dark:text-green-400'
+                    : 'text-red-600 dark:text-red-400',
+              ]"
+            />
+            <div class="flex-1">
+              <p
+                :class="[
+                  'text-sm font-medium mb-1',
+                  project.visibility === 'reviewing'
+                    ? 'text-yellow-900 dark:text-yellow-100'
+                    : project.visibility === 'accepted'
+                      ? 'text-green-900 dark:text-green-100'
+                      : 'text-red-900 dark:text-red-100',
+                ]"
+              >
+                {{
+                  project.visibility === "reviewing"
+                    ? "Under Review"
+                    : project.visibility === "accepted"
+                      ? "Accepted"
+                      : "Rejected"
+                }}
+              </p>
+              <p
+                :class="[
+                  'text-xs',
+                  project.visibility === 'reviewing'
+                    ? 'text-yellow-700 dark:text-yellow-300'
+                    : project.visibility === 'accepted'
+                      ? 'text-green-700 dark:text-green-300'
+                      : 'text-red-700 dark:text-red-300',
+                ]"
+              >
+                {{ getSubmissionStatusMessage }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Submit button for draft/private projects -->
           <ButtonsPresetButton
             v-if="canSubmit"
             preset="submitProject"
@@ -249,18 +313,65 @@ const showAuthModal = ref(false);
 const canSubmit = computed(() => {
   if (!isOwner.value || !project.value) return false;
 
-  // Check if project has already been submitted
-  const hasSubmission =
-    project.value.submissions && project.value.submissions.length > 0;
-  return !hasSubmission;
+  // Only show submit button for draft projects
+  // Default to draft if visibility is not set (will be updated via API later)
+  const visibility = project.value.visibility || "draft";
+  return visibility === "draft";
+});
+
+// Get submission status message
+const getSubmissionStatusMessage = computed(() => {
+  if (!project.value) return "";
+
+  const visibility = project.value.visibility;
+
+  if (visibility === "reviewing") {
+    return "This project is currently under review by teachers. Please wait for their feedback.";
+  } else if (visibility === "accepted") {
+    return "This project has been accepted! You can view it in your submissions page.";
+  } else if (visibility === "rejected") {
+    return "This project was rejected. You can edit and resubmit it after making improvements.";
+  }
+
+  return "";
 });
 
 // Student-specific methods
 const submitProject = () => {
-  if (!canSubmit.value) return;
-  showSubmitModal.value = true;
+  if (!project.value) return;
 
-  
+  const visibility = project.value.visibility;
+  const toast = useToast();
+
+  // Check if already submitted
+  if (visibility === "reviewing") {
+    toast.add({
+      title: "Already Submitted",
+      description: "This project is currently under review by teachers.",
+      color: "warning",
+    });
+    return;
+  }
+
+  if (visibility === "accepted") {
+    toast.add({
+      title: "Already Accepted",
+      description: "This project has been accepted and cannot be resubmitted.",
+      color: "info",
+    });
+    return;
+  }
+
+  // Allow submission for draft, private, rejected, or no visibility
+  if (canSubmit.value) {
+    showSubmitModal.value = true;
+  } else {
+    toast.add({
+      title: "Cannot Submit",
+      description: "This project cannot be submitted at this time.",
+      color: "error",
+    });
+  }
 };
 
 const editProject = () => {
@@ -309,14 +420,40 @@ const confirmDelete = async () => {
 };
 
 const confirmSubmit = async () => {
+  if (!project.value) return;
+
+  const toast = useToast();
+
   try {
     isSubmitting.value = true;
 
-    // Submit project for review - add to submissions array
+    // Double-check visibility status before submission
+    const visibility = project.value.visibility;
+
+    if (visibility === "reviewing") {
+      toast.add({
+        title: "Already Under Review",
+        description: "This project is currently being reviewed by teachers.",
+        color: "warning",
+      });
+      showSubmitModal.value = false;
+      return;
+    }
+
+    if (visibility === "accepted") {
+      toast.add({
+        title: "Already Accepted",
+        description: "This project has already been accepted.",
+        color: "info",
+      });
+      showSubmitModal.value = false;
+      return;
+    }
+
+    // Submit project for review
     const success = await projectStore.submitProjectForReview(project.value.id);
 
     if (success) {
-      const toast = useToast();
       toast.add({
         title: "Project Submitted!",
         description: "Your project has been submitted to teachers for review.",
@@ -325,6 +462,9 @@ const confirmSubmit = async () => {
 
       showSubmitModal.value = false;
 
+      // Update local project visibility
+      project.value.visibility = "reviewing";
+
       // Optionally navigate to submissions page
       // await navigateTo("/student/submissions");
     } else {
@@ -332,7 +472,6 @@ const confirmSubmit = async () => {
     }
   } catch (error) {
     console.error("Error submitting project:", error);
-    const toast = useToast();
     toast.add({
       title: "Submission Failed",
       description: "Failed to submit project. Please try again.",

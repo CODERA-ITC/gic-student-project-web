@@ -216,10 +216,7 @@ export class ProjectTransformer {
         typeof projectData.course === "string"
           ? projectData.course
           : projectData.course?.name || "",
-      visibility:
-        projectData.visibility === "draft"
-          ? "private"
-          : projectData.visibility || "public",
+      visibility: projectData.visibility || "draft",
       submissions: projectData.submissions || {
         id: projectData.id || "",
         name: projectData.name || "",
