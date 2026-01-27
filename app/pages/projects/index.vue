@@ -949,7 +949,7 @@ const isValidProject = (project: any): boolean => {
   return !!(
     project &&
     project.id &&
-    project.name &&
+    project.title &&
     project.description &&
     project.category &&
     typeof project.likes === "number" &&

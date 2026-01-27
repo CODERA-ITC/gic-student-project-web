@@ -1362,7 +1362,7 @@ const loadProjectForEditing = async (projectId) => {
       });
 
       form = {
-        name: project.name || "",
+        name: project.title || "",
         description: project.description || "",
         thumbnails: project.images || [],
         category: project.category || "",
