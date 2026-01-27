@@ -1,119 +1,162 @@
 <template>
-  <div class="min-h-screen flex">
+  <div class="min-h-screen flex flex-col bg-white dark:bg-neutral-900">
     <!-- Security Questions Modal -->
     <SecurityQuestionsModal :is-open="showSecurityQuestions" :allow-close="false"
       @submit="handleSecurityQuestionsSubmit" />
-    <SecurityQuestionsModal :is-open="showSecurityQuestions" :allow-close="false"
-      @submit="handleSecurityQuestionsSubmit" />
 
-    <AuthHero />
-
-    <!-- Right Side - Sign Up Form -->
-    <div class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-neutral-900">
+    <!-- Main Content - Centered Form -->
+    <div class="flex-1 flex items-center justify-center p-8">
       <div class="w-full max-w-md">
         <!-- Header -->
-        <div class="mb-8">
+        <div class="mb-8 text-center">
           <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">
-            Create your account
+            {{ currentStep === 1 ? 'Verify Your Account' : 'Create your account' }}
           </h1>
+          <p class="text-slate-600 dark:text-neutral-400 text-sm">
+            Step {{ currentStep }} of {{ totalSteps }}
+          </p>
         </div>
 
-        <form @submit.prevent="handleSignup" class="space-y-4">
-          <!-- Full Name Input -->
-          <div>
-            <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-              Full name
-            </label>
-            <input v-model="fullName" type="text" placeholder="John Doe" required
-              class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
-          </div>
-
-          <!-- Email Input -->
-          <div>
-            <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-              Email address
-            </label>
-            <input v-model="email" type="email" placeholder="your.email@example.com" required
-              class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
-          </div>
-
-          <!-- Password Input -->
-          <div>
-            <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-              Password
-            </label>
-            <input v-model="password" type="password" placeholder="••••••••" required
-              class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
-          </div>
-
-          <!-- Confirm Password Input -->
-          <div>
-            <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
-              Confirm password
-            </label>
-            <input v-model="confirmPassword" type="password" placeholder="••••••••" required
-              class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
-          </div>
-
-          <!-- Terms & Conditions -->
-          <div class="flex items-start gap-2">
-            <input v-model="agreeToTerms" type="checkbox" required
-              class="w-4 h-4 mt-1 rounded border-slate-300 dark:border-neutral-600 text-blue-900 focus:ring-blue-900 focus:ring-offset-0 cursor-pointer" />
-            <label class="text-sm text-slate-700 dark:text-neutral-300 cursor-pointer">
-              I agree to the
-              <NuxtLink to="/terms"
-                class="text-blue-900 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors">
-                Terms & Conditions
-              </NuxtLink>
-              and
-              <NuxtLink to="/privacy"
-                class="text-blue-900 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors">
-                Privacy Policy
-              </NuxtLink>
-            </label>
-          </div>
-
-          <!-- Sign Up Button using PresetButton -->
-          <ButtonsPresetButton preset="primary" label="CREATE ACCOUNT" :loading="isLoading" :disabled="isLoading"
-            size="lg" class="w-full" type="submit" />
-
-          <!-- Error Message -->
-          <div v-if="error"
-            class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400">
-            {{ error }}
-          </div>
-        </form>
-
-        <!-- Divider -->
-        <div class="relative my-6">
-          <div class="absolute inset-0 flex items-center">
-            <div class="w-full border-t border-slate-200 dark:border-neutral-700"></div>
-          </div>
-          <div class="relative flex justify-center text-sm">
-            <span class="px-4 bg-white dark:bg-neutral-900 text-slate-500 dark:text-neutral-400">or</span>
-          </div>
+        <!-- Error Message (Global) -->
+        <div v-if="error"
+          class="mb-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400">
+          {{ error }}
         </div>
 
-        <!-- Social Sign Up -->
-        <div class="grid grid-cols-2 gap-3">
-          <button type="button" :disabled="isLoading" @click="handleGoogleSignup"
-            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
-            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
-              <UIcon name="i-logos-google-icon" class="w-6 h-6" />
-            </div>
-            <span
-              class="text-sm text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors">GOOGLE</span>
-          </button>
+        <!-- Step Container with Animation -->
+        <div class="relative overflow-hidden">
+          <Transition :name="transitionName" mode="out-in">
+            <!-- Step 1: Verify Account -->
+            <div v-if="currentStep === 1" key="step1" class="space-y-4">
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
+                    ត្រកូល <span class="text-red-500">*</span>
+                  </label>
+                  <input v-model="familyNameKh" type="text" placeholder="គង់" required
+                    class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
+                    នាម <span class="text-red-500">*</span>
+                  </label>
+                  <input v-model="givenNameKh" type="text" placeholder="សុខា" required
+                    class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
+                </div>
+              </div>
 
-          <button type="button" :disabled="isLoading" @click="handleGithubSignup"
-            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-200 flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
-            <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
-              <UIcon name="i-simple-icons-github"
-                class="w-6 h-6 text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors" />
+              <div>
+                <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
+                  Date of Birth <span class="text-red-500">*</span>
+                </label>
+                <input v-model="dob" type="date" required
+                  class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
+                  Phone Number <span class="text-red-500">*</span>
+                </label>
+                <input v-model="phone" type="tel" placeholder="012 345 678" required
+                  class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
+                  Student ID <span class="text-red-500">*</span>
+                </label>
+                <input v-model="studentId" type="text" placeholder="S123456" required
+                  class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
+              </div>
+
+              <div class="pt-4">
+                <ButtonsPresetButton preset="primary" label="NEXT" @click="nextStep" size="lg" class="w-full" />
+              </div>
             </div>
-            <span
-              class="text-sm text-slate-700 dark:text-neutral-300 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors">GITHUB</span>
-          </button>
+
+            <!-- Step 2: Create Your Account -->
+            <div v-else-if="currentStep === 2" key="step2" class="space-y-4">
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
+                    Family Name <span class="text-red-500">*</span>
+                  </label>
+                  <input v-model="familyName" type="text" placeholder="Kong" required
+                    class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
+                    Given Name <span class="text-red-500">*</span>
+                  </label>
+                  <input v-model="givenName" type="text" placeholder="Sokha" required
+                    class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
+                  Email Address <span class="text-red-500">*</span>
+                </label>
+                <input v-model="email" type="email" placeholder="your.email@example.com" required
+                  class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
+                  Password <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                  <input v-model="password" :type="showPassword ? 'text' : 'password'" placeholder="••••••••" required
+                    class="w-full px-4 py-3 pr-12 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
+                  <button type="button" @click="showPassword = !showPassword"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-neutral-500 dark:hover:text-neutral-300 transition-colors">
+                    <UIcon :name="showPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'" class="w-5 h-5" />
+                  </button>
+                </div>
+                <p class="mt-1 text-xs text-slate-500 dark:text-neutral-400">
+                  Must be at least 8 characters long
+                </p>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
+                  Verify Password <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                  <input v-model="confirmPassword" :type="showConfirmPassword ? 'text' : 'password'"
+                    placeholder="••••••••" required
+                    class="w-full px-4 py-3 pr-12 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
+                  <button type="button" @click="showConfirmPassword = !showConfirmPassword"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-neutral-500 dark:hover:text-neutral-300 transition-colors">
+                    <UIcon :name="showConfirmPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'" class="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-2 p-4 bg-slate-50 dark:bg-neutral-800 rounded-lg">
+                <input v-model="agreeToTerms" type="checkbox" required
+                  class="w-4 h-4 mt-1 rounded border-slate-300 dark:border-neutral-600 text-blue-900 focus:ring-blue-900 focus:ring-offset-0 cursor-pointer" />
+                <label class="text-sm text-slate-700 dark:text-neutral-300 cursor-pointer">
+                  I agree to the
+                  <NuxtLink to="/terms"
+                    class="text-blue-900 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors">
+                    Terms & Conditions
+                  </NuxtLink>
+                  and
+                  <NuxtLink to="/privacy"
+                    class="text-blue-900 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors">
+                    Privacy Policy
+                  </NuxtLink>
+                </label>
+              </div>
+
+              <div class="flex gap-3 pt-4">
+                <ButtonsPresetButton preset="secondary" label="BACK" @click="previousStep" size="lg" class="w-1/3" />
+                <ButtonsPresetButton preset="primary" label="CREATE ACCOUNT" :loading="isLoading"
+                  :disabled="isLoading || !agreeToTerms" @click="handleSignup" size="lg" class="w-2/3" />
+              </div>
+            </div>
+          </Transition>
         </div>
 
         <!-- Sign In Link -->
@@ -128,6 +171,12 @@
         </div>
       </div>
     </div>
+
+    <!-- Progress Bar - Fixed at Bottom -->
+    <div class="fixed bottom-0 left-0 w-full bg-slate-200 dark:bg-neutral-700 h-2">
+      <div class="h-full bg-blue-900 dark:bg-blue-600 transition-all duration-500 ease-out"
+        :style="{ width: `${(currentStep / totalSteps) * 100}%` }"></div>
+    </div>
   </div>
 </template>
 
@@ -137,14 +186,21 @@ definePageMeta({
   middleware: ["guest"],
 });
 
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useAuthStore } from "~/stores/auth";
 import { useRouter } from "vue-router";
 
 const authStore = useAuthStore();
 const router = useRouter();
 
-const fullName = ref("");
+// Form fields
+const familyNameKh = ref(""); // ត្រកូល
+const givenNameKh = ref(""); // នាម
+const dob = ref("");
+const phone = ref("");
+const studentId = ref("");
+const familyName = ref(""); // Family name in English
+const givenName = ref(""); // Given name in English
 const email = ref("");
 const password = ref("");
 const confirmPassword = ref("");
@@ -152,6 +208,109 @@ const agreeToTerms = ref(false);
 const isLoading = ref(false);
 const error = ref("");
 const showSecurityQuestions = ref(false);
+
+// Step management
+const currentStep = ref(1);
+const totalSteps = 2;
+const transitionName = ref('slide-left');
+
+// Password visibility toggles
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
+
+// Step labels
+const getStepLabel = (step) => {
+  const labels = {
+    1: 'Verify',
+    2: 'Create'
+  };
+  return labels[step] || '';
+};
+
+// Step navigation
+const nextStep = () => {
+  error.value = "";
+
+  // Validate current step before proceeding
+  if (currentStep.value === 1) {
+    if (!familyNameKh.value.trim()) {
+      error.value = "Please enter your family name in Khmer (ត្រកូល)";
+      return;
+    }
+    if (!givenNameKh.value.trim()) {
+      error.value = "Please enter your given name in Khmer (នាម)";
+      return;
+    }
+    if (!dob.value) {
+      error.value = "Please enter your date of birth";
+      return;
+    }
+    if (!phone.value.trim()) {
+      error.value = "Please enter your phone number";
+      return;
+    }
+    // Basic phone validation (Cambodia format)
+    const phoneRegex = /^0\d{8,9}$/;
+    if (!phoneRegex.test(phone.value.replace(/\s/g, ''))) {
+      error.value = "Please enter a valid phone number (e.g., 012345678)";
+      return;
+    }
+    if (!studentId.value.trim()) {
+      error.value = "Please enter your student ID";
+      return;
+    }
+  }
+
+  if (currentStep.value === 2) {
+    if (!familyName.value.trim()) {
+      error.value = "Please enter your family name";
+      return;
+    }
+    if (!givenName.value.trim()) {
+      error.value = "Please enter your given name";
+      return;
+    }
+    if (!email.value.trim()) {
+      error.value = "Please enter your email address";
+      return;
+    }
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.value)) {
+      error.value = "Please enter a valid email address";
+      return;
+    }
+    if (!password.value) {
+      error.value = "Please enter a password";
+      return;
+    }
+    if (password.value.length < 8) {
+      error.value = "Password must be at least 8 characters long";
+      return;
+    }
+    if (password.value !== confirmPassword.value) {
+      error.value = "Passwords do not match";
+      return;
+    }
+    if (!agreeToTerms.value) {
+      error.value = "You must agree to the Terms & Conditions";
+      return;
+    }
+  }
+
+  if (currentStep.value < totalSteps) {
+    transitionName.value = 'slide-left';
+    currentStep.value++;
+  }
+};
+
+const previousStep = () => {
+  error.value = "";
+  if (currentStep.value > 1) {
+    transitionName.value = 'slide-right';
+    currentStep.value--;
+  }
+};
 
 const handleSecurityQuestionsSubmit = async (answers) => {
   try {
@@ -176,31 +335,24 @@ const handleSecurityQuestionsSubmit = async (answers) => {
 const handleSignup = async () => {
   error.value = "";
 
-  // Validation
-  if (password.value !== confirmPassword.value) {
-    error.value = "Passwords do not match";
-    return;
-  }
-
-  if (password.value.length < 8) {
-    error.value = "Password must be at least 8 characters long";
-    return;
-  }
-
-  if (!agreeToTerms.value) {
-    error.value = "You must agree to the Terms & Conditions";
-    return;
-  }
-
   isLoading.value = true;
 
   try {
     await authStore.register(
-      fullName.value,
+      `${familyName.value} ${givenName.value}`,
       email.value,
       password.value,
       confirmPassword.value,
-      Role.student
+      Role.student,
+      {
+        familyNameKh: familyNameKh.value,
+        givenNameKh: givenNameKh.value,
+        familyName: familyName.value,
+        givenName: givenName.value,
+        dob: dob.value,
+        phone: phone.value,
+        studentId: studentId.value
+      }
     );
 
     // Redirect to dashboard first, then security questions will show there
@@ -214,20 +366,35 @@ const handleSignup = async () => {
     isLoading.value = false;
   }
 };
-
-// Handle Google OAuth signup
-const handleGoogleSignup = () => {
-  // Redirect directly to backend OAuth endpoint
-  const config = useRuntimeConfig();
-  const backendUrl = config.public.apiBase || 'https://gic-project.darororo.dev';
-  window.location.href = `${backendUrl}/users/google`;
-};
-
-// Handle GitHub OAuth signup
-const handleGithubSignup = () => {
-  // Redirect directly to backend OAuth endpoint
-  const config = useRuntimeConfig();
-  const backendUrl = config.public.apiBase || 'https://gic-project.darororo.dev';
-  window.location.href = `${backendUrl}/users/github`;
-};
 </script>
+
+
+<style scoped>
+/* Slide animations */
+.slide-left-enter-active,
+.slide-left-leave-active,
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-left-enter-from {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.slide-left-leave-to {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+.slide-right-enter-from {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+.slide-right-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+</style>
