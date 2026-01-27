@@ -10,7 +10,7 @@
         <!-- Header -->
         <div class="mb-8 text-center">
           <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">
-            {{ currentStep === 1 ? 'Verify Your Account' : 'Create your account' }}
+            {{ currentStep === 1 ? 'Your GIC Information' : 'Create your account' }}
           </h1>
           <p class="text-slate-600 dark:text-neutral-400 text-sm">
             Step {{ currentStep }} of {{ totalSteps }}
@@ -65,7 +65,7 @@
                 <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                   Student ID <span class="text-red-500">*</span>
                 </label>
-                <input v-model="studentId" type="text" placeholder="S123456" required
+                <input v-model="studentId" type="text" placeholder="e2021xxx" required
                   class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
               </div>
 
@@ -250,9 +250,9 @@ const nextStep = () => {
       return;
     }
     // Basic phone validation (Cambodia format)
-    const phoneRegex = /^0\d{8,9}$/;
+    const phoneRegex = /^\d{8,9}$/;
     if (!phoneRegex.test(phone.value.replace(/\s/g, ''))) {
-      error.value = "Please enter a valid phone number (e.g., 012345678)";
+      error.value = "Please enter a valid phone number (e.g., 12345678)";
       return;
     }
     if (!studentId.value.trim()) {
@@ -334,35 +334,32 @@ const handleSecurityQuestionsSubmit = async (answers) => {
 
 const handleSignup = async () => {
   error.value = "";
-
   isLoading.value = true;
 
   try {
-    await authStore.register(
-      `${familyName.value} ${givenName.value}`,
-      email.value,
-      password.value,
-      confirmPassword.value,
-      Role.student,
-      {
-        familyNameKh: familyNameKh.value,
-        givenNameKh: givenNameKh.value,
-        familyName: familyName.value,
-        givenName: givenName.value,
-        dob: dob.value,
-        phone: phone.value,
-        studentId: studentId.value
-      }
-    );
+    const config = useRuntimeConfig();
+    const apiBase = config.public.apiBase || 'https://gic-project.darororo.dev';
 
-    // Redirect to dashboard first, then security questions will show there
-    if (authStore.isTeacher) {
-      await router.push('/teacher/dashboard');
-    } else {
-      await router.push('/student/dashboard');
-    }
+    const response = await $fetch(`${apiBase}/users/signup`, {
+      method: 'POST',
+      body: {
+        firstName: familyName.value,
+        lastName: givenName.value,
+        email: email.value,
+        password: password.value,
+        departmentCode: "GIC",
+        bio: "Student at GIC",
+        studentId: studentId.value,
+        nameKh: `${familyNameKh.value} ${givenNameKh.value}`,
+        dob: dob.value,
+        phoneNumber: phone.value
+      }
+    });
+
+    // Success - redirect to login or dashboard
+    await router.push('/login');
   } catch (err) {
-    error.value = err instanceof Error ? err.message : "Sign up failed";
+    error.value = err?.data?.message || err?.message || "Sign up failed. Please try again.";
     isLoading.value = false;
   }
 };
