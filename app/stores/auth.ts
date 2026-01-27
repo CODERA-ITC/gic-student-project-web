@@ -671,6 +671,10 @@ export const useAuthStore = defineStore("auth", {
         console.log("🔄 Attempting to refresh access token...");
 
         const responseData = await $fetch("/api/users/refresh", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: {
             refresh_token: refreshToken,
           },
