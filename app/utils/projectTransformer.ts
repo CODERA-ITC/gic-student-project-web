@@ -210,9 +210,12 @@ export class ProjectTransformer {
         projectData.visibility === "draft"
           ? "private"
           : projectData.visibility || "public",
-      submissions: Array.isArray(projectData.submissions)
-        ? projectData.submissions
-        : [],
+      submissions: projectData.submissions || {
+        id: "",
+        name: "",
+        date: new Date().toISOString().split("T")[0],
+        status: "",
+      },
     };
   }
 

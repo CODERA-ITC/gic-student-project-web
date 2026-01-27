@@ -64,7 +64,7 @@ export interface Project {
     name: string;
     date: string;
     status: string;
-  }[];
+  };
 }
 
 export interface ProjectStats {
