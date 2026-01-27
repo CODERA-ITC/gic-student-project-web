@@ -669,6 +669,9 @@ export const useProjectStore = defineStore("projects", {
 
         console.log(`Found ${submissions.length} total submissions`);
 
+        // Update store state with fetched submissions
+        this.projects = submissions;
+
         return submissions;
       } catch (error) {
         console.error("Error fetching all submissions:", error);

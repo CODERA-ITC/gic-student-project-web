@@ -1,10 +1,7 @@
 <template>
   <div class="min-h-screen bg-white dark:bg-slate-900">
     <!-- Loading State -->
-    <div
-      v-if="authStore.isLoading"
-      class="min-h-screen flex items-center justify-center"
-    >
+    <div v-if="isLoading" class="min-h-screen flex items-center justify-center">
       <div class="text-center space-y-4">
         <div
           class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"
@@ -14,7 +11,7 @@
     </div>
 
     <!-- Dashboard Content -->
-    <div v-else>
+    <div v-else-if="!isLoading && teacher.name">
       <!-- Header Section -->
       <div
         class="py-16 bg-gray-100 dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700"
@@ -285,7 +282,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useAuthStore } from "~/stores/auth";
 import { useProjectStore } from "~/stores/projects";
 import ButtonsPresetButton from "~/components/buttons/PresetButton.vue";
@@ -298,9 +295,60 @@ definePageMeta({
   middleware: ["auth", "teacher"],
 });
 
+// Local loading state
+const isLoading = ref(true);
+
 // Fetch submissions on mount
 onMounted(async () => {
-  await projectsStore.fetchAllSubmissions();
+  try {
+    isLoading.value = true;
+
+    // Wait for auth store to be ready
+    if (authStore.isLoading) {
+      console.log("⏳ Waiting for authentication to complete...");
+      await new Promise((resolve) => {
+        const unwatch = watch(
+          () => authStore.isLoading,
+          (loading) => {
+            if (!loading) {
+              unwatch();
+              resolve();
+            }
+          },
+        );
+      });
+    }
+
+    // Ensure user is authenticated
+    if (!authStore.isAuthenticated || !authStore.currentUser) {
+      console.warn("⚠️ User not authenticated, redirecting...");
+      await navigateTo("/login");
+      return;
+    }
+
+    console.log("🔄 Fetching submissions data...");
+
+    // Fetch all submissions with error handling
+    const submissions = await projectsStore.fetchAllSubmissions();
+
+    if (!submissions || submissions.length === 0) {
+      console.log("ℹ️ No submissions found");
+    } else {
+      console.log(`✅ Loaded ${submissions.length} submissions successfully`);
+    }
+  } catch (error) {
+    console.error("❌ Error loading dashboard data:", error);
+
+    // Show error toast to user
+    const toast = useToast();
+    toast.add({
+      title: "Error Loading Dashboard",
+      description: "Failed to load submissions. Please refresh the page.",
+      color: "error",
+    });
+  } finally {
+    isLoading.value = false;
+  }
 });
 
 // Get teacher info from auth store

@@ -704,7 +704,22 @@ export const useAuthStore = defineStore("auth", {
         console.log("✅ Token refreshed successfully");
 
         // Fetch complete user details from API
-        await this.fetchCurrentUser();
+        try {
+          await this.fetchCurrentUser();
+
+          // Update authentication state
+          this.isAuthenticated = true;
+          this.error = null;
+        } catch (userError) {
+          console.error(
+            "❌ Failed to fetch user after token refresh:",
+            userError,
+          );
+          // Token is valid but user fetch failed - still mark as authenticated
+          // with the token, user can try again later
+          this.isAuthenticated = true;
+          this.error = null;
+        }
 
         return true;
       } catch (error) {
