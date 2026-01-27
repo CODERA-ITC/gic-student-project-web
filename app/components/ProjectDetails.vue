@@ -110,7 +110,7 @@
             </UBadge>
           </div>
           <h1
-            class="text-4xl lg:text-5x l font-black text-gray-900 dark:text-white"
+            class="text-4xl lg:text-5xl font-semibold font-black text-gray-900 dark:text-white"
           >
             {{ project.name }}
           </h1>

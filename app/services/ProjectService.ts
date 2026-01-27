@@ -305,7 +305,6 @@ export class ProjectService {
     try {
       await $fetch(`${this.baseUrl}/${projectId}/view`, {
         method: "POST",
-        headers: this.getAuthHeaders(),
       });
     } catch (error) {
       console.error(

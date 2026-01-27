@@ -61,7 +61,10 @@
           <div class="flex-1">
             <div class="flex items-center justify-center gap-1 flex-wrap">
               <!-- Loading state -->
-              <div v-if="isLoadingData" class="flex gap-2">
+              <div
+                v-if="isLoadingData && categories.length <= 1"
+                class="flex gap-2"
+              >
                 <div
                   class="h-10 w-20 bg-gray-200 dark:bg-slate-700 rounded-lg animate-pulse"
                 ></div>
@@ -638,6 +641,7 @@ import { useAuthStore } from "~/stores/auth";
 const projectStore = useProjectStore();
 const authStore = useAuthStore();
 const isLoadingData = ref(false);
+const isLoadingCategories = ref(false);
 const dataFetchError = ref<string | null>(null);
 const isInitialized = ref(false);
 
@@ -650,12 +654,15 @@ const initializeData = async () => {
   dataFetchError.value = null;
 
   try {
-    // Fetch categories, tags, and projects in parallel
+    // Fetch categories FIRST (they're fast and needed for UI)
+    if (projectStore.availableCategories.length <= 1) {
+      isLoadingCategories.value = true;
+      await projectStore.fetchCategories();
+      isLoadingCategories.value = false;
+    }
+
+    // Then fetch tags and projects in parallel
     await Promise.all([
-      // cuz if only 1 category, likely just "All"
-      projectStore.availableCategories.length <= 1
-        ? projectStore.fetchCategories()
-        : Promise.resolve(),
       projectStore.availableTags.length === 0
         ? projectStore.fetchTags()
         : Promise.resolve(),
@@ -675,31 +682,29 @@ const initializeData = async () => {
     console.error("Error fetching data:", error);
     dataFetchError.value =
       error instanceof Error ? error.message : "Failed to load projects";
+    isLoadingCategories.value = false;
   } finally {
     isLoadingData.value = false;
   }
 };
 
-// Initialize on before mount (SSR friendly)
-onBeforeMount(async () => {
-  await initializeData();
-});
-
-// Also initialize on mounted for client-side navigation
+// Initialize on mounted (client-side)
 onMounted(async () => {
   await initializeData();
 });
 
-// Watch for route changes and reinitialize
-const route = useRoute();
-watch(
-  () => route.path,
-  async (newPath, oldPath) => {
-    if (newPath === "/projects" && newPath !== oldPath) {
-      await initializeData();
-    }
-  },
-);
+// Watch for route changes - only reset if coming from different route
+// const route = useRoute();
+// watch(
+//   () => route.path,
+//   async (newPath, oldPath) => {
+//     if (newPath === "/projects" && oldPath && oldPath !== "/projects") {
+//       // Coming from a different page - reset initialization flag
+//       isInitialized.value = false;
+//       await initializeData();
+//     }
+//   },
+// );
 
 // Store computed properties
 const categories = computed(() => {
@@ -713,7 +718,7 @@ const categories = computed(() => {
 });
 
 const isCategoriesLoaded = computed(() => {
-  return !isLoadingData.value && categories.value.length > 0;
+  return !isLoadingCategories.value && categories.value.length > 0;
 });
 
 const categoryOptions = computed(() => categories.value.slice(0, 6));
@@ -811,6 +816,29 @@ const sortOptions = ref([
     icon: "i-heroicons-eye",
   },
 ]);
+
+// const sortOptions = ref([
+//   {
+//     label: "Gen 27",
+//     value: "recent",
+//     icon: "i-heroicons-clock",
+//   },
+//   {
+//     label: "Gen 26",
+//     value: "oldest",
+//     icon: "i-heroicons-calendar",
+//   },
+//   {
+//     label: "Gen 25",
+//     value: "liked",
+//     icon: "i-heroicons-heart",
+//   },
+//   {
+//     label: "Gen 24",
+//     value: "viewed",
+//     icon: "i-heroicons-eye",
+//   },
+// ]);
 
 const selectedSort = computed({
   get: () => {

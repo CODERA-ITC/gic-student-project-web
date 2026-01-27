@@ -519,13 +519,7 @@ export const useProjectStore = defineStore("projects", {
 
     async incrementViews(projectId: string | number): Promise<void> {
       try {
-        const authStore = useAuthStore();
-        if (!authStore.token) {
-          console.warn("User not authenticated, skipping view tracking");
-          return;
-        }
-
-        // Use ProjectService to track view
+        // Track view regardless of authentication status
         await projectService.trackView(projectId.toString());
 
         console.log("✅ View tracked successfully on backend");
