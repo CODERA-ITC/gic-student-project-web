@@ -652,7 +652,8 @@ const initializeData = async () => {
   try {
     // Fetch categories, tags, and projects in parallel
     await Promise.all([
-      projectStore.availableCategories.length === 0
+      // cuz if only 1 category, likely just "All"
+      projectStore.availableCategories.length <= 1
         ? projectStore.fetchCategories()
         : Promise.resolve(),
       projectStore.availableTags.length === 0

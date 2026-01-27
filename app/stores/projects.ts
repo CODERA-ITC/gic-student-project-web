@@ -586,10 +586,6 @@ export const useProjectStore = defineStore("projects", {
         // Transform project using ProjectTransformer
         const transformedProject = transformProject(response);
 
-        // Don't update the main projects array to avoid mixing list and detail data
-        // The projects array should only be updated by fetchProjects() for consistency
-        // Just return the transformed project for display on detail page
-
         return transformedProject;
       } catch (error) {
         console.error("Error fetching project by ID:", error);
