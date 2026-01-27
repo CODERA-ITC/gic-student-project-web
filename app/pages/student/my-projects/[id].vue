@@ -259,6 +259,8 @@ const canSubmit = computed(() => {
 const submitProject = () => {
   if (!canSubmit.value) return;
   showSubmitModal.value = true;
+
+  
 };
 
 const editProject = () => {

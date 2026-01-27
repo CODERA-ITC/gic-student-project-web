@@ -1053,54 +1053,10 @@ export const useProjectStore = defineStore("projects", {
     // Submit project for review (add to submissions)
     async submitProjectForReview(projectId: string): Promise<boolean> {
       try {
-        // Find project in user projects
-        // const userProject = this.userProjects.find((p) => p.id === projectId);
-        // if (!userProject) {
-        //   console.error("Project not found in user projects");
-        //   return false;
-        // }
-
-        // // Initialize submissions array if it doesn't exist
-        // if (!userProject.submissions) {
-        //   userProject.submissions = [];
-        // }
-        // // Initialize submissions array if it doesn't exist
-        // if (!userProject.submissions) {
-        //   userProject.submissions = [];
-        // }
-
-        // // Check if already submitted
-        // const alreadySubmitted = userProject.submissions.some(
-        //   (sub) => sub.id === projectId,
-        // );
-        // if (alreadySubmitted) {
-        //   console.warn("Project already submitted");
-        //   return false;
-        // }
-
-        // // Add new submission
-        // const newSubmission = {
-        //   id: projectId,
-        //   name: userProject.name,
-        //   date: new Date().toISOString(),
-        //   status: "Under Review",
-        // };
-        // userProject.submissions.push(newSubmission);
-
-        // // Also update in all projects if it exists there
-        // const project = this.projects.find((p) => p.id === projectId);
-        // if (project) {
-        //   if (!project.submissions) {
-        //     project.submissions = [];
-        //   }
-        //   project.submissions.push(newSubmission);
-        // }
-
-        // Save to localStorage
-        // this.saveUserCreatedProjects();
-
-        // In real app, sync with backend
-        // await api.submitProject(projectId);
+        const response = await projectService.submitForReview(projectId);
+        if (response) {
+          console.log("✅ Project submitted for review successfully");
+        }
 
         return true;
       } catch (error) {

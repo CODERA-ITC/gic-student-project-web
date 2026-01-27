@@ -40,7 +40,7 @@
           <img
             :src="currentImageUrl"
             :alt="project.name || 'Project image'"
-            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 rounded-lg"
+            class="w-full h-full object-cover transition-all duration-500 ease-in-out group-hover:scale-105 rounded-lg"
             @error="handleImageError"
           />
 
@@ -81,7 +81,7 @@
             <button
               v-for="(_, idx) in project.images"
               :key="idx"
-              @click.stop="currentImageIndex = idx"
+              @click.stop.prevent="handleDotClick(idx)"
               :class="[
                 'w-2 h-2 rounded-full transition-all duration-300',
                 idx === currentImageIndex
@@ -350,16 +350,24 @@ const handleImageError = (event) => {
 };
 
 const startAutoPlay = () => {
-  // Only run on client side
+  // Only run on client side and if multiple images
+  if (typeof window === "undefined") return;
+
+  // Clear any existing interval first
+  stopAutoPlay();
+
   if (
-    process.client &&
     props.project?.images &&
     Array.isArray(props.project.images) &&
     props.project.images.length > 1
   ) {
+    console.log(
+      `Starting carousel for project ${props.project.id} with ${props.project.images.length} images`,
+    );
     autoPlayInterval = setInterval(() => {
-      const maxIndex = props.project.images.length - 1;
-      currentImageIndex.value = (currentImageIndex.value + 1) % (maxIndex + 1);
+      // Simple increment with wrap-around
+      currentImageIndex.value =
+        (currentImageIndex.value + 1) % props.project.images.length;
     }, 4000);
   }
 };
@@ -369,6 +377,13 @@ const stopAutoPlay = () => {
     clearInterval(autoPlayInterval);
     autoPlayInterval = null;
   }
+};
+
+const handleDotClick = (index) => {
+  currentImageIndex.value = index;
+  // Restart autoplay after manual navigation
+  stopAutoPlay();
+  startAutoPlay();
 };
 
 // Watch for project changes and reset image index
@@ -406,20 +421,18 @@ watch(
   },
   { deep: true, immediate: true },
 );
-// Only mount on client side
-if (process.client) {
-  onMounted(() => {
-    // Reset image index on mount
-    currentImageIndex.value = 0;
-    startAutoPlay();
-  });
 
-  onUnmounted(() => {
-    stopAutoPlay();
-    // Reset image index on unmount for cleanup
-    currentImageIndex.value = 0;
-  });
-}
+onMounted(() => {
+  // Reset image index on mount
+  currentImageIndex.value = 0;
+  startAutoPlay();
+});
+
+onUnmounted(() => {
+  stopAutoPlay();
+  // Reset image index on unmount for cleanup
+  currentImageIndex.value = 0;
+});
 </script>
 
 <style scoped>

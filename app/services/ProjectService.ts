@@ -279,6 +279,21 @@ export class ProjectService {
     }
   }
 
+  async submitProjectForReview(projectId: string): Promise<any> {
+    try {
+      return await $fetch(`${this.baseUrl}/submit/${projectId}`, {
+        method: "POST",
+        headers: this.getAuthHeaders(),
+      });
+    } catch (error) {
+      console.error(
+        `ProjectService: Failed to submit project ${projectId}`,
+        error,
+      );
+      throw error;
+    }
+  }
+
   /**
    * Like/Unlike a project
    */
