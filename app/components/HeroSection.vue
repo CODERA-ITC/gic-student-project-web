@@ -21,7 +21,7 @@
         <div class="space-y-8 pt-8">
           <div class="space-y-4">
             <h1
-              class="text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight"
+              class="text-5xl lg:text-6xl font-semibold text-gray-900 dark:text-white leading-tight"
             >
               Showcase Your Innovation
             </h1>
@@ -48,19 +48,25 @@
             class="grid grid-cols-3 gap-4 pt-8 border-t border-gray-300 dark:border-neutral-700"
           >
             <div>
-              <div class="text-3xl font-bold text-slate-700 dark:text-blue-400">
+              <div
+                class="text-3xl font-semibold text-slate-700 dark:text-blue-400"
+              >
                 {{ projects }}+
               </div>
               <p class="text-sm text-gray-600 dark:text-gray-400">Projects</p>
             </div>
             <div>
-              <div class="text-3xl font-bold text-slate-700 dark:text-blue-400">
+              <div
+                class="text-3xl font-semibold text-slate-700 dark:text-blue-400"
+              >
                 {{ students }}+
               </div>
               <p class="text-sm text-gray-600 dark:text-gray-400">Students</p>
             </div>
             <div>
-              <div class="text-3xl font-bold text-slate-700 dark:text-blue-400">
+              <div
+                class="text-3xl font-semibold text-slate-700 dark:text-blue-400"
+              >
                 {{ gens }}
               </div>
               <p class="text-sm text-gray-600 dark:text-gray-400">Gens</p>
@@ -130,7 +136,7 @@ onMounted(() => {
         }
       });
     },
-    { threshold: 0.5 }
+    { threshold: 0.5 },
   );
 
   if (containerRef.value) {
@@ -185,7 +191,8 @@ onMounted(() => {
 
 /* Grid pattern background */
 .bg-grid-pattern {
-  background-image: linear-gradient(
+  background-image:
+    linear-gradient(
       0deg,
       transparent 24%,
       rgba(255, 255, 255, 0.05) 25%,
@@ -241,8 +248,8 @@ onMounted(() => {
 .typewriter::after {
   width: 0.125em;
   background: black;
-  animation: typing v-bind("typeWriterSpeed") steps(v-bind("typeWriterChars"))
-      forwards,
+  animation:
+    typing v-bind("typeWriterSpeed") steps(v-bind("typeWriterChars")) forwards,
     blink 1s steps(v-bind("typeWriterChars")) infinite;
   margin-left: 2px;
 }

@@ -1,3 +1,5 @@
+import { de } from "zod/locales";
+
 export const getRandomProject = () => {
   const projectNames = [
     "Smart Parking System",
@@ -71,51 +73,69 @@ export const getRandomProject = () => {
 
   const projectName = randomPick(projectNames);
 
+  // return {
+  //   name: projectName,
+  //   description: `${projectName} is a university project focusing on building a complete system including design, development, and testing.`,
+  //   thumbnails: [],
+  //   category: "",
+  //   academicYear: randomPick(academicYears),
+  //   technologies: getRandomTechnologies(),
+  //   githubUrl: `https://github.com/demo/${projectName.toLowerCase().replaceAll(" ", "-")}`,
+  //   demoUrl: `https://${projectName.toLowerCase().replaceAll(" ", "-")}.demo.com`,
+  //   visibility: Math.random() > 0.5 ? "public" : "private",
+  //   duration: `${randomInt(1, 6)} months`,
+  //   teamSize: randomInt(2, 5),
+  //   teamMembers: getRandomMembers(),
+  //   feature: [
+  //     {
+  //       name: "Planning & Research",
+  //       description:
+  //         "Defined system scope, requirements, and collected references.",
+  //       date: "2025-09-01",
+  //       icon: "i-lucide-book-open",
+  //       status: "done",
+  //     },
+  //     {
+  //       name: "Development",
+  //       description:
+  //         "Implemented core features and integrated backend services.",
+  //       date: "2025-10-01",
+  //       icon: "i-lucide-code",
+  //       status: "done",
+  //     },
+  //     {
+  //       name: "Testing & Improvements",
+  //       description: "Fixed bugs, improved UI, and optimized performance.",
+  //       date: "2025-11-01",
+  //       icon: "i-lucide-bug",
+  //       status: "done",
+  //     },
+  //     {
+  //       name: "Deployment",
+  //       description: "Deployed the project and prepared documentation.",
+  //       date: "2025-12-01",
+  //       icon: "i-lucide-cloud",
+  //       status: "done",
+  //     },
+  //   ],
+  //   course: "",
+  //   tags: [],
+  // };
+
   return {
-    name: projectName,
-    description: `${projectName} is a university project focusing on building a complete system including design, development, and testing.`,
+    name: "",
+    description: "",
     thumbnails: [],
     category: "",
-    academicYear: randomPick(academicYears),
-    technologies: getRandomTechnologies(),
-    githubUrl: `https://github.com/demo/${projectName.toLowerCase().replaceAll(" ", "-")}`,
-    demoUrl: `https://${projectName.toLowerCase().replaceAll(" ", "-")}.demo.com`,
-    visibility: Math.random() > 0.5 ? "public" : "private",
-    duration: `${randomInt(1, 6)} months`,
-    teamSize: randomInt(2, 5),
-    teamMembers: getRandomMembers(),
-    feature: [
-      {
-        name: "Planning & Research",
-        description:
-          "Defined system scope, requirements, and collected references.",
-        date: "2025-09-01",
-        icon: "i-lucide-book-open",
-        status: "done",
-      },
-      {
-        name: "Development",
-        description:
-          "Implemented core features and integrated backend services.",
-        date: "2025-10-01",
-        icon: "i-lucide-code",
-        status: "done",
-      },
-      {
-        name: "Testing & Improvements",
-        description: "Fixed bugs, improved UI, and optimized performance.",
-        date: "2025-11-01",
-        icon: "i-lucide-bug",
-        status: "done",
-      },
-      {
-        name: "Deployment",
-        description: "Deployed the project and prepared documentation.",
-        date: "2025-12-01",
-        icon: "i-lucide-cloud",
-        status: "done",
-      },
-    ],
+    academicYear: "",
+    technologies: [],
+    githubUrl: "",
+    demoUrl: "",
+    visibility: "",
+    duration: "",
+    teamSize: null,
+    teamMembers: [],
+    feature: [],
     course: "",
     tags: [],
   };

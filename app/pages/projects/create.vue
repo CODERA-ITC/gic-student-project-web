@@ -66,7 +66,7 @@
               >
                 <div
                   :class="[
-                    'w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all',
+                    'w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all',
                     currentStep > idx
                       ? 'bg-blue-900 text-white'
                       : currentStep === idx
@@ -90,7 +90,7 @@
 
             <!-- Step 1: Basic Info -->
             <div v-if="currentStep === 0" class="space-y-6 animate-fadeIn">
-              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
                 Basic Information
               </h2>
 
@@ -319,7 +319,7 @@
 
             <!-- Step 2: Technical Details -->
             <div v-if="currentStep === 1" class="space-y-6 animate-fadeIn">
-              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
                 Technical Details
               </h2>
 
@@ -504,7 +504,7 @@
 
             <!-- Step 3: Project Details -->
             <div v-if="currentStep === 2" class="space-y-6 animate-fadeIn">
-              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
                 Project Details
               </h2>
 
@@ -891,7 +891,7 @@
 
             <!-- Step 4: Review & Submit -->
             <div v-if="currentStep === 3" class="space-y-6 animate-fadeIn">
-              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
                 Review Your Project
               </h2>
 
@@ -931,7 +931,7 @@
                       </div>
                     </div>
                     <h3
-                      class="text-2xl font-bold text-gray-900 dark:text-white"
+                      class="text-2xl font-semibold text-gray-900 dark:text-white"
                     >
                       {{ form.name }}
                     </h3>
@@ -1136,7 +1136,7 @@
             name="i-heroicons-lock-closed"
             class="w-16 h-16 text-blue-500 mx-auto mb-4"
           />
-          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
             Authentication Required
           </h2>
           <p class="text-gray-600 dark:text-gray-400">
@@ -1547,6 +1547,24 @@ const FORM_STORAGE_KEY = "gic-project-draft";
 
 const saveToLocalStorage = () => {
   if (editMode.value) return; // Don't save drafts when editing
+
+  // Check if form has any meaningful content before saving
+  const hasContent =
+    form.name?.trim() ||
+    form.description?.trim() ||
+    form.category ||
+    form.academicYear ||
+    (form.technologies && form.technologies.length > 0) ||
+    (form.thumbnails && form.thumbnails.length > 0) ||
+    form.githubUrl?.trim() ||
+    form.demoUrl?.trim() ||
+    (form.teamMembers && form.teamMembers.length > 0) ||
+    (form.tags && form.tags.length > 0);
+
+  if (!hasContent) {
+    // Don't save completely empty drafts
+    return;
+  }
 
   try {
     isSaving.value = true;

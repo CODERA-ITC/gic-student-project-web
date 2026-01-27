@@ -41,7 +41,9 @@
       >
         <div class="flex items-center justify-between">
           <div>
-            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+            <h2
+              class="text-2xl font-semibold text-gray-900 dark:text-white mb-1"
+            >
               {{ favoriteProjects.length }} Favorite Projects
             </h2>
             <p class="text-gray-600 dark:text-gray-400">
@@ -106,7 +108,7 @@
           name="i-heroicons-heart"
           class="w-24 h-24 text-gray-300 dark:text-gray-600 mb-4"
         />
-        <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+        <h3 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
           No favorites yet
         </h3>
         <p class="text-gray-600 dark:text-gray-400 mb-6 text-center max-w-md">

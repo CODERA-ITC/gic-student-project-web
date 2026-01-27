@@ -39,7 +39,7 @@
             class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
           >
             <div>
-              <h2 class="text-xl font-bold text-gray-900 dark:text-white">
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
                 Submitted Projects
               </h2>
               <p class="text-sm text-gray-500 dark:text-slate-400 mt-1">
@@ -364,19 +364,19 @@ const filteredSubmissions = computed(() => {
     (submission) =>
       submission.projectName.toLowerCase().includes(query) ||
       submission.category.toLowerCase().includes(query) ||
-      submission.status.toLowerCase().includes(query)
+      submission.status.toLowerCase().includes(query),
   );
 });
 
 const totalPages = computed(() =>
-  Math.ceil(filteredSubmissions.value.length / itemsPerPage.value)
+  Math.ceil(filteredSubmissions.value.length / itemsPerPage.value),
 );
 
 const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage.value);
 const endIndex = computed(() => startIndex.value + itemsPerPage.value);
 
 const paginatedSubmissions = computed(() =>
-  filteredSubmissions.value.slice(startIndex.value, endIndex.value)
+  filteredSubmissions.value.slice(startIndex.value, endIndex.value),
 );
 
 const displayedPages = computed(() => {
@@ -445,7 +445,7 @@ const handleCancelConfirm = async () => {
   try {
     isCanceling.value = true;
     const project = projectStore.userProjects.find(
-      (p) => p.id === selectedSubmissionId.value
+      (p) => p.id === selectedSubmissionId.value,
     );
 
     if (project && project.submissions && project.submissions.length > 0) {
@@ -522,7 +522,9 @@ useHead({
 
 .modal-enter-active .relative,
 .modal-leave-active .relative {
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
 }
 
 .modal-enter-from .relative,

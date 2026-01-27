@@ -55,7 +55,7 @@ const roadmap = [
   <UContainer
     class="min-h-screen bg-background py-12 bg-white dark:bg-slate-900"
   >
-    <h1 class="text-3xl font-bold mb-6">Project Development Roadmap</h1>
+    <h1 class="text-3xl font-semibold mb-6">Project Development Roadmap</h1>
     <RoadmapInfographic :milestones="roadmap" />
   </UContainer>
 </template>

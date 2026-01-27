@@ -1,7 +1,7 @@
 <template>
   <div class="p-6 space-y-6">
     <div>
-      <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-1">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-1">
         Privacy Settings
       </h2>
       <p class="text-sm text-gray-600 dark:text-slate-400">

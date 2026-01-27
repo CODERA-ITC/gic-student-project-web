@@ -11,7 +11,7 @@
       <!-- Badge -->
       <span
         v-if="unreadCount > 0"
-        class="absolute top-1 right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1 -translate-y-1 bg-red-500 rounded-full"
+        class="absolute top-1 right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-semibold leading-none text-white transform translate-x-1 -translate-y-1 bg-red-500 rounded-full"
       >
         {{ unreadCount > 9 ? "9+" : unreadCount }}
       </span>
@@ -154,13 +154,13 @@ interface NotificationItem {
   title: string;
   message: string;
   type:
-  | "success"
-  | "error"
-  | "warning"
-  | "info"
-  | "project"
-  | "approval"
-  | "comment";
+    | "success"
+    | "error"
+    | "warning"
+    | "info"
+    | "project"
+    | "approval"
+    | "comment";
   timestamp: string;
   duration?: number;
   read?: boolean;
@@ -210,11 +210,11 @@ onUnmounted(() => {
 watchEffect(() => {
   console.log(
     "🔔 NotificationBell received notifications:",
-    props.notifications
+    props.notifications,
   );
   console.log(
     "🔔 NotificationBell notifications count:",
-    props.notifications.length
+    props.notifications.length,
   );
 });
 

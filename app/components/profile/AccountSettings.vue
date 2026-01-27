@@ -1,7 +1,7 @@
 <template>
   <div class="p-6 space-y-6">
     <div>
-      <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-1">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-1">
         Account Settings
       </h2>
       <p class="text-sm text-gray-600 dark:text-slate-400">
@@ -18,51 +18,86 @@
       <!-- Security Questions -->
       <div v-if="!loadingQuestions" class="space-y-4">
         <div v-for="(question, index) in securityQuestions" :key="question.id">
-          <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+          <label
+            class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
+          >
             {{ index + 1 }}. {{ question.questions }}
             <span class="text-red-500">*</span>
           </label>
-          <UInput v-model="securityAnswers[question.id]" type="text" placeholder="Enter your answer" size="lg"
-            required />
+          <UInput
+            v-model="securityAnswers[question.id]"
+            type="text"
+            placeholder="Enter your answer"
+            size="lg"
+            required
+          />
         </div>
       </div>
       <div v-else class="flex justify-center py-4">
-        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-900 dark:border-blue-400"></div>
+        <div
+          class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-900 dark:border-blue-400"
+        ></div>
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+        <label
+          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
+        >
           4. New Password
           <span class="text-red-500">*</span>
         </label>
-        <UInput v-model="passwordData.new" type="password" placeholder="Enter new password" size="lg" required />
+        <UInput
+          v-model="passwordData.new"
+          type="password"
+          placeholder="Enter new password"
+          size="lg"
+          required
+        />
         <p class="text-xs text-slate-500 dark:text-neutral-500 mt-1">
           Must be at least 8 characters long
         </p>
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+        <label
+          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
+        >
           5. Confirm New Password
           <span class="text-red-500">*</span>
         </label>
-        <UInput v-model="passwordData.confirm" type="password" placeholder="Confirm new password" size="lg" required />
+        <UInput
+          v-model="passwordData.confirm"
+          type="password"
+          placeholder="Confirm new password"
+          size="lg"
+          required
+        />
       </div>
 
       <!-- Error Message -->
-      <div v-if="passwordError"
-        class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400">
+      <div
+        v-if="passwordError"
+        class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400"
+      >
         {{ passwordError }}
       </div>
 
       <!-- Success Message -->
-      <div v-if="passwordSuccess"
-        class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 text-sm text-green-700 dark:text-green-400">
+      <div
+        v-if="passwordSuccess"
+        class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 text-sm text-green-700 dark:text-green-400"
+      >
         {{ passwordSuccess }}
       </div>
 
       <div class="pt-2">
-        <ButtonsPresetButton preset="submit" label="Update Password" icon="" :loading="isUpdating"
-          :disabled="isUpdating" @click="handleUpdatePassword" />
+        <ButtonsPresetButton
+          preset="submit"
+          label="Update Password"
+          icon=""
+          :loading="isUpdating"
+          :disabled="isUpdating"
+          @click="handleUpdatePassword"
+        />
       </div>
     </div>
 
@@ -77,8 +112,11 @@
             Add an extra layer of security to your account
           </p>
         </div>
-        <ButtonsPresetButton :preset="twoFactorEnabled ? 'delete' : 'save'"
-          :label="twoFactorEnabled ? 'Disable' : 'Enable'" @click="toggleTwoFactor" />
+        <ButtonsPresetButton
+          :preset="twoFactorEnabled ? 'delete' : 'save'"
+          :label="twoFactorEnabled ? 'Disable' : 'Enable'"
+          @click="toggleTwoFactor"
+        />
       </div>
     </div>
 
@@ -88,10 +126,16 @@
         Active Sessions
       </h3>
       <div class="space-y-3">
-        <div v-for="session in activeSessions" :key="session.id"
-          class="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-700/30 rounded-lg">
+        <div
+          v-for="session in activeSessions"
+          :key="session.id"
+          class="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-700/30 rounded-lg"
+        >
           <div class="flex items-center gap-3">
-            <UIcon :name="session.icon" class="w-5 h-5 text-gray-600 dark:text-slate-400" />
+            <UIcon
+              :name="session.icon"
+              class="w-5 h-5 text-gray-600 dark:text-slate-400"
+            />
             <div>
               <p class="text-sm font-medium text-gray-900 dark:text-white">
                 {{ session.device }}
@@ -101,9 +145,17 @@
               </p>
             </div>
           </div>
-          <ButtonsPresetButton v-if="!session.current" preset="delete" label="Revoke" size="xs"
-            @click="revokeSession(session.id)" />
-          <span v-else class="text-xs font-semibold text-green-600 dark:text-green-400">
+          <ButtonsPresetButton
+            v-if="!session.current"
+            preset="delete"
+            label="Revoke"
+            size="xs"
+            @click="revokeSession(session.id)"
+          />
+          <span
+            v-else
+            class="text-xs font-semibold text-green-600 dark:text-green-400"
+          >
             Current
           </span>
         </div>
@@ -186,8 +238,12 @@ const handleUpdatePassword = async () => {
 
   // Validate security question answers
   for (const question of securityQuestions.value) {
-    if (!securityAnswers.value[question.id] || securityAnswers.value[question.id].trim().length < 2) {
-      passwordError.value = "Please answer all security questions (minimum 2 characters each)";
+    if (
+      !securityAnswers.value[question.id] ||
+      securityAnswers.value[question.id].trim().length < 2
+    ) {
+      passwordError.value =
+        "Please answer all security questions (minimum 2 characters each)";
       return;
     }
   }
@@ -195,14 +251,14 @@ const handleUpdatePassword = async () => {
   isUpdating.value = true;
   try {
     // Prepare answers array for API
-    const answers = securityQuestions.value.map(question => ({
+    const answers = securityQuestions.value.map((question) => ({
       questionId: question.id,
-      answer: securityAnswers.value[question.id]
+      answer: securityAnswers.value[question.id],
     }));
 
     await emit("update-password", {
       answers: answers,
-      newPassword: passwordData.value.new
+      newPassword: passwordData.value.new,
     });
 
     passwordSuccess.value = "Password updated successfully!";

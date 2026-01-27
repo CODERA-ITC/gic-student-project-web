@@ -72,7 +72,7 @@
                 <!-- Section Header -->
                 <div class="mb-6">
                   <h3
-                    class="text-gray-900 dark:text-white text-xl font-bold mb-2"
+                    class="text-gray-900 dark:text-white text-xl font-semibold mb-2"
                   >
                     Student Projects
                   </h3>

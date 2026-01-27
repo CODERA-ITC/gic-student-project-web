@@ -6,7 +6,7 @@
       <div
         class="text-center text-gray-900 dark:text-white space-y-8 max-w-2xl mx-auto"
       >
-        <h2 class="text-4xl lg:text-5xl font-bold">
+        <h2 class="text-4xl lg:text-5xl font-semibold">
           Ready to Showcase Your Innovation?
         </h2>
         <p

@@ -7,7 +7,7 @@
       <UContainer>
         <div class="text-center space-y-4 max-w-3xl mx-auto">
           <h1
-            class="text-4xl lg:text-6xl font-bold tracking-tight leading-tight text-blue-900 dark:text-white"
+            class="text-4xl lg:text-6xl font-semibold tracking-tight leading-tight text-blue-900 dark:text-white"
           >
             About GIC Student Portal
           </h1>
@@ -25,7 +25,7 @@
       <div class="grid lg:grid-cols-2 gap-12 items-center">
         <div class="space-y-6">
           <div class="space-y-3">
-            <h2 class="text-4xl font-bold text-gray-900 dark:text-white">
+            <h2 class="text-4xl font-semibold text-gray-900 dark:text-white">
               Empowering Student Innovators
             </h2>
             <div
@@ -71,7 +71,7 @@
       <!-- Core Values -->
       <div class="space-y-12">
         <div class="text-center space-y-3">
-          <h2 class="text-4xl font-bold text-gray-900 dark:text-white">
+          <h2 class="text-4xl font-semibold text-gray-900 dark:text-white">
             What We Believe In
           </h2>
           <div
@@ -93,7 +93,9 @@
             >
               <UIcon :name="value.icon" class="w-8 h-8 text-white" />
             </div>
-            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">
+            <h3
+              class="text-xl font-semibold text-gray-900 dark:text-white mb-3"
+            >
               {{ value.title }}
             </h3>
             <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -106,7 +108,7 @@
       <!-- Features -->
       <div class="space-y-12">
         <div class="text-center space-y-3">
-          <h2 class="text-4xl font-bold text-gray-900 dark:text-white">
+          <h2 class="text-4xl font-semibold text-gray-900 dark:text-white">
             Built for Students
           </h2>
           <div
@@ -129,7 +131,7 @@
               <UIcon :name="feature.icon" class="w-6 h-6 text-white" />
             </div>
             <div>
-              <h3 class="font-bold text-gray-900 dark:text-white mb-1">
+              <h3 class="font-semibold text-gray-900 dark:text-white mb-1">
                 {{ feature.title }}
               </h3>
               <p
@@ -147,7 +149,7 @@
         class="bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border border-gray-200 dark:border-slate-700 rounded-2xl p-12"
       >
         <div class="text-center mb-8">
-          <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-2">
             Our Impact
           </h2>
           <p class="text-gray-700 dark:text-gray-300">
@@ -157,7 +159,7 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div v-for="stat in statistics" :key="stat.label" class="text-center">
             <p
-              class="text-4xl lg:text-5xl font-bold text-blue-600 dark:text-blue-400 mb-2"
+              class="text-4xl lg:text-5xl font-semibold text-blue-600 dark:text-blue-400 mb-2"
             >
               {{ stat.value }}
             </p>
@@ -171,7 +173,7 @@
       <!-- Team Section -->
       <div class="space-y-12">
         <div class="text-center space-y-3">
-          <h2 class="text-4xl font-bold text-gray-900 dark:text-white">
+          <h2 class="text-4xl font-semibold text-gray-900 dark:text-white">
             Meet Our Team
           </h2>
           <div
@@ -189,13 +191,13 @@
             class="text-center group"
           >
             <div
-              class="w-28 h-28 md:w-32 md:h-32 rounded-full bg-gradient-to-br mx-auto mb-4 flex items-center justify-center text-white text-2xl md:text-3xl font-bold group-hover:scale-110 transition-transform shadow-lg"
+              class="w-28 h-28 md:w-32 md:h-32 rounded-full bg-gradient-to-br mx-auto mb-4 flex items-center justify-center text-white text-2xl md:text-3xl font-semibold group-hover:scale-110 transition-transform shadow-lg"
               :class="member.gradient"
             >
               {{ member.initials }}
             </div>
             <h3
-              class="text-base md:text-lg font-bold text-gray-900 dark:text-white group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors"
+              class="text-base md:text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors"
             >
               {{ member.name }}
             </h3>
@@ -215,7 +217,7 @@
         <div
           class="text-center text-gray-900 dark:text-white space-y-8 max-w-2xl mx-auto"
         >
-          <h2 class="text-4xl lg:text-5xl font-bold">
+          <h2 class="text-4xl lg:text-5xl font-semibold">
             Ready to Showcase Your Innovation?
           </h2>
           <p

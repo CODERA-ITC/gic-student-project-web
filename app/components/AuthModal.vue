@@ -32,7 +32,7 @@
                     class="w-4 h-4 text-white"
                   />
                 </div>
-                <h3 class="text-xl font-bold text-white">
+                <h3 class="text-xl font-semibold text-white">
                   {{
                     context === "create"
                       ? "🚀 Ready to Create?"

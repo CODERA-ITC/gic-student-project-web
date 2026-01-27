@@ -318,7 +318,9 @@
       <UContainer
         class="min-h-screen bg-background py-12 bg-white bg-white/50 dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-6 space-y-6 transform transition-all"
       >
-        <h3 class="text-3xl font-bold mb-6 text-gray-900 dark:text-gray-200">
+        <h3
+          class="text-3xl font-semibold mb-6 text-gray-900 dark:text-gray-200"
+        >
           Project Development Roadmap
         </h3>
         <RoadmapInfographic :milestones="roadmap" />
@@ -335,7 +337,9 @@
           class="w-6 h-6 text-cyan-500 dark:text-cyan-400 mt-1 flex-shrink-0"
         />
         <div class="flex-1">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Project Team</h3>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Project Team
+          </h3>
           <div
             v-if="filteredMembers.length > 0"
             class="grid sm:grid-cols-2 gap-4"
@@ -358,7 +362,7 @@
                 v-if="!member.image"
                 class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0"
               >
-                <span class="text-white text-sm font-bold">
+                <span class="text-white text-sm font-semibold">
                   {{ getInitials(member.name) }}
                 </span>
               </div>

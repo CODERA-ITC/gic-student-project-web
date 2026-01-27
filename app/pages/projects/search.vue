@@ -6,7 +6,7 @@
         <div class="space-y-6">
           <div class="text-center space-y-4 max-w-2xl mx-auto">
             <h1
-              class="text-4xl lg:text-6xl font-bold tracking-tight leading-tight text-blue-900"
+              class="text-4xl lg:text-6xl font-semibold tracking-tight leading-tight text-blue-900"
             >
               Search Results
             </h1>
@@ -44,7 +44,9 @@
         >
           <p class="text-white">
             Found
-            <span class="text-white font-bold">{{ searchResults.length }}</span>
+            <span class="text-white font-semibold">{{
+              searchResults.length
+            }}</span>
             {{ searchResults.length === 1 ? "project" : "projects" }}
           </p>
 
@@ -76,7 +78,9 @@
             name="i-heroicons-magnifying-glass-20-solid"
             class="w-16 h-16 text-gray-400 mx-auto mb-4"
           />
-          <h3 class="text-xl font-bold text-white mb-2">No Projects Found</h3>
+          <h3 class="text-xl font-semibold text-white mb-2">
+            No Projects Found
+          </h3>
           <p class="text-gray-300 mb-6">
             Try adjusting your search terms or browse all projects
           </p>
@@ -119,7 +123,7 @@ watch(
   (newQuery) => {
     searchQuery.value = newQuery.search || "";
     categoryFilter.value = newQuery.category || "";
-  }
+  },
 );
 
 // Get all projects from store
@@ -133,7 +137,7 @@ const searchResults = computed(() => {
   if (categoryFilter.value) {
     results = results.filter(
       (project) =>
-        project.category.toLowerCase() === categoryFilter.value.toLowerCase()
+        project.category.toLowerCase() === categoryFilter.value.toLowerCase(),
     );
   }
 
@@ -147,7 +151,7 @@ const searchResults = computed(() => {
         project.category.toLowerCase().includes(query) ||
         project.author.name.toLowerCase().includes(query) ||
         project.semester.toLowerCase().includes(query) ||
-        project.technologies.some((tech) => tech.toLowerCase().includes(query))
+        project.technologies.some((tech) => tech.toLowerCase().includes(query)),
     );
   }
 
@@ -185,7 +189,7 @@ const toggleLike = (projectId) => {
   if (typeof window !== "undefined") {
     localStorage.setItem(
       LIKED_PROJECTS_KEY,
-      JSON.stringify(likedProjects.value)
+      JSON.stringify(likedProjects.value),
     );
   }
 };
@@ -199,8 +203,8 @@ useHead({
   title: searchQuery.value
     ? `Search: ${searchQuery.value} - Projects`
     : categoryFilter.value
-    ? `${categoryFilter.value} Projects`
-    : "Search Projects - GIC Student Portal",
+      ? `${categoryFilter.value} Projects`
+      : "Search Projects - GIC Student Portal",
   meta: [
     {
       name: "description",

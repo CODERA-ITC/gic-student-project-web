@@ -7,7 +7,7 @@
       <UContainer>
         <div class="flex items-center justify-between">
           <div class="space-y-2">
-            <h1 class="text-3xl font-bold text-white">Edit Project</h1>
+            <h1 class="text-3xl font-semibold text-white">Edit Project</h1>
             <p class="text-gray-200">Update your project information</p>
           </div>
           <ButtonsPresetButton
@@ -71,7 +71,9 @@
         <form @submit.prevent="saveChanges" class="space-y-8">
           <!-- Basic Information -->
           <div class="bg-slate-800/50 rounded-xl p-6">
-            <h2 class="text-xl font-bold text-white mb-6">Basic Information</h2>
+            <h2 class="text-xl font-semibold text-white mb-6">
+              Basic Information
+            </h2>
             <div class="grid md:grid-cols-2 gap-6">
               <div class="md:col-span-2">
                 <label class="block text-sm font-medium text-gray-300 mb-2">
@@ -146,7 +148,7 @@
 
           <!-- Project Links -->
           <div class="bg-slate-800/50 rounded-xl p-6">
-            <h2 class="text-xl font-bold text-white mb-6">Project Links</h2>
+            <h2 class="text-xl font-semibold text-white mb-6">Project Links</h2>
             <div class="grid md:grid-cols-2 gap-6">
               <div>
                 <label class="block text-sm font-medium text-gray-300 mb-2">
@@ -174,7 +176,7 @@
 
           <!-- Technologies -->
           <div class="bg-slate-800/50 rounded-xl p-6">
-            <h2 class="text-xl font-bold text-white mb-6">Technologies</h2>
+            <h2 class="text-xl font-semibold text-white mb-6">Technologies</h2>
             <div class="space-y-4">
               <div class="flex gap-2">
                 <UInput
@@ -221,7 +223,9 @@
 
           <!-- Project Images -->
           <div class="bg-slate-800/50 rounded-xl p-6">
-            <h2 class="text-xl font-bold text-white mb-6">Project Images</h2>
+            <h2 class="text-xl font-semibold text-white mb-6">
+              Project Images
+            </h2>
             <div class="space-y-4">
               <!-- Current Images -->
               <div
@@ -283,7 +287,7 @@
             v-if="editForm.feature && editForm.feature.length > 0"
             class="bg-slate-800/50 rounded-xl p-6"
           >
-            <h2 class="text-xl font-bold text-white mb-6">
+            <h2 class="text-xl font-semibold text-white mb-6">
               Features & Milestones
             </h2>
             <div class="space-y-4">
@@ -335,7 +339,9 @@
             v-if="editForm.progress !== undefined"
             class="bg-slate-800/50 rounded-xl p-6"
           >
-            <h2 class="text-xl font-bold text-white mb-6">Project Progress</h2>
+            <h2 class="text-xl font-semibold text-white mb-6">
+              Project Progress
+            </h2>
             <div class="space-y-4">
               <label class="block text-sm font-medium text-gray-300 mb-2">
                 Completion Percentage: {{ editForm.progress }}%
@@ -399,7 +405,9 @@
           name="i-heroicons-exclamation-triangle"
           class="w-16 h-16 text-yellow-400 mx-auto mb-4"
         />
-        <h2 class="text-2xl font-bold text-white mb-2">Project Not Found</h2>
+        <h2 class="text-2xl font-semibold text-white mb-2">
+          Project Not Found
+        </h2>
         <p class="text-gray-400 mb-6">
           The project you're trying to edit doesn't exist or you don't have
           permission to edit it.
@@ -610,7 +618,7 @@ const saveChanges = async () => {
     // In a real app, this would call an API
     // For now, we'll update the store directly
     const projectIndex = projectStore.userProjects.findIndex(
-      (p) => p.id === project.value.id
+      (p) => p.id === project.value.id,
     );
     if (projectIndex !== -1) {
       projectStore.userProjects[projectIndex] = updatedProject;
@@ -669,7 +677,7 @@ onMounted(async () => {
 // Meta
 useHead({
   title: computed(() =>
-    project.value ? `Edit ${project.value.title}` : "Edit Project"
+    project.value ? `Edit ${project.value.title}` : "Edit Project",
   ),
   meta: [
     {

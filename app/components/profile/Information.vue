@@ -1,7 +1,7 @@
 <template>
   <div class="p-6 space-y-6">
     <div>
-      <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-1">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-1">
         Profile Information
       </h2>
       <p class="text-sm text-gray-600 dark:text-slate-400">
@@ -25,7 +25,7 @@
         v-else
         class="w-24 h-24 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center border-4 border-gray-200 dark:border-slate-700"
       >
-        <span class="text-2xl font-bold text-white">{{
+        <span class="text-2xl font-semibold text-white">{{
           getInitials(formData.name)
         }}</span>
       </div>
@@ -386,7 +386,7 @@
             :disabled="true"
             placeholder="25"
             size="lg"
-            class="font-bold"
+            class="font-semibold"
           />
         </div>
       </div>

@@ -10,7 +10,7 @@
         <div class="space-y-6">
           <div class="text-center space-y-4 max-w-2xl mx-auto">
             <h1
-              class="text-4xl lg:text-6xl font-bold tracking-tight leading-tight text-blue-900 dark:text-white"
+              class="text-4xl lg:text-6xl font-semibold tracking-tight leading-tight text-blue-900 dark:text-white"
             >
               Explore All Projects
             </h1>
@@ -263,7 +263,7 @@
                     <template v-if="totalPages > 1">
                       Showing {{ paginatedProjects.length }} of
                     </template>
-                    <span class="font-bold text-blue-900 dark:text-white">{{
+                    <span class="font-semibold text-blue-900 dark:text-white">{{
                       projectStore.pagination.totalItems
                     }}</span>
                     projects
@@ -513,11 +513,11 @@
                       class="w-4 h-4 text-white"
                     />
                   </div>
-                  <h3 class="text-xl font-bold text-white">
+                  <h3 class="text-xl font-semibold text-white">
                     {{
                       authModalContext === "create"
-                        ? "🚀 Ready to Create?"
-                        : "🔒 Login Required"
+                        ? "Ready to Create?"
+                        : "Login Required"
                     }}
                   </h3>
                 </div>
@@ -656,14 +656,19 @@ const initializeData = async () => {
 
   try {
     // Always fetch fresh data on navigation/reload
-    await Promise.all([
-      projectStore.fetchCategories(),
-      projectStore.fetchTags(),
-      projectStore.fetchProjects(
-        projectStore.pagination.currentPage,
-        projectStore.pagination.itemsPerPage,
-      ),
-    ]);
+
+    if (projectStore.projects.length > 0) {
+      return;
+    } else {
+      await Promise.all([
+        projectStore.fetchCategories(),
+        projectStore.fetchTags(),
+        projectStore.fetchProjects(
+          projectStore.pagination.currentPage,
+          projectStore.pagination.itemsPerPage,
+        ),
+      ]);
+    }
 
     // Load user liked projects if authenticated
     if (authStore.isAuthenticated) {

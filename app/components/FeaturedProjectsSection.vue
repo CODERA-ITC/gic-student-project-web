@@ -5,7 +5,7 @@
     <UContainer>
       <div class="flex justify-between items-center mb-12">
         <div>
-          <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+          <h2 class="text-4xl font-semibold text-gray-900 dark:text-white mb-2">
             Featured Projects
           </h2>
           <p class="text-gray-700 dark:text-gray-300">

@@ -27,7 +27,7 @@
         >
           <!-- Avatar -->
           <div
-            class="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-6xl md:text-8xl font-bold border-4 border-white/30 shadow-2xl"
+            class="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-6xl md:text-8xl font-semibold border-4 border-white/30 shadow-2xl"
           >
             {{ student.name.charAt(0) }}
           </div>
@@ -35,7 +35,7 @@
           <!-- Profile Info -->
           <div class="flex-1">
             <h1
-              class="text-4xl md:text-5xl font-bold text-white mb-2 drop-shadow-lg"
+              class="text-4xl md:text-5xl font-semibold text-white mb-2 drop-shadow-lg"
             >
               {{ student.name }}
             </h1>
@@ -78,7 +78,7 @@
                 name="i-heroicons-information-circle"
                 class="w-6 h-6 text-blue-600 dark:text-blue-400"
               />
-              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
                 About
               </h2>
             </div>
@@ -96,7 +96,7 @@
                 name="i-heroicons-wrench-screwdriver"
                 class="w-6 h-6 text-blue-600 dark:text-blue-400"
               />
-              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
                 Skills & Expertise
               </h2>
             </div>
@@ -121,7 +121,7 @@
                 name="i-heroicons-star"
                 class="w-6 h-6 text-yellow-500 dark:text-yellow-400"
               />
-              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
                 Achievements
               </h2>
             </div>
@@ -156,7 +156,7 @@
                 name="i-heroicons-briefcase"
                 class="w-6 h-6 text-blue-600 dark:text-blue-400"
               />
-              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+              <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
                 Projects ({{ student.projectsContributed.length }})
               </h2>
             </div>
