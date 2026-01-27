@@ -345,7 +345,7 @@ const submissions = computed(() => {
         project.submissions![project.submissions!.length - 1];
       return {
         id: project.id,
-        projectName: project.name,
+        projectName: project.title,
         category: project.category || "General",
         submittedDate: latestSubmission.date || project.createdAt,
         status: latestSubmission.status,

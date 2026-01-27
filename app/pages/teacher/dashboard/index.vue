@@ -133,7 +133,7 @@
               </p>
             </div>
             <NuxtLink
-              to="/teacher/manage-projects"
+              to="/teacher/submissions"
               class="flex items-center gap-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
             >
               <span>View All Projects</span>
@@ -252,10 +252,10 @@
                   <ButtonsPresetButton
                     v-if="project.status === 'pending'"
                     preset="primary"
-                    label="Review"
-                    icon="i-heroicons-check-circle"
+                    label="View"
+                    icon="i-heroicons-arrow-right"
                     size="xs"
-                    @click="reviewProject(project)"
+                    :to="'/projects/' + project.id"
                   />
                 </div>
               </div>
@@ -285,16 +285,24 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useAuthStore } from "~/stores/auth";
-import { projectsData } from "~/constants/projects";
+import { useProjectStore } from "~/stores/projects";
 import ButtonsPresetButton from "~/components/buttons/PresetButton.vue";
 import SparklineChart from "~/components/SparklineChart.vue";
 
 const authStore = useAuthStore();
+const projectsStore = useProjectStore();
 
 definePageMeta({
   middleware: ["auth", "teacher"],
+});
+
+// Fetch projects on mount
+onMounted(async () => {
+  if (projectsStore.projects.length === 0) {
+    await projectsStore.fetchProjects();
+  }
 });
 
 // Get teacher info from auth store
@@ -302,9 +310,9 @@ const teacher = computed(() => ({
   name: authStore.currentUser?.name || "Teacher",
 }));
 
-// Transform projectsData to match teacher dashboard structure
+// Transform projects from store to match teacher dashboard structure
 const projects = computed(() => {
-  return projectsData.map((project) => {
+  return projectsStore.projects.map((project) => {
     // Generate email from name
     const emailName = project.author.name.toLowerCase().replace(" ", ".");
     const studentEmail = `${emailName}@student.edu`;
@@ -365,7 +373,7 @@ const projects = computed(() => {
       studentEmail: studentEmail,
       studentInitials: studentInitials,
       studentAvatar: project.author.avatar,
-      title: project.title,
+      title: project.name,
       description: project.description,
       category: mappedCategory,
       generation: mappedGeneration,

@@ -231,7 +231,7 @@
                     <img
                       v-if="project.images && project.images[0]"
                       :src="project.images[0].thumbnailUrl"
-                      :alt="project.name"
+                      :alt="project.title"
                       class="w-12 h-12 rounded-lg object-cover"
                     />
                     <div
@@ -247,7 +247,7 @@
                       <p
                         class="text-sm font-semibold text-gray-900 dark:text-white"
                       >
-                        {{ project.name }}
+                        {{ project.title }}
                       </p>
                       <p
                         class="text-xs text-gray-500 dark:text-gray-400 line-clamp-1"
