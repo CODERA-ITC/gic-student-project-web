@@ -150,7 +150,8 @@
                     <UButton
                       v-if="
                         submission.status === 'Under Review' ||
-                        submission.status === 'Needs Revision'
+                        submission.status === 'Needs Revision' ||
+                        submission.status === 'Rejected'
                       "
                       icon="i-heroicons-x-circle"
                       size="xs"
@@ -341,15 +342,39 @@ const isCanceling = ref(false);
 // Get submitted projects from fetched data
 const submissions = computed(() => {
   return userSubmissions.value.map((project) => {
+    // Map visibility to status
+    let status = "Under Review";
+    if (project.visibility === "accepted") {
+      status = "Approved";
+    } else if (project.visibility === "rejected") {
+      status = "Rejected";
+    } else if (project.visibility === "reviewing") {
+      status = "Under Review";
+    }
+
     return {
       id: project.id,
       projectName: project.name,
       category: project.category || "General",
-      submittedDate: project.updatedAt?.split("T")[0] || new Date().toISOString(),
-      status: project.visibility === "reviewing" ? "Under Review" : "Approved",
+      submittedDate:
+        project.createdAt?.split("T")[0] ||
+        project.updatedAt?.split("T")[0] ||
+        new Date().toISOString().split("T")[0],
+      status: status,
     };
   });
 });
+
+// Status counts for summary cards
+const underReviewCount = computed(
+  () => submissions.value.filter((s) => s.status === "Under Review").length,
+);
+const approvedCount = computed(
+  () => submissions.value.filter((s) => s.status === "Approved").length,
+);
+const rejectedCount = computed(
+  () => submissions.value.filter((s) => s.status === "Rejected").length,
+);
 
 // Computed properties for search and pagination
 const filteredSubmissions = computed(() => {
