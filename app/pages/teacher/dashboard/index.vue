@@ -298,11 +298,9 @@ definePageMeta({
   middleware: ["auth", "teacher"],
 });
 
-// Fetch projects on mount
+// Fetch submissions on mount
 onMounted(async () => {
-  if (projectsStore.projects.length === 0) {
-    await projectsStore.fetchProjects();
-  }
+  await projectsStore.fetchAllSubmissions();
 });
 
 // Get teacher info from auth store
@@ -353,9 +351,14 @@ const projects = computed(() => {
 
     const mappedGeneration = generationMapping[project.semester] || "2024";
 
-    // Map status
-    const mappedStatus =
-      project.status === "Completed" ? "completed" : "pending";
+    // Map status - show visibility state for submissions
+    const statusMapping = {
+      reviewing: "pending",
+      accepted: "completed",
+      public: "completed",
+    };
+
+    const mappedStatus = statusMapping[project.visibility] || "pending";
 
     // Calculate due date (add some days to createdAt)
     const createdDate = new Date(project.createdAt);
@@ -385,33 +388,43 @@ const projects = computed(() => {
   });
 });
 
-// Stats for teacher dashboard
-const stats = ref([
-  {
-    label: "Total Submissions",
-    value: "124",
-    icon: "i-heroicons-inbox-stack",
-    change: "+12 this week",
-    changeColor: "positive",
-    chartData: [95, 102, 88, 110, 95, 108, 124],
-  },
-  {
-    label: "Pending Review",
-    value: "18",
-    icon: "i-heroicons-exclamation-circle",
-    change: "3 overdue",
-    changeColor: "negative",
-    chartData: [20, 14, 25, 19, 17, 21, 18],
-  },
-  {
-    label: "Average Score",
-    value: "78%",
-    icon: "i-heroicons-chart-bar-square",
-    change: "+5% from last semester",
-    changeColor: "positive",
-    chartData: [76, 74, 80, 77, 79, 78, 78],
-  },
-]);
+// Stats for teacher dashboard - computed from real data
+const stats = computed(() => {
+  const totalSubmissions = projectsStore.projects.length;
+  const pendingReview = projectsStore.projects.filter(
+    (p) => p.visibility === "reviewing",
+  ).length;
+  const acceptedProjects = projectsStore.projects.filter(
+    (p) => p.visibility === "accepted",
+  ).length;
+
+  return [
+    {
+      label: "Total Submissions",
+      value: totalSubmissions.toString(),
+      icon: "i-heroicons-inbox-stack",
+      change: `${acceptedProjects} accepted`,
+      changeColor: "positive",
+      chartData: [95, 102, 88, 110, 95, 108, totalSubmissions],
+    },
+    {
+      label: "Pending Review",
+      value: pendingReview.toString(),
+      icon: "i-heroicons-exclamation-circle",
+      change: "Awaiting approval",
+      changeColor: pendingReview > 0 ? "negative" : "positive",
+      chartData: [20, 14, 25, 19, 17, 21, pendingReview],
+    },
+    {
+      label: "Accepted",
+      value: acceptedProjects.toString(),
+      icon: "i-heroicons-check-circle",
+      change: `${totalSubmissions - acceptedProjects} remaining`,
+      changeColor: "positive",
+      chartData: [76, 74, 80, 77, 79, 78, acceptedProjects],
+    },
+  ];
+});
 
 // Recent projects - show only 6 most recent projects
 const recentProjects = computed(() => {

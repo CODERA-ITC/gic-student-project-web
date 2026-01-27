@@ -146,6 +146,22 @@ export class ProjectService {
   }
 
   /**
+   * Fetch all submissions (for teachers)
+   * Endpoint: GET /courses/submissions
+   */
+  async fetchAllSubmissions(): Promise<any> {
+    try {
+      return await $fetch("/api/courses/submissions", {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+      });
+    } catch (error) {
+      console.error("ProjectService: Failed to fetch submissions", error);
+      throw error;
+    }
+  }
+
+  /**
    * Create a new project
    */
   async create(projectData: CreateProjectDTO): Promise<any> {
@@ -403,19 +419,19 @@ export class ProjectService {
     }
   }
 
-  async fetchSubmissionProjectForTeacher(): Promise<Project[]> {
-    try {
-      return await $fetch(`${this.baseUrl}/submissions/teacher`, {
-        headers: this.getAuthHeaders(),
-      });
-    } catch (error) {
-      console.error(
-        `ProjectService: Failed to fetch submission projects for teacher`,
-        error,
-      );
-      throw error;
-    }
-  }
+  // async fetchSubmissionProjectForTeacher(): Promise<Project[]> {
+  //   try {
+  //     return await $fetch(`${this.baseUrl}/submissions/teacher`, {
+  //       headers: this.getAuthHeaders(),
+  //     });
+  //   } catch (error) {
+  //     console.error(
+  //       `ProjectService: Failed to fetch submission projects for teacher`,
+  //       error,
+  //     );
+  //     throw error;
+  //   }
+  // }
 }
 
 /**

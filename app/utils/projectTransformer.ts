@@ -39,13 +39,14 @@ export class ProjectTransformer {
   static transformAuthor(authorData: any): ProjectAuthor {
     const firstName = authorData?.firstName || "";
     const lastName = authorData?.lastName || "";
+    const avatarUrl = authorData?.avatarUrl || authorData?.avatar || "";
 
     return {
       id: authorData?.id || "",
       name: authorData
         ? `${firstName} ${lastName}`.trim() || "Unknown"
         : "Unknown",
-      avatar: getAvatarUrl(authorData?.avatar, firstName, lastName),
+      avatar: avatarUrl || getAvatarUrl("", firstName, lastName),
       program: authorData?.program || "",
       year: authorData?.year || "",
     };
@@ -205,6 +206,8 @@ export class ProjectTransformer {
       images,
       createdAt:
         projectData.createdAt || new Date().toISOString().split("T")[0],
+      updatedAt:
+        projectData.updatedAt || new Date().toISOString().split("T")[0],
       tags,
       members,
       features,
@@ -218,10 +221,12 @@ export class ProjectTransformer {
           ? "private"
           : projectData.visibility || "public",
       submissions: projectData.submissions || {
-        id: "",
-        name: "",
-        date: new Date().toISOString().split("T")[0],
-        status: "",
+        id: projectData.id || "",
+        name: projectData.name || "",
+        date: projectData.startDate
+          ? new Date(projectData.startDate).toISOString().split("T")[0]
+          : new Date().toISOString().split("T")[0],
+        status: projectData.visibility || "",
       },
     };
   }

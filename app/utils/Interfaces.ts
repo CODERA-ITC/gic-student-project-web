@@ -14,10 +14,6 @@ export interface FeatureItem {
   status: "pending" | "ongoing" | "done";
 }
 
-
-
-
-
 export interface Course {
   id: string;
   createdAt: string;
@@ -27,8 +23,6 @@ export interface Course {
   description: string;
   code: string;
 }
-
-
 
 export interface ProjectImage {
   id: string;
@@ -53,17 +47,19 @@ export interface Project {
   githubUrl: string;
   images: ProjectImage[];
   createdAt: string;
+  updatedAt?: string;
   tags: string[];
   members?: { name: string; image: string }[];
   features?: FeatureItem[];
   duration?: string;
   course?: string;
-  visibility?: "public" | "private";
+  visibility?: string;
   submissions?: {
     id: string;
     name: string;
     date: string;
     status: string;
+    updatedAt?: string;
   };
 }
 

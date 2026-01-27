@@ -595,6 +595,89 @@ export const useProjectStore = defineStore("projects", {
       );
     },
 
+    /**
+     * Fetch submission projects for the current user
+     * Returns projects where:
+     * - Author ID matches current user ID
+     * - Visibility is 'reviewing' or 'accepted'
+     */
+    async fetchUserSubmissions(): Promise<Project[]> {
+      this.loading = true;
+      try {
+        const authStore = useAuthStore();
+
+        // Check if user is authenticated
+        if (!authStore.isAuthenticated || !authStore.user?.id) {
+          console.warn("User not authenticated, cannot fetch submissions");
+          return [];
+        }
+
+        const currentUserId = authStore.user.id;
+
+        // Fetch all projects (in real implementation, this would be a dedicated API endpoint)
+        // For now, we fetch all projects and filter client-side
+        const allProjects = await this.fetchProjects(1, 100); // Fetch more items to get all user projects
+
+        // Filter projects by author ID and visibility status
+        const userSubmissions = allProjects.filter((project) => {
+          const isUserProject = project.author?.id === currentUserId;
+          const isSubmissionStatus =
+            project.visibility === "reviewing" ||
+            project.visibility === "accepted";
+
+          return isUserProject && isSubmissionStatus;
+        });
+
+        console.log(
+          `Found ${userSubmissions.length} submission projects for user ${currentUserId}`,
+        );
+
+        return userSubmissions;
+      } catch (error) {
+        console.error("Error fetching user submissions:", error);
+        return [];
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    /**
+     * Fetch all submissions (for teachers)
+     * Returns all student submissions across all courses
+     */
+    async fetchAllSubmissions(): Promise<Project[]> {
+      this.loading = true;
+      try {
+        const authStore = useAuthStore();
+
+        // Check if user is authenticated and is a teacher
+        if (!authStore.isAuthenticated) {
+          console.warn("User not authenticated, cannot fetch submissions");
+          return [];
+        }
+
+        // Use ProjectService to fetch submissions
+        const response = await projectService.fetchAllSubmissions();
+
+        console.log("Fetched submissions response:", response);
+
+        // Transform API response using ProjectTransformer
+        // API returns array directly, not wrapped in data property
+        const submissions = Array.isArray(response)
+          ? response.map((item: any) => transformProject(item))
+          : [];
+
+        console.log(`Found ${submissions.length} total submissions`);
+
+        return submissions;
+      } catch (error) {
+        console.error("Error fetching all submissions:", error);
+        return [];
+      } finally {
+        this.loading = false;
+      }
+    },
+
     async searchProjects(query: string) {
       if (!query.trim()) return [];
 
@@ -1078,11 +1161,11 @@ export const useProjectStore = defineStore("projects", {
       return this.courseObjects;
     },
 
-    async fetchSubmissionProjects(): Promise<Project[]> {
-      let projects: Project[] = [];
-      projects = await projectService.fetchSubmissionProjectForTeacher();
-      return projects;
-    },
+    // async fetchSubmissionProjects(): Promise<Project[]> {
+    //   let projects: Project[] = [];
+    //   projects = await projectService.fetchSubmissionProjectForTeacher();
+    //   return projects;
+    // },
 
     // Accept project submission
     async acceptProject(projectId: string): Promise<void> {

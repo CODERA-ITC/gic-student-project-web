@@ -324,6 +324,10 @@ const router = useRouter();
 const projectStore = useProjectStore();
 const authStore = useAuthStore();
 
+// State
+const isLoading = ref(false);
+const userSubmissions = ref<Project[]>([]);
+
 // Search and pagination
 const searchQuery = ref("");
 const currentPage = ref(1);
@@ -334,23 +338,17 @@ const showCancelModal = ref(false);
 const selectedSubmissionId = ref<string | null>(null);
 const isCanceling = ref(false);
 
-// Get submitted projects from store
+// Get submitted projects from fetched data
 const submissions = computed(() => {
-  // Get user's projects that have submissions - only show the latest submission per project
-  return projectStore.userProjects
-    .filter((project) => project.submissions && project.submissions.length > 0)
-    .map((project) => {
-      // Get the latest submission (last one in array)
-      const latestSubmission =
-        project.submissions![project.submissions!.length - 1];
-      return {
-        id: project.id,
-        projectName: project.title,
-        category: project.category || "General",
-        submittedDate: latestSubmission.date || project.createdAt,
-        status: latestSubmission.status,
-      };
-    });
+  return userSubmissions.value.map((project) => {
+    return {
+      id: project.id,
+      projectName: project.name,
+      category: project.category || "General",
+      submittedDate: project.updatedAt?.split("T")[0] || new Date().toISOString(),
+      status: project.visibility === "reviewing" ? "Under Review" : "Approved",
+    };
+  });
 });
 
 // Computed properties for search and pagination
@@ -444,16 +442,15 @@ const handleCancelConfirm = async () => {
 
   try {
     isCanceling.value = true;
-    const project = projectStore.userProjects.find(
+
+    // Find the project in submissions
+    const projectIndex = userSubmissions.value.findIndex(
       (p) => p.id === selectedSubmissionId.value,
     );
 
-    if (project && project.submissions && project.submissions.length > 0) {
-      // Remove the latest submission
-      project.submissions.pop();
-
-      // Save to localStorage
-      // projectStore.saveUserCreatedProjects();
+    if (projectIndex !== -1) {
+      // Remove from local array
+      userSubmissions.value.splice(projectIndex, 1);
 
       // Show success toast
       const toast = useToast();
@@ -495,8 +492,22 @@ onMounted(async () => {
     }
   }
 
-  // Fetch user's projects to get submitted ones
-  await projectStore.fetchUserProjects();
+  // Fetch user's submission projects
+  isLoading.value = true;
+  try {
+    userSubmissions.value = await projectStore.fetchUserSubmissions();
+    console.log(`Loaded ${userSubmissions.value.length} submission projects`);
+  } catch (error) {
+    console.error("Error loading submissions:", error);
+    const toast = useToast();
+    toast.add({
+      title: "Error Loading Submissions",
+      description: "Failed to load your project submissions. Please try again.",
+      color: "error",
+    });
+  } finally {
+    isLoading.value = false;
+  }
 });
 
 useHead({

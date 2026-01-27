@@ -293,21 +293,21 @@
                           @click="viewProject(project)"
                         />
                         <ButtonsPresetButton
-                          v-if="project.status === 'In Progress'"
+                          v-if="project.visibility === 'reviewing'"
                           label="Accept"
                           icon="i-heroicons-check-circle"
                           color="success"
                           size="xs"
-                          @click="acceptProject(project)"
+                          @click="openAcceptModal(project)"
                           :loading="acceptingId === project.id"
                         />
                         <ButtonsPresetButton
-                          v-if="project.status === 'In Progress'"
+                          v-if="project.visibility === 'reviewing'"
                           label="Reject"
                           icon="i-heroicons-x-circle"
                           color="danger"
                           size="xs"
-                          @click="rejectProject(project)"
+                          @click="openRejectModal(project)"
                           :loading="rejectingId === project.id"
                         />
                       </div>
@@ -388,6 +388,141 @@
         </div>
       </UContainer>
     </div>
+
+    <!-- Accept Modal -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div
+          v-if="showAcceptModal"
+          class="fixed inset-0 z-50 flex items-center justify-center p-4"
+          @click.self="showAcceptModal = false"
+        >
+          <!-- Backdrop -->
+          <div
+            class="absolute inset-0 bg-gray-900/75 dark:bg-gray-900/90 backdrop-blur-sm"
+            @click="showAcceptModal = false"
+          ></div>
+
+          <!-- Modal Container -->
+          <div
+            class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-xl shadow-2xl transform transition-all"
+          >
+            <div class="p-8">
+              <div class="flex items-center gap-3 mb-4">
+                <div
+                  class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center"
+                >
+                  <UIcon
+                    name="i-heroicons-check-circle"
+                    class="w-6 h-6 text-green-600 dark:text-green-400"
+                  />
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                  Accept Project
+                </h3>
+              </div>
+              <p class="text-gray-600 dark:text-gray-300 mb-2">
+                Are you sure you want to accept this project?
+              </p>
+              <div
+                v-if="selectedProject"
+                class="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-4 mb-6"
+              >
+                <p class="font-semibold text-gray-900 dark:text-white mb-1">
+                  {{ selectedProject.name }}
+                </p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  by {{ selectedProject.author?.name }}
+                </p>
+              </div>
+              <div class="flex flex-col sm:flex-row gap-3 justify-end">
+                <ButtonsPresetButton
+                  preset="cancel"
+                  size="lg"
+                  @click="showAcceptModal = false"
+                />
+                <ButtonsPresetButton
+                  label="Accept Project"
+                  icon="i-heroicons-check-circle"
+                  color="success"
+                  size="lg"
+                  :loading="acceptingId === selectedProject?.id"
+                  @click="confirmAccept"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <!-- Reject Modal -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div
+          v-if="showRejectModal"
+          class="fixed inset-0 z-50 flex items-center justify-center p-4"
+          @click.self="showRejectModal = false"
+        >
+          <!-- Backdrop -->
+          <div
+            class="absolute inset-0 bg-gray-900/75 dark:bg-gray-900/90 backdrop-blur-sm"
+            @click="showRejectModal = false"
+          ></div>
+
+          <!-- Modal Container -->
+          <div
+            class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-xl shadow-2xl transform transition-all"
+          >
+            <div class="p-8">
+              <div class="flex items-center gap-3 mb-4">
+                <div
+                  class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center"
+                >
+                  <UIcon
+                    name="i-heroicons-x-circle"
+                    class="w-6 h-6 text-red-600 dark:text-red-400"
+                  />
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                  Reject Project
+                </h3>
+              </div>
+              <p class="text-gray-600 dark:text-gray-300 mb-2">
+                Are you sure you want to reject this project? The student will
+                be notified of the rejection.
+              </p>
+              <div
+                v-if="selectedProject"
+                class="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-4 mb-6"
+              >
+                <p class="font-semibold text-gray-900 dark:text-white mb-1">
+                  {{ selectedProject.name }}
+                </p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  by {{ selectedProject.author?.name }}
+                </p>
+              </div>
+              <div class="flex flex-col sm:flex-row gap-3 justify-end">
+                <ButtonsPresetButton
+                  preset="cancel"
+                  size="lg"
+                  @click="showRejectModal = false"
+                />
+                <ButtonsPresetButton
+                  label="Reject Project"
+                  icon="i-heroicons-x-circle"
+                  color="danger"
+                  size="lg"
+                  :loading="rejectingId === selectedProject?.id"
+                  @click="confirmReject"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -405,12 +540,31 @@ const authStore = useAuthStore();
 definePageMeta({
   middleware: ["auth", "teacher"],
 });
-const projects = computed(() => projectsStore.projects);
 
-// Fetch projects on mount
+// Store submissions in a ref
+const submissions = ref([]);
+const isLoadingSubmissions = ref(false);
+
+const projects = computed(() => submissions.value);
+
+// Fetch submissions on mount
 onMounted(async () => {
-  if (projectsStore.projects.length === 0) {
-    await projectsStore.fetchProjects();
+  isLoadingSubmissions.value = true;
+  try {
+    console.log("Fetching all submissions for teacher...");
+    submissions.value = await projectsStore.fetchAllSubmissions();
+    console.log(`✅ Loaded ${submissions.value.length} submissions`);
+    console.log("First submission sample:", submissions.value[0]);
+  } catch (error) {
+    console.error("❌ Error loading submissions:", error);
+    const toast = useToast();
+    toast.add({
+      title: "Error Loading Submissions",
+      description: "Failed to load submissions. Please refresh the page.",
+      color: "error",
+    });
+  } finally {
+    isLoadingSubmissions.value = false;
   }
 });
 
@@ -424,6 +578,11 @@ const selectedGeneration = ref("");
 const acceptingId = ref(null);
 const rejectingId = ref(null);
 
+// Modal states
+const showAcceptModal = ref(false);
+const showRejectModal = ref(false);
+const selectedProject = ref(null);
+
 // Pagination state
 const currentPage = ref(1);
 const itemsPerPage = ref(8);
@@ -431,11 +590,25 @@ const itemsPerPage = ref(8);
 // Filtered projects computed property
 const filteredProjects = computed(() => {
   let filtered = projects.value.filter((project) => {
-    // Filter by active/pending status
-    if (activeFilter.value === "completed" && project.status !== "Completed") {
+    // Only show submitted projects (reviewing or accepted status)
+    if (
+      !project.visibility ||
+      (project.visibility !== "reviewing" && project.visibility !== "accepted")
+    ) {
       return false;
     }
-    if (activeFilter.value === "pending" && project.status !== "In Progress") {
+
+    // Filter by active/pending status
+    if (
+      activeFilter.value === "completed" &&
+      project.visibility !== "accepted"
+    ) {
+      return false;
+    }
+    if (
+      activeFilter.value === "pending" &&
+      project.visibility !== "reviewing"
+    ) {
       return false;
     }
 
@@ -574,33 +747,104 @@ const viewProject = (project) => {
   navigateTo(`/teacher/submissions/${project.id}`);
 };
 
-const acceptProject = async (project) => {
-  if (confirm(`Accept "${project.name}"?`)) {
-    try {
-      acceptingId.value = project.id;
-      await projectsStore.acceptProject(project.id);
-      await projectsStore.fetchProjects();
-    } catch (error) {
-      console.error("Accept failed:", error);
-      alert("Failed to accept project");
-    } finally {
-      acceptingId.value = null;
-    }
+// Modal control functions
+const openAcceptModal = (project) => {
+  selectedProject.value = project;
+  showAcceptModal.value = true;
+};
+
+const openRejectModal = (project) => {
+  selectedProject.value = project;
+  showRejectModal.value = true;
+};
+
+const confirmAccept = async () => {
+  if (!selectedProject.value) return;
+
+  try {
+    acceptingId.value = selectedProject.value.id;
+    await projectsStore.acceptProject(selectedProject.value.id);
+
+    // Refresh submissions list after accepting
+    submissions.value = await projectsStore.fetchAllSubmissions();
+
+    const toast = useToast();
+    toast.add({
+      title: "Project Accepted",
+      description: `"${selectedProject.value.name}" has been accepted successfully.`,
+      color: "success",
+    });
+
+    showAcceptModal.value = false;
+    selectedProject.value = null;
+  } catch (error) {
+    console.error("Accept failed:", error);
+    const toast = useToast();
+    toast.add({
+      title: "Accept Failed",
+      description: "Failed to accept project. Please try again.",
+      color: "error",
+    });
+  } finally {
+    acceptingId.value = null;
   }
 };
 
-const rejectProject = async (project) => {
-  if (confirm(`Reject "${project.name}"?`)) {
-    try {
-      rejectingId.value = project.id;
-      await projectsStore.rejectProject(project.id);
-      await projectsStore.fetchProjects();
-    } catch (error) {
-      console.error("Reject failed:", error);
-      alert("Failed to reject project");
-    } finally {
-      rejectingId.value = null;
-    }
+const confirmReject = async () => {
+  if (!selectedProject.value) return;
+
+  try {
+    rejectingId.value = selectedProject.value.id;
+    await projectsStore.rejectProject(selectedProject.value.id);
+
+    // Refresh submissions list after rejecting
+    submissions.value = await projectsStore.fetchAllSubmissions();
+
+    const toast = useToast();
+    toast.add({
+      title: "Project Rejected",
+      description: `"${selectedProject.value.name}" has been rejected.`,
+      color: "success",
+    });
+
+    showRejectModal.value = false;
+    selectedProject.value = null;
+  } catch (error) {
+    console.error("Reject failed:", error);
+    const toast = useToast();
+    toast.add({
+      title: "Reject Failed",
+      description: "Failed to reject project. Please try again.",
+      color: "error",
+    });
+  } finally {
+    rejectingId.value = null;
   }
 };
 </script>
+
+<style scoped>
+/* Modal transition animations */
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-active .relative,
+.modal-leave-active .relative {
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.modal-enter-from .relative,
+.modal-leave-to .relative {
+  transform: scale(0.95);
+  opacity: 0;
+}
+</style>
