@@ -77,18 +77,28 @@ export class ProjectService {
 
   /**
    * Fetch all projects with optional filters
+   * When search is provided, only search parameter is sent (debounced mode)
    */
   async fetchAll(filters?: ProjectFilters): Promise<any> {
     try {
       const params = new URLSearchParams();
 
-      if (filters?.page) params.append("page", filters.page.toString());
-      if (filters?.limit) params.append("limit", filters.limit.toString());
-      if (filters?.search) params.append("search", filters.search);
-      if (filters?.categoryId) params.append("category", filters.categoryId);
-      if (filters?.tags?.length) params.append("tags", filters.tags.join(","));
-      if (filters?.year) params.append("year", filters.year);
-      if (filters?.sort) params.append("sort", filters.sort);
+      // If search is provided, only send search parameter (debounced search mode)
+      if (filters?.search) {
+        params.append("search", filters.search);
+        // Optionally keep pagination for search results
+        if (filters?.page) params.append("page", filters.page.toString());
+        if (filters?.limit) params.append("limit", filters.limit.toString());
+      } else {
+        // Normal filtering mode - apply all filters
+        if (filters?.page) params.append("page", filters.page.toString());
+        if (filters?.limit) params.append("limit", filters.limit.toString());
+        if (filters?.categoryId) params.append("category", filters.categoryId);
+        if (filters?.tags?.length)
+          params.append("tags", filters.tags.join(","));
+        if (filters?.year) params.append("year", filters.year);
+        if (filters?.sort) params.append("sort", filters.sort);
+      }
 
       const queryString = params.toString();
       const url = queryString ? `${this.baseUrl}?${queryString}` : this.baseUrl;
