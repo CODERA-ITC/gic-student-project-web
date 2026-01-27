@@ -370,21 +370,29 @@ onMounted(async () => {
       }
     }
 
-    // Ensure auth is restored from localStorage
-    await authStore.restoreAuth();
-
-    // Check authentication
+    // Ensure auth is restored from localStorage only if not already authenticated
     if (!authStore.isAuthenticated) {
-      await navigateTo("/login");
-      return;
+      const authRestored = await authStore.restoreAuth();
+
+      // Check authentication after restore attempt
+      if (!authRestored || !authStore.isAuthenticated) {
+        console.log("Authentication failed - redirecting to login");
+        await navigateTo("/login");
+        return;
+      }
     }
 
-    // Fetch all necessary data before showing dashboard
-    await Promise.all([
-      projectStore.fetchUserProjects(),
-      projectStore.fetchTags(),
-      projectStore.fetchCategories(),
-    ]);
+    console.log("✅ User authenticated:", authStore.currentUser?.email);
+
+    if (projectStore.userProjects.length === 0) {
+      await projectStore.fetchUserProjects();
+    }
+    if (projectStore.availableTags.length === 0) {
+      await projectStore.fetchTags();
+    }
+    if (projectStore.availableCategories.length === 0) {
+      await projectStore.fetchCategories();
+    }
 
     console.log("Dashboard data loaded successfully");
   } catch (err) {

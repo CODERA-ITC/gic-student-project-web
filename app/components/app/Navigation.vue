@@ -59,7 +59,13 @@
 
         <!-- User Menu (Desktop Only) -->
         <div class="hidden lg:block">
+          <!-- Show skeleton loader while auth is loading or during initial load -->
+          <div
+            v-if="authStore.isLoading || isInitialLoad"
+            class="w-10 h-10 rounded-full bg-gray-200 dark:bg-neutral-700 animate-pulse"
+          ></div>
           <UserMenu
+            v-else
             :is-authenticated="isAuthenticated"
             :user="user"
             @logout="handleLogout"
@@ -260,14 +266,26 @@ const { t, setLocale } = useI18n();
 // State
 const mobileMenuOpen = ref(false);
 const isScrolled = ref(false);
+const isInitialLoad = ref(true);
 
 // Scroll detection
 const handleScroll = () => {
   isScrolled.value = window.scrollY > 10;
 };
 
-onMounted(() => {
+onMounted(async () => {
   if (process.client) {
+    // Check if we have a token in localStorage (synchronous check)
+    const hasToken = localStorage.getItem("access_token");
+
+    // Only restore auth if we have a token and not already authenticated
+    if (hasToken && !authStore.isAuthenticated && !authStore.isLoading) {
+      await authStore.restoreAuth();
+    }
+
+    // Mark initial load as complete
+    isInitialLoad.value = false;
+
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll(); // Check initial state
   }

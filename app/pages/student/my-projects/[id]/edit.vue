@@ -653,12 +653,14 @@ const discardChanges = () => {
 
 // Lifecycle
 onMounted(async () => {
-  // Restore authentication state from localStorage
-  await authStore.restoreAuth();
-
+  // Restore authentication state from localStorage only if not already authenticated
   if (!authStore.isAuthenticated) {
-    await navigateTo("/login");
-    return;
+    await authStore.restoreAuth();
+
+    if (!authStore.isAuthenticated) {
+      await navigateTo("/login");
+      return;
+    }
   }
 
   await loadProject();
