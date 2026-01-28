@@ -265,14 +265,14 @@
                     <td class="p-3 text-slate-100 align-top text-xs">
                       <span
                         :class="
-                          project.status === 'completed'
+                          project.visibility === 'accepted' || project.visibility === 'public'
                             ? 'bg-green-600 text-white'
                             : 'bg-yellow-600 text-white'
                         "
                         class="px-2 py-1 rounded text-xs font-semibold inline-block"
                       >
                         {{
-                          project.status === "completed"
+                          project.visibility === "accepted" || project.visibility === "public"
                             ? "Completed"
                             : "Pending"
                         }}
@@ -542,19 +542,20 @@ definePageMeta({
 });
 
 // Store submissions in a ref
-const submissions = ref([]);
-const isLoadingSubmissions = ref(false);
+// const submissions = ref([]); // Removed local ref, use store directly
+// const isLoadingSubmissions = ref(false);
 
-const projects = computed(() => submissions.value);
+const projects = computed(() => projectsStore.projects);
 
 // Fetch submissions on mount
 onMounted(async () => {
-  isLoadingSubmissions.value = true;
+  // isLoadingSubmissions.value = true; // Removed
   try {
     console.log("Fetching all submissions for teacher...");
-    submissions.value = await projectsStore.fetchAllSubmissions();
-    console.log(`✅ Loaded ${submissions.value.length} submissions`);
-    console.log("First submission sample:", submissions.value[0]);
+    // submissions.value = await projectsStore.fetchAllSubmissions(); // Removed, use store
+    await projectsStore.fetchAllSubmissions(); // Ensure store has data
+    console.log(`✅ Loaded ${projectsStore.projects.length} submissions`);
+    console.log("First submission sample:", projectsStore.projects[0]);
   } catch (error) {
     console.error("❌ Error loading submissions:", error);
     const toast = useToast();
@@ -564,7 +565,7 @@ onMounted(async () => {
       color: "error",
     });
   } finally {
-    isLoadingSubmissions.value = false;
+    // isLoadingSubmissions.value = false; // Removed
   }
 });
 
@@ -743,8 +744,8 @@ const prevPage = () => {
 
 // Action methods for project buttons
 const viewProject = (project) => {
-  // TODO: Implement view project functionality
-  navigateTo(`/teacher/submissions/${project.id}`);
+  // Navigate to project details page
+  navigateTo(`/projects/${project.id}`);
 };
 
 // Modal control functions
@@ -766,7 +767,8 @@ const confirmAccept = async () => {
     await projectsStore.acceptProject(selectedProject.value.id);
 
     // Refresh submissions list after accepting
-    submissions.value = await projectsStore.fetchAllSubmissions();
+    // submissions.value = await projectsStore.fetchAllSubmissions(); // Removed, store will update
+    await projectsStore.fetchAllSubmissions(); // Refresh store
 
     const toast = useToast();
     toast.add({
@@ -798,7 +800,8 @@ const confirmReject = async () => {
     await projectsStore.rejectProject(selectedProject.value.id);
 
     // Refresh submissions list after rejecting
-    submissions.value = await projectsStore.fetchAllSubmissions();
+    // submissions.value = await projectsStore.fetchAllSubmissions(); // Removed
+    await projectsStore.fetchAllSubmissions(); // Refresh store
 
     const toast = useToast();
     toast.add({
