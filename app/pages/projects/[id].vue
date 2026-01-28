@@ -10,7 +10,7 @@
     >
       <UContainer class="py-4">
         <div class="flex items-center justify-between">
-          <ButtonsPresetButton preset="back" to="/projects" />
+          <ButtonsPresetButton preset="back" @click="goBack" />
         </div>
       </UContainer>
     </div>
@@ -54,6 +54,7 @@ import { useAuthStore } from "~/stores/auth";
 import { is, tr } from "zod/locales";
 
 const route = useRoute();
+const router = useRouter();
 const projectStore = useProjectStore();
 const authStore = useAuthStore();
 const projectId = route.params.id as string;
@@ -207,6 +208,10 @@ const toggleVisibility = async () => {
       color: "error",
     });
   }
+};
+
+const goBack = () => {
+  router.back();
 };
 
 useHead({
