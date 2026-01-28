@@ -244,7 +244,7 @@
                     label="View"
                     icon="i-heroicons-arrow-right"
                     size="xs"
-                    @click="viewProject(project)"
+                    :to="'/projects/' + project.id"
                   />
                   <ButtonsPresetButton
                     v-if="project.status === 'pending'"
