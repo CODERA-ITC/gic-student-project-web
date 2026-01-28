@@ -125,6 +125,12 @@
                 <UIcon name="i-heroicons-heart-20-solid" class="w-4 h-4" />
                 Favorites
               </NuxtLink>
+              <NuxtLink to="/teacher/user-management"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                @click="closeMenu">
+                <UIcon name="i-heroicons-users-20-solid" class="w-4 h-4" />
+                User Management
+              </NuxtLink>
             </template>
 
             <!-- Common Menu Items -->
