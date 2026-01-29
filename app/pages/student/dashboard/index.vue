@@ -294,11 +294,12 @@
                     {{ update.message }}
                   </p>
                   <div v-if="update.action" class="mt-2">
-                    <button
+                    <NuxtLink
+                      :to="`/student/my-projects/${update.projectId}`"
                       class="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                     >
                       {{ update.action }} →
-                    </button>
+                    </NuxtLink>
                   </div>
                 </div>
               </div>
@@ -324,7 +325,7 @@ const route = useRoute();
 definePageMeta({
   middleware: ["auth", "student"],
 });
-const isLoading = ref(false);
+const isLoading = ref(true);
 const error = ref("");
 const showSecurityQuestions = ref(false);
 
@@ -354,7 +355,7 @@ onMounted(async () => {
       // Handle OAuth callback with the token
       const tokenStr = String(token);
       const refreshTokenStr = refreshToken ? String(refreshToken) : undefined;
-      await authStore.handleOAuthCallback(tokenStr, refreshTokenStr);
+      // await authStore.handleOAuthCallback(tokenStr, refreshTokenStr);
 
       // Check if user needs to set up security questions AFTER OAuth callback
       if (authStore.needsSecurityQuestions) {
@@ -541,7 +542,7 @@ const recentProjects = computed(() => {
 
     return {
       id: projectId,
-      name: project.title,
+      name: project.name,
       category:
         typeof project.category === "object"
           ? project.category
@@ -566,7 +567,8 @@ const updates = computed(() => {
       projectUpdates.push({
         id: `approved-${project.id}`,
         title: "Project Approved! 🎉",
-        message: `Your "${project.title}" project has been approved and marked as completed`,
+        projectId: project.id,
+        message: `Your "${project.name}" project has been approved and marked as completed`,
         time: "Recently",
         icon: "i-heroicons-check-circle",
         iconColor: "text-emerald-600 dark:text-emerald-400",
@@ -586,7 +588,8 @@ const updates = computed(() => {
         projectUpdates.push({
           id: `review-${project.id}`,
           title: "Project Under Review",
-          message: `Your "${project.title}" project is currently being reviewed`,
+          projectId: project.id,
+          message: `Your "${project.name}" project is currently being reviewed`,
           time: "Recently",
           icon: "i-heroicons-clock",
           iconColor: "text-blue-600 dark:text-blue-400",
@@ -598,8 +601,9 @@ const updates = computed(() => {
       } else if (latestSubmission.status === "Approved") {
         projectUpdates.push({
           id: `submission-approved-${project.id}`,
+          projectId: project.id,
           title: "Submission Approved! ✅",
-          message: `Your submission for "${project.title}" has been approved`,
+          message: `Your submission for "${project.name}" has been approved`,
           time: "Recently",
           icon: "i-heroicons-check-badge",
           iconColor: "text-emerald-600 dark:text-emerald-400",
@@ -611,8 +615,9 @@ const updates = computed(() => {
       } else if (latestSubmission.status === "Rejected") {
         projectUpdates.push({
           id: `submission-rejected-${project.id}`,
+          projectId: project.id,
           title: "Submission Needs Revision",
-          message: `Your submission for "${project.title}" requires changes. Please review the feedback.`,
+          message: `Your submission for "${project.name}" requires changes. Please review the feedback.`,
           time: "Recently",
           icon: "i-heroicons-exclamation-triangle",
           iconColor: "text-red-600 dark:text-red-400",
@@ -628,8 +633,9 @@ const updates = computed(() => {
     if (project.status === "In Progress") {
       projectUpdates.push({
         id: `progress-${project.id}`,
+        projectId: project.id,
         title: "Project In Progress",
-        message: `Continue working on "${project.title}" to complete it`,
+        message: `Continue working on "${project.name}" to complete it`,
         time: "Recently",
         icon: "i-heroicons-rocket-launch",
         iconColor: "text-blue-600 dark:text-blue-400",
