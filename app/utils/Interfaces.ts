@@ -100,4 +100,5 @@ export interface ProjectState {
     year: string;
     sort: string;
   };
+  highlightedProjects: Project[];
 }

@@ -40,6 +40,8 @@
             @toggle-like="toggleLike"
           />
         </div>
+
+        <p>featuredProjects: {{ featuredProjects.length }}</p>
       </section>
     </UContainer>
 
@@ -52,14 +54,16 @@
 const projectStore = useProjectStore();
 const authStore = useAuthStore();
 
-const featuredProjects = ref<Project[]>([]);
+const featuredProjects = computed(() => projectStore.getHighlightedProjects);
 
 const showAuthModal = ref(false);
 const authModalContext = ref("like"); // 'like' or 'create'
 
 onMounted(async () => {
-  featuredProjects.value = await projectStore.fetchHighlightedProjects();
-  await projectStore.loadUserLikedProjects();
+  await Promise.all([
+    projectStore.fetchHighlightedProjects(),
+    projectStore.loadUserLikedProjects(),
+  ]);
 });
 
 const toggleLike = async (projectId) => {

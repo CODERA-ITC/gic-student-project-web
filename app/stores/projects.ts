@@ -39,6 +39,7 @@ export const useProjectStore = defineStore("projects", {
       year: "",
       sort: "recent",
     },
+    highlightedProjects: [],
   }),
 
   getters: {
@@ -120,6 +121,8 @@ export const useProjectStore = defineStore("projects", {
         ),
       };
     },
+
+    getHighlightedProjects: (state) => state.highlightedProjects,
   },
 
   actions: {
@@ -444,7 +447,7 @@ export const useProjectStore = defineStore("projects", {
       }
     },
 
-    async fetchHighlightedProjects(): Promise<Project[]> {
+    async fetchHighlightedProjects(): Promise<void> {
       ///  use api directly
       let projects: Project[] = [];
       let selectProject: Project[] = []; // only 3 projects will be selected
@@ -455,14 +458,20 @@ export const useProjectStore = defineStore("projects", {
 
       projects = transformProjects(highlightedProjects);
       let total = projects.length;
+      let numToSelect = Math.min(3, total); // select up to 3 projects
 
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < total; i++) {
         let index = Math.floor(Math.random() * total);
-        selectProject = [...selectProject, projects[index]];
-        projects.splice(index, 1); // remove selected project to avoid duplicates
+
+        if (!selectProject.includes(projects[index])) {
+          selectProject = [...selectProject, projects[index]];
+        }
+        if (numToSelect === selectProject.length) break;
+
+        // projects.splice(index, 1); // remove selected project to avoid duplicates
       }
 
-      return selectProject;
+      this.highlightedProjects = selectProject;
     },
 
     // Save user's liked projects (would sync with backend in real app)
