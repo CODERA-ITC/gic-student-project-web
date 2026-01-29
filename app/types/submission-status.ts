@@ -1,6 +1,6 @@
 export enum SubmissionStatus {
   DRAFT = "draft",
   PENDING = "pending",
-  EXCEPTED = "accepted",
+  ACCEPTED = "accepted",
   REJECTED = "rejected",
 }

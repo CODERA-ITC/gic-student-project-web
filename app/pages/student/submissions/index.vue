@@ -107,7 +107,7 @@
                     <p
                       class="text-sm font-semibold text-gray-900 dark:text-white"
                     >
-                      {{ submission.projectName }}
+                      {{ submission.name }}
                     </p>
                     <p class="text-xs text-gray-500 dark:text-gray-400">
                       {{ submission.category }}
@@ -115,18 +115,18 @@
                   </div>
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-slate-400">
-                  {{ submission.submittedDate }}
+                  {{ submission.updatedAt }}
                 </td>
                 <td class="px-6 py-4">
                   <span
-                    :class="getStatusBadgeClass(submission.status)"
+                    :class="getStatusBadgeClass(submission.submissionStatus)"
                     class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold"
                   >
                     <span
                       class="w-1.5 h-1.5 rounded-full"
-                      :class="getStatusDotClass(submission.status)"
+                      :class="getStatusDotClass(submission.submissionStatus)"
                     ></span>
-                    {{ submission.status }}
+                    {{ submission.submissionStatus }}
                   </span>
                 </td>
                 <td class="px-6 py-4">
@@ -149,9 +149,10 @@
                     />
                     <UButton
                       v-if="
-                        submission.status === 'Under Review' ||
-                        submission.status === 'Needs Revision' ||
-                        submission.status === 'Rejected'
+                        submission.submissionStatus ===
+                          SubmissionStatus.PENDING ||
+                        submission.submissionStatus ===
+                          SubmissionStatus.REJECTED
                       "
                       icon="i-heroicons-x-circle"
                       size="xs"
@@ -327,7 +328,6 @@ const authStore = useAuthStore();
 
 // State
 const isLoading = ref(false);
-const userSubmissions = ref<Project[]>([]);
 
 // Search and pagination
 const searchQuery = ref("");
@@ -339,41 +339,52 @@ const showCancelModal = ref(false);
 const selectedSubmissionId = ref<string | null>(null);
 const isCanceling = ref(false);
 
-// Get submitted projects from fetched data
+// Get submitted projects from store - filter by current user and non-draft status
 const submissions = computed(() => {
-  return userSubmissions.value.map((project) => {
-    // Map visibility to status
-    let status = "Under Review";
-    if (project.visibility === "accepted") {
-      status = "Approved";
-    } else if (project.visibility === "rejected") {
-      status = "Rejected";
-    } else if (project.visibility === "reviewing") {
-      status = "Under Review";
-    }
+  console.log("User Projects:", projectStore.userProjects);
+  console.log("SubmissionStatus.DRAFT value:", SubmissionStatus.DRAFT);
 
-    return {
-      id: project.id,
-      projectName: project.name,
-      category: project.category || "General",
-      submittedDate:
-        project.createdAt?.split("T")[0] ||
+  // Filter all projects from store (use userProjects which is populated by fetchUserProjects)
+  return projectStore.userProjects
+    .filter((project) => {
+      console.log(`Project: ${project.name}, submissionStatus: "${project.submissionStatus}", type: ${typeof project.submissionStatus}`);
+      
+      // Check if project is submitted (not draft)
+      const isSubmitted = project.submissionStatus !== SubmissionStatus.DRAFT;
+      console.log(`  isSubmitted: ${isSubmitted}`);
+      
+      return isSubmitted;
+    })
+    .map((project) => ({
+      ...project,
+      // Format the date for display
+      updatedAt:
         project.updatedAt?.split("T")[0] ||
+        project.createdAt?.split("T")[0] ||
         new Date().toISOString().split("T")[0],
-      status: status,
-    };
-  });
+    }));
 });
+
+
 
 // Status counts for summary cards
 const underReviewCount = computed(
-  () => submissions.value.filter((s) => s.status === "Under Review").length,
+  () =>
+    submissions.value.filter(
+      (s) => s.submissionStatus === SubmissionStatus.PENDING,
+    ).length,
 );
 const approvedCount = computed(
-  () => submissions.value.filter((s) => s.status === "Approved").length,
+  () =>
+    submissions.value.filter(
+      (s) => s.submissionStatus === SubmissionStatus.ACCEPTED,
+    ).length,
 );
 const rejectedCount = computed(
-  () => submissions.value.filter((s) => s.status === "Rejected").length,
+  () =>
+    submissions.value.filter(
+      (s) => s.submissionStatus === SubmissionStatus.REJECTED,
+    ).length,
 );
 
 // Computed properties for search and pagination
@@ -385,9 +396,9 @@ const filteredSubmissions = computed(() => {
   const query = searchQuery.value.toLowerCase();
   return submissions.value.filter(
     (submission) =>
-      submission.projectName.toLowerCase().includes(query) ||
+      submission.name.toLowerCase().includes(query) ||
       submission.category.toLowerCase().includes(query) ||
-      submission.status.toLowerCase().includes(query),
+      submission.submissionStatus.toLowerCase().includes(query),
   );
 });
 
@@ -469,13 +480,13 @@ const handleCancelConfirm = async () => {
     isCanceling.value = true;
 
     // Find the project in submissions
-    const projectIndex = userSubmissions.value.findIndex(
+    const projectIndex = submissions.value.findIndex(
       (p) => p.id === selectedSubmissionId.value,
     );
 
     if (projectIndex !== -1) {
       // Remove from local array
-      userSubmissions.value.splice(projectIndex, 1);
+      submissions.value.splice(projectIndex, 1);
 
       // Show success toast
       const toast = useToast();
@@ -517,11 +528,11 @@ onMounted(async () => {
     }
   }
 
-  // Fetch user's submission projects
+  // Fetch all user projects (they will be filtered in the computed property)
   isLoading.value = true;
   try {
-    userSubmissions.value = await projectStore.fetchUserSubmissions();
-    console.log(`Loaded ${userSubmissions.value.length} submission projects`);
+    await projectStore.fetchUserProjects();
+    console.log(`Loaded ${submissions.value.length} submitted projects`);
   } catch (error) {
     console.error("Error loading submissions:", error);
     const toast = useToast();
