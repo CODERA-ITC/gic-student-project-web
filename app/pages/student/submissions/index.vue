@@ -82,6 +82,11 @@
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
                 >
+                  Category
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
+                >
                   Submitted
                 </th>
                 <th
@@ -103,16 +108,48 @@
                 class="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
               >
                 <td class="px-6 py-4">
-                  <div>
-                    <p
-                      class="text-sm font-semibold text-gray-900 dark:text-white"
+                  <div class="flex items-center gap-3">
+                    <!-- Preview Image -->
+                    <div
+                      class="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden bg-gray-200 dark:bg-slate-700"
                     >
-                      {{ submission.name }}
-                    </p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                      {{ submission.category }}
-                    </p>
+                      <img
+                        v-if="submission.images && submission.images.length > 0"
+                        :src="
+                          submission.images[0].thumbnailUrl ||
+                          submission.images[0].originalUrl
+                        "
+                        :alt="submission.name"
+                        class="w-full h-full object-cover"
+                      />
+                      <div
+                        v-else
+                        class="w-full h-full flex items-center justify-center text-gray-400 dark:text-slate-500"
+                      >
+                        <UIcon name="i-heroicons-photo" class="w-8 h-8" />
+                      </div>
+                    </div>
+                    <!-- Name and Description -->
+                    <div class="flex-1 min-w-0">
+                      <p
+                        class="text-sm font-semibold text-gray-900 dark:text-white truncate"
+                      >
+                        {{ submission.name }}
+                      </p>
+                      <p
+                        class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mt-1"
+                      >
+                        {{
+                          submission.description || "No description available"
+                        }}
+                      </p>
+                    </div>
                   </div>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="text-sm text-gray-600 dark:text-slate-400">
+                    {{ submission.category || "Uncategorized" }}
+                  </span>
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-slate-400">
                   {{ submission.updatedAt }}
@@ -147,7 +184,7 @@
                       label="Edit"
                       @click="editSubmission(submission.id)"
                     />
-                    <UButton
+                    <!-- <UButton
                       v-if="
                         submission.submissionStatus ===
                           SubmissionStatus.PENDING ||
@@ -160,7 +197,7 @@
                       variant="ghost"
                       label="Cancel"
                       @click="confirmCancel(submission.id)"
-                    />
+                    /> -->
                   </div>
                 </td>
               </tr>
@@ -347,12 +384,14 @@ const submissions = computed(() => {
   // Filter all projects from store (use userProjects which is populated by fetchUserProjects)
   return projectStore.userProjects
     .filter((project) => {
-      console.log(`Project: ${project.name}, submissionStatus: "${project.submissionStatus}", type: ${typeof project.submissionStatus}`);
-      
+      console.log(
+        `Project: ${project.name}, submissionStatus: "${project.submissionStatus}", type: ${typeof project.submissionStatus}`,
+      );
+
       // Check if project is submitted (not draft)
       const isSubmitted = project.submissionStatus !== SubmissionStatus.DRAFT;
       console.log(`  isSubmitted: ${isSubmitted}`);
-      
+
       return isSubmitted;
     })
     .map((project) => ({
@@ -364,8 +403,6 @@ const submissions = computed(() => {
         new Date().toISOString().split("T")[0],
     }));
 });
-
-
 
 // Status counts for summary cards
 const underReviewCount = computed(
@@ -436,27 +473,33 @@ const handleSearch = () => {
 
 const getStatusBadgeClass = (status: string) => {
   const classes: Record<string, string> = {
-    Approved:
-      "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
-    "Under Review":
+    pending:
       "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
-    "Needs Revision":
-      "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
-    Rejected:
-      "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300",
+
+    accepted:
+      "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+    rejected: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+    // Legacy values
   };
-  return classes[status] || "bg-gray-100 text-gray-800";
+  return (
+    classes[status] ||
+    "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300"
+  );
 };
 
 const getStatusDotClass = (status: string) => {
   const classes: Record<string, string> = {
+    pending: "bg-yellow-600 dark:bg-yellow-400",
+    accepted: "bg-green-600 dark:bg-green-400",
+    rejected: "bg-red-600 dark:bg-red-400",
+    // Legacy values
     Approved: "bg-green-600 dark:bg-green-400",
     "Under Review": "bg-yellow-600 dark:bg-yellow-400",
     "Needs Revision": "bg-red-600 dark:bg-red-400",
-    Rejected: "bg-gray-600 dark:bg-gray-400",
+    Rejected: "bg-red-600 dark:bg-red-400",
   };
 
-  return classes[status] || "bg-gray-600";
+  return classes[status] || "bg-gray-600 dark:bg-gray-400";
 };
 
 const viewSubmission = (id: string) => {

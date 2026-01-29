@@ -39,7 +39,7 @@ export class ProjectTransformer {
   static transformAuthor(authorData: any): ProjectAuthor {
     const firstName = authorData?.firstName || "";
     const lastName = authorData?.lastName || "";
-    const avatarUrl = authorData?.avatarUrl || authorData?.avatar || "";
+    const avatarUrl = authorData?.avatar || "";
 
     return {
       id: authorData?.id || "",
@@ -195,7 +195,7 @@ export class ProjectTransformer {
       author,
       technologies: Array.isArray(projectData.technologies)
         ? projectData.technologies
-        : [], 
+        : [],
       category,
       projectStatus: status,
       submissionStatus: projectData.status || "draft",

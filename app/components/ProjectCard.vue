@@ -253,7 +253,7 @@ const props = defineProps({
         (obj.images || obj.emoji || obj.gradient) &&
         obj.views !== undefined &&
         obj.likes !== undefined &&
-        (!obj.members ||
+        (!obj.members ||  
           (Array.isArray(obj.members) && obj.members.every((m) => m && m.name)))
       );
     },
@@ -317,7 +317,7 @@ const isProjectAuthor = computed(() => {
   }
 
   // Compare by name (in a real app, you'd use user IDs)
-  return authStore.user.name === props.project.author.name;
+  return authStore.user.id === props.project.author.id;
 });
 
 const toggleLikeHandler = () => {
