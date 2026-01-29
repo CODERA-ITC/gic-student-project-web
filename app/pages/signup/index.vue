@@ -174,6 +174,50 @@
       </div>
     </div>
 
+    <!-- Loading/Success Modal -->
+    <Transition name="modal-fade">
+      <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div class="bg-white dark:bg-neutral-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center">
+          <!-- Verifying State -->
+          <div v-if="modalStatus === 'verifying'" class="space-y-4">
+            <div class="flex justify-center">
+              <div
+                class="w-16 h-16 border-4 border-blue-900 border-t-transparent dark:border-blue-500 dark:border-t-transparent rounded-full animate-spin">
+              </div>
+            </div>
+            <h3 class="text-xl font-semibold text-slate-900 dark:text-white">Verifying...</h3>
+            <p class="text-sm text-slate-600 dark:text-neutral-400">Creating your account</p>
+          </div>
+
+          <!-- Success State -->
+          <div v-else-if="modalStatus === 'success'" class="space-y-4">
+            <div class="flex justify-center">
+              <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center animate-check-scale">
+                <UIcon name="i-heroicons-check" class="w-10 h-10 text-white animate-check-draw" />
+              </div>
+            </div>
+            <h3 class="text-xl font-semibold text-slate-900 dark:text-white">Success!</h3>
+            <p class="text-sm text-slate-600 dark:text-neutral-400">Your account has been created</p>
+          </div>
+
+          <!-- Failed State -->
+          <div v-else-if="modalStatus === 'failed'" class="space-y-4">
+            <div class="flex justify-center">
+              <div class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center animate-error-scale">
+                <UIcon name="i-heroicons-x-mark" class="w-10 h-10 text-white animate-error-draw" />
+              </div>
+            </div>
+            <h3 class="text-xl font-semibold text-slate-900 dark:text-white">Failed!</h3>
+            <p class="text-sm text-slate-600 dark:text-neutral-400">{{ errorMessage }}</p>
+            <div class="pt-2">
+              <ButtonsPresetButton preset="primary" label="TRY AGAIN" @click="closeFailedModal" size="lg"
+                class="w-full" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
     <!-- Progress Bar - Fixed at Bottom -->
     <div class="fixed bottom-0 left-0 w-full bg-slate-200 dark:bg-neutral-700 h-2">
       <div class="h-full bg-blue-900 dark:bg-blue-600 transition-all duration-500 ease-out"
@@ -209,6 +253,11 @@ const confirmPassword = ref("");
 const agreeToTerms = ref(false);
 const isLoading = ref(false);
 const error = ref("");
+
+// Modal state for loading/success popup
+const showModal = ref(false);
+const modalStatus = ref('verifying'); // 'verifying' | 'success' | 'failed'
+const errorMessage = ref('');
 
 // Step management
 const currentStep = ref(1);
@@ -317,6 +366,10 @@ const handleSignup = async () => {
   error.value = "";
   isLoading.value = true;
 
+  // Show modal with verifying state
+  showModal.value = true;
+  modalStatus.value = 'verifying';
+
   try {
     const config = useRuntimeConfig();
     const apiBase = config.public.apiBase || 'https://gic-project.darororo.dev';
@@ -345,14 +398,29 @@ const handleSignup = async () => {
     // Step 2: Automatically login with the account
     await authStore.login(email.value, password.value);
 
+    // Show success state
+    modalStatus.value = 'success';
+
+    // Wait for animation to complete before navigating
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
     // Step 3: Navigate to dashboard based on role
     // The dashboard will automatically show the security questions modal
     const dashboardRoute = authStore.isTeacher ? '/teacher/dashboard' : '/student/dashboard';
     await router.push(dashboardRoute);
   } catch (err) {
-    error.value = err?.data?.message || err?.message || "Sign up failed. Please try again.";
+    // Show failed state
+    modalStatus.value = 'failed';
+    errorMessage.value = err?.data?.message || err?.message || "Sign up failed. Please try again.";
     isLoading.value = false;
   }
+};
+
+// Close modal and show error in form
+const closeFailedModal = () => {
+  showModal.value = false;
+  error.value = errorMessage.value;
+  errorMessage.value = '';
 };
 </script>
 
@@ -383,5 +451,88 @@ const handleSignup = async () => {
 .slide-right-leave-to {
   opacity: 0;
   transform: translateX(30px);
+}
+
+/* Modal fade animation */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+
+/* Checkmark scale animation */
+@keyframes check-scale {
+  0% {
+    transform: scale(0);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-check-scale {
+  animation: check-scale 0.5s ease-out;
+}
+
+/* Checkmark draw animation */
+@keyframes check-draw {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-check-draw {
+  animation: check-draw 0.3s ease-out 0.2s both;
+}
+
+/* Error scale animation */
+@keyframes error-scale {
+  0% {
+    transform: scale(0);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-error-scale {
+  animation: error-scale 0.5s ease-out;
+}
+
+/* Error draw animation */
+@keyframes error-draw {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(-90deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.animate-error-draw {
+  animation: error-draw 0.3s ease-out 0.2s both;
 }
 </style>
