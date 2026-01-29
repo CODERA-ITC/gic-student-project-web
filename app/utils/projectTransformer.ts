@@ -199,7 +199,7 @@ export class ProjectTransformer {
       category,
       projectStatus: status,
       submissionStatus: projectData.submissionStatus || "draft",
-      featured: projectData.featured || projectData.isFeatured || false,
+      highlighted: projectData.highlighted || false,
       likes: projectData.likes || projectData.likeCount || 0,
       views: projectData.views || projectData.viewCount || 0,
       demoUrl: projectData.demoUrl || "",

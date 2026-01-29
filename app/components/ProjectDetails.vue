@@ -219,9 +219,9 @@
             <!-- Edit and Delete Buttons (Owner only) - via slot -->
             <slot name="action-buttons"></slot>
 
-            <!-- Hide/Show Project Button (Teacher only) -->
+            <!-- Hide/Show Project Button (Teacher only when project is not public) -->
             <UButton
-              v-if="userRole === Role.teacher"
+              v-if="userRole === (Role.teacher || Role.admin) && !isPublic"
               @click="$emit('hide')"
               :color="project.visibility === 'private' ? 'success' : 'warning'"
               variant="solid"
@@ -436,6 +436,7 @@ interface Props {
   project: Project;
   isLiked?: boolean;
   userRole?: Role | null;
+  isPublic?: boolean;
   isOwner?: boolean;
 }
 
@@ -457,8 +458,6 @@ const autoPlayInterval = ref<NodeJS.Timeout | null>(null);
 
 // Timeline scroll detection
 const isTimelineInView = ref(false);
-const isScrollLocked = ref(false);
-const scrollPosition = ref(0);
 
 // Reset autoplay interval when user manually navigates
 const resetAutoplay = () => {
@@ -532,29 +531,6 @@ const currentStatus = computed(() => {
     ? projectStore.getProjectStatus(props.project.features)
     : "In Progress";
 });
-
-// Scroll lock functions
-const lockScroll = () => {
-  if (typeof window !== "undefined") {
-    scrollPosition.value = window.scrollY;
-    document.body.style.overflow = "hidden";
-    document.body.style.position = "fixed";
-    document.body.style.top = `-${scrollPosition.value}px`;
-    document.body.style.width = "100%";
-    isScrollLocked.value = true;
-  }
-};
-
-const unlockScroll = () => {
-  if (typeof window !== "undefined") {
-    document.body.style.overflow = "";
-    document.body.style.position = "";
-    document.body.style.top = "";
-    document.body.style.width = "";
-    window.scrollTo(0, scrollPosition.value);
-    isScrollLocked.value = false;
-  }
-};
 
 // GSAP Animations
 onMounted(() => {

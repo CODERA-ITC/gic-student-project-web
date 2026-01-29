@@ -41,7 +41,7 @@ export interface Project {
   category: string;
   submissionStatus: "draft" | "pending" | "accepted" | "rejected";
   projectStatus?: string; // For backward compatibility
-  featured: boolean;
+  highlighted: boolean;
   likes: number;
   views: number;
   demoUrl: string;

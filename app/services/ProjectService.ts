@@ -165,7 +165,7 @@ export class ProjectService {
     let projects: any;
 
     try {
-      const response = await $fetch(`${this.baseUrl}/highlighted`);
+      const response = await $fetch(`${this.baseUrl}/highlights`);
       return (projects = response);
     } catch (error) {
       console.error(

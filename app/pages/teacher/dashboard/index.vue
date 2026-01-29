@@ -292,7 +292,7 @@
                     label="View"
                     icon="i-heroicons-arrow-right"
                     size="xs"
-                    :to="'/projects/' + project.id"
+                    :to="'/teacher/submissions/' + project.id"
                   />
                 </div>
               </div>

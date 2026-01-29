@@ -200,11 +200,12 @@ onMounted(async () => {
     project.value = projectData;
 
     // Check ownership after project is loaded
-    if (!isOwner.value) {
-      console.log("User is not owner, redirecting to public view");
-      await navigateTo(`/projects/${projectId}`);
-      return;
-    }
+    // since teacher act as admin
+    // if (!isOwner.value) {
+    //   console.log("User is not owner, redirecting to public view");
+    //   await navigateTo(`/projects/${projectId}`);
+    //   return;
+    // }
 
     console.log("✅ User is owner, displaying project");
   } catch (error) {

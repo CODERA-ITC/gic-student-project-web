@@ -12,8 +12,8 @@
         'hover:cursor-pointer',
       ]"
     >
-      <!-- Circular featured badge -->
-      <template v-if="project.featured">
+      <!-- Circular highlighted badge -->
+      <template v-if="project.highlighted">
         <div class="absolute top-3 left-3 z-50 animate-pulse">
           <UBadge
             icon="i-lucide-rocket"
@@ -21,7 +21,7 @@
             color="error"
             variant="solid"
           >
-            Featured
+            Highlighted
           </UBadge>
         </div>
       </template>
