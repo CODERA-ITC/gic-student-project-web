@@ -185,20 +185,23 @@
               :key="project.id"
               class="bg-white dark:bg-slate-800 rounded-xl border-1 border-gray-200 dark:border-slate-700/50"
             >
+            <p>
+              <!-- test project {{ project.submissionStatus}} -->
+            </p>
               <!-- Card Content -->
               <div class="p-6">
                 <!-- Header: Status Badge -->
                 <div class="flex justify-end mb-3">
                   <span
                     :class="
-                      project.status === 'completed'
+                      project.projectStatus === 'completed'
                         ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
                         : 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
                     "
                     class="px-3 py-1 rounded-full text-xs font-medium"
                   >
                     {{
-                      project.status === "completed" ? "Completed" : "Pending"
+                      project.projectStatus === "completed" ? "Completed" : "Pending"
                     }}
                   </span>
                 </div>
@@ -206,33 +209,33 @@
                 <!-- Student Info -->
                 <div class="flex items-center gap-3 mb-4">
                   <div
-                    v-if="project.studentAvatar"
+                    v-if="project.author.avatar"
                     class="w-12 h-12 rounded-full overflow-hidden shrink-0 ring-2 ring-gray-100 dark:ring-slate-700"
                   >
                     <img
-                      :src="project.studentAvatar"
-                      :alt="project.studentName"
+                      :src="project.author.avatar"
+                      :alt="project.author.name"
                       class="w-full h-full object-cover"
                     />
                   </div>
-                  <div
+                  <!-- <div
                     v-else
                     class="w-12 h-12 rounded-full bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center shrink-0 ring-2 ring-gray-100 dark:ring-slate-700"
                   >
                     <span class="text-sm font-semibold text-white">{{
-                      project.studentInitials
+                      project.author.name
                     }}</span>
-                  </div>
+                  </div> -->
                   <div class="flex-1 min-w-0">
                     <div
                       class="font-semibold text-black dark:text-white text-sm truncate"
                     >
-                      {{ project.studentName }}
+                      {{ project.author.name }}
                     </div>
                     <div
                       class="text-xs text-gray-500 dark:text-slate-400 truncate"
                     >
-                      {{ project.studentEmail }}
+                      {{ project.author.email }}
                     </div>
                   </div>
                 </div>
@@ -242,7 +245,7 @@
                   <h3
                     class="font-semibold text-base text-black dark:text-white mb-2 line-clamp-1"
                   >
-                    {{ project.title }}
+                    {{ project.name }}
                   </h3>
                   <p
                     class="text-sm text-gray-600 dark:text-slate-400 line-clamp-2 leading-relaxed"
@@ -259,10 +262,10 @@
                     <UIcon name="i-heroicons-tag" class="w-4 h-4" />
                     <span>{{ project.category }}</span>
                   </div>
-                  <div class="flex items-center gap-1.5">
+                  <!-- <div class="flex items-center gap-1.5">
                     <UIcon name="i-heroicons-calendar" class="w-4 h-4" />
                     <span>{{ project.generation }}</span>
-                  </div>
+                  </div> -->
                 </div>
 
                 <!-- Divider -->
@@ -276,18 +279,20 @@
                     class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-slate-400"
                   >
                     <UIcon name="i-heroicons-clock" class="w-4 h-4" />
-                    <span>{{ project.submittedDate }}</span>
+                    <span>{{ project.updatedAt }}</span>
                   </div>
-                  <ButtonsPresetButton
-                    v-if="project.status !== 'pending'"
+                  <!-- <ButtonsPresetButton
+                    v-if="project.projectStatus !== 'pending'"
                     preset="primary"
                     label="View"
                     icon="i-heroicons-arrow-right"
                     size="xs"
                     :to="'/projects/' + project.id"
-                  />
+                  /> -->
+
+
                   <ButtonsPresetButton
-                    v-if="project.status === 'pending'"
+                    v-if="project.submissionStatus === 'pending'"
                     preset="primary"
                     label="View"
                     icon="i-heroicons-arrow-right"
@@ -341,6 +346,8 @@ const isLoading = ref(true);
 const error = ref("");
 const GreetMessage = getGreetingByTimeZone("Asia/Phnom_Penh");
 
+const submissions = computed(() => projectsStore.submissionProjects);
+
 // Fetch submissions on mount
 onMounted(async () => {
   try {
@@ -372,12 +379,16 @@ onMounted(async () => {
     console.log("🔄 Fetching submissions data...");
 
     // Fetch all submissions with error handling
-    const submissions = await projectsStore.fetchAllSubmissions();
+    // const submissions = await projectsStore.fetchAllSubmissions();
 
-    if (!submissions || submissions.length === 0) {
+    if(!projectsStore.submissionProjects || projectsStore.submissionProjects.length === 0) {
+      await projectsStore.fetchAllSubmissions();
+    }
+
+    if (!projectsStore.submissionProjects || projectsStore.submissionProjects.length === 0) {
       console.log("ℹ️ No submissions found");
     } else {
-      console.log(`✅ Loaded ${submissions.length} submissions successfully`);
+      console.log(`✅ Loaded ${projectsStore.submissionProjects.length} submissions successfully`);
     }
   } catch (error) {
     console.error("❌ Error loading dashboard data:", error);
@@ -400,89 +411,89 @@ const teacher = computed(() => ({
 }));
 
 // Transform projects from store to match teacher dashboard structure
-const projects = computed(() => {
-  return projectsStore.projects.map((project) => {
-    // Generate email from name
-    const emailName = project.author.name.toLowerCase().replace(" ", ".");
-    const studentEmail = `${emailName}@student.edu`; // use as fallback email
+// const projects = computed(() => {
+//   return projectsStore.projects.map((project) => {
+//     // Generate email from name
+//     const emailName = project.author.name.toLowerCase().replace(" ", ".");
+//     const studentEmail = `${emailName}@student.edu`; // use as fallback email
 
-    // Generate initials
-    const nameParts = project.author.name.split(" ");
-    const studentInitials = nameParts
-      .map((part) => part.charAt(0))
-      .join("")
-      .toUpperCase();
+//     // Generate initials
+//     const nameParts = project.author.name.split(" ");
+//     const studentInitials = nameParts
+//       .map((part) => part.charAt(0))
+//       .join("")
+//       .toUpperCase();
 
-    // Map categories from projects.ts to teacher dashboard categories
-    const categoryMapping = {
-      "Artificial Intelligence": "AI/ML",
-      "Mobile Development": "Mobile App",
-      "Web Development": "Web Development",
-      "Environmental Tech": "Other",
-      "Data Science": "Data Science",
-      IoT: "Other",
-      Blockchain: "Other",
-      "Augmented Reality": "Mobile App",
-      "Machine Learning": "AI/ML",
-      "Data Analytics": "Data Science",
-      EdTech: "Other",
-      FinTech: "Other",
-      APIs: "Web Development",
-      "Virtual Reality": "Game Development",
-      "Smart Cities": "Other",
-    };
+//     // Map categories from projects.ts to teacher dashboard categories
+//     const categoryMapping = {
+//       "Artificial Intelligence": "AI/ML",
+//       "Mobile Development": "Mobile App",
+//       "Web Development": "Web Development",
+//       "Environmental Tech": "Other",
+//       "Data Science": "Data Science",
+//       IoT: "Other",
+//       Blockchain: "Other",
+//       "Augmented Reality": "Mobile App",
+//       "Machine Learning": "AI/ML",
+//       "Data Analytics": "Data Science",
+//       EdTech: "Other",
+//       FinTech: "Other",
+//       APIs: "Web Development",
+//       "Virtual Reality": "Game Development",
+//       "Smart Cities": "Other",
+//     };
 
-    const mappedCategory = categoryMapping[project.category] || "Other";
+//     const mappedCategory = categoryMapping[project.category] || "Other";
 
-    // Map semester to generation
-    const generationMapping = {
-      "Fall 2024": "2024",
-      "Spring 2025": "2025",
-    };
+//     // Map semester to generation
+//     const generationMapping = {
+//       "Fall 2024": "2024",
+//       "Spring 2025": "2025",
+//     };
 
-    const mappedGeneration = generationMapping[project.semester] || "2024";
+//     const mappedGeneration = generationMapping[project.semester] || "2024";
 
-    // Map status - show visibility state for submissions
-    const statusMapping = {
-      pending: "pending",
-      accepted: "completed",
-      completed: "completed",
-    };
+//     // Map status - show visibility state for submissions
+//     const statusMapping = {
+//       pending: "pending",
+//       accepted: "completed",
+//       completed: "completed",
+//     };
 
-    const mappedStatus = statusMapping[project.visibility] || "pending";
+//     const mappedStatus = statusMapping[project.visibility] || "pending";
 
-    // Calculate due date (add some days to createdAt)
-    const createdDate = new Date(project.createdAt);
-    const dueDate = new Date(createdDate);
-    dueDate.setDate(dueDate.getDate() + 60); // Add 60 days
-    const dueDateString = dueDate.toISOString().split("T")[0];
+//     // Calculate due date (add some days to createdAt)
+//     const createdDate = new Date(project.createdAt);
+//     const dueDate = new Date(createdDate);
+//     dueDate.setDate(dueDate.getDate() + 60); // Add 60 days
+//     const dueDateString = dueDate.toISOString().split("T")[0];
 
-    // Check if overdue
-    const currentDate = new Date();
-    const isOverdue = currentDate > dueDate;
+//     // Check if overdue
+//     const currentDate = new Date();
+//     const isOverdue = currentDate > dueDate;
 
-    return {
-      id: project.id,
-      studentName: project.author.name,
-      studentEmail: project.author.email || studentEmail,
-      studentInitials: studentInitials,
-      studentAvatar: project.author.avatar,
-      title: project.name,
-      description: project.description,
-      category: mappedCategory,
-      generation: mappedGeneration,
-      status: mappedStatus,
-      submittedDate: project.createdAt,
-      dueDate: dueDateString,
-      isOverdue: isOverdue,
-    };
-  });
-});
+//     return {
+//       id: project.id,
+//       studentName: project.author.name,
+//       studentEmail: project.author.email || studentEmail,
+//       studentInitials: studentInitials,
+//       studentAvatar: project.author.avatar,
+//       title: project.name,
+//       description: project.description,
+//       category: mappedCategory,
+//       generation: mappedGeneration,
+//       status: mappedStatus,
+//       submittedDate: project.createdAt,
+//       dueDate: dueDateString,
+//       isOverdue: isOverdue,
+//     };
+//   });
+// });
 
 // Stats for teacher dashboard - computed from real data
 const stats = computed(() => {
   // Get submissions from store
-  const submissions = projectsStore.submissions || [];
+  const submissions = projectsStore.submissionProjects || [];
   const totalSubmissions = submissions.length;
   const pendingReview = submissions.filter(
     (s) => s.status === "Pending",
@@ -590,10 +601,10 @@ const stats = computed(() => {
 // Recent projects - show only 6 most recent projects
 const recentProjects = computed(() => {
   // Sort projects by submitted date (most recent first) and take first 6
-  return projects.value
+  return submissions.value
     .slice()
     .sort((a, b) => {
-      return new Date(b.submittedDate) - new Date(a.submittedDate);
+      return new Date(b.createdAt) - new Date(a.createdAt);
     })
     .slice(0, 6);
 });

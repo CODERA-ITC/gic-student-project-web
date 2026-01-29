@@ -195,10 +195,10 @@ export class ProjectTransformer {
       author,
       technologies: Array.isArray(projectData.technologies)
         ? projectData.technologies
-        : [],
+        : [], 
       category,
       projectStatus: status,
-      submissionStatus: projectData.submissionStatus || "draft",
+      submissionStatus: projectData.status || "draft",
       highlighted: projectData.highlighted || false,
       likes: projectData.likes || projectData.likeCount || 0,
       views: projectData.views || projectData.viewCount || 0,

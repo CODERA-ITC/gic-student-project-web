@@ -40,6 +40,7 @@ export const useProjectStore = defineStore("projects", {
       sort: "recent",
     },
     highlightedProjects: [],
+    submissionProjects: [],
   }),
 
   getters: {
@@ -123,6 +124,8 @@ export const useProjectStore = defineStore("projects", {
     },
 
     getHighlightedProjects: (state) => state.highlightedProjects,
+
+    getSubmissionProjects: (state) => state.submissionProjects,
   },
 
   actions: {
@@ -161,7 +164,7 @@ export const useProjectStore = defineStore("projects", {
     //   } finally {
     //     this.loading = false;
     //   }
-    // },
+    // },f
 
     async fetchCategories(): Promise<string[]> {
       this.loading = true;
@@ -473,6 +476,7 @@ export const useProjectStore = defineStore("projects", {
 
       this.highlightedProjects = selectProject;
     },
+  
 
     // Save user's liked projects (would sync with backend in real app)
     async saveUserLikedProjects(): Promise<void> {
@@ -676,7 +680,7 @@ export const useProjectStore = defineStore("projects", {
      */
     async fetchAllSubmissions(): Promise<Project[]> {
       this.loading = true;
-      let projects: Project[] = [];
+     
       try {
         const authStore = useAuthStore();
 
@@ -699,8 +703,12 @@ export const useProjectStore = defineStore("projects", {
 
         console.log(`Found ${submissions.length} total submissions`);
 
+        this.submissionProjects = submissions;
+
+
+
         // Update store state with fetched submissions
-        projects = submissions;
+        // projects = submissions;
 
         return submissions;
       } catch (error) {

@@ -101,4 +101,5 @@ export interface ProjectState {
     sort: string;
   };
   highlightedProjects: Project[];
+  submissionProjects: Project[];
 }

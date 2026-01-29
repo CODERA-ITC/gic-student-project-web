@@ -265,14 +265,14 @@
                     <td class="p-3 text-slate-100 align-top text-xs">
                       <span
                         :class="
-                          project.visibility === 'accepted' || project.visibility === 'public'
+                          project.submissionStatus === 'accepted'
                             ? 'bg-green-600 text-white'
                             : 'bg-yellow-600 text-white'
                         "
                         class="px-2 py-1 rounded text-xs font-semibold inline-block"
                       >
                         {{
-                          project.visibility === "accepted" || project.visibility === "public"
+                          project.submissionStatus === "accepted"
                             ? "Completed"
                             : "Pending"
                         }}
@@ -281,7 +281,7 @@
                     <td
                       class="p-3 text-black dark:text-slate-100 align-top text-xs hidden md:table-cell"
                     >
-                      {{ project.submissions.date }}
+                      {{ project.createdAt }}
                     </td>
                     <td class="p-3 text-slate-100 align-top text-xs">
                       <div class="flex gap-2 flex-wrap">
@@ -293,7 +293,7 @@
                           @click="viewProject(project)"
                         />
                         <ButtonsPresetButton
-                          v-if="project.visibility === 'reviewing'"
+                          v-if="project.submissionStatus === 'Pending'"
                           label="Accept"
                           icon="i-heroicons-check-circle"
                           color="success"
@@ -302,7 +302,7 @@
                           :loading="acceptingId === project.id"
                         />
                         <ButtonsPresetButton
-                          v-if="project.visibility === 'reviewing'"
+                          v-if="project.submissionStatus === 'Pending'"
                           label="Reject"
                           icon="i-heroicons-x-circle"
                           color="danger"
@@ -545,7 +545,7 @@ definePageMeta({
 // const submissions = ref([]); // Removed local ref, use store directly
 // const isLoadingSubmissions = ref(false);
 
-const projects = computed(() => projectsStore.projects);
+const projects = computed(() => projectsStore.submissionProjects);
 
 // Fetch submissions on mount
 onMounted(async () => {
@@ -591,10 +591,10 @@ const itemsPerPage = ref(8);
 // Filtered projects computed property
 const filteredProjects = computed(() => {
   let filtered = projects.value.filter((project) => {
-    // Only show submitted projects (reviewing or accepted status)
+    // Only show submitted projects (pending or accepted status)
     if (
-      !project.visibility ||
-      (project.visibility !== "reviewing" && project.visibility !== "accepted")
+      !project.submissionStatus ||
+      (project.submissionStatus !== "pending" && project.submissionStatus !== "accepted")
     ) {
       return false;
     }
@@ -602,16 +602,16 @@ const filteredProjects = computed(() => {
     // Filter by active/pending status
     if (
       activeFilter.value === "completed" &&
-      project.visibility !== "accepted"
+      project.submissionStatus !== "accepted"
     ) {
       return false;
     }
     if (
       activeFilter.value === "pending" &&
-      project.visibility !== "reviewing"
+      project.submissionStatus !== "pending"
     ) {
       return false;
-    }
+    }``
 
     // Filter by search query
     if (searchQuery.value) {
