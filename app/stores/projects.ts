@@ -10,6 +10,7 @@ import type {
 
 import { projectsData } from "~/constants/projects";
 import { transformProjects } from "~/utils/projectTransformer";
+import { string } from "zod";
 
 // Types
 
@@ -17,7 +18,7 @@ export const useProjectStore = defineStore("projects", {
   state: (): ProjectState => ({
     projects: [],
     userProjects: [],
-    availableCategories: ["All"],
+    availableCategories: [],
     availableTags: [],
     categoryObjects: [],
     tagObjects: [],
@@ -33,11 +34,12 @@ export const useProjectStore = defineStore("projects", {
       totalPages: 0,
     },
     filters: {
-      categories: ["All"],
+      categoryId: "",
       search: "",
-      tags: [],
-      year: "",
+      courseId: "",
+      gen: "",
       sort: "recent",
+      ascending: true,
     },
     highlightedProjects: [],
     submissionProjects: [],
@@ -83,6 +85,38 @@ export const useProjectStore = defineStore("projects", {
         );
       };
     },
+
+    // Get similar projects by category, excluding the current project
+    getSimilarProjects() {
+      return (
+        currentProjectId: string | number,
+        category?: string,
+      ): Project[] => {
+        let filteredProjects = this.projects.filter(
+          (p) => p.id !== currentProjectId,
+        );
+
+        // If category is provided, filter by same category first
+        if (category) {
+          const sameCategoryProjects = filteredProjects.filter(
+            (p) => p.category === category,
+          );
+          // If we have enough projects in the same category, use those
+          if (sameCategoryProjects.length >= 6) {
+            return sameCategoryProjects.slice(0, 6);
+          }
+          // Otherwise, prioritize same category and fill with others
+          const otherProjects = filteredProjects.filter(
+            (p) => p.category !== category,
+          );
+          return [...sameCategoryProjects, ...otherProjects].slice(0, 6);
+        }
+
+        // No category filter, just return first 6
+        return filteredProjects.slice(0, 6);
+      };
+    },
+
     // Get real-time calculated status for a project based on its features
 
     projectsByCategory(): Record<string, Partial<Project>[]> {
@@ -260,22 +294,16 @@ export const useProjectStore = defineStore("projects", {
           page,
           limit,
           search: this.filters.search || undefined,
-          tags: this.filters.tags.length > 0 ? this.filters.tags : undefined,
-          year: this.filters.year || undefined,
+          courseId: this.filters.courseId || undefined,
+          gen: this.filters.gen || undefined,
           sort: this.filters.sort || undefined,
+          ascending: this.filters.ascending,
           categoryId: "", // will be set below if needed
         };
 
-        // Add category filter if not "All"
-        if (
-          this.filters.categories.length > 0 &&
-          !this.filters.categories.includes("All")
-        ) {
-          // use function map to convert category names to IDs
-
-          filters.categoryId = this.getCategoryIdByName(
-            this.filters.categories[0],
-          ); // always take the first category for filtering
+        // Add category filter if set
+        if (this.filters.categoryId) {
+          filters.categoryId = this.filters.categoryId;
         }
 
         // Use ProjectService to fetch
@@ -416,36 +444,46 @@ export const useProjectStore = defineStore("projects", {
     // Load user's liked projects (would be from backend in real app)
     async loadUserLikedProjects(): Promise<void> {
       const authStore = useAuthStore();
-      if (!authStore.isAuthenticated || !authStore.user) {
+      if (!authStore.isAuthenticated || !authStore.user || !authStore.token) {
         this.likedProjects.clear();
         return;
       }
 
-      // In real app, fetch from backend based on user ID
-      // const userLikes = await api.getUserLikedProjects(authStore.user.id);
-      // this.likedProjects = new Set(userLikes);
+      try {
+        // Fetch user's liked projects from API
+        const likedData = await projectService.getUserLikedProjects();
 
-      // For now, simulate loading from localStorage with user-specific key
-      if (typeof window !== "undefined") {
-        const key = `likedProjects_${authStore.user.id}`;
-        try {
-          const stored = localStorage.getItem(key);
-          if (stored) {
-            const parsed = JSON.parse(stored);
-            if (Array.isArray(parsed)) {
-              this.likedProjects = new Set(parsed);
-              console.log(
-                `📚 Loaded ${parsed.length} liked project(s) for user ${authStore.user.name}`,
-              );
+        // Extract project IDs from the response
+        // Response format: [{ id, user: { id }, project: { id } }, ...]
+        const likedProjectIds = likedData
+          .map((like: any) => like.project?.id || like.projectId)
+          .filter(Boolean);
+
+        this.likedProjects = new Set(likedProjectIds);
+        console.log(
+          `📚 Loaded ${likedProjectIds.length} liked project(s) for user ${authStore.user.name} from API`,
+        );
+      } catch (error) {
+        console.error("Error loading user liked projects from API:", error);
+
+        // Fallback to localStorage if API fails
+        if (typeof window !== "undefined") {
+          const key = `likedProjects_${authStore.user.id}`;
+          try {
+            const stored = localStorage.getItem(key);
+            if (stored) {
+              const parsed = JSON.parse(stored);
+              if (Array.isArray(parsed)) {
+                this.likedProjects = new Set(parsed);
+                console.log(
+                  `📚 Loaded ${parsed.length} liked project(s) from localStorage fallback`,
+                );
+              }
             }
-          } else {
-            console.log(
-              `📚 No liked projects found for user ${authStore.user.name}`,
-            );
+          } catch (e) {
+            console.warn("Error loading from localStorage fallback:", e);
+            this.likedProjects.clear();
           }
-        } catch (error) {
-          console.warn("Error loading user liked projects:", error);
-          this.likedProjects.clear();
         }
       }
     },
@@ -461,22 +499,22 @@ export const useProjectStore = defineStore("projects", {
 
       projects = transformProjects(highlightedProjects);
       let total = projects.length;
-      let numToSelect = Math.min(3, total); // select up to 3 projects
+      let numToSelect = Math.min(6, total); // select up to 6 projects
+      selectProject = projects.slice(0, numToSelect);
 
-      for (let i = 0; i < total; i++) {
-        let index = Math.floor(Math.random() * total);
+      // for (let i = 0; i < total; i++) {
+      //   let index = Math.floor(Math.random() * total);
 
-        if (!selectProject.includes(projects[index])) {
-          selectProject = [...selectProject, projects[index]];
-        }
-        if (numToSelect === selectProject.length) break;
+      //   if (!selectProject.includes(projects[index])) {
+      //     selectProject = [...selectProject, projects[index]];
+      //   }
+      //   if (numToSelect === selectProject.length) break;
 
-        // projects.splice(index, 1); // remove selected project to avoid duplicates
-      }
+      //   // projects.splice(index, 1); // remove selected project to avoid duplicates
+      // }
 
       this.highlightedProjects = selectProject;
     },
-  
 
     // Save user's liked projects (would sync with backend in real app)
     async saveUserLikedProjects(): Promise<void> {
@@ -680,7 +718,7 @@ export const useProjectStore = defineStore("projects", {
      */
     async fetchAllSubmissions(): Promise<Project[]> {
       this.loading = true;
-     
+
       try {
         const authStore = useAuthStore();
 
@@ -704,8 +742,6 @@ export const useProjectStore = defineStore("projects", {
         console.log(`Found ${submissions.length} total submissions`);
 
         this.submissionProjects = submissions;
-
-
 
         // Update store state with fetched submissions
         // projects = submissions;
@@ -747,11 +783,8 @@ export const useProjectStore = defineStore("projects", {
         const { projects } = ProjectTransformer.transformApiResponse(response);
 
         // Search categories from available categories
-        this.filters.categories.forEach((category) => {
-          if (
-            category.toLowerCase().includes(searchTerm) &&
-            category !== "All"
-          ) {
+        this.availableCategories.forEach((category) => {
+          if (category.toLowerCase().includes(searchTerm)) {
             const key = `category-${category}`;
             if (!addedItems.has(key)) {
               addedItems.add(key);
@@ -800,18 +833,22 @@ export const useProjectStore = defineStore("projects", {
     },
 
     // Filter management methods
-    setFilter(key: keyof ProjectState["filters"], value: any): void {
-      this.filters[key] = value;
+    setFilter<K extends keyof ProjectFilters>(
+      key: K,
+      value: ProjectFilters[K],
+    ): void {
+      (this.filters as any)[key] = value;
       this.pagination.currentPage = 1; // Reset to first page when filters change
     },
 
     clearFilters(): void {
       this.filters = {
-        categories: ["All"],
+        categoryId: "",
         search: "",
-        tags: [],
-        year: "",
+        courseId: "",
+        gen: "",
         sort: "recent",
+        ascending: true,
       };
       this.resetPagination();
     },
@@ -819,14 +856,7 @@ export const useProjectStore = defineStore("projects", {
     getFilteredProjects(): Partial<Project[]> {
       let filtered = [...this.projects];
 
-      // Filter by category
-      if (this.filters.categories && !this.filters.categories.includes("All")) {
-        filtered = filtered.filter((p) =>
-          this.filters.categories.includes(p.category),
-        );
-      }
-
-      // Filter by search
+      // Filter by search (client-side for immediate feedback)
       if (this.filters.search.trim()) {
         const search = this.filters.search.toLowerCase();
         filtered = filtered.filter(
@@ -835,21 +865,6 @@ export const useProjectStore = defineStore("projects", {
             p.description.toLowerCase().includes(search) ||
             p.category.toLowerCase().includes(search),
         );
-      }
-
-      // Filter by tags
-      if (this.filters.tags.length > 0) {
-        filtered = filtered.filter((p) =>
-          p.tags?.some((tag) => this.filters.tags.includes(tag)),
-        );
-      }
-
-      // Filter by year
-      if (this.filters.year) {
-        filtered = filtered.filter((p) => {
-          const year = p.academicYear?.match(/\d{4}/)?.[0];
-          return year === this.filters.year;
-        });
       }
 
       // Apply sorting
@@ -1199,7 +1214,8 @@ export const useProjectStore = defineStore("projects", {
 
       console.log("Fetched courses:", this.courseObjects);
 
-      this.availableCourses = this.courseObjects.map((course) => course.name);
+      // Keep full course objects in availableCourses for use in dropdowns
+      this.availableCourses = this.courseObjects;
 
       return this.courseObjects;
     },

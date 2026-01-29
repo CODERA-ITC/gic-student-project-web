@@ -41,9 +41,10 @@ export interface ProjectFilters {
   limit?: number;
   search?: string;
   categoryId?: string;
-  tags?: string[];
-  year?: string;
+  courseId?: string;
+  gen?: string;
   sort?: string;
+  ascending?: boolean;
 }
 
 /**
@@ -95,10 +96,11 @@ export class ProjectService {
         if (filters?.limit) params.append("limit", filters.limit.toString());
         if (filters?.categoryId)
           params.append("categoryId", filters.categoryId);
-        if (filters?.tags?.length)
-          params.append("tags", filters.tags.join(","));
-        if (filters?.year) params.append("year", filters.year);
+        if (filters?.courseId) params.append("courseId", filters.courseId);
+        if (filters?.gen) params.append("gen", filters.gen);
         if (filters?.sort) params.append("sort", filters.sort);
+        if (filters?.ascending !== undefined)
+          params.append("ascending", filters.ascending.toString());
       }
 
       const queryString = params.toString();
@@ -412,6 +414,26 @@ export class ProjectService {
         error,
       );
       return false;
+    }
+  }
+
+  /**
+   * Fetch all projects liked by the current user
+   * Returns array of like objects with project info
+   */
+  async getUserLikedProjects(): Promise<any[]> {
+    try {
+      const response = await $fetch(`${this.baseUrl}/me/likes`, {
+        method: "GET",
+        headers: this.getAuthHeaders(),
+      });
+      return Array.isArray(response) ? response : [];
+    } catch (error) {
+      console.error(
+        "ProjectService: Failed to fetch user liked projects",
+        error,
+      );
+      return [];
     }
   }
 

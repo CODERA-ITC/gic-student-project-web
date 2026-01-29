@@ -2,17 +2,6 @@
   <div
     class="min-h-screen bg-gray-50 dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
   >
-    <!-- Back Button -->
-    <div
-      class="top-20 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur border-b border-gray-200 dark:border-slate-700"
-    >
-      <UContainer class="py-4">
-        <div class="flex items-center justify-between">
-          <ButtonsPresetButton preset="back" to="/student/my-projects" />
-        </div>
-      </UContainer>
-    </div>
-
     <!-- Project Details -->
     <UContainer class="py-12">
       <div
@@ -34,6 +23,13 @@
         :is-liked="isLiked"
         :user-role="authStore.userRole"
         :is-owner="isOwner"
+        :show-submission-status="true"
+        :show-similar-projects="false"
+        :breadcrumb-base="{
+          label: 'My Projects',
+          path: '/student/my-projects',
+          icon: 'i-heroicons-folder',
+        }"
         @like="toggleLike"
         @share="shareProject"
         @hide="toggleVisibility"
@@ -103,35 +99,41 @@
           </div>
 
           <!-- Submit button for draft/private projects -->
-          <ButtonsPresetButton
+          <UButton
             v-if="canSubmit"
-            preset="submitProject"
-            label="Submit to Teacher"
-            icon="i-heroicons-paper-airplane"
-            size="lg"
-            :loading="isSubmitting"
-            class="w-full justify-center"
             @click="submitProject"
-          />
+            :loading="isSubmitting"
+            class="w-full justify-center rounded-lg bg-blue-900 hover:bg-blue-800 text-white"
+            size="md"
+          >
+            <template #leading>
+              <UIcon name="i-heroicons-paper-airplane" class="w-5 h-5" />
+            </template>
+            Submit to Teacher
+          </UButton>
         </template>
         <template #action-buttons>
-          <div class="flex flex-col sm:flex-row gap-3">
-            <ButtonsPresetButton
-              label="Edit Project"
-              icon="i-heroicons-pencil-square"
-              color="primary"
-              variant="solid"
-              size="lg"
-              class="flex-1"
+          <div class="flex gap-2">
+            <UButton
               @click="editProject"
-            />
-            <ButtonsPresetButton
-              label="Delete Project"
-              icon="i-heroicons-trash"
-              size="lg"
-              class="flex-1"
+              class="flex-1 justify-center rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 border border-blue-200 dark:border-blue-800"
+              size="md"
+            >
+              <template #leading>
+                <UIcon name="i-heroicons-pencil-square" class="w-5 h-5" />
+              </template>
+              Edit
+            </UButton>
+            <UButton
               @click="showDeleteModal = true"
-            />
+              class="flex-1 justify-center rounded-lg bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-600 border border-gray-200 dark:border-slate-600"
+              size="md"
+            >
+              <template #leading>
+                <UIcon name="i-heroicons-trash" class="w-5 h-5" />
+              </template>
+              Delete
+            </UButton>
           </div>
         </template>
       </ProjectDetails>
@@ -281,10 +283,13 @@ onMounted(async () => {
 
 // Check if user owns this project
 const isOwner = computed(() => {
-  if (!authStore.user) {
-    return false;
-  }
-  return project.value.author?.id === authStore.user.id;
+  if (!project.value || !authStore.user) return false;
+
+  // ensure user is either author or member
+  return (
+    project.value.author.id === authStore.user.id ||
+    project.value.members?.some((member) => member.id === authStore.user.id)
+  );
 });
 
 // Image carousel

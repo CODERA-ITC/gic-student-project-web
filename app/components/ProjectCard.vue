@@ -14,9 +14,9 @@
     >
       <!-- Circular highlighted badge -->
       <template v-if="project.highlighted">
-        <div class="absolute top-3 left-3 z-50 animate-pulse">
+        <div class="absolute top-3 left-3 z-50">
           <UBadge
-            icon="i-lucide-rocket"
+            icon="i-lucide-star"
             size="md"
             color="error"
             variant="solid"
@@ -253,7 +253,7 @@ const props = defineProps({
         (obj.images || obj.emoji || obj.gradient) &&
         obj.views !== undefined &&
         obj.likes !== undefined &&
-        (!obj.members ||  
+        (!obj.members ||
           (Array.isArray(obj.members) && obj.members.every((m) => m && m.name)))
       );
     },

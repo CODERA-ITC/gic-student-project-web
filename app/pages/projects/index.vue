@@ -43,26 +43,16 @@
     <!-- Filters and Projects -->
     <!-- Sticky Top Bar -->
     <div
-      class="sticky top-13 z-[100] bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-sm border-b border-gray-200 dark:border-slate-700"
+      class="sticky top-0 z-[200] bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-sm border-b border-gray-200 dark:border-slate-700"
     >
       <UContainer>
-        <div class="flex items-center justify-between w-full gap-2 py-2">
-          <!-- Sort Dropdown -->
-          <div class="relative">
-            <USelectMenu
-              v-model="selectedSort"
-              size="xl"
-              :items="sortOptions"
-              class="w-35 rounded-xl"
-            />
-          </div>
-
+        <div class="flex items-center justify-between w-full gap-4 py-3">
           <!-- Categories Pills -->
           <div class="flex-1">
-            <div class="flex items-center justify-center gap-1 flex-wrap">
+            <div class="flex items-center justify-center gap-2 flex-wrap">
               <!-- Loading state -->
               <div
-                v-if="isLoadingData && categories.length <= 1"
+                v-if="isLoadingData && categories.length === 0"
                 class="flex gap-2"
               >
                 <div
@@ -182,38 +172,36 @@
                 </div>
               </div>
 
-              <!-- Enhanced Tags Dropdown -->
+              <!-- Course Dropdown -->
               <div>
                 <p
                   class="text-lg font-semibold mb-2 text-blue-900 dark:text-white"
                 >
-                  Tags
+                  Course
                 </p>
                 <USelectMenu
-                  v-model="selectedTags"
+                  v-model="selectedCourse"
                   size="xl"
-                  :items="filteredTags"
-                  multiple
+                  :items="courseOptions"
                   searchable
-                  searchable-placeholder="Type to search tags (e.g., AI, Soft, Web)"
-                  placeholder="Click to select tags"
+                  searchable-placeholder="Type to search courses"
+                  placeholder="Select a course"
                   class="w-full rounded-xl"
-                  :search-attributes="['label', 'value']"
                 />
               </div>
 
-              <!-- Years Dropdown -->
+              <!-- Gen Dropdown -->
               <div>
                 <p
                   class="text-lg font-semibold mb-2 text-blue-900 dark:text-white"
                 >
-                  Academic Years
+                  Generation
                 </p>
                 <USelectMenu
-                  v-model="selectedYear"
+                  v-model="selectedGen"
                   size="xl"
-                  :items="years"
-                  placeholder="Click to select year"
+                  :items="genOptions"
+                  placeholder="Select generation"
                   class="w-full rounded-xl"
                 />
               </div>
@@ -282,23 +270,18 @@
                     >
                     <div class="flex flex-wrap gap-1">
                       <UBadge
-                        v-if="
-                          selectedCategory && selectedCategory.value !== 'All'
-                        "
+                        v-if="selectedCategory"
                         variant="soft"
                         size="md"
                         class="flex items-center gap-1 text-blue-900"
                       >
                         {{ selectedCategory.label }}
                         <UButton
-                          @click="
-                            selectedCategory = categoryOptions.find(
-                              (c) => c.value === 'All',
-                            )
-                          "
+                          @click="selectedCategory = null"
                           color="primary"
                           variant="ghost"
                           size="xs"
+                          icon="i-heroicons-x-mark"
                           :padded="false"
                           class="ml-1"
                         />
@@ -321,36 +304,18 @@
                         />
                       </UBadge>
                       <UBadge
-                        v-for="tag in selectedTags"
-                        :key="tag"
+                        v-if="selectedCourse && selectedCourse.value"
                         color="primary"
                         variant="soft"
                         size="sm"
                         class="flex items-center gap-1"
                       >
-                        {{ tag }}
+                        {{ selectedCourse.label }}
                         <UButton
                           @click="
-                            selectedTags = selectedTags.filter((t) => t !== tag)
-                          "
-                          color="primary"
-                          variant="ghost"
-                          size="xs"
-                          :padded="false"
-                          class="ml-1"
-                        />
-                      </UBadge>
-                      <UBadge
-                        v-if="selectedYear && selectedYear.value"
-                        color="primary"
-                        variant="soft"
-                        size="sm"
-                        class="flex items-center gap-1"
-                      >
-                        {{ selectedYear.label }}
-                        <UButton
-                          @click="
-                            selectedYear = years.find((y) => y.value === '')
+                            selectedCourse = courseOptions.find(
+                              (c) => c.value === '',
+                            )
                           "
                           color="primary"
                           variant="ghost"
@@ -361,18 +326,16 @@
                         />
                       </UBadge>
                       <UBadge
-                        v-if="selectedSort && selectedSort.value !== 'recent'"
+                        v-if="selectedGen && selectedGen.value"
                         color="primary"
                         variant="soft"
                         size="sm"
                         class="flex items-center gap-1"
                       >
-                        Sort: {{ selectedSort.label }}
+                        {{ selectedGen.label }}
                         <UButton
                           @click="
-                            selectedSort = sortOptions.find(
-                              (s) => s.value === 'recent',
-                            )
+                            selectedGen = genOptions.find((g) => g.value === '')
                           "
                           color="primary"
                           variant="ghost"
@@ -655,10 +618,15 @@ const initializeData = async () => {
 
   try {
     // Fetch categories FIRST (they're fast and needed for UI)
-    if (projectStore.availableCategories.length <= 1) {
+    if (projectStore.availableCategories.length === 0) {
       isLoadingCategories.value = true;
       await projectStore.fetchCategories();
       isLoadingCategories.value = false;
+    }
+
+    // Fetch courses for filter dropdown
+    if (projectStore.availableCourses.length === 0) {
+      await projectStore.fetchCourses();
     }
 
     // Then fetch tags and projects in parallel
@@ -693,28 +661,14 @@ onMounted(async () => {
   await initializeData();
 });
 
-// Watch for route changes - only reset if coming from different route
-// const route = useRoute();
-// watch(
-//   () => route.path,
-//   async (newPath, oldPath) => {
-//     if (newPath === "/projects" && oldPath && oldPath !== "/projects") {
-//       // Coming from a different page - reset initialization flag
-//       isInitialized.value = false;
-//       await initializeData();
-//     }
-//   },
-// );
-
 // Store computed properties
 const categories = computed(() => {
-  const cats = projectStore.availableCategories || [];
-  // Ensure "All" is always present and is the first option
-  const allCategories = cats.length > 0 ? cats : ["All"];
-  if (!allCategories.includes("All")) {
-    allCategories.unshift("All");
-  }
-  return allCategories.map((cat) => ({ label: cat, value: cat }));
+  const categoryObjs = projectStore.categoryObjects || [];
+  // Map category objects to {label: name, value: id} format
+  return categoryObjs.map((cat: any) => ({
+    label: typeof cat === "string" ? cat : cat.name,
+    value: typeof cat === "string" ? cat : cat.id,
+  }));
 });
 
 const isCategoriesLoaded = computed(() => {
@@ -756,17 +710,17 @@ const toggleFilters = () => {
 // Store filter state as computed properties
 const selectedCategory = computed({
   get: () => {
-    const cats = projectStore.filters.categories;
-    const value = cats.includes("All") ? "All" : cats[0] || "All";
+    const categoryId = projectStore.filters.categoryId;
+    if (!categoryId) return null;
+    // Find category by ID
     return (
-      categoryOptions.value.find((cat) => cat.value === value) ||
-      categoryOptions.value[0]
+      categoryOptions.value.find((cat) => cat.value === categoryId) || null
     );
   },
   set: (selectedOption) => {
-    const value = selectedOption?.value || selectedOption;
-    const newCategories = value === "All" ? ["All"] : [value];
-    projectStore.setFilter("categories", newCategories);
+    // Set categoryId from selected option (value is already the ID)
+    const categoryId = selectedOption?.value || "";
+    projectStore.setFilter("categoryId", categoryId);
   },
 });
 
@@ -775,92 +729,60 @@ const categorySearch = computed({
   set: (value) => projectStore.setFilter("search", value),
 });
 
-const selectedTags = computed({
-  get: () => projectStore.filters.tags,
-  set: (value) => projectStore.setFilter("tags", value),
-});
-
-const selectedYear = computed({
+const selectedCourse = computed({
   get: () => {
-    const yearValue = projectStore.filters.year;
+    const courseId = projectStore.filters.courseId;
+    if (!courseId) return courseOptions.value[0]; // Return "All Courses" when empty
     return (
-      years.value.find((year) => year.value === yearValue) || years.value[0]
+      courseOptions.value.find((course) => course.value === courseId) ||
+      courseOptions.value[0]
     );
   },
   set: (selectedOption) => {
-    const value = selectedOption?.value || selectedOption || "";
-    projectStore.setFilter("year", value);
+    const value = selectedOption?.value || "";
+    projectStore.setFilter("courseId", value);
   },
 });
 
-// Sort dropdown items
-const sortOptions = ref([
-  {
-    label: "Recently",
-    value: "recent",
-    icon: "i-heroicons-clock",
-  },
-  {
-    label: "Oldest",
-    value: "oldest",
-    icon: "i-heroicons-calendar",
-  },
-  {
-    label: "Most Liked",
-    value: "liked",
-    icon: "i-heroicons-heart",
-  },
-  {
-    label: "Most Viewed",
-    value: "viewed",
-    icon: "i-heroicons-eye",
-  },
-]);
-
-// const sortOptions = ref([
-//   {
-//     label: "Gen 27",
-//     value: "recent",
-//     icon: "i-heroicons-clock",
-//   },
-//   {
-//     label: "Gen 26",
-//     value: "oldest",
-//     icon: "i-heroicons-calendar",
-//   },
-//   {
-//     label: "Gen 25",
-//     value: "liked",
-//     icon: "i-heroicons-heart",
-//   },
-//   {
-//     label: "Gen 24",
-//     value: "viewed",
-//     icon: "i-heroicons-eye",
-//   },
-// ]);
-
-const selectedSort = computed({
+const selectedGen = computed({
   get: () => {
-    const currentSort = projectStore.filters.sort || "recent";
+    const genValue = projectStore.filters.gen;
+    if (!genValue) return genOptions.value[0]; // Return "All Generations" when empty
     return (
-      sortOptions.value.find((option) => option.value === currentSort) ||
-      sortOptions.value[0]
+      genOptions.value.find((gen) => gen.value === genValue) ||
+      genOptions.value[0]
     );
   },
   set: (selectedOption) => {
-    const sortValue = selectedOption?.value || selectedOption || "recent";
-    projectStore.setFilter("sort", sortValue);
+    const value = selectedOption?.value || "";
+    projectStore.setFilter("gen", value);
   },
 });
 
-// Years options for filtering
-const years = computed(() => [
-  { label: "All Years", value: "" },
-  { label: "2024", value: "2024" },
-  { label: "2023", value: "2023" },
-  { label: "2022", value: "2022" },
-  { label: "2021", value: "2021" },
+const isAscending = computed({
+  get: () => projectStore.filters.ascending,
+  set: (value) => projectStore.setFilter("ascending", value),
+});
+
+// Course options for filtering
+const courseOptions = computed(() => {
+  const courses = projectStore.availableCourses || [];
+  const allOption = [{ label: "All Courses", value: "" }];
+  const mappedCourses = courses.map((course) => ({
+    label: `${course.name} (${course.code})`,
+    value: course.id,
+  }));
+  return [...allOption, ...mappedCourses];
+});
+
+// Generation options for filtering
+const genOptions = computed(() => [
+  { label: "All Generations", value: "" },
+  { label: "Gen 27", value: "27" },
+  { label: "Gen 26", value: "26" },
+  { label: "Gen 25", value: "25" },
+  { label: "Gen 24", value: "24" },
+  { label: "Gen 23", value: "23" },
 ]);
 
 // Pagination state
@@ -894,55 +816,50 @@ watch(
 );
 
 watch(categorySearchInput, (newValue) => {
-  isSearching.value = true;
-
   // Show suggestions when user types
   if (newValue.trim()) {
     showCategorySuggestions.value = true;
+  } else {
+    showCategorySuggestions.value = false;
   }
-
-  if (searchTimeout) {
-    clearTimeout(searchTimeout);
-  }
-
-  searchTimeout = setTimeout(() => {
-    categorySearch.value = newValue;
-    isSearching.value = false;
-  }, 2000);
 });
-
-// Filter options from store
-const tags = computed(() => projectStore.availableTags || []);
 
 // Autocomplete suggestions
 const categorySuggestions = computed(() => {
   if (!categorySearchInput.value.trim()) return [];
 
   const input = categorySearchInput.value.toLowerCase();
-  const allCategories = [...new Set(projects.value.map((p) => p.category))];
-  // fetch from current projects to ensure relevance directly
+  // Use all available categories from the store, not just from current projects
+  const allCategories = projectStore.availableCategories || [];
+
   return allCategories
     .filter((category) => category.toLowerCase().includes(input))
-    .map((category) => ({
-      id: category,
-      label: category,
-      suffix:
-        projects.value.filter((p) => p.category === category).length +
-        " projects",
-    }))
-    .slice(0, 5);
-});
-
-const filteredTags = computed(() => {
-  const selectedValues = selectedTags.value;
-  const availableTags = tags.value || [];
-  return availableTags.filter((tag) => !selectedValues.includes(tag));
+    .map((category) => {
+      // Count projects in current view that match this category
+      const count = projects.value.filter(
+        (p) => p.category === category,
+      ).length;
+      return {
+        id: category,
+        label: category,
+        suffix: count > 0 ? `${count} projects` : "Filter by this",
+      };
+    })
+    .slice(0, 10); // Show up to 10 category suggestions
 });
 
 // Category suggestion methods
 const selectCategorySuggestion = (suggestion) => {
-  categorySearchInput.value = suggestion.label;
-  categorySearch.value = suggestion.label;
+  // Find the category ID by name
+  const categoryId = projectStore.getCategoryIdByName(suggestion.label);
+
+  if (categoryId) {
+    // Set the category filter using ID
+    projectStore.setFilter("categoryId", categoryId);
+  }
+
+  // Clear the search input
+  categorySearchInput.value = "";
   showCategorySuggestions.value = false;
 };
 
@@ -992,13 +909,11 @@ const totalPages = computed(() => projectStore.pagination.totalPages);
 const hasActiveFilters = computed(() => {
   const filters = projectStore.filters;
   return (
-    (filters.categories &&
-      !filters.categories.includes("All") &&
-      filters.categories.length > 0) ||
+    filters.categoryId ||
     filters.search.trim() ||
-    filters.tags.length > 0 ||
-    filters.year ||
-    (filters.sort && filters.sort !== "recent") // Include non-default sort
+    filters.courseId ||
+    filters.gen ||
+    filters.ascending !== true // Include if not default ascending
   );
 });
 
@@ -1007,8 +922,8 @@ const clearFilters = () => {
   // Clear store filters
   projectStore.clearFilters();
 
-  // Reset sort to default
-  projectStore.setFilter("sort", "recent");
+  // Reset ascending to default
+  projectStore.setFilter("ascending", true);
 
   // Reset local UI states to defaults
   categorySearchInput.value = "";

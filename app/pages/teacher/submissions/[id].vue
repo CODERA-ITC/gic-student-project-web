@@ -2,17 +2,6 @@
   <div
     class="min-h-screen bg-gray-50 dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
   >
-    <!-- Back Button -->
-    <div
-      class="top-20 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur border-b border-gray-200 dark:border-slate-700"
-    >
-      <UContainer class="py-4">
-        <div class="flex items-center justify-between">
-          <ButtonsPresetButton preset="back" to="/student/my-projects" />
-        </div>
-      </UContainer>
-    </div>
-
     <!-- Project Details -->
     <UContainer class="py-12">
       <div
@@ -34,6 +23,13 @@
         :is-liked="isLiked"
         :user-role="authStore.userRole"
         :is-owner="isOwner"
+        :show-submission-status="true"
+        :show-similar-projects="false"
+        :breadcrumb-base="{
+          label: 'Submissions',
+          path: '/teacher/submissions',
+          icon: 'i-heroicons-inbox-stack',
+        }"
         @like="toggleLike"
         @share="shareProject"
         @hide="toggleVisibility"

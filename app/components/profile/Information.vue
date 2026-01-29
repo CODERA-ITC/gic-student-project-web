@@ -581,6 +581,9 @@ const handleFileChange = async (event: Event) => {
     // Upload to server via auth store
     const response = await authStore.uploadAvatar(file);
 
+    // Refetch user data to ensure store is fully in sync with server
+    await authStore.fetchCurrentUser();
+
     // Update avatar preview with uploaded URL
     if (response && response.avatar) {
       formData.value.avatar = response.avatar;

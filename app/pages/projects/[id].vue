@@ -4,17 +4,6 @@
   >
     <ScrollToTop />
 
-    <!-- Back Button -->
-    <div
-      class="top-20 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur border-b border-gray-200 dark:border-slate-700"
-    >
-      <UContainer class="py-4">
-        <div class="flex items-center justify-between">
-          <ButtonsPresetButton preset="back" @click="goBack" />
-        </div>
-      </UContainer>
-    </div>
-
     <!-- Project Details -->
     <UContainer class="py-12">
       <div
@@ -30,12 +19,12 @@
         </div>
       </div>
 
+      <!-- no need to check any author for public view -->
       <ProjectDetails
         v-else-if="project && project.id"
         :project="project"
         :is-liked="isLiked"
         :user-role="authStore.userRole"
-        :is-owner="isOwner"
         @like="toggleLike"
         @share="shareProject"
         @hide="toggleVisibility"
@@ -116,11 +105,6 @@ watch(
 const isLiked = computed(() => {
   if (!project.value) return false;
   return projectStore.isProjectLiked(project.value.id);
-});
-
-const isOwner = computed(() => {
-  if (!project.value || !authStore.user) return false;
-  return project.value.author?.name === authStore.user.name;
 });
 
 const toggleLike = async () => {
