@@ -183,6 +183,11 @@ export const useAuthStore = defineStore("auth", {
 
           await this.fetchCurrentUser();
 
+          // Check if user needs to set security questions
+          if (this.user && !this.user.hasSecurityQuestions) {
+            this.needsSecurityQuestions = true;
+          }
+
           this.isAuthenticated = true;
         } else {
           throw new Error("No access token received from server");

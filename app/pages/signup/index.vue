@@ -1,12 +1,5 @@
 <template>
   <div class="min-h-screen flex flex-col bg-white dark:bg-neutral-900">
-    <!-- Security Questions Modal -->
-    <SecurityQuestionsModal
-      :is-open="showSecurityQuestions"
-      :allow-close="false"
-      @submit="handleSecurityQuestionsSubmit"
-    />
-
     <!-- Main Content - Centered Form -->
     <div class="flex-1 flex items-center justify-center p-8">
       <div class="w-full max-w-md">
@@ -21,10 +14,8 @@
         </div>
 
         <!-- Error Message (Global) -->
-        <div
-          v-if="error"
-          class="mb-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400"
-        >
+        <div v-if="error"
+          class="mb-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400">
           {{ error }}
         </div>
 
@@ -35,68 +26,39 @@
             <div v-if="currentStep === 1" key="step1" class="space-y-4">
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label
-                    class="block text-sm font-medium text-slate-900 dark:text-white mb-2"
-                  >
+                  <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                     ត្រកូល <span class="text-red-500">*</span>
                   </label>
-                  <input
-                    v-model="familyNameKh"
-                    type="text"
-                    placeholder="គង់"
-                    required
-                    class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all"
-                  />
+                  <input v-model="familyNameKh" type="text" placeholder="គង់" required
+                    class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
                 </div>
                 <div>
-                  <label
-                    class="block text-sm font-medium text-slate-900 dark:text-white mb-2"
-                  >
+                  <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                     នាម <span class="text-red-500">*</span>
                   </label>
-                  <input
-                    v-model="givenNameKh"
-                    type="text"
-                    placeholder="សុខា"
-                    required
-                    class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all"
-                  />
+                  <input v-model="givenNameKh" type="text" placeholder="សុខា" required
+                    class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
                 </div>
               </div>
 
               <div>
-                <label
-                  class="block text-sm font-medium text-slate-900 dark:text-white mb-2"
-                >
+                <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                   Date of Birth <span class="text-red-500">*</span>
                 </label>
-                <input
-                  v-model="dob"
-                  type="date"
-                  required
-                  class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all"
-                />
+                <input v-model="dob" type="date" required
+                  class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
               </div>
 
               <div>
-                <label
-                  class="block text-sm font-medium text-slate-900 dark:text-white mb-2"
-                >
+                <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                   Phone Number <span class="text-red-500">*</span>
                 </label>
-                <input
-                  v-model="phone"
-                  type="tel"
-                  placeholder="012 345 678"
-                  required
-                  class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all"
-                />
+                <input v-model="phone" type="tel" placeholder="012 345 678" required
+                  class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
               </div>
 
               <div>
-                <label
-                  class="block text-sm font-medium text-slate-900 dark:text-white mb-2"
-                >
+                <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                   Student ID <span class="text-red-500">*</span>
                 </label>
                 <input v-model="studentId" type="text" placeholder="e2021xxx" required
@@ -104,13 +66,7 @@
               </div>
 
               <div class="pt-4">
-                <ButtonsPresetButton
-                  preset="primary"
-                  label="NEXT"
-                  @click="nextStep"
-                  size="lg"
-                  class="w-full"
-                />
+                <ButtonsPresetButton preset="primary" label="NEXT" @click="nextStep" size="lg" class="w-full" />
               </div>
             </div>
 
@@ -118,77 +74,42 @@
             <div v-else-if="currentStep === 2" key="step2" class="space-y-4">
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label
-                    class="block text-sm font-medium text-slate-900 dark:text-white mb-2"
-                  >
+                  <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                     Family Name <span class="text-red-500">*</span>
                   </label>
-                  <input
-                    v-model="familyName"
-                    type="text"
-                    placeholder="Kong"
-                    required
-                    class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all"
-                  />
+                  <input v-model="familyName" type="text" placeholder="Kong" required
+                    class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
                 </div>
                 <div>
-                  <label
-                    class="block text-sm font-medium text-slate-900 dark:text-white mb-2"
-                  >
+                  <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                     Given Name <span class="text-red-500">*</span>
                   </label>
-                  <input
-                    v-model="givenName"
-                    type="text"
-                    placeholder="Sokha"
-                    required
-                    class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all"
-                  />
+                  <input v-model="givenName" type="text" placeholder="Sokha" required
+                    class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
                 </div>
               </div>
 
               <div>
-                <label
-                  class="block text-sm font-medium text-slate-900 dark:text-white mb-2"
-                >
+                <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                   Email Address <span class="text-red-500">*</span>
                 </label>
-                <input
-                  v-model="email"
-                  type="email"
-                  placeholder="your.email@example.com"
-                  required
-                  class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all"
-                />
+                <input v-model="email" type="email" placeholder="your.email@example.com" required
+                  class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
               </div>
 
               <div>
-                <label
-                  class="block text-sm font-medium text-slate-900 dark:text-white mb-2"
-                >
+                <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                   Password <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
-                  <input
-                    v-model="password"
-                    :type="showPassword ? 'text' : 'password'"
-                    placeholder="••••••••"
-                    required
-                    class="w-full px-4 py-3 pr-12 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all"
-                  />
-                  <button
-                    type="button"
-                    @click="showPassword = !showPassword"
-                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-neutral-500 dark:hover:text-neutral-300 transition-colors"
-                  >
-                    <UIcon
-                      :name="
-                        showPassword
-                          ? 'i-heroicons-eye-slash'
-                          : 'i-heroicons-eye'
-                      "
-                      class="w-5 h-5"
-                    />
+                  <input v-model="password" :type="showPassword ? 'text' : 'password'" placeholder="••••••••" required
+                    class="w-full px-4 py-3 pr-12 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
+                  <button type="button" @click="showPassword = !showPassword"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-neutral-500 dark:hover:text-neutral-300 transition-colors">
+                    <UIcon :name="showPassword
+                      ? 'i-heroicons-eye-slash'
+                      : 'i-heroicons-eye'
+                      " class="w-5 h-5" />
                   </button>
                 </div>
                 <p class="mt-1 text-xs text-slate-500 dark:text-neutral-400">
@@ -197,82 +118,44 @@
               </div>
 
               <div>
-                <label
-                  class="block text-sm font-medium text-slate-900 dark:text-white mb-2"
-                >
+                <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                   Verify Password <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
-                  <input
-                    v-model="confirmPassword"
-                    :type="showConfirmPassword ? 'text' : 'password'"
-                    placeholder="••••••••"
-                    required
-                    class="w-full px-4 py-3 pr-12 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all"
-                  />
-                  <button
-                    type="button"
-                    @click="showConfirmPassword = !showConfirmPassword"
-                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-neutral-500 dark:hover:text-neutral-300 transition-colors"
-                  >
-                    <UIcon
-                      :name="
-                        showConfirmPassword
-                          ? 'i-heroicons-eye-slash'
-                          : 'i-heroicons-eye'
-                      "
-                      class="w-5 h-5"
-                    />
+                  <input v-model="confirmPassword" :type="showConfirmPassword ? 'text' : 'password'"
+                    placeholder="••••••••" required
+                    class="w-full px-4 py-3 pr-12 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all" />
+                  <button type="button" @click="showConfirmPassword = !showConfirmPassword"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-neutral-500 dark:hover:text-neutral-300 transition-colors">
+                    <UIcon :name="showConfirmPassword
+                      ? 'i-heroicons-eye-slash'
+                      : 'i-heroicons-eye'
+                      " class="w-5 h-5" />
                   </button>
                 </div>
               </div>
 
-              <div
-                class="flex items-start gap-2 p-4 bg-slate-50 dark:bg-neutral-800 rounded-lg"
-              >
-                <input
-                  v-model="agreeToTerms"
-                  type="checkbox"
-                  required
-                  class="w-4 h-4 mt-1 rounded border-slate-300 dark:border-neutral-600 text-blue-900 focus:ring-blue-900 focus:ring-offset-0 cursor-pointer"
-                />
-                <label
-                  class="text-sm text-slate-700 dark:text-neutral-300 cursor-pointer"
-                >
+              <div class="flex items-start gap-2 p-4 bg-slate-50 dark:bg-neutral-800 rounded-lg">
+                <input v-model="agreeToTerms" type="checkbox" required
+                  class="w-4 h-4 mt-1 rounded border-slate-300 dark:border-neutral-600 text-blue-900 focus:ring-blue-900 focus:ring-offset-0 cursor-pointer" />
+                <label class="text-sm text-slate-700 dark:text-neutral-300 cursor-pointer">
                   I agree to the
-                  <NuxtLink
-                    to="/terms"
-                    class="text-blue-900 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors"
-                  >
+                  <NuxtLink to="/terms"
+                    class="text-blue-900 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors">
                     Terms & Conditions
                   </NuxtLink>
                   and
-                  <NuxtLink
-                    to="/privacy"
-                    class="text-blue-900 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors"
-                  >
+                  <NuxtLink to="/privacy"
+                    class="text-blue-900 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors">
                     Privacy Policy
                   </NuxtLink>
                 </label>
               </div>
 
               <div class="flex gap-3 pt-4">
-                <ButtonsPresetButton
-                  preset="secondary"
-                  label="BACK"
-                  @click="previousStep"
-                  size="lg"
-                  class="w-1/3"
-                />
-                <ButtonsPresetButton
-                  preset="primary"
-                  label="CREATE ACCOUNT"
-                  :loading="isLoading"
-                  :disabled="isLoading || !agreeToTerms"
-                  @click="handleSignup"
-                  size="lg"
-                  class="w-2/3"
-                />
+                <ButtonsPresetButton preset="secondary" label="BACK" @click="previousStep" size="lg" class="w-1/3" />
+                <ButtonsPresetButton preset="primary" label="CREATE ACCOUNT" :loading="isLoading"
+                  :disabled="isLoading || !agreeToTerms" @click="handleSignup" size="lg" class="w-2/3" />
               </div>
             </div>
           </Transition>
@@ -282,10 +165,8 @@
         <div class="text-center mt-6">
           <p class="text-sm text-slate-600 dark:text-neutral-400">
             Already have an account?
-            <NuxtLink
-              to="/login"
-              class="text-blue-900 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-semibold transition-colors"
-            >
+            <NuxtLink to="/login"
+              class="text-blue-900 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-semibold transition-colors">
               Sign in here
             </NuxtLink>
           </p>
@@ -294,13 +175,9 @@
     </div>
 
     <!-- Progress Bar - Fixed at Bottom -->
-    <div
-      class="fixed bottom-0 left-0 w-full bg-slate-200 dark:bg-neutral-700 h-2"
-    >
-      <div
-        class="h-full bg-blue-900 dark:bg-blue-600 transition-all duration-500 ease-out"
-        :style="{ width: `${(currentStep / totalSteps) * 100}%` }"
-      ></div>
+    <div class="fixed bottom-0 left-0 w-full bg-slate-200 dark:bg-neutral-700 h-2">
+      <div class="h-full bg-blue-900 dark:bg-blue-600 transition-all duration-500 ease-out"
+        :style="{ width: `${(currentStep / totalSteps) * 100}%` }"></div>
     </div>
   </div>
 </template>
@@ -332,7 +209,6 @@ const confirmPassword = ref("");
 const agreeToTerms = ref(false);
 const isLoading = ref(false);
 const error = ref("");
-const showSecurityQuestions = ref(false);
 
 // Step management
 const currentStep = ref(1);
@@ -437,26 +313,6 @@ const previousStep = () => {
   }
 };
 
-const handleSecurityQuestionsSubmit = async (answers) => {
-  try {
-    isLoading.value = true;
-    await authStore.submitSecurityQuestions(answers);
-
-    // Redirect to dashboard after successfully saving security questions
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    if (authStore.isTeacher) {
-      await router.push("/teacher/dashboard");
-    } else {
-      await router.push("/student/dashboard");
-    }
-  } catch (err) {
-    error.value = err.message || "Failed to save security questions";
-    showSecurityQuestions.value = false;
-    isLoading.value = false;
-  }
-};
-
 const handleSignup = async () => {
   error.value = "";
   isLoading.value = true;
@@ -469,6 +325,7 @@ const handleSignup = async () => {
     const dobDate = new Date(dob.value);
     const formattedDob = `${String(dobDate.getDate()).padStart(2, '0')}/${String(dobDate.getMonth() + 1).padStart(2, '0')}/${dobDate.getFullYear()}`;
 
+    // Step 1: Sign up the user
     const response = await $fetch(`${apiBase}/users/signup`, {
       method: 'POST',
       body: {
@@ -485,8 +342,13 @@ const handleSignup = async () => {
       }
     });
 
-    // Success - redirect to login or dashboard
-    await router.push('/login');
+    // Step 2: Automatically login with the account
+    await authStore.login(email.value, password.value);
+
+    // Step 3: Navigate to dashboard based on role
+    // The dashboard will automatically show the security questions modal
+    const dashboardRoute = authStore.isTeacher ? '/teacher/dashboard' : '/student/dashboard';
+    await router.push(dashboardRoute);
   } catch (err) {
     error.value = err?.data?.message || err?.message || "Sign up failed. Please try again.";
     isLoading.value = false;
