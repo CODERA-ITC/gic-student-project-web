@@ -10,6 +10,46 @@
       </div>
     </div>
 
+    <!-- Error State -->
+    <div
+      v-else-if="error"
+      class="min-h-screen flex items-center justify-center"
+    >
+      <div class="text-center space-y-6">
+        <div class="flex flex-col items-center">
+          <div
+            class="w-20 h-20 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-4"
+          >
+            <svg
+              class="w-12 h-12 text-blue-600 dark:text-blue-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+              ></path>
+            </svg>
+          </div>
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+            Authentication Required
+          </h2>
+          <p class="text-sm text-gray-600 dark:text-slate-400 max-w-md">
+            {{ error }}
+          </p>
+        </div>
+        <NuxtLink
+          to="/login"
+          class="inline-block px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
+        >
+          Back to Login
+        </NuxtLink>
+      </div>
+    </div>
+
     <!-- Dashboard Content -->
     <div v-else-if="!isLoading && teacher.name">
       <!-- Header Section -->
@@ -22,9 +62,9 @@
           >
             <div class="flex flex-col gap-2 flex-1">
               <h1
-                class="text-2xl sm:text-3xl md:text-4xl font-black text-black dark:text-white leading-none"
+                class="text-2xl sm:text-3xl md:text-4xl font-semibold text-black dark:text-white leading-none"
               >
-                Welcome back,
+                {{ GreetMessage }},
                 <span class="text-blue-400">{{ teacher.name }}</span>
               </h1>
               <p class="text-sm sm:text-base text-gray-600 dark:text-slate-300">
@@ -287,6 +327,7 @@ import { useAuthStore } from "~/stores/auth";
 import { useProjectStore } from "~/stores/projects";
 import ButtonsPresetButton from "~/components/buttons/PresetButton.vue";
 import SparklineChart from "~/components/SparklineChart.vue";
+import { getGreetingByTimeZone } from "#imports";
 
 const authStore = useAuthStore();
 const projectsStore = useProjectStore();
@@ -297,6 +338,8 @@ definePageMeta({
 
 // Local loading state
 const isLoading = ref(true);
+const error = ref("");
+const GreetMessage = getGreetingByTimeZone("Asia/Phnom_Penh");
 
 // Fetch submissions on mount
 onMounted(async () => {
@@ -361,7 +404,7 @@ const projects = computed(() => {
   return projectsStore.projects.map((project) => {
     // Generate email from name
     const emailName = project.author.name.toLowerCase().replace(" ", ".");
-    const studentEmail = `${emailName}@student.edu`;
+    const studentEmail = `${emailName}@student.edu`; // use as fallback email
 
     // Generate initials
     const nameParts = project.author.name.split(" ");
@@ -401,9 +444,9 @@ const projects = computed(() => {
 
     // Map status - show visibility state for submissions
     const statusMapping = {
-      reviewing: "pending",
+      pending: "pending",
       accepted: "completed",
-      public: "completed",
+      completed: "completed",
     };
 
     const mappedStatus = statusMapping[project.visibility] || "pending";
@@ -421,7 +464,7 @@ const projects = computed(() => {
     return {
       id: project.id,
       studentName: project.author.name,
-      studentEmail: studentEmail,
+      studentEmail: project.author.email || studentEmail,
       studentInitials: studentInitials,
       studentAvatar: project.author.avatar,
       title: project.name,
@@ -438,38 +481,108 @@ const projects = computed(() => {
 
 // Stats for teacher dashboard - computed from real data
 const stats = computed(() => {
-  const totalSubmissions = projectsStore.projects.length;
-  const pendingReview = projectsStore.projects.filter(
-    (p) => p.visibility === "reviewing",
+  // Get submissions from store
+  const submissions = projectsStore.submissions || [];
+  const totalSubmissions = submissions.length;
+  const pendingReview = submissions.filter(
+    (s) => s.status === "Pending",
   ).length;
-  const acceptedProjects = projectsStore.projects.filter(
-    (p) => p.visibility === "accepted",
+  const acceptedProjects = submissions.filter(
+    (s) => s.status === "accepted",
   ).length;
+
+  // Generate chart data based on actual submission dates over last 7 days
+  const generateChartData = (currentValue, filterFn = null) => {
+    const dataToAnalyze = filterFn ? submissions.filter(filterFn) : submissions;
+
+    // If no data, return zeros
+    if (dataToAnalyze.length === 0) {
+      return [0, 0, 0, 0, 0, 0, 0];
+    }
+
+    // Get last 7 days
+    const today = new Date();
+    today.setHours(23, 59, 59, 999); // End of today
+    const last7Days = [];
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      date.setHours(23, 59, 59, 999); // End of each day
+      last7Days.push(date);
+    }
+
+    // Count cumulative submissions created up to and including each day
+    const chartData = last7Days.map((targetDate) => {
+      return dataToAnalyze.filter((submission) => {
+        if (!submission.createdAt) return false;
+        const submissionDate = new Date(submission.createdAt);
+        // Include all submissions created on or before this date
+        return submissionDate <= targetDate;
+      }).length;
+    });
+
+    return chartData;
+  };
+
+  // Generate chart data for each stat
+  const totalSubmissionsChart = generateChartData(totalSubmissions);
+  const pendingReviewChart = generateChartData(
+    pendingReview,
+    (s) => s.status === "Pending",
+  );
+  const acceptedProjectsChart = generateChartData(
+    acceptedProjects,
+    (s) => s.status === "accepted",
+  );
+
+  // Calculate changes from previous period (comparing last data point to second-to-last)
+  const calculateChange = (chartData) => {
+    if (chartData.length < 2) return { value: 0, percentage: 0 };
+    const current = chartData[chartData.length - 1];
+    const previous = chartData[chartData.length - 2];
+    const change = current - previous;
+    const percentage =
+      previous > 0 ? ((change / previous) * 100).toFixed(1) : 0;
+    return { value: change, percentage };
+  };
+
+  const totalChange = calculateChange(totalSubmissionsChart);
+  const pendingChange = calculateChange(pendingReviewChart);
+  const acceptedChange = calculateChange(acceptedProjectsChart);
 
   return [
     {
       label: "Total Submissions",
       value: totalSubmissions.toString(),
       icon: "i-heroicons-inbox-stack",
-      change: `${acceptedProjects} accepted`,
-      changeColor: "positive",
-      chartData: [95, 102, 88, 110, 95, 108, totalSubmissions],
+      change:
+        totalChange.value !== 0
+          ? `${totalChange.value > 0 ? "+" : ""}${totalChange.value} (${totalChange.percentage}%) from last period`
+          : "No change from last period",
+      changeColor: totalChange.value >= 0 ? "positive" : "negative",
+      chartData: totalSubmissionsChart,
     },
     {
       label: "Pending Review",
       value: pendingReview.toString(),
       icon: "i-heroicons-exclamation-circle",
-      change: "Awaiting approval",
-      changeColor: pendingReview > 0 ? "negative" : "positive",
-      chartData: [20, 14, 25, 19, 17, 21, pendingReview],
+      change:
+        pendingChange.value !== 0
+          ? `${pendingChange.value > 0 ? "+" : ""}${pendingChange.value} (${pendingChange.percentage}%) from last period`
+          : "No change from last period",
+      changeColor: pendingChange.value > 0 ? "negative" : "positive",
+      chartData: pendingReviewChart,
     },
     {
       label: "Accepted",
       value: acceptedProjects.toString(),
       icon: "i-heroicons-check-circle",
-      change: `${totalSubmissions - acceptedProjects} remaining`,
-      changeColor: "positive",
-      chartData: [76, 74, 80, 77, 79, 78, acceptedProjects],
+      change:
+        acceptedChange.value !== 0
+          ? `${acceptedChange.value > 0 ? "+" : ""}${acceptedChange.value} (${acceptedChange.percentage}%) from last period`
+          : "No change from last period",
+      changeColor: acceptedChange.value >= 0 ? "positive" : "negative",
+      chartData: acceptedProjectsChart,
     },
   ];
 });

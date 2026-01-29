@@ -9,6 +9,7 @@ import type {
 } from "~/services/ProjectService";
 
 import { projectsData } from "~/constants/projects";
+import { transformProjects } from "~/utils/projectTransformer";
 
 // Types
 
@@ -51,10 +52,6 @@ export const useProjectStore = defineStore("projects", {
         const allDone = features.every((feature) => feature.status === "done");
         return allDone ? "Completed" : "In Progress";
       };
-    },
-
-    getFeaturedProjects(): Partial<Project[]> {
-      return this.projects.filter((project) => project.featured).slice(0, 3);
     },
 
     getCourseIdByName() {
@@ -110,9 +107,11 @@ export const useProjectStore = defineStore("projects", {
     projectStats(): ProjectStats {
       return {
         total: this.projects.length,
-        completed: this.projects.filter((p) => p.status === "Completed").length,
-        inProgress: this.projects.filter((p) => p.status === "In Progress")
+        completed: this.projects.filter((p) => p.projectStatus === "Completed")
           .length,
+        inProgress: this.projects.filter(
+          (p) => p.projectStatus === "In Progress",
+        ).length,
         totalLikes: this.projects.reduce((sum, p) => sum + p.likes, 0),
         totalViews: this.projects.reduce((sum, p) => sum + p.views, 0),
         totalTeamMembers: this.projects.reduce(
@@ -135,31 +134,31 @@ export const useProjectStore = defineStore("projects", {
     // In real application, this would involve API calls
     // 1. fetch Category data from server
 
-    async fetchFeaturedProjects(): Promise<Partial<Project[]>> {
-      this.loading = true;
-      try {
-        // If projects array is already populated, just return featured ones
-        if (this.projects.length > 0) {
-          return this.projects.filter((project) => project.featured);
-        }
+    // async fetchFeaturedProjects(): Promise<Partial<Project[]>> {
+    //   this.loading = true;
+    //   try {
+    //     // If projects array is already populated, just return featured ones
+    //     if (this.projects.length > 0) {
+    //       return this.projects.filter((project) => project.featured);
+    //     }
 
-        // Otherwise, fetch all projects first
-        await this.fetchProjects();
+    //     // Otherwise, fetch all projects first
+    //     await this.fetchProjects();
 
-        // Return featured projects
-        return this.projects.filter((project) => project.featured);
-      } catch (error) {
-        console.error(
-          "Error fetching featured projects, using fallback static data:",
-          error,
-        );
-        // Fallback: fetch from static data and filter featured
-        this.projects = projectsData;
-        return projectsData.filter((project) => project.featured);
-      } finally {
-        this.loading = false;
-      }
-    },
+    //     // Return featured projects
+    //     return this.projects.filter((project) => project.featured);
+    //   } catch (error) {
+    //     console.error(
+    //       "Error fetching featured projects, using fallback static data:",
+    //       error,
+    //     );
+    //     // Fallback: fetch from static data and filter featured
+    //     this.projects = projectsData;
+    //     return projectsData.filter((project) => project.featured);
+    //   } finally {
+    //     this.loading = false;
+    //   }
+    // },
 
     async fetchCategories(): Promise<string[]> {
       this.loading = true;
@@ -445,6 +444,27 @@ export const useProjectStore = defineStore("projects", {
       }
     },
 
+    async fetchHighlightedProjects(): Promise<Project[]> {
+      ///  use api directly
+      let projects: Project[] = [];
+      let selectProject: Project[] = []; // only 3 projects will be selected
+
+      const highlightedProjects = await projectService.getHighlightedProjects();
+
+      // tranform api response
+
+      projects = transformProjects(highlightedProjects);
+      let total = projects.length;
+
+      for (let i = 0; i < 3; i++) {
+        let index = Math.floor(Math.random() * total);
+        selectProject = [...selectProject, projects[index]];
+        projects.splice(index, 1); // remove selected project to avoid duplicates
+      }
+
+      return selectProject;
+    },
+
     // Save user's liked projects (would sync with backend in real app)
     async saveUserLikedProjects(): Promise<void> {
       const authStore = useAuthStore();
@@ -647,6 +667,7 @@ export const useProjectStore = defineStore("projects", {
      */
     async fetchAllSubmissions(): Promise<Project[]> {
       this.loading = true;
+      let projects: Project[] = [];
       try {
         const authStore = useAuthStore();
 
@@ -670,7 +691,7 @@ export const useProjectStore = defineStore("projects", {
         console.log(`Found ${submissions.length} total submissions`);
 
         // Update store state with fetched submissions
-        this.projects = submissions;
+        projects = submissions;
 
         return submissions;
       } catch (error) {
@@ -981,13 +1002,13 @@ export const useProjectStore = defineStore("projects", {
       // Update in user projects
       const userProject = this.userProjects.find((p) => p.id === projectId);
       if (userProject) {
-        userProject.status = status as any;
+        userProject.projectStatus = status as any;
       }
 
       // Update in all projects
       const project = this.projects.find((p) => p.id === projectId);
       if (project) {
-        project.status = status as any;
+        project.projectStatus = status as any;
       }
 
       // In real app, sync with backend
@@ -1034,7 +1055,7 @@ export const useProjectStore = defineStore("projects", {
 
       // If features are being updated, recalculate status
       if (updates.features) {
-        updates.status = this.calculateProjectStatus(updates.features);
+        updates.projectStatus = this.calculateProjectStatus(updates.features);
       }
 
       let updated = false;
@@ -1049,8 +1070,11 @@ export const useProjectStore = defineStore("projects", {
           ...updates,
         };
         // Recalculate status if not explicitly set and features exist
-        if (!updates.status && this.userProjects[userProjectIndex].features) {
-          this.userProjects[userProjectIndex].status =
+        if (
+          !updates.projectStatus &&
+          this.userProjects[userProjectIndex].features
+        ) {
+          this.userProjects[userProjectIndex].projectStatus =
             this.calculateProjectStatus(
               this.userProjects[userProjectIndex].features,
             );
@@ -1068,10 +1092,9 @@ export const useProjectStore = defineStore("projects", {
           ...updates,
         };
         // Recalculate status if not explicitly set and features exist
-        if (!updates.status && this.projects[projectIndex].features) {
-          this.projects[projectIndex].status = this.calculateProjectStatus(
-            this.projects[projectIndex].features,
-          );
+        if (!updates.projectStatus && this.projects[projectIndex].features) {
+          this.projects[projectIndex].projectStatus =
+            this.calculateProjectStatus(this.projects[projectIndex].features);
         }
         updated = true;
       }

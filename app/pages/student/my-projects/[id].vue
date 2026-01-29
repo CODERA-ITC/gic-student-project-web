@@ -290,21 +290,21 @@ const isOwner = computed(() => {
 // Image carousel
 const currentImageIndex = ref(0);
 
-const nextImage = () => {
-  if (project.value?.images) {
-    currentImageIndex.value =
-      (currentImageIndex.value + 1) % project.value.images.length;
-  }
-};
+// const nextImage = () => {
+//   if (project.value?.images) {
+//     currentImageIndex.value =
+//       (currentImageIndex.value + 1) % project.value.images.length;
+//   }
+// };
 
-const previousImage = () => {
-  if (project.value?.images) {
-    currentImageIndex.value =
-      currentImageIndex.value === 0
-        ? project.value.images.length - 1
-        : currentImageIndex.value - 1;
-  }
-};
+// const previousImage = () => {
+//   if (project.value?.images) {
+//     currentImageIndex.value =
+//       currentImageIndex.value === 0
+//         ? project.value.images.length - 1
+//         : currentImageIndex.value - 1;
+//   }
+// };
 
 // Like functionality - using store with authentication
 const showAuthModal = ref(false);
@@ -315,11 +315,11 @@ const canSubmit = computed(() => {
 
   // Only show submit button for draft projects
   // Default to draft if visibility is not set (will be updated via API later)
-  const visibility = project.value.visibility || "draft";
-  return visibility === "draft";
+  const status = project.value.submissionStatus || "draft";
+  return status === "draft";
 });
 
-// Get submission status message
+// Get submission status mqessage
 const getSubmissionStatusMessage = computed(() => {
   if (!project.value) return "";
 

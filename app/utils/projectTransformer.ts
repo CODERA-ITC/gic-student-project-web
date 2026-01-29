@@ -16,8 +16,8 @@ import type {
 export const ProjectDefaultImages: ProjectImage[] = [
   {
     id: "1234",
-    originalUrl: `https://www.pixeden.com/media/k2/galleries/856/001-screen-showcase-landing-page-devices-presentation-web-psd-projects.jpg`,
-    thumbnailUrl: `https://www.pixeden.com/media/k2/galleries/856/001-screen-showcase-landing-page-devices-presentation-web-psd-projects.jpg`,
+    originalUrl: `https://img.freepik.com/free-vector/web-design-concept-with-flat-design_23-2147852840.jpg`,
+    thumbnailUrl: `https://img.freepik.com/free-vector/web-design-concept-with-flat-design_23-2147852840.jpg`,
   },
   {
     id: "1235",
@@ -197,7 +197,8 @@ export class ProjectTransformer {
         ? projectData.technologies
         : [],
       category,
-      status,
+      projectStatus: status,
+      submissionStatus: projectData.submissionStatus || "draft",
       featured: projectData.featured || projectData.isFeatured || false,
       likes: projectData.likes || projectData.likeCount || 0,
       views: projectData.views || projectData.viewCount || 0,

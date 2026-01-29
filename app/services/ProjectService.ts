@@ -161,6 +161,20 @@ export class ProjectService {
     }
   }
 
+  async getHighlightedProjects(): Promise<any> {
+    let projects: any;
+
+    try {
+      const response = await $fetch(`${this.baseUrl}/highlighted`);
+      return (projects = response);
+    } catch (error) {
+      console.error(
+        "ProjectService: Failed to fetch highlighted projects",
+        error,
+      );
+    }
+  }
+
   /**
    * Create a new project
    */

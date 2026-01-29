@@ -199,6 +199,13 @@ export const BUTTON_PRESETS = {
     variant: "solid" as ButtonVariant,
     size: "lg" as ButtonSize,
   },
+  exploreHighlightedProjects: {
+    label: "Highlighted Projects",
+    icon: "i-heroicons-rocket-launch",
+    color: "primary" as ButtonColor,
+    variant: "solid" as ButtonVariant,
+    size: "lg" as ButtonSize,
+  },
   createProject: {
     label: "Create Project",
     icon: "i-heroicons-plus",

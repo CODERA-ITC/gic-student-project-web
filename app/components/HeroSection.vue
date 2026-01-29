@@ -35,10 +35,12 @@
           <!-- CTA Buttons -->
           <div class="flex flex-col sm:flex-row gap-4 pt-4">
             <ButtonsPresetButton
-              preset="exploreProjects"
-              to="/projects"
-              size="md"
-            />
+              preset="exploreHighlightedProjects"
+              @click="scrollToProjects"
+              class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
+            >
+              <UIcon name="i-heroicons-arrow-right" class="w-5 h-5" />
+            </ButtonsPresetButton>
             <ButtonsPresetButton preset="learnMore" to="/about" size="md" />
           </div>
 
@@ -105,6 +107,21 @@ const projects = ref(0);
 const students = ref(0);
 const gens = ref(0);
 const containerRef = ref(null);
+
+// Smooth scroll to projects section with header offset
+const scrollToProjects = () => {
+  const element = document.getElementById("highlighted-projects");
+  if (element) {
+    const headerOffset = 80; // Adjust this value based on your header height
+    const elementPosition = element.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth",
+    });
+  }
+};
 
 const animateCount = (setter, target, duration) => {
   const start = 0;

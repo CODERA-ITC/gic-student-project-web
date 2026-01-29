@@ -39,7 +39,8 @@ export interface Project {
   author: ProjectAuthor;
   technologies: string[];
   category: string;
-  status: "Completed" | "In Progress";
+  submissionStatus: "draft" | "pending" | "accepted" | "rejected";
+  projectStatus?: string; // For backward compatibility
   featured: boolean;
   likes: number;
   views: number;
