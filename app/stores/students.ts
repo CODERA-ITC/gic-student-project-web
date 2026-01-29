@@ -1,6 +1,10 @@
 import { defineStore } from "pinia";
 import type { ComputedRef } from "vue";
-import { studentsData, studentPrograms, studentYears } from "~/constants/students";
+import {
+  studentsData,
+  studentPrograms,
+  studentYears,
+} from "~/constants/students";
 
 // Types
 export interface StudentSocial {
@@ -26,6 +30,35 @@ export interface Student {
   gen: number;
 }
 
+// API Student Interface
+export interface APIStudent {
+  id: string;
+  firstName: string;
+  lastName?: string;
+  email: string;
+  phone?: string;
+  year?: number;
+  generation?: number;
+  avatar?: string;
+  bio?: string;
+  skill?: string[] | null;
+  department?: {
+    id: string;
+    name: string;
+    code: string;
+  };
+  courses?: any[];
+  role?: string;
+}
+
+export interface PaginatedResponse {
+  data: APIStudent[];
+  page: number;
+  limit: number;
+  total: number;
+  lastPage: number;
+}
+
 export interface StudentFilters {
   program: string;
   year: string;
@@ -45,6 +78,16 @@ export interface StudentState {
   programs: string[];
   years: string[];
   filters: StudentFilters;
+  // API-based state
+  apiStudents: APIStudent[];
+  loading: boolean;
+  currentPage: number;
+  limit: number;
+  total: number;
+  lastPage: number;
+  selectedGeneration: string | number;
+  availableGenerations: number[];
+  searchQuery: string;
 }
 
 export const useStudentStore = defineStore("students", {
@@ -58,6 +101,16 @@ export const useStudentStore = defineStore("students", {
       search: "",
       sortBy: "name",
     },
+    // API-based state
+    apiStudents: [],
+    loading: false,
+    currentPage: 1,
+    limit: 10,
+    total: 0,
+    lastPage: 1,
+    selectedGeneration: "all",
+    availableGenerations: [25, 26, 27, 28, 29, 30],
+    searchQuery: "",
   }),
 
   getters: {
@@ -67,14 +120,14 @@ export const useStudentStore = defineStore("students", {
       // Apply program filter
       if (this.filters.program !== "All") {
         filtered = filtered.filter(
-          (student) => student.program === this.filters.program
+          (student) => student.program === this.filters.program,
         );
       }
 
       // Apply year filter
       if (this.filters.year !== "All") {
         filtered = filtered.filter(
-          (student) => student.year === this.filters.year
+          (student) => student.year === this.filters.year,
         );
       }
 
@@ -87,8 +140,8 @@ export const useStudentStore = defineStore("students", {
             student.program.toLowerCase().includes(searchTerm) ||
             student.bio.toLowerCase().includes(searchTerm) ||
             student.skills.some((skill) =>
-              skill.toLowerCase().includes(searchTerm)
-            )
+              skill.toLowerCase().includes(searchTerm),
+            ),
         );
       }
 
@@ -154,7 +207,7 @@ export const useStudentStore = defineStore("students", {
 
     getStudent(id: number | string): Student | undefined {
       return this.students.find(
-        (student) => student.id === Number.parseInt(id.toString())
+        (student) => student.id === Number.parseInt(id.toString()),
       );
     },
 
@@ -169,8 +222,8 @@ export const useStudentStore = defineStore("students", {
           student.name.toLowerCase().includes(searchTerm) ||
           student.program.toLowerCase().includes(searchTerm) ||
           student.skills.some((skill) =>
-            skill.toLowerCase().includes(searchTerm)
-          )
+            skill.toLowerCase().includes(searchTerm),
+          ),
       );
     },
 
@@ -229,7 +282,7 @@ export const useStudentStore = defineStore("students", {
       // Search by skills
       this.students.forEach((student) => {
         const matchingSkills = student.skills.filter((skill) =>
-          skill.toLowerCase().includes(searchTerm)
+          skill.toLowerCase().includes(searchTerm),
         );
         if (matchingSkills.length > 0) {
           const key = `skill-${student.name}`;
@@ -248,6 +301,136 @@ export const useStudentStore = defineStore("students", {
       });
 
       return results.slice(0, 8);
+    },
+
+    // API-based actions
+    async loadStudents(token: string) {
+      this.loading = true;
+      try {
+        const params: any = {
+          page: this.currentPage,
+          limit: this.limit,
+          role: "STUDENT", // Only fetch students
+        };
+
+        // Add generation filter if selected
+        if (this.selectedGeneration !== "all") {
+          params.generation = this.selectedGeneration;
+        }
+
+        // Add search query if present
+        if (this.searchQuery && this.searchQuery.trim()) {
+          params.search = this.searchQuery.trim();
+        }
+
+        const response = await $fetch<PaginatedResponse>(`/api/users`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params,
+        });
+
+        // Set students directly from response (already filtered by API)
+        if (response.data && Array.isArray(response.data)) {
+          this.apiStudents = response.data;
+          this.total = response.total;
+          this.lastPage = response.lastPage;
+          this.currentPage = response.page;
+        }
+      } catch (error) {
+        console.error("Error loading students:", error);
+        this.apiStudents = [];
+        this.total = 0;
+        this.lastPage = 1;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async changePage(page: number, token: string) {
+      this.currentPage = page;
+      await this.loadStudents(token);
+    },
+
+    setGeneration(generation: string | number) {
+      this.selectedGeneration = generation;
+      this.currentPage = 1; // Reset to first page when filter changes
+    },
+
+    setSearchQuery(query: string) {
+      this.searchQuery = query;
+      this.currentPage = 1; // Reset to first page when search changes
+    },
+
+    async createStudent(studentData: any, token: string) {
+      try {
+        const response = await $fetch("/api/users", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: {
+            ...studentData,
+            role: "STUDENT",
+          },
+        });
+
+        return response;
+      } catch (error: any) {
+        console.error("Error creating student:", error);
+        throw new Error(error.data?.message || "Failed to create student");
+      }
+    },
+
+    async deleteStudent(studentId: string, token: string) {
+      try {
+        await $fetch(`/api/users/${studentId}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // Remove from local state
+        this.apiStudents = this.apiStudents.filter(
+          (student) => student.id !== studentId,
+        );
+        this.total = Math.max(0, this.total - 1);
+
+        // Recalculate last page
+        this.lastPage = Math.ceil(this.total / this.limit);
+
+        // If current page is now beyond last page, go back one page
+        if (this.currentPage > this.lastPage && this.lastPage > 0) {
+          this.currentPage = this.lastPage;
+        }
+      } catch (error) {
+        console.error("Error deleting student:", error);
+        throw error;
+      }
+    },
+
+    async uploadStudentsCSV(file: File, token: string) {
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        // this api is use to upload csv file to server
+        const response = await $fetch("/api/real-student/upload", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        return response;
+      } catch (error: any) {
+        console.error("Error uploading CSV:", error);
+        throw new Error(error.data?.message || "Failed to upload CSV file");
+      }
     },
   },
 });
