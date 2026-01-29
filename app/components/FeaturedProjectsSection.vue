@@ -40,8 +40,6 @@
             @toggle-like="toggleLike"
           />
         </div>
-
-        <p>featuredProjects: {{ featuredProjects.length }}</p>
       </section>
     </UContainer>
 
