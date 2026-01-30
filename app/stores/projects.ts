@@ -723,10 +723,10 @@ export const useProjectStore = defineStore("projects", {
         const authStore = useAuthStore();
 
         // Check if user is authenticated and is a teacher
-        if (!authStore.isAuthenticated) {
-          console.warn("User not authenticated, cannot fetch submissions");
-          return [];
-        }
+        // if (!authStore.isAuthenticated) {
+        //   console.warn("User not authenticated, cannot fetch submissions");
+        //   return [];
+        // }
 
         // Use ProjectService to fetch submissions
         const response = await projectService.fetchAllSubmissions();
@@ -735,8 +735,8 @@ export const useProjectStore = defineStore("projects", {
 
         // Transform API response using ProjectTransformer
         // API returns array directly, not wrapped in data property
-        const submissions = Array.isArray(response)
-          ? response.map((item: any) => transformProject(item))
+        const submissions = Array.isArray(response.data)
+          ? response.data.map((item: any) => transformProject(item))
           : [];
 
         console.log(`Found ${submissions.length} total submissions`);
