@@ -10,8 +10,17 @@
       </div>
     </div>
 
-    <!-- Error State -->
-    <div
+    <!-- Error State// Stats for teacher dashboard - computed from real data
+const stats = computed(() => {
+  // Get submissions from store
+  const submissions = projectsStore.submissionProjects || [];
+  const totalSubmissions = submissions.length;
+  const pendingReview = submissions.filter(
+    (s) => s.submissionStatus === "pending",
+  ).length;
+  const acceptedProjects = submissions.filter(
+    (s) => s.submissionStatus === "accepted",
+  ).length;iv
       v-else-if="error"
       class="min-h-screen flex items-center justify-center"
     >
@@ -54,23 +63,18 @@
     <div v-else-if="!isLoading && teacher.name">
       <!-- Header Section -->
       <div
-        class="py-16 bg-gray-100 dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700"
+        class="py-16 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900 border-b border-blue-700/30 dark:border-slate-700"
       >
         <UContainer>
-          <div
-            class="flex flex-col sm:flex-row items-start sm:items-center justify-start gap-4 md:gap-8"
-          >
-            <div class="flex flex-col gap-2 flex-1">
-              <h1
-                class="text-2xl sm:text-3xl md:text-4xl font-semibold text-black dark:text-white leading-none"
-              >
-                {{ GreetMessage }},
-                <span class="text-blue-400">{{ teacher.name }}</span>
+          <div class="space-y-2">
+            <div class="flex items-center gap-3">
+              <h1 class="text-4xl font-black text-white">
+                {{ GreetMessage }}, <span class="text-blue-200">{{ teacher.name }}</span>
               </h1>
-              <p class="text-sm sm:text-base text-gray-600 dark:text-slate-300">
-                Manage student projects and review submissions
-              </p>
             </div>
+            <p class="text-blue-100 dark:text-slate-300">
+              Manage student projects and review submissions
+            </p>
           </div>
         </UContainer>
       </div>
@@ -185,24 +189,15 @@
               :key="project.id"
               class="bg-white dark:bg-slate-800 rounded-xl border-1 border-gray-200 dark:border-slate-700/50"
             >
-            <p>
-              <!-- test project {{ project.submissionStatus}} -->
-            </p>
               <!-- Card Content -->
               <div class="p-6">
                 <!-- Header: Status Badge -->
                 <div class="flex justify-end mb-3">
                   <span
-                    :class="
-                      project.projectStatus === 'completed'
-                        ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
-                        : 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
-                    "
+                    :class="getStatusBadgeClass(project.submissionStatus || project.projectStatus)"
                     class="px-3 py-1 rounded-full text-xs font-medium"
                   >
-                    {{
-                      project.projectStatus === "completed" ? "Completed" : "Pending"
-                    }}
+                    {{ project.submissionStatus || project.projectStatus }}
                   </span>
                 </div>
 
@@ -292,7 +287,6 @@
 
 
                   <ButtonsPresetButton
-                    v-if="project.submissionStatus === 'pending'"
                     preset="primary"
                     label="View"
                     icon="i-heroicons-arrow-right"
@@ -496,10 +490,10 @@ const stats = computed(() => {
   const submissions = projectsStore.submissionProjects || [];
   const totalSubmissions = submissions.length;
   const pendingReview = submissions.filter(
-    (s) => s.status === "Pending",
+    (s) => s.submissionStatus === "pending",
   ).length;
   const acceptedProjects = submissions.filter(
-    (s) => s.status === "accepted",
+    (s) => s.submissionStatus === "accepted",
   ).length;
 
   // Generate chart data based on actual submission dates over last 7 days
@@ -539,11 +533,11 @@ const stats = computed(() => {
   const totalSubmissionsChart = generateChartData(totalSubmissions);
   const pendingReviewChart = generateChartData(
     pendingReview,
-    (s) => s.status === "Pending",
+    (s) => s.submissionStatus === "pending",
   );
   const acceptedProjectsChart = generateChartData(
     acceptedProjects,
-    (s) => s.status === "accepted",
+    (s) => s.submissionStatus === "accepted",
   );
 
   // Calculate changes from previous period (comparing last data point to second-to-last)
@@ -598,10 +592,11 @@ const stats = computed(() => {
   ];
 });
 
-// Recent projects - show only 6 most recent projects
+// Recent projects - show only 6 most recent pending projects
 const recentProjects = computed(() => {
-  // Sort projects by submitted date (most recent first) and take first 6
+  // Filter for pending projects, sort by submitted date (most recent first), and take first 6
   return submissions.value
+    .filter(project => (project.submissionStatus || project.projectStatus) === 'pending')
     .slice()
     .sort((a, b) => {
       return new Date(b.createdAt) - new Date(a.createdAt);
@@ -618,5 +613,19 @@ const viewProject = (project) => {
 const reviewProject = (project) => {
   // TODO: Implement review project functionality
   console.log("Review project:", project);
+};
+
+// Helper function for status badge classes
+const getStatusBadgeClass = (status) => {
+  switch (status) {
+    case 'pending':
+      return 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
+    case 'accepted':
+      return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
+    case 'rejected':
+      return 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400';
+    default:
+      return 'bg-gray-50 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400';
+  }
 };
 </script>
