@@ -184,8 +184,10 @@ const outerOrbit9 = useHeroRotation({
   >
     <!-- Central content -->
     <div class="relative z-10 text-center">
-      <h1 class="text-3xl mb-2 font-semibold text-slate-100">TechHub</h1>
-      <p class="text-l text-slate-200">
+      <h1 class="text-3xl mb-2 font-semibold text-gray-700 dark:text-white">
+        TechHub
+      </h1>
+      <p class="text-l text-slate-500">
         Showcasing student <br />tech brilliance
       </p>
     </div>

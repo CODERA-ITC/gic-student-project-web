@@ -78,7 +78,7 @@
 
         <!-- Visual Element -->
         <div class="relative hidden lg:block">
-          <AppHero />
+          <AppTechHub />
         </div>
       </div>
     </UContainer>
@@ -86,13 +86,12 @@
 </template>
 
 <script setup>
-import AppHero from "~/components/app/Hero.vue";
-
 import { tokenize } from "khmertokenizer";
 
 const subtitle = "បង្កើតដោយនិស្សិត សម្រាប់និស្សិត ₍^.  ̫.^₎";
 const typeWriterChars = computed(() => tokenize(subtitle).length);
 const typeWriterSpeed = "4s";
+const projectStore = useProjectStore();
 
 // fetch stats data from API by using store
 const stats = [
@@ -103,10 +102,11 @@ const stats = [
 
 import { ref, onMounted } from "vue";
 
-const projects = ref(0);
+let projects = ref(0);
 const students = ref(0);
 const gens = ref(0);
 const containerRef = ref(null);
+projects = computed(() => projectStore.totalProject);
 
 // Smooth scroll to projects section with header offset
 const scrollToProjects = () => {
@@ -141,7 +141,8 @@ const animateCount = (setter, target, duration) => {
   requestAnimationFrame(animate);
 };
 
-onMounted(() => {
+const authStore = useAuthStore();
+onMounted(async () => {
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -158,6 +159,10 @@ onMounted(() => {
 
   if (containerRef.value) {
     observer.observe(containerRef.value);
+  }
+
+  if (projectStore.projects.length == 0) {
+    await projectStore.fetchProjects();
   }
 
   onBeforeUnmount(() => observer.disconnect());

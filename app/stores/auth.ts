@@ -182,6 +182,7 @@ export const useAuthStore = defineStore("auth", {
           safeLocalStorage.setItem("refresh_token", data.refresh_token);
 
           await this.fetchCurrentUser();
+          // check if that user ever submission security question first
 
           // Check if user needs to set security questions
           if (this.user && !this.user.hasSecurityQuestions) {
@@ -322,7 +323,7 @@ export const useAuthStore = defineStore("auth", {
           this.user = {
             ...baseUserData,
             role: "STUDENT",
-            studentId: userData.studentId || userData.id,
+            studentId: userData.studentId || " ",
             program: userData.program || "",
             year: userData.year || "",
             gen: userData.gen || "",
@@ -500,7 +501,7 @@ export const useAuthStore = defineStore("auth", {
         }
 
         return responseData.data
-          .filter((userData: any) => userData.id !== this.user?.id)
+          .filter((userData: any) => userData.id !== this.user?.id || userData.role !== Role.admin || userData.role !== Role.teacher  )
 
           .map((userData: any) => ({
             id: userData.id,

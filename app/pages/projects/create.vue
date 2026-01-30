@@ -882,7 +882,7 @@
                       :key="course"
                       :value="course"
                     >
-                      {{ course }}
+                      {{ course.name }}
                     </option>
                   </select>
                 </div>

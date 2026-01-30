@@ -16,8 +16,8 @@ import type {
 export const ProjectDefaultImages: ProjectImage[] = [
   {
     id: "1234",
-    originalUrl: `https://img.freepik.com/free-vector/web-design-concept-with-flat-design_23-2147852840.jpg`,
-    thumbnailUrl: `https://img.freepik.com/free-vector/web-design-concept-with-flat-design_23-2147852840.jpg`,
+    originalUrl: `https://cdn.dribbble.com/userupload/17725359/file/original-ce1c9450a03ae68e328403e0740acf70.png?resize=1200x900&vertical=center`,
+    thumbnailUrl: `https://cdn.dribbble.com/userupload/17725359/file/original-ce1c9450a03ae68e328403e0740acf70.png?resize=1200x900&vertical=center`,
   },
   {
     id: "1235",

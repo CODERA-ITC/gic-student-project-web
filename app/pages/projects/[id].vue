@@ -116,9 +116,9 @@ const toggleLike = async () => {
     return;
   }
 
-  const newLikedState = await projectStore.likeProject(project.value.id);
   // Save the updated likes to persistence layer
   await projectStore.saveUserLikedProjects();
+  return await projectStore.likeProject(project.value.id);
 };
 
 const shareProject = async () => {

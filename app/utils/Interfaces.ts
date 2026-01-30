@@ -98,4 +98,5 @@ export interface ProjectState {
   filters: ProjectFilters;
   highlightedProjects: Project[];
   submissionProjects: Project[];
+  totalProject: number
 }

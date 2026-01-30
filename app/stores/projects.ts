@@ -43,6 +43,7 @@ export const useProjectStore = defineStore("projects", {
     },
     highlightedProjects: [],
     submissionProjects: [],
+    totalProject: 0,
   }),
 
   getters: {
@@ -319,6 +320,7 @@ export const useProjectStore = defineStore("projects", {
 
         // Update pagination state from API response
         this.pagination.totalItems = pagination.total;
+        this.totalProject = pagination.total;
         this.pagination.totalPages = pagination.lastPage;
         this.pagination.currentPage =
           pagination.page || this.pagination.currentPage;
@@ -359,10 +361,13 @@ export const useProjectStore = defineStore("projects", {
       if (!authStore.isTokenValid()) {
         console.error("❌ Token is invalid or expired. Please log in again.");
         // Show notification to user (you can add a toast/notification here)
-        alert("Your session has expired. Please log in again.");
         // Optionally logout and redirect
-        await authStore.logout();
-        return false;
+
+        // call refresh to new one
+        authStore.refreshAccessToken();
+
+        // await authStore.logout();
+        // return false;
       }
 
       const project = this.projects.find(
