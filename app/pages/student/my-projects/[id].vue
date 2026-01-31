@@ -567,9 +567,8 @@ const toggleLike = async () => {
     return;
   }
 
-  const newLikedState = await projectStore.likeProject(project.value.id);
-  // Save the updated likes to persistence layer
-  await projectStore.saveUserLikedProjects();
+  await projectStore.likeProject(project.value.id);
+  await projectStore.loadUserLikedProjects();
 };
 
 // Timeline items computed property

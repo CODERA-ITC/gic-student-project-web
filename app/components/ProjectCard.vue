@@ -3,11 +3,11 @@
   <div class="block group cursor-pointer">
     <div
       :class="[
-        'relative h-full rounded-xl overflow-hidden transition-all duration-300',
-        'border-2 border-blue-600/20 hover:border-blue-600/40 dark:border-blue-400/20 dark:hover:border-blue-400/40',
-        'bg-white dark:bg-slate-800 backdrop-blur hover:bg-blue-50/50 dark:hover:bg-slate-700/50',
-        'shadow-lg hover:shadow-xl hover:shadow-blue-500/20 dark:hover:shadow-blue-400/20',
-        'p-1',
+        'relative h-full rounded-3xl overflow-hidden transition-all duration-300',
+        'border border-white/70 dark:border-white/5 ring-1 ring-blue-500/10 hover:ring-blue-500/30',
+        'bg-gradient-to-br from-white via-slate-50 to-blue-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 backdrop-blur-xl',
+        'shadow-xl hover:shadow-2xl hover:shadow-blue-500/25 dark:hover:shadow-blue-400/25 hover:-translate-y-1',
+        'p-2 sm:p-3',
         'w-full max-w-sm mx-auto',
         'hover:cursor-pointer',
       ]"
@@ -28,12 +28,12 @@
 
       <!-- Project Header Image Carousel -->
       <div
-        class="relative h-70 flex items-center justify-center overflow-hidden rounded-lg group"
+        class="relative h-70 flex items-center justify-center overflow-hidden rounded-2xl group bg-slate-100/70 dark:bg-slate-800/50 ring-1 ring-slate-200/60 dark:ring-slate-700/50"
       >
         <!-- Images Carousel -->
         <div
           v-if="hasValidImages"
-          class="relative w-full h-full rounded-lg overflow-hidden hover:shadow-xl p-1"
+          class="relative w-full h-full rounded-2xl overflow-hidden hover:shadow-xl p-1"
         >
           <!-- Views -->
 
@@ -99,7 +99,7 @@
         <div class="flex flex-col">
           <div class="flex items-center justify-between mb-1">
             <h3
-              class="text-lg font-semibold text-black dark:text-white transition-colors line-clamp-2 mb-1"
+              class="text-lg font-semibold text-slate-900 dark:text-white transition-colors line-clamp-2 mb-1"
             >
               {{ project.name }}
             </h3>
@@ -111,10 +111,10 @@
                 v-if="showLikeButton"
                 @click.prevent.stop="toggleLikeHandler"
                 :class="[
-                  'flex items-center gap-1.5 transition-all duration-300 cursor-pointer p-1 rounded-lg',
+                  'flex items-center justify-center transition-all duration-300 cursor-pointer w-10 h-10 rounded-full',
                   isLiked
-                    ? 'bg-red-50 dark:bg-red-900/20'
-                    : 'hover:bg-gray-100 dark:hover:bg-slate-700',
+                    ? 'bg-red-50 dark:bg-red-900/20 shadow-inner shadow-red-500/10'
+                    : 'bg-white/80 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-700',
                 ]"
                 :title="isLiked ? 'Remove favorite' : 'Add favorite'"
                 type="button"
@@ -127,38 +127,47 @@
                     'w-5 h-5 transition-all duration-300',
                     isLiked
                       ? 'text-red-600 dark:text-red-400 scale-110'
-                      : 'text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 hover:scale-110',
+                      : 'text-gray-500 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 hover:scale-110',
                   ]"
                 />
-                <span
-                  :class="[
-                    'text-xs font-medium transition-colors duration-300 text-gray-700 dark:text-gray-300',
-                  ]"
-                >
-                  {{ formatNumber(project.likes) }}
-                </span>
               </button>
             </div>
           </div>
 
-          <div
-            class="flex text-xs items-center gap-1 text-gray-700 dark:text-gray-300"
-          >
-            <span class="font-medium">{{ project.category }}</span>
-            •
-            <span class="text-blue-900/70 dark:text-blue-400/70">{{
-              formatNumber(project.views)
-            }}</span>
-            <UIcon
-              name="i-heroicons-eye"
-              class="w-4 h-4 transition-colors text-gray-600 dark:text-gray-400"
-            />
+          <div class="flex flex-wrap items-center gap-2 text-xs">
+            <span
+              class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-white/70 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200"
+            >
+              <UIcon
+                name="i-heroicons-swatch"
+                class="w-3.5 h-3.5 text-blue-600 dark:text-blue-300"
+              />
+              <span class="font-semibold">{{ project.category }}</span>
+            </span>
+            <span
+              class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-900/80 dark:text-blue-200 border border-blue-100 dark:border-blue-800"
+            >
+              <UIcon
+                name="i-heroicons-eye"
+                class="w-3.5 h-3.5 text-blue-700 dark:text-blue-300"
+              />
+              {{ formatNumber(project.views) }}
+            </span>
+            <span
+              class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-200 border border-rose-100 dark:border-rose-800"
+            >
+              <UIcon
+                name="i-heroicons-heart-solid"
+                class="w-3.5 h-3.5 text-rose-600 dark:text-rose-300"
+              />
+              {{ formatNumber(project.likes) }}
+            </span>
           </div>
         </div>
 
         <!-- Description -->
         <p
-          class="text-blue-900/70 dark:text-gray-300/70 text-sm leading-relaxed line-clamp-2"
+            class="text-blue-900/70 dark:text-gray-300/70 text-sm leading-relaxed line-clamp-2"
         >
           {{ project.description }}
         </p>
@@ -212,6 +221,7 @@
               preset="viewDetails"
               size="sm"
               :to="`${baseRoute}/${project.id}`"
+              class="!rounded-full !px-4 !py-2 !font-semibold !shadow-lg hover:!shadow-xl hover:-translate-y-0.5 !transition-all !duration-200"
             />
           </div>
         </div>

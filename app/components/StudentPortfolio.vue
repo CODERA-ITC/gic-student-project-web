@@ -1,30 +1,40 @@
 <template>
   <div
-    class="group relative bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-400 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+    class="group relative h-full w-full max-w-md mx-auto overflow-hidden rounded-3xl
+           border border-white/70 dark:border-white/5 ring-1 ring-blue-500/10 hover:ring-blue-500/30
+           bg-gradient-to-br from-white via-slate-50 to-blue-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950
+           shadow-xl hover:shadow-2xl hover:shadow-blue-500/25 dark:hover:shadow-blue-400/25
+           transition-all duration-300 hover:-translate-y-1 backdrop-blur-xl"
     @mouseenter="showSocial = true"
     @mouseleave="showSocial = false"
   >
     <!-- Header Image Background -->
     <div
-      class="h-32 bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-500 dark:from-blue-800 dark:via-blue-700 dark:to-cyan-700 relative overflow-hidden"
+      class="h-36 bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-500 dark:from-blue-800 dark:via-blue-700 dark:to-cyan-700 relative overflow-hidden
+             ring-1 ring-slate-200/70 dark:ring-slate-700/60 rounded-2xl m-3"
     >
       <div
         class="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC40Ij48cGF0aCBkPSJNMzYgMzBoLTEydjEyaDEyVjMwem0tMTIgMGgtMTJ2MTJoMTJWMzB6bTEyLTEyaC0xMnYxMmgxMlYxOHptMCAxMmgxMnYxMkg0OFYzMHptMC0xMmgxMnYxMkg0OFYxOHoiLz48L2c+PC9nPjwvc3ZnPg==')]"
       ></div>
+      <div
+        class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+      ></div>
     </div>
 
     <!-- Content -->
-    <div class="p-6 pt-0">
+    <div class="px-5 pb-6 pt-2">
       <!-- Avatar -->
-      <div class="flex justify-center -mt-16 mb-4">
+      <div class="flex justify-center -mt-20 mb-4">
         <div
-          class="relative w-28 h-28 rounded-full border-4 border-white dark:border-slate-800 shadow-lg overflow-hidden bg-gray-200 dark:bg-slate-700"
+          class="relative w-28 h-28 rounded-full border-4 border-white dark:border-slate-800 shadow-2xl overflow-hidden bg-white dark:bg-slate-800
+                 ring-4 ring-white/50 dark:ring-slate-700/50 group-hover:ring-8 group-hover:ring-blue-300/60 dark:group-hover:ring-blue-500/60
+                 transition-all duration-300"
         >
           <img
             v-if="avatar"
             :src="avatar"
             :alt="name"
-            class="w-full h-full object-cover"
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             @error="handleImageError"
           />
           <div
@@ -39,12 +49,12 @@
       <!-- Student Info -->
       <div class="text-center mb-4">
         <h3
-          class="text-xl font-semibold text-gray-900 dark:text-white mb-1 line-clamp-1"
+          class="text-xl font-semibold text-slate-900 dark:text-white mb-1 line-clamp-1 tracking-tight"
         >
           {{ name }}
         </h3>
         <p
-          class="text-sm font-medium text-blue-600 dark:text-blue-400 mb-2 line-clamp-1"
+          class="text-xs font-semibold text-blue-900/70 dark:text-blue-200 uppercase tracking-[0.2em] mb-2 line-clamp-1"
         >
           {{ program }}
         </p>
@@ -77,13 +87,13 @@
           <span
             v-for="(skill, index) in displaySkills"
             :key="index"
-            class="px-2 py-1 text-xs font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-md"
+            class="px-3 py-1 text-xs font-semibold bg-white/80 dark:bg-slate-800/70 text-slate-800 dark:text-blue-100 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm"
           >
             {{ skill }}
           </span>
           <span
             v-if="skills.length > maxSkills"
-            class="px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-400 rounded-md"
+            class="px-3 py-1 text-xs font-semibold bg-slate-50/80 dark:bg-slate-800/70 text-slate-700 dark:text-blue-200 rounded-xl border border-slate-300 dark:border-slate-600"
           >
             +{{ skills.length - maxSkills }}
           </span>
@@ -92,25 +102,25 @@
 
       <!-- Stats -->
       <div
-        class="flex items-center justify-around py-3 mb-4 border-t border-b border-gray-200 dark:border-slate-700"
+        class="flex items-center justify-around py-4 mb-5 rounded-2xl ring-1 ring-slate-200/70 dark:ring-slate-700/60 bg-white/80 dark:bg-slate-800/70 shadow-sm"
       >
         <div class="text-center">
-          <div class="text-lg font-semibold text-gray-900 dark:text-white">
+          <div class="text-lg font-semibold text-slate-900 dark:text-white">
             {{ projectCount }}
           </div>
-          <div class="text-xs text-gray-500 dark:text-gray-400">Projects</div>
+          <div class="text-xs text-slate-500 dark:text-gray-400">Projects</div>
         </div>
         <div class="text-center">
-          <div class="text-lg font-semibold text-gray-900 dark:text-white">
+          <div class="text-lg font-semibold text-slate-900 dark:text-white">
             {{ joined || "2026" }}
           </div>
-          <div class="text-xs text-gray-500 dark:text-gray-400">Joined</div>
+          <div class="text-xs text-slate-500 dark:text-gray-400">Joined</div>
         </div>
         <div class="text-center">
-          <div class="text-lg font-semibold text-gray-900 dark:text-white">
+          <div class="text-lg font-semibold text-slate-900 dark:text-white">
             {{ gen }}
           </div>
-          <div class="text-xs text-gray-500 dark:text-gray-400">Gen</div>
+          <div class="text-xs text-slate-500 dark:text-gray-400">Gen</div>
         </div>
       </div>
 

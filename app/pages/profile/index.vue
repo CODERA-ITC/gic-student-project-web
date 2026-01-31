@@ -1,26 +1,47 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-slate-900">
     <!-- Header Section -->
-    <div
-      class="py-16 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900 border-b border-blue-700/30 dark:border-slate-700"
-    >
+    <div class="py-14">
       <UContainer>
-        <div class="flex items-center gap-4 mb-4">
+        <div
+          class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/15
+                 bg-white/90 dark:bg-slate-900/90 shadow-2xl px-8 py-10"
+        >
           <div
-            class="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-lg p-1 hover:bg-white/20 dark:hover:bg-white/10 transition-colors"
-          >
-            <ButtonsPresetButton
-              preset="back"
-              @click="goBack"
-              class="!text-white"
-            />
+            class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.08),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(79,70,229,0.08),transparent_30%)] pointer-events-none"
+            aria-hidden="true"
+          ></div>
+
+          <div class="relative space-y-3">
+            <div class="flex flex-col gap-3 mb-2">
+              <nav class="flex items-center flex-wrap gap-1 text-sm text-slate-600 dark:text-slate-300">
+                <template v-for="(crumb, idx) in breadcrumbs" :key="crumb.label">
+                  <NuxtLink
+                    :to="crumb.to || undefined"
+                    :class="[
+                      'transition-colors',
+                      crumb.to
+                        ? 'hover:text-blue-600 dark:hover:text-blue-300'
+                        : 'text-slate-900 dark:text-white font-semibold',
+                    ]"
+                  >
+                    {{ crumb.label }}
+                  </NuxtLink>
+                  <span
+                    v-if="idx < breadcrumbs.length - 1"
+                    class="text-slate-400 dark:text-slate-500"
+                    >/</span
+                  >
+                </template>
+              </nav>
+              <h1 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
+                Profile Settings
+              </h1>
+            </div>
+            <p class="text-slate-700 dark:text-slate-300">
+              Manage your account and preferences
+            </p>
           </div>
-        </div>
-        <div class="space-y-2">
-          <h1 class="text-4xl font-black text-white">Profile Settings</h1>
-          <p class="text-blue-100 dark:text-slate-300">
-            Manage your account and preferences
-          </p>
         </div>
       </UContainer>
     </div>
@@ -112,6 +133,11 @@ import { ref, reactive, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import auth from "~/middleware/auth";
 import { useAuthStore, type User } from "~/stores/auth";
+
+const breadcrumbs = [
+  { label: "Dashboard", to: "/student/dashboard" },
+  { label: "Profile Settings" },
+];
 
 definePageMeta({
   middleware: ["auth"],

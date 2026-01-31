@@ -500,7 +500,7 @@
                   <span
                     class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white"
                   >
-                    {{ formatNumber(project.likes) }}
+                    {{ formatNumber(likesCount) }}
                   </span>
                 </div>
                 <p class="text-xs text-gray-500 dark:text-gray-400">Likes</p>
@@ -837,7 +837,7 @@
                     name="i-heroicons-heart"
                     class="w-3 h-3 sm:w-4 sm:h-4"
                   />
-                  {{ formatNumber(project.likes) }} likes
+                  {{ formatNumber(likesCount) }} likes
                 </span>
               </div>
             </div>
@@ -1160,6 +1160,26 @@ defineEmits<{
   share: [];
   hide: [];
 }>();
+
+// Local like count that stays responsive to parent changes and toggle events
+const likesCount = ref(props.project?.likes ?? 0);
+
+watch(
+  () => props.project?.likes,
+  (val) => {
+    likesCount.value = val ?? 0;
+  },
+  { immediate: true },
+);
+
+watch(
+  () => props.isLiked,
+  (newVal, oldVal) => {
+    if (newVal === oldVal) return;
+    likesCount.value += newVal ? 1 : -1;
+    if (likesCount.value < 0) likesCount.value = 0;
+  },
+);
 
 // Image carousel
 const currentImageIndex = ref(0);

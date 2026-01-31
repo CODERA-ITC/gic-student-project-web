@@ -950,7 +950,7 @@ const toggleLike = async (projectId) => {
   }
 
   await projectStore.likeProject(projectId);
-  await projectStore.saveUserLikedProjects();
+  await projectStore.loadUserLikedProjects();
 };
 
 // Helper to check if a project is liked

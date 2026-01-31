@@ -1,29 +1,63 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-slate-900">
     <!-- Header Section -->
-    <div
-      class="py-16 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 dark:border-slate-700"
-    >
+    <div class="relative overflow-hidden py-16">
+      <div
+        class="absolute -top-24 -left-24 w-80 h-80 bg-blue-500/40 rounded-full blur-3xl"
+        aria-hidden="true"
+      ></div>
+      <div
+        class="absolute -bottom-32 right-0 w-96 h-96 bg-indigo-600/40 rounded-full blur-3xl"
+        aria-hidden="true"
+      ></div>
+      <div
+        class="absolute top-10 right-24 w-52 h-52 bg-cyan-400/30 rounded-full blur-3xl"
+        aria-hidden="true"
+      ></div>
+
       <UContainer>
-        <div class="flex flex-row items-center gap-4 mb-4">
+        <div
+          class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/25
+                 bg-gradient-to-br from-blue-900 via-indigo-900 to-blue-700 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950
+                 shadow-2xl px-8 py-10"
+        >
           <div
-            class="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-lg p-1 hover:bg-white/20 dark:hover:bg-white/10 transition-colors"
-          >
-            <ButtonsPresetButton
-              preset="back"
-              @click="$router.push('/student/dashboard')"
-              class="!text-white"
-            />
+            class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.12),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.08),transparent_30%)] pointer-events-none"
+            aria-hidden="true"
+          ></div>
+
+          <div class="relative space-y-3">
+            <div class="flex flex-col gap-3 mb-2">
+              <nav class="flex items-center flex-wrap gap-1 text-sm text-slate-600 dark:text-slate-300">
+                <template v-for="(crumb, idx) in breadcrumbs" :key="crumb.label">
+                  <NuxtLink
+                    :to="crumb.to || undefined"
+                    :class="[
+                      'transition-colors  ',
+                      crumb.to
+                        ? 'hover:text-blue-700 text-white dark:hover:text-blue-300'
+                        : 'text-slate-300 dark:text-white font-semibold',
+                    ]"
+                  >
+                    {{ crumb.label }}
+                  </NuxtLink>
+                  <span
+                    v-if="idx < breadcrumbs.length - 1"
+                    class="text-slate-400 dark:text-slate-500"
+                    >/</span
+                  >
+                </template>
+              </nav>
+              <div class="space-y-3">
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-white leading-tight">
+                  Project Submissions
+                </h1>
+                <p class="text-slate-300 dark:text-slate-300 max-w-2xl">
+                  Track submitted projects and their review status. Syncs with notifications.
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="space-y-2">
-          <div class="flex items-center gap-3">
-            <h1 class="text-4xl font-black text-white">Project Submissions</h1>
-          </div>
-          <p class="text-blue-100 dark:text-slate-300">
-            Track submitted projects and their review status. Syncs with
-            notifications.
-          </p>
         </div>
       </UContainer>
     </div>
@@ -171,18 +205,20 @@
                     <UButton
                       icon="i-heroicons-eye"
                       size="xs"
-                      color="primary"
+                      color="neutral"
                       variant="ghost"
                       label="View"
                       @click="viewSubmission(submission.id)"
+                      class="text-gray-700 dark:text-gray-300 disabled:text-gray-400 dark:disabled:text-gray-600 disabled:opacity-60"
                     />
                     <UButton
                       icon="i-heroicons-pencil"
                       size="xs"
-                      color="primary"
+                      color="neutral"
                       variant="ghost"
                       label="Edit"
                       @click="editSubmission(submission.id)"
+                      class="text-gray-700 dark:text-gray-300 disabled:text-gray-400 dark:disabled:text-gray-600 disabled:opacity-60"
                     />
                     <!-- <UButton
                       v-if="
@@ -354,6 +390,11 @@ import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useProjectStore } from "~/stores/projects";
 import { useAuthStore } from "~/stores/auth";
+
+const breadcrumbs = [
+  { label: "Dashboard", to: "/student/dashboard" },
+  { label: "Submissions" },
+];
 
 definePageMeta({
   middleware: ["auth", "student"],

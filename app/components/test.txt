@@ -1,6 +1,0 @@
-nice for field to create project show also allow add geneneration too,
-then for academic year, use drop down
-like 2023-2024
-
-then for course is not yet correct use
-it now use object directly in the form of create project

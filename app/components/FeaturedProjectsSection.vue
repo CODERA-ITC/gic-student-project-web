@@ -72,8 +72,16 @@ const toggleLike = async (projectId) => {
     return;
   }
 
-  await projectStore.likeProject(projectId);
-  await projectStore.saveUserLikedProjects();
+  const wasLiked = projectStore.isProjectLiked(projectId);
+  const result = await projectStore.likeProject(projectId);
+  if (result) {
+    const card = featuredProjects.value.find((p) => p.id === projectId);
+    if (card) {
+      card.likes = (card.likes || 0) + (wasLiked ? -1 : 1);
+      if (card.likes < 0) card.likes = 0;
+    }
+  }
+  await projectStore.loadUserLikedProjects();
 };
 </script>
 

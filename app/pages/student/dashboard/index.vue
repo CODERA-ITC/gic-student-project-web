@@ -68,32 +68,58 @@
     <!-- Dashboard Content -->
     <div v-else>
       <!-- Header Section -->
-      <div
-        class="py-16 bg-white dark:bg-slate-800 border-b border-blue-700/30 dark:border-slate-700"
-      >
+      <div class="relative overflow-hidden py-16">
+        <div
+          class="absolute -top-24 -left-24 w-80 h-80 bg-blue-500/40 rounded-full blur-3xl"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="absolute -bottom-32 right-0 w-96 h-96 bg-indigo-600/40 rounded-full blur-3xl"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="absolute top-10 right-24 w-52 h-52 bg-cyan-400/30 rounded-full blur-3xl"
+          aria-hidden="true"
+        ></div>
+
         <UContainer>
           <div
-            class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0"
+            class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/25 bg-gradient-to-br from-blue-900 via-indigo-900 to-blue-700 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 shadow-2xl px-8 py-10"
           >
-            <div class="space-y-2">
-              <h1
-                class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-black dark:text-white"
-              >
-                {{ GreetMessage }},
-                <span class="text-blue-900 dark:text-blue-300">{{
-                  student.name
-                }}</span>
-              </h1>
-              <p class="text-blue-800 dark:text-slate-300">
-                Track and manage your projects
-              </p>
+            <div
+              class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.12),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.08),transparent_30%)] pointer-events-none"
+              aria-hidden="true"
+            ></div>
+
+            <div
+              class="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0"
+            >
+              <div class="space-y-3">
+                <div
+                  class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50/80 dark:bg-blue-900/30 text-blue-900 dark:text-blue-200 text-sm font-semibold"
+                >
+                  <UIcon name="i-heroicons-squares-2x2" class="w-4 h-4" />
+                  Dashboard
+                </div>
+                <h1
+                  class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-blue-300 dark:text-white"
+                >
+                  {{ GreetMessage }},
+                  <span class="text-white dark:text-blue-300">{{
+                    student.name
+                  }}</span>
+                </h1>
+                <p class="text-slate-300 dark:text-slate-300">
+                  Track and manage your projects
+                </p>
+              </div>
+              <ButtonsPresetButton
+                preset="createProject"
+                to="/projects/create"
+                size="md"
+                class="w-full sm:w-auto shadow-lg"
+              />
             </div>
-            <ButtonsPresetButton
-              preset="createProject"
-              to="/projects/create"
-              size="md"
-              class="w-full sm:w-auto"
-            />
           </div>
         </UContainer>
       </div>

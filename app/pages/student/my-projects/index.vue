@@ -1,55 +1,76 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-slate-900">
     <!-- Header Section -->
-    <div
-      class="py-16 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 dark:border-slate-700"
-    >
+    <div class="relative overflow-hidden py-16">
+      <!-- Ambient blobs -->
+      <div
+        class="absolute -top-24 -left-24 w-80 h-80 bg-blue-500/40 rounded-full blur-3xl"
+        aria-hidden="true"
+      ></div>
+      <div
+        class="absolute -bottom-32 right-0 w-96 h-96 bg-indigo-600/40 rounded-full blur-3xl"
+        aria-hidden="true"
+      ></div>
+      <div
+        class="absolute top-10 right-24 w-52 h-52 bg-cyan-400/30 rounded-full blur-3xl"
+        aria-hidden="true"
+      ></div>
+
       <UContainer>
         <div
-          class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+          class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/20 bg-gradient-to-br from-blue-900 via-indigo-900 to-blue-700 text-white shadow-2xl"
         >
-          <div class="flex flex-col items-start gap-4 mb-4">
-            <div
-              class="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-lg p-1 hover:bg-white/20 dark:hover:bg-white/10 transition-colors"
-            >
+          <div
+            class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.08),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.06),transparent_30%)]"
+            aria-hidden="true"
+          ></div>
+
+          <div
+            class="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-8 sm:p-10"
+          >
+            <div class="flex flex-col items-start gap-4 mb-2 w-full">
+              <nav
+                class="flex items-center flex-wrap gap-1 text-sm text-slate-600 dark:text-slate-300"
+              >
+                <template
+                  v-for="(crumb, idx) in breadcrumbs"
+                  :key="crumb.label"
+                >
+                  <NuxtLink
+                    :to="crumb.to || undefined"
+                    :class="[
+                      'transition-colors  ',
+                      crumb.to
+                        ? 'hover:text-blue-700 text-white dark:hover:text-blue-300'
+                        : 'text-slate-300 dark:text-white font-semibold',
+                    ]"
+                  >
+                    {{ crumb.label }}
+                  </NuxtLink>
+                  <span
+                    v-if="idx < breadcrumbs.length - 1"
+                    class="text-slate-400 dark:text-slate-500"
+                    >/</span
+                  >
+                </template>
+              </nav>
+              <div class="space-y-3">
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semiboldl text-white leading-tight">My Projects</h1>
+                <p class="text-slate-300 dark:text-slate-300">
+                  Create, manage, and organize all your projects
+                </p>
+              </div>
+            </div>
+
+            <div class="flex gap-3">
               <ButtonsPresetButton
-                preset="back"
-                @click="$router.push('/student/dashboard')"
-                class="!text-white"
+                preset="createProject"
+                to="/projects/create"
+                color="neutral"
+                variant="solid"
+                class="!bg-white !text-blue-700 hover:!bg-blue-50 dark:!bg-slate-800 dark:!text-blue-200 dark:hover:!bg-slate-700 shadow-lg"
               />
             </div>
-
-            <!-- <div class="space-y-2">
-              <div class="flex items-center gap-3">
-                <UIcon
-                  name="i-heroicons-heart-solid"
-                  class="w-10 h-10 text-red-400"
-                />
-                <h1 class="text-4xl font-black text-white">
-                  Favorite Projects
-                </h1>
-              </div>
-              <p class="text-blue-100 dark:text-slate-300">
-                Projects you've liked and want to revisit
-              </p>
-            </div> -->
-
-            <div class="space-y-2">
-              <h1 class="text-4xl font-black text-white">My Projects</h1>
-              <p class="text-gray-200">
-                Create, manage, and organize all your projects
-              </p>
-            </div>
-          </div>
-
-          <div class="flex gap-3">
-            <ButtonsPresetButton
-              preset="createProject"
-              to="/projects/create"
-              color="neutral"
-              variant="solid"
-              class="!bg-white !text-blue-600 hover:!bg-gray-100 dark:!bg-slate-800 dark:!text-blue-400 dark:hover:!bg-slate-700"
-            />
           </div>
         </div>
       </UContainer>
@@ -99,8 +120,19 @@
                 v-model="searchQuery"
                 type="text"
                 placeholder="Search projects..."
-                class="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                class="w-full pl-9 pr-9 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                @keyup.enter.prevent="applyImmediateSearch"
+                @keyup.esc="clearSearch"
               />
+              <div
+                v-if="isSearching"
+                class="absolute right-3 top-1/2 -translate-y-1/2"
+              >
+                <UIcon
+                  name="i-heroicons-arrow-path"
+                  class="w-4 h-4 animate-spin text-blue-500"
+                />
+              </div>
             </div>
             <span
               class="text-sm text-gray-500 dark:text-slate-400 whitespace-nowrap"
@@ -109,12 +141,12 @@
             </span>
           </div>
           <div class="flex gap-3 w-full sm:w-auto">
-            <USelect
+            <!-- <USelect
               v-model="selectedTag"
               :items="tagOptions"
               placeholder="All Tags"
               class="flex-1 sm:w-40"
-            />
+            /> -->
             <USelect
               v-model="selectedCategory"
               :items="categoryOptions"
@@ -247,7 +279,7 @@
                       <p
                         class="text-sm font-semibold text-gray-900 dark:text-white"
                       >
-                        {{ project.title }}
+                        {{ project.name }}
                       </p>
                       <p
                         class="text-xs text-gray-500 dark:text-gray-400 line-clamp-1"
@@ -268,14 +300,14 @@
                   <span
                     :class="[
                       'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
-                      project.status === 'Completed'
+                      project.projectStatus === ProjectStatus.Completed
                         ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                        : project.status === 'In Review'
+                        : project.status === ProjectStatus.InProgress
                           ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
                           : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300',
                     ]"
                   >
-                    {{ project.status }}
+                    {{ project.projectStatus }}
                   </span>
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-slate-400">
@@ -286,7 +318,7 @@
                     <UButton
                       icon="i-heroicons-eye"
                       size="xs"
-                      color="primary"
+                      color="neutral"
                       variant="ghost"
                       label="View"
                       @click="navigateTo(`/student/my-projects/${project.id}`)"
@@ -294,7 +326,7 @@
                     <UButton
                       icon="i-heroicons-pencil"
                       size="xs"
-                      color="primary"
+                      color="neutral"
                       variant="ghost"
                       label="Edit"
                       @click="handleEdit(project.id)"
@@ -383,6 +415,11 @@ import { useAuthStore } from "~/stores/auth";
 const projectStore = useProjectStore();
 const authStore = useAuthStore();
 
+const breadcrumbs = [
+  { label: "Dashboard", to: "/student/dashboard" },
+  { label: "My Projects" },
+];
+
 // Reactive data
 const activeTab = ref("all");
 const searchQuery = ref("");
@@ -394,37 +431,55 @@ const pageSize = ref(9);
 const isSearching = ref(false);
 const viewMode = ref("grid"); // Add view mode toggle
 
-// Like functionality
+// Like functionality (persisted per user)
 const likedProjects = ref({});
 
-// Watch for like changes and save to localStorage
+const likesStorageKey = computed(() => {
+  const userId = authStore.user?.id || "guest";
+  return `likedProjects_${userId}`;
+});
+
+// Persist likes for the current user
 watch(
   likedProjects,
   (newLikes) => {
     if (process.client) {
-      localStorage.setItem("likedProjects", JSON.stringify(newLikes));
+      localStorage.setItem(likesStorageKey.value, JSON.stringify(newLikes));
     }
   },
   { deep: true },
 );
 
-// Handle like toggle
+// Reload likes when user changes (e.g., logout/login as another user)
+watch(
+  () => authStore.user?.id,
+  (newUserId) => {
+    if (!process.client) return;
+    const savedLikes = localStorage.getItem(
+      `likedProjects_${newUserId || "guest"}`,
+    );
+    likedProjects.value = savedLikes ? JSON.parse(savedLikes) : {};
+  },
+);
+
+// Handle like toggle with local optimistic count
 const handleToggleLike = (projectId) => {
-  if (likedProjects.value[projectId]) {
-    delete likedProjects.value[projectId];
-    // Update project likes count
-    const project = myProjects.value.find((p) => p.id === projectId);
+  const nextLikes = { ...likedProjects.value };
+  const project = myProjects.value.find((p) => p.id === projectId);
+
+  if (nextLikes[projectId]) {
+    delete nextLikes[projectId];
     if (project && project.likes > 0) {
-      project.likes--;
+      project.likes -= 1;
     }
   } else {
-    likedProjects.value[projectId] = true;
-    // Update project likes count
-    const project = myProjects.value.find((p) => p.id === projectId);
+    nextLikes[projectId] = true;
     if (project) {
-      project.likes++;
+      project.likes += 1;
     }
   }
+
+  likedProjects.value = nextLikes;
 };
 
 // Handle edit project
@@ -538,7 +593,7 @@ onMounted(async () => {
 
   // Load liked projects from localStorage
   if (process.client) {
-    const savedLikes = localStorage.getItem("likedProjects");
+    const savedLikes = localStorage.getItem(likesStorageKey.value);
     if (savedLikes) {
       likedProjects.value = JSON.parse(savedLikes);
     }
@@ -552,11 +607,10 @@ const myProjects = computed(() => {
 
 const tabs = computed(() => [
   { label: "All Projects", value: "all", count: myProjects.value.length },
-
   {
-    label: "Under Review",
-    value: "in-review",
-    count: getProjectsByStatus("In Review").length,
+    label: "In Progress",
+    value: "in-progress",
+    count: getProjectsByStatus("In Progress").length,
   },
   {
     label: "Completed",
@@ -572,10 +626,11 @@ const filteredProjects = computed(() => {
   if (activeTab.value !== "all") {
     const statusMap = {
       "in-progress": "In Progress",
-      "in-review": "In Review",
       completed: "Completed",
     };
-    projects = projects.filter((p) => p.status === statusMap[activeTab.value]);
+    projects = projects.filter(
+      (p) => getStatus(p) === statusMap[activeTab.value],
+    );
   }
 
   // Filter by search query
@@ -583,7 +638,7 @@ const filteredProjects = computed(() => {
     const query = debouncedSearchQuery.value.toLowerCase();
     projects = projects.filter(
       (p) =>
-        p.title.toLowerCase().includes(query) ||
+        (p.title || p.name || "").toLowerCase().includes(query) ||
         p.description.toLowerCase().includes(query) ||
         p.category.toLowerCase().includes(query) ||
         (p.tags && p.tags.some((tag) => tag.toLowerCase().includes(query))) ||
@@ -678,6 +733,20 @@ watch(searchQuery, (newQuery) => {
   }, 300);
 });
 
+// Instant search on Enter key
+const applyImmediateSearch = () => {
+  debouncedSearchQuery.value = searchQuery.value;
+  isSearching.value = false;
+  currentPage.value = 1;
+};
+
+// Clear search on Escape
+const clearSearch = () => {
+  searchQuery.value = "";
+  debouncedSearchQuery.value = "";
+  currentPage.value = 1;
+};
+
 // Reset pagination when filters change
 watch([selectedTag, selectedCategory, activeTab], () => {
   currentPage.value = 1;
@@ -685,7 +754,7 @@ watch([selectedTag, selectedCategory, activeTab], () => {
 
 // Methods
 const getProjectsByStatus = (status) => {
-  return myProjects.value.filter((p) => p.status === status);
+  return myProjects.value.filter((p) => getStatus(p) === status);
 };
 
 const getQuickActions = (project) => {
@@ -821,6 +890,10 @@ const getStatusColor = (status) => {
   };
   return colors[status] || "gray";
 };
+
+// Normalize project status (some data uses status, others projectStatus)
+const getStatus = (project) =>
+  (project.projectStatus || project.status || "").toString();
 
 const shareProject = (project) => {
   const url = `${window.location.origin}/student/my-projects/${project.id}`;

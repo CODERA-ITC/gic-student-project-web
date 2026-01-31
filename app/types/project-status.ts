@@ -1,4 +1,4 @@
 export enum ProjectStatus {
-  Completed = "completed",
-  InProgress = "in progress",
+  Completed = "Completed",
+  InProgress = "In progress",
 }

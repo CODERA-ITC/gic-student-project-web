@@ -9,7 +9,7 @@ import type {
 } from "~/services/ProjectService";
 
 import { projectsData } from "~/constants/projects";
-import { transformProjects } from "~/utils/projectTransformer";
+import { transformProjects, transformProject } from "~/utils/projectTransformer";
 import { string } from "zod";
 
 // Types
@@ -25,6 +25,7 @@ export const useProjectStore = defineStore("projects", {
     availableCourses: [],
     courseObjects: [],
     likedProjects: new Set(),
+    likedProjectList: [],
     loading: false,
     nextProjectId: 1000, // Start user-created projects from 1000 to avoid conflicts
     pagination: {
@@ -370,9 +371,11 @@ export const useProjectStore = defineStore("projects", {
         // return false;
       }
 
-      const project = this.projects.find(
-        (p) => p.id?.toString() === projectId.toString(),
-      );
+      const project =
+        this.projects.find((p) => p.id?.toString() === projectId.toString()) ||
+        this.likedProjectList.find(
+          (p) => p.id?.toString() === projectId.toString(),
+        );
       if (!project) {
         console.warn("❌ Project not found:", projectId);
         return false;
@@ -449,24 +452,45 @@ export const useProjectStore = defineStore("projects", {
     // Load user's liked projects (would be from backend in real app)
     async loadUserLikedProjects(): Promise<void> {
       const authStore = useAuthStore();
-      if (!authStore.isAuthenticated || !authStore.user || !authStore.token) {
-        this.likedProjects.clear();
-        return;
-      }
+      // if (!authStore.isAuthenticated || !authStore.user || !authStore.token) {
+      //   this.likedProjects.clear();
+      //   this.likedProjectList = [];
+      //   return;
+      // }
 
       try {
         // Fetch user's liked projects from API
         const likedData = await projectService.getUserLikedProjects();
 
-        // Extract project IDs from the response
-        // Response format: [{ id, user: { id }, project: { id } }, ...]
-        const likedProjectIds = likedData
-          .map((like: any) => like.project?.id || like.projectId)
-          .filter(Boolean);
+        // API can return either:
+        // 1) like records with `project` object, or
+        // 2) raw project objects (as currently returned by /projects/me/likes).
+        const likedProjectObjects = likedData
+          .map((item: any) =>
+            item.project ? transformProject(item.project) : transformProject(item),
+          )
+          .filter((p: any) => p && p.id);
 
-        this.likedProjects = new Set(likedProjectIds);
+        const finalIds = likedProjectObjects.map((p: any) => p.id);
+
+        this.likedProjects = new Set(finalIds);
+
+        // We already have full project objects from the API in most cases.
+        // If for some reason we didn't, fallback to fetching by id.
+        if (likedProjectObjects.length > 0) {
+          this.likedProjectList = likedProjectObjects;
+        } else if (finalIds.length > 0) {
+          const fetchedProjects = await Promise.all(
+            finalIds.map((id: string | number) =>
+              this.fetchProjectById(id.toString()),
+            ),
+          );
+          this.likedProjectList = fetchedProjects.filter(Boolean) as Project[];
+        } else {
+          this.likedProjectList = [];
+        }
         console.log(
-          `📚 Loaded ${likedProjectIds.length} liked project(s) for user ${authStore.user.name} from API`,
+          `📚 Loaded ${finalIds.length} liked project(s) for user ${authStore.user.name} from API`,
         );
       } catch (error) {
         console.error("Error loading user liked projects from API:", error);
@@ -480,6 +504,7 @@ export const useProjectStore = defineStore("projects", {
               const parsed = JSON.parse(stored);
               if (Array.isArray(parsed)) {
                 this.likedProjects = new Set(parsed);
+                this.likedProjectList = [];
                 console.log(
                   `📚 Loaded ${parsed.length} liked project(s) from localStorage fallback`,
                 );
@@ -488,6 +513,7 @@ export const useProjectStore = defineStore("projects", {
           } catch (e) {
             console.warn("Error loading from localStorage fallback:", e);
             this.likedProjects.clear();
+            this.likedProjectList = [];
           }
         }
       }

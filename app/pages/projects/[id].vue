@@ -40,7 +40,6 @@
 import { ref, computed, watch, onMounted } from "vue";
 import { useProjectStore } from "~/stores/projects";
 import { useAuthStore } from "~/stores/auth";
-import { is, tr } from "zod/locales";
 
 const route = useRoute();
 const router = useRouter();
@@ -116,9 +115,14 @@ const toggleLike = async () => {
     return;
   }
 
-  // Save the updated likes to persistence layer
-  await projectStore.saveUserLikedProjects();
-  return await projectStore.likeProject(project.value.id);
+  const wasLiked = isLiked.value;
+  const result = await projectStore.likeProject(project.value.id);
+  // Optimistically update local count to reflect toggle result
+  if (result) {
+    project.value.likes = (project.value.likes || 0) + (wasLiked ? -1 : 1);
+    if (project.value.likes < 0) project.value.likes = 0;
+  }
+  await projectStore.loadUserLikedProjects();
 };
 
 const shareProject = async () => {
