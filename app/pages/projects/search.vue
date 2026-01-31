@@ -105,13 +105,17 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useProjectStore } from "~/stores/projects";
+import { useAuthStore } from "~/stores/auth";
+import { useToast } from "#imports";
 
 const route = useRoute();
 const router = useRouter();
 const projectStore = useProjectStore();
+const authStore = useAuthStore();
+const toast = useToast();
 
 // Get query params
 const searchQuery = ref(route.query.search || "");
@@ -158,40 +162,28 @@ const searchResults = computed(() => {
   return results;
 });
 
-// Like functionality - persist in localStorage
-const LIKED_PROJECTS_KEY = "likedProjects";
+const likedProjects = computed(() => projectStore.likedProjects);
 
-const getLikedProjectsFromStorage = () => {
-  if (typeof window !== "undefined") {
-    const stored = localStorage.getItem(LIKED_PROJECTS_KEY);
-    return stored ? JSON.parse(stored) : {};
-  }
-  return {};
-};
-
-const likedProjects = ref(getLikedProjectsFromStorage());
-
-const toggleLike = (projectId) => {
-  if (likedProjects.value[projectId]) {
-    // Unlike: decrement count and remove from liked
-    const project = projects.value.find((p) => p.id === projectId);
-    if (project && project.likes > 0) {
-      project.likes--;
-    }
-    delete likedProjects.value[projectId];
+onMounted(async () => {
+  if (authStore.isAuthenticated) {
+    await projectStore.loadUserLikedProjects();
   } else {
-    // Like: increment count and add to liked
-    projectStore.likeProject(projectId);
-    likedProjects.value[projectId] = true;
+    projectStore.clearUserLikedProjects();
+  }
+});
+
+const toggleLike = async (projectId) => {
+  if (!authStore.isAuthenticated) {
+    toast.add({
+      title: "Login required",
+      description: "Please sign in to like projects.",
+      color: "warning",
+    });
+    return;
   }
 
-  // Save to localStorage
-  if (typeof window !== "undefined") {
-    localStorage.setItem(
-      LIKED_PROJECTS_KEY,
-      JSON.stringify(likedProjects.value),
-    );
-  }
+  await projectStore.likeProject(projectId);
+  await projectStore.loadUserLikedProjects();
 };
 
 // Clear search and return to projects page

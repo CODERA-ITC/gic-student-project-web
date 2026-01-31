@@ -31,7 +31,7 @@
         <NavLink
           v-for="item in navigationItems"
           :key="item.to"
-          :to="item.to"
+          :to="item.allow === false ? null : item.to"
           :label="item.label"
           :is-active="isActiveRoute(item.to)"
           :badge="item.badge"
@@ -317,7 +317,7 @@ const searchContext = computed(() => {
 const navigationItems = computed(() => [
   { label: t("home"), to: "/" },
   { label: t("projects"), to: "/projects" },
-  { label: t("students"), to: "/students", badge: "beta" },
+  { label: t("students"), to: "/students", badge: "beta", allow: false },
   { label: t("about"), to: "/about" },
 ]);
 

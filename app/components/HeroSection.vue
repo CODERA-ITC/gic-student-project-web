@@ -35,10 +35,12 @@
           <!-- CTA Buttons -->
           <div class="flex flex-col sm:flex-row gap-4 pt-4">
             <ButtonsPresetButton
-              preset="exploreProjects"
-              to="/projects"
-              size="md"
-            />
+              preset="exploreHighlightedProjects"
+              @click="scrollToProjects"
+              class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
+            >
+              <UIcon name="i-heroicons-arrow-right" class="w-5 h-5" />
+            </ButtonsPresetButton>
             <ButtonsPresetButton preset="learnMore" to="/about" size="md" />
           </div>
 
@@ -76,7 +78,7 @@
 
         <!-- Visual Element -->
         <div class="relative hidden lg:block">
-          <AppHero />
+          <AppTechHub />
         </div>
       </div>
     </UContainer>
@@ -84,13 +86,12 @@
 </template>
 
 <script setup>
-import AppHero from "~/components/app/Hero.vue";
-
 import { tokenize } from "khmertokenizer";
 
 const subtitle = "បង្កើតដោយនិស្សិត សម្រាប់និស្សិត ₍^.  ̫.^₎";
 const typeWriterChars = computed(() => tokenize(subtitle).length);
 const typeWriterSpeed = "4s";
+const projectStore = useProjectStore();
 
 // fetch stats data from API by using store
 const stats = [
@@ -101,10 +102,26 @@ const stats = [
 
 import { ref, onMounted } from "vue";
 
-const projects = ref(0);
+let projects = ref(0);
 const students = ref(0);
 const gens = ref(0);
 const containerRef = ref(null);
+projects = computed(() => projectStore.totalProject);
+
+// Smooth scroll to projects section with header offset
+const scrollToProjects = () => {
+  const element = document.getElementById("highlighted-projects");
+  if (element) {
+    const headerOffset = 80; // Adjust this value based on your header height
+    const elementPosition = element.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth",
+    });
+  }
+};
 
 const animateCount = (setter, target, duration) => {
   const start = 0;
@@ -124,7 +141,8 @@ const animateCount = (setter, target, duration) => {
   requestAnimationFrame(animate);
 };
 
-onMounted(() => {
+const authStore = useAuthStore();
+onMounted(async () => {
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -141,6 +159,10 @@ onMounted(() => {
 
   if (containerRef.value) {
     observer.observe(containerRef.value);
+  }
+
+  if (projectStore.projects.length == 0) {
+    await projectStore.fetchProjects();
   }
 
   onBeforeUnmount(() => observer.disconnect());

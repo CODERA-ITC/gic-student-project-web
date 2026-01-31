@@ -3,9 +3,8 @@
  * Handles user login, role assignment (student/teacher), and auth state
  */
 
-import error from "#build/ui/error";
+
 import { defineStore } from "pinia";
-import { de } from "zod/locales";
 import { Role } from "~/types/roles";
 import { getAvatarUrl } from "~/utils/avatar";
 
@@ -83,6 +82,8 @@ export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isRefreshing: boolean;
+  refreshPromise: Promise<boolean> | null;
   error: string | null;
   needsSecurityQuestions: boolean;
 }
@@ -92,6 +93,8 @@ export const useAuthStore = defineStore("auth", {
     user: null,
     isAuthenticated: false,
     isLoading: false,
+    isRefreshing: false,
+    refreshPromise: null,
     error: null,
     needsSecurityQuestions: false,
   }),
@@ -182,6 +185,12 @@ export const useAuthStore = defineStore("auth", {
           safeLocalStorage.setItem("refresh_token", data.refresh_token);
 
           await this.fetchCurrentUser();
+          // check if that user ever submission security question first
+
+          // Check if user needs to set security questions
+          if (this.user && !this.user.hasSecurityQuestions) {
+            this.needsSecurityQuestions = true;
+          }
 
           // Check if user needs to set security questions
           if (this.user && !this.user.hasSecurityQuestions) {
@@ -322,7 +331,7 @@ export const useAuthStore = defineStore("auth", {
           this.user = {
             ...baseUserData,
             role: "STUDENT",
-            studentId: userData.studentId || userData.id,
+            studentId: userData.studentId || " ",
             program: userData.program || "",
             year: userData.year || "",
             gen: userData.gen || "",
@@ -500,7 +509,7 @@ export const useAuthStore = defineStore("auth", {
         }
 
         return responseData.data
-          .filter((userData: any) => userData.id !== this.user?.id)
+          .filter((userData: any) => userData.id !== this.user?.id || userData.role !== Role.admin || userData.role !== Role.teacher  )
 
           .map((userData: any) => ({
             id: userData.id,
@@ -665,6 +674,11 @@ export const useAuthStore = defineStore("auth", {
      * Refresh access token using refresh token
      */
     async refreshAccessToken(): Promise<boolean> {
+      // Reuse in-flight refresh to prevent duplicate calls
+      if (this.refreshPromise) {
+        return this.refreshPromise;
+      }
+
       const refreshToken = safeLocalStorage.getItem("refresh_token");
 
       if (!refreshToken) {
@@ -672,65 +686,77 @@ export const useAuthStore = defineStore("auth", {
         return false;
       }
 
-      try {
-        console.log("🔄 Attempting to refresh access token...");
+      this.isRefreshing = true;
 
-        const responseData = await $fetch("/api/users/refresh", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: {
-            refresh_token: refreshToken,
-          },
-        }).catch((err) => {
-          console.error("Token refresh API error:", err);
-          return null;
-        });
-
-        if (!responseData) {
-          console.error("❌ No response from refresh endpoint");
-          return false;
-        }
-
-        if (!responseData.access_token && !responseData.refresh_token) {
-          console.error("❌ No access token in refresh response");
-          return false;
-        }
-
-        // Store new access token
-        safeLocalStorage.setItem("access_token", responseData.access_token);
-
-        // Update refresh token if provided
-        if (responseData.refresh_token) {
-          safeLocalStorage.setItem("refresh_token", responseData.refresh_token);
-        }
-
-        console.log("✅ Token refreshed successfully");
-
-        // Fetch complete user details from API
+      this.refreshPromise = (async () => {
         try {
-          await this.fetchCurrentUser();
+          console.log("🔄 Attempting to refresh access token...");
 
-          // Update authentication state
-          this.isAuthenticated = true;
-          this.error = null;
-        } catch (userError) {
-          console.error(
-            "❌ Failed to fetch user after token refresh:",
-            userError,
-          );
-          // Token is valid but user fetch failed - still mark as authenticated
-          // with the token, user can try again later
-          this.isAuthenticated = true;
-          this.error = null;
+          const responseData = await $fetch("/api/users/refresh", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: {
+              refresh_token: refreshToken,
+            },
+          }).catch((err) => {
+            console.error("Token refresh API error:", err);
+            return null;
+          });
+
+          if (!responseData) {
+            console.error("❌ No response from refresh endpoint");
+            return false;
+          }
+
+          if (!responseData.access_token && !responseData.refresh_token) {
+            console.error("❌ No access token in refresh response");
+            return false;
+          }
+
+          // Store new access token
+          safeLocalStorage.setItem("access_token", responseData.access_token);
+
+          // Update refresh token if provided
+          if (responseData.refresh_token) {
+            safeLocalStorage.setItem(
+              "refresh_token",
+              responseData.refresh_token,
+            );
+          }
+
+          console.log("✅ Token refreshed successfully");
+
+          // Fetch complete user details from API
+          try {
+            await this.fetchCurrentUser();
+
+            // Update authentication state
+            this.isAuthenticated = true;
+            this.error = null;
+          } catch (userError) {
+            console.error(
+              "❌ Failed to fetch user after token refresh:",
+              userError,
+            );
+            // Token is valid but user fetch failed - still mark as authenticated
+            // with the token, user can try again later
+            this.isAuthenticated = true;
+            this.error = null;
+          }
+
+          return true;
+        } catch (error) {
+          console.error("❌ Failed to refresh token:", error);
+          return false;
+        } finally {
+          this.isRefreshing = false;
+          this.refreshPromise = null;
         }
+      })();
 
-        return true;
-      } catch (error) {
-        console.error("❌ Failed to refresh token:", error);
-        return false;
-      }
+      return this.refreshPromise;
     },
 
     /**
@@ -812,6 +838,19 @@ export const useAuthStore = defineStore("auth", {
       // Clear stored tokens
       safeLocalStorage.removeItem("access_token");
       safeLocalStorage.removeItem("refresh_token");
+
+      // Best-effort revoke on backend
+      try {
+        fetch("/api/users/logout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token: null }),
+        }).catch(() => {});
+      } catch (e) {
+        // ignore network errors on logout
+      }
     },
 
     /**

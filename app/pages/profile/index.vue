@@ -1,20 +1,47 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-slate-900">
     <!-- Header Section -->
-    <div
-      class="py-16 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900 border-b border-blue-700/30 dark:border-slate-700">
+    <div class="py-14">
       <UContainer>
-        <div class="flex items-center gap-4 mb-4">
+        <div
+          class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/15
+                 bg-white/90 dark:bg-slate-900/90 shadow-2xl px-8 py-10"
+        >
           <div
-            class="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-lg p-1 hover:bg-white/20 dark:hover:bg-white/10 transition-colors">
-            <ButtonsPresetButton preset="back" @click="goBack" class="!text-white" />
+            class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.08),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(79,70,229,0.08),transparent_30%)] pointer-events-none"
+            aria-hidden="true"
+          ></div>
+
+          <div class="relative space-y-3">
+            <div class="flex flex-col gap-3 mb-2">
+              <nav class="flex items-center flex-wrap gap-1 text-sm text-slate-600 dark:text-slate-300">
+                <template v-for="(crumb, idx) in breadcrumbs" :key="crumb.label">
+                  <NuxtLink
+                    :to="crumb.to || undefined"
+                    :class="[
+                      'transition-colors',
+                      crumb.to
+                        ? 'hover:text-blue-600 dark:hover:text-blue-300'
+                        : 'text-slate-900 dark:text-white font-semibold',
+                    ]"
+                  >
+                    {{ crumb.label }}
+                  </NuxtLink>
+                  <span
+                    v-if="idx < breadcrumbs.length - 1"
+                    class="text-slate-400 dark:text-slate-500"
+                    >/</span
+                  >
+                </template>
+              </nav>
+              <h1 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
+                Profile Settings
+              </h1>
+            </div>
+            <p class="text-slate-700 dark:text-slate-300">
+              Manage your account and preferences
+            </p>
           </div>
-        </div>
-        <div class="space-y-2">
-          <h1 class="text-4xl font-black text-white">Profile Settings</h1>
-          <p class="text-blue-100 dark:text-slate-300">
-            Manage your account and preferences
-          </p>
         </div>
       </UContainer>
     </div>
@@ -25,13 +52,19 @@
         <!-- Sidebar Navigation -->
         <div class="lg:col-span-1">
           <div
-            class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-4 space-y-1 sticky top-20">
-            <button v-for="tab in tabs" :key="tab.id" @click="activeTab = tab.id" :class="[
-              activeTab === tab.id
-                ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
-                : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700',
-              'w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left',
-            ]">
+            class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-4 space-y-1 sticky top-20"
+          >
+            <button
+              v-for="tab in tabs"
+              :key="tab.id"
+              @click="activeTab = tab.id"
+              :class="[
+                activeTab === tab.id
+                  ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                  : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700',
+                'w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left',
+              ]"
+            >
               <UIcon :name="tab.icon" class="w-5 h-5" />
               <span class="font-medium">{{ tab.label }}</span>
             </button>
@@ -40,30 +73,54 @@
 
         <!-- Content Area -->
         <div class="lg:col-span-2">
-          <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700">
+          <div
+            class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700"
+          >
             <!-- Profile Information -->
-            <ProfileInformation v-if="activeTab === 'profile'" :initial-data="authStore.user"
-              @save="handleProfileSave" />
+            <ProfileInformation
+              v-if="activeTab === 'profile'"
+              :initial-data="authStore.user"
+              @save="handleProfileSave"
+            />
 
             <!-- Public Profile Preview -->
             <template v-if="authStore.isStudent">
-              <ProfilePublicProfilePreview v-if="activeTab === 'public'" :user="authStore.user"
-                :bio="StudentProfile.bio" :skills="StudentProfile.skills" :social-links="StudentProfile.socialLinks"
-                :program="StudentProfile.program" :year="StudentProfile.year" :phone="StudentProfile.phone"
-                :student-id="StudentProfile.studentId" :project-count="StudentProfile.projectCount"
-                :achievements="StudentProfile.achievements" />
+              <ProfilePublicProfilePreview
+                v-if="activeTab === 'public'"
+                :user="authStore.user"
+                :bio="StudentProfile.bio"
+                :skills="StudentProfile.skills"
+                :social-links="StudentProfile.socialLinks"
+                :program="StudentProfile.program"
+                :year="StudentProfile.year"
+                :phone="StudentProfile.phone"
+                :student-id="StudentProfile.studentId"
+                :project-count="StudentProfile.projectCount"
+                :achievements="StudentProfile.achievements"
+              />
             </template>
 
             <!-- Account Settings -->
-            <ProfileAccountSettings v-if="activeTab === 'account'" @update-password="handlePasswordUpdate"
-              @toggle-2fa="handleToggle2FA" @revoke-session="handleRevokeSession" />
+            <ProfileAccountSettings
+              v-if="activeTab === 'account'"
+              @update-password="handlePasswordUpdate"
+              @toggle-2fa="handleToggle2FA"
+              @revoke-session="handleRevokeSession"
+            />
 
             <!-- Notifications -->
-            <ProfileNotificationSettings v-if="activeTab === 'notifications'" @save="handleNotificationsSave" />
+            <ProfileNotificationSettings
+              v-if="activeTab === 'notifications'"
+              @save="handleNotificationsSave"
+            />
 
             <!-- Privacy -->
-            <ProfilePrivacySettings v-if="activeTab === 'privacy'" @save="handlePrivacySave"
-              @data-request="handleDataRequest" @delete-account="handleDeleteAccount" />
+            <ProfilePrivacySettings
+              v-if="activeTab === 'privacy'"
+              @save="handlePrivacySave"
+              @data-request="handleDataRequest"
+              @delete-account="handleDeleteAccount"
+            />
           </div>
         </div>
       </div>
@@ -76,6 +133,11 @@ import { ref, reactive, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import auth from "~/middleware/auth";
 import { useAuthStore, type User } from "~/stores/auth";
+
+const breadcrumbs = [
+  { label: "Dashboard", to: "/student/dashboard" },
+  { label: "Profile Settings" },
+];
 
 definePageMeta({
   middleware: ["auth"],
@@ -271,72 +333,93 @@ const currentProfile = computed(() => {
 });
 
 // Event handlers
-const handleProfileSave = (data: any) => {
+const handleProfileSave = async (data: any) => {
   console.log("Profile saved:", data);
 
-  if (authStore.isStudent) {
-    // Update student profile data
-    if (data.bio) StudentProfile.bio = data.bio;
-    if (data.skills) StudentProfile.skills = data.skills;
-    if (data.program) StudentProfile.program = data.program;
-    if (data.year) StudentProfile.year = data.year;
-    if (data.phone) StudentProfile.phone = data.phone;
-    if (data.studentId) StudentProfile.studentId = data.studentId;
-    if (data.socialLinks) {
-      StudentProfile.socialLinks = {
-        ...StudentProfile.socialLinks,
-        ...data.socialLinks,
-      };
+  try {
+    // TODO: Implement API call to save profile data to backend
+    // await $fetch('/api/users/profile', { method: 'PUT', body: data });
+
+    // After successful save, refetch user data from server to ensure consistency
+    await authStore.fetchCurrentUser();
+
+    // Update local reactive state with fresh data from store
+    if (authStore.isStudent) {
+      const studentUser = authStore.studentProfile;
+      Object.assign(StudentProfile, {
+        bio: studentUser?.bio || "",
+        skills: studentUser?.skills || [],
+        program: studentUser?.program || "",
+        year: studentUser?.year || "",
+        studentId: studentUser?.studentId || "",
+        gen: studentUser?.gen || "",
+        phone: studentUser?.phone || "",
+        socialLinks: studentUser?.socialLinks || {
+          github: "",
+          linkedin: "",
+          twitter: "",
+          portfolio: "",
+        },
+        projectCount: studentUser?.projectCount || 0,
+        achievements: studentUser?.achievements || 0,
+      });
+    } else if (authStore.isTeacher) {
+      const teacherUser = authStore.teacherProfile;
+      Object.assign(TeacherProfile, {
+        bio: teacherUser?.bio || "",
+        skills: teacherUser?.skills || [],
+        department: teacherUser?.department || "",
+        position: teacherUser?.position || "",
+        teacherId: teacherUser?.teacherId || "",
+        phone: teacherUser?.phone || "",
+        courses: teacherUser?.courses || [],
+        yearsOfExperience: teacherUser?.yearsOfExperience || 0,
+        socialLinks: teacherUser?.socialLinks || {
+          github: "",
+          linkedin: "",
+          twitter: "",
+          portfolio: "",
+        },
+      });
+    } else if (authStore.isAdmin) {
+      const adminUser = authStore.adminProfile;
+      Object.assign(AdminProfile, {
+        bio: adminUser?.bio || "",
+        skills: adminUser?.skills || [],
+        adminId: adminUser?.adminId || "",
+        socialLinks: adminUser?.socialLinks || {
+          github: "",
+          linkedin: "",
+          twitter: "",
+          portfolio: "",
+        },
+      });
     }
-  } else if (authStore.isTeacher) {
-    // Update teacher profile data
-    if (data.bio) TeacherProfile.bio = data.bio;
-    if (data.skills) TeacherProfile.skills = data.skills;
-    if (data.department) TeacherProfile.department = data.department;
-    if (data.position) TeacherProfile.position = data.position;
-    if (data.phone) TeacherProfile.phone = data.phone;
-    if (data.teacherId) TeacherProfile.teacherId = data.teacherId;
-    if (data.courses) TeacherProfile.courses = data.courses;
-    if (data.yearsOfExperience)
-      TeacherProfile.yearsOfExperience = data.yearsOfExperience;
-    if (data.socialLinks) {
-      TeacherProfile.socialLinks = {
-        ...TeacherProfile.socialLinks,
-        ...data.socialLinks,
-      };
-    }
-  } else if (authStore.isAdmin) {
-    // Update admin profile data
-    if (data.bio) AdminProfile.bio = data.bio;
-    if (data.skills) AdminProfile.skills = data.skills;
-    if (data.adminId) AdminProfile.adminId = data.adminId;
-    if (data.socialLinks) {
-      AdminProfile.socialLinks = {
-        ...AdminProfile.socialLinks,
-        ...data.socialLinks,
-      };
-    }
+
+    console.log("✅ Profile updated and store refreshed");
+  } catch (error) {
+    console.error("❌ Failed to update profile:", error);
+    throw error;
   }
-  // TODO: Implement API call
 };
 
 const handlePasswordUpdate = async (data: any) => {
   try {
     const token = authStore.token;
-    
+
     console.log("=== Password Change Debug ===");
     console.log("Token exists:", !!token);
     console.log("Token length:", token?.length);
     console.log("User:", authStore.user?.email);
     console.log("Request data:", data);
-    
+
     if (!token) {
       throw new Error("No authentication token found. Please log in again.");
     }
 
     const apiBaseUrl = useRuntimeConfig().public.apiBase;
     const url = `${apiBaseUrl}/users/change-password`;
-    
+
     console.log("API URL:", url);
     console.log("Authorization header:", `Bearer ${token.substring(0, 20)}...`);
 
@@ -360,15 +443,16 @@ const handlePasswordUpdate = async (data: any) => {
     console.error("Password change error:", error);
     console.error("Error status:", error?.statusCode);
     console.error("Error data:", error?.data);
-    
+
     let errorMessage = "Failed to change password";
-    
+
     if (error?.statusCode === 401) {
-      errorMessage = "Unauthorized. Your session may have expired. Please log in again.";
+      errorMessage =
+        "Unauthorized. Your session may have expired. Please log in again.";
     } else {
       errorMessage = error?.data?.message || error?.message || errorMessage;
     }
-    
+
     // TODO: Show error toast
     throw new Error(errorMessage);
   }

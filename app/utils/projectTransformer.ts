@@ -16,8 +16,8 @@ import type {
 export const ProjectDefaultImages: ProjectImage[] = [
   {
     id: "1234",
-    originalUrl: `https://www.pixeden.com/media/k2/galleries/856/001-screen-showcase-landing-page-devices-presentation-web-psd-projects.jpg`,
-    thumbnailUrl: `https://www.pixeden.com/media/k2/galleries/856/001-screen-showcase-landing-page-devices-presentation-web-psd-projects.jpg`,
+    originalUrl: `https://cdn.dribbble.com/userupload/17725359/file/original-ce1c9450a03ae68e328403e0740acf70.png?resize=1200x900&vertical=center`,
+    thumbnailUrl: `https://cdn.dribbble.com/userupload/17725359/file/original-ce1c9450a03ae68e328403e0740acf70.png?resize=1200x900&vertical=center`,
   },
   {
     id: "1235",
@@ -39,7 +39,7 @@ export class ProjectTransformer {
   static transformAuthor(authorData: any): ProjectAuthor {
     const firstName = authorData?.firstName || "";
     const lastName = authorData?.lastName || "";
-    const avatarUrl = authorData?.avatarUrl || authorData?.avatar || "";
+    const avatarUrl = authorData?.avatar || "";
 
     return {
       id: authorData?.id || "",
@@ -197,10 +197,11 @@ export class ProjectTransformer {
         ? projectData.technologies
         : [],
       category,
-      status,
-      featured: projectData.featured || projectData.isFeatured || false,
-      likes: projectData.likes || projectData.likeCount || 0,
-      views: projectData.views || projectData.viewCount || 0,
+      projectStatus: status,
+      submissionStatus: projectData.status || "draft",
+      highlighted: projectData.highlighted || false,
+      likes: projectData.likeCount || 0,
+      views: projectData.viewCount || 0,
       demoUrl: projectData.demoUrl || "",
       githubUrl: projectData.githubUrl || projectData.repoUrl || "",
       images,

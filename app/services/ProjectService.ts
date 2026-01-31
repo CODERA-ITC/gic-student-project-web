@@ -41,9 +41,10 @@ export interface ProjectFilters {
   limit?: number;
   search?: string;
   categoryId?: string;
-  tags?: string[];
-  year?: string;
+  courseId?: string;
+  gen?: string;
   sort?: string;
+  ascending?: boolean;
 }
 
 /**
@@ -55,18 +56,18 @@ export class ProjectService {
   private baseUrl = "/api/projects";
 
   /**
-   * Get authentication token from auth store
-   */
-  private getAuthToken(): string | null {
-    const authStore = useAuthStore();
-    return authStore.token;
-  }
-
-  /**
    * Build authorization headers
    */
-  private getAuthHeaders(): Record<string, string> {
-    const token = this.getAuthToken();
+  private async getAuthHeaders(): Promise<Record<string, string>> {
+    const authStore = useAuthStore();
+
+    // Refresh if token is expired or about to expire
+    if (authStore.isTokenExpired()) {
+      await authStore.refreshAccessToken();
+    }
+
+    const token = authStore.token;
+
     return token
       ? {
           Authorization: `Bearer ${token}`,
@@ -95,10 +96,11 @@ export class ProjectService {
         if (filters?.limit) params.append("limit", filters.limit.toString());
         if (filters?.categoryId)
           params.append("categoryId", filters.categoryId);
-        if (filters?.tags?.length)
-          params.append("tags", filters.tags.join(","));
-        if (filters?.year) params.append("year", filters.year);
+        if (filters?.courseId) params.append("courseId", filters.courseId);
+        if (filters?.gen) params.append("gen", filters.gen);
         if (filters?.sort) params.append("sort", filters.sort);
+        if (filters?.ascending !== undefined)
+          params.append("ascending", filters.ascending.toString());
       }
 
       const queryString = params.toString();
@@ -137,7 +139,7 @@ export class ProjectService {
     try {
       return await $fetch(`${this.baseUrl}/me`, {
         method: "GET",
-        headers: this.getAuthHeaders(),
+        headers: await this.getAuthHeaders(),
       });
     } catch (error) {
       console.error("ProjectService: Failed to fetch user projects", error);
@@ -153,11 +155,25 @@ export class ProjectService {
     try {
       return await $fetch("/api/courses/submissions", {
         method: "GET",
-        headers: this.getAuthHeaders(),
+        headers: await this.getAuthHeaders(),
       });
     } catch (error) {
       console.error("ProjectService: Failed to fetch submissions", error);
       throw error;
+    }
+  }
+
+  async getHighlightedProjects(): Promise<any> {
+    let projects: any;
+
+    try {
+      const response = await $fetch(`${this.baseUrl}/highlights`);
+      return (projects = response);
+    } catch (error) {
+      console.error(
+        "ProjectService: Failed to fetch highlighted projects",
+        error,
+      );
     }
   }
 
@@ -204,7 +220,7 @@ export class ProjectService {
         });
       }
 
-      const token = this.getAuthToken();
+      const token = this.getAuthHeaders();
 
       let response = await $fetch(this.baseUrl, {
         method: "POST",
@@ -226,7 +242,7 @@ export class ProjectService {
     try {
       let response = await $fetch(`${this.baseUrl}/${projectId}`, {
         method: "PATCH",
-        headers: this.getAuthHeaders(),
+        headers: await this.getAuthHeaders(),
         body: updates,
       });
       return response;
@@ -246,7 +262,7 @@ export class ProjectService {
     try {
       const response = await $fetch(`${this.baseUrl}/accept/${projectId}`, {
         method: "PATCH",
-        headers: this.getAuthHeaders(),
+        headers: await this.getAuthHeaders(),
       });
       return response;
     } catch (error) {
@@ -265,7 +281,7 @@ export class ProjectService {
     try {
       const response = await $fetch(`${this.baseUrl}/reject/${projectId}`, {
         method: "PATCH",
-        headers: this.getAuthHeaders(),
+        headers: await this.getAuthHeaders(),
       });
       return response;
     } catch (error) {
@@ -284,7 +300,7 @@ export class ProjectService {
     try {
       await $fetch(`${this.baseUrl}/${projectId}`, {
         method: "DELETE",
-        headers: this.getAuthHeaders(),
+        headers: await this.getAuthHeaders(),
       });
     } catch (error) {
       console.error(
@@ -299,7 +315,7 @@ export class ProjectService {
     try {
       return await $fetch(`${this.baseUrl}/submit/${projectId}`, {
         method: "POST",
-        headers: this.getAuthHeaders(),
+        headers: await this.getAuthHeaders(),
       });
     } catch (error) {
       console.error(
@@ -317,7 +333,7 @@ export class ProjectService {
     try {
       let response = await $fetch(`${this.baseUrl}/${projectId}/like`, {
         method: "POST",
-        headers: this.getAuthHeaders(),
+        headers: await this.getAuthHeaders(),
       });
       return response;
     } catch (error) {
@@ -389,7 +405,7 @@ export class ProjectService {
     try {
       const data = await $fetch(`${this.baseUrl}/${projectId}/has-liked`, {
         method: "GET",
-        headers: this.getAuthHeaders(),
+        headers: await this.getAuthHeaders(),
       });
       return data.hasLiked || false;
     } catch (error) {
@@ -402,13 +418,33 @@ export class ProjectService {
   }
 
   /**
+   * Fetch all projects liked by the current user
+   * Returns array of like objects with project info
+   */
+  async getUserLikedProjects(): Promise<any[]> {
+    try {
+      const response = await $fetch(`${this.baseUrl}/me/likes`, {
+        method: "GET",
+        headers: await this.getAuthHeaders(),
+      });
+      return Array.isArray(response) ? response : [];
+    } catch (error) {
+      console.error(
+        "ProjectService: Failed to fetch user liked projects",
+        error,
+      );
+      return [];
+    }
+  }
+
+  /**
    * Submit project for review
    */
   async submitForReview(projectId: string): Promise<any> {
     try {
       return await $fetch(`${this.baseUrl}/submit/${projectId}`, {
         method: "POST",
-        headers: this.getAuthHeaders(),
+        headers: await this.getAuthHeaders(),
       });
     } catch (error) {
       console.error(
@@ -422,7 +458,7 @@ export class ProjectService {
   // async fetchSubmissionProjectForTeacher(): Promise<Project[]> {
   //   try {
   //     return await $fetch(`${this.baseUrl}/submissions/teacher`, {
-  //       headers: this.getAuthHeaders(),
+  //       headers: await this.getAuthHeaders(),
   //     });
   //   } catch (error) {
   //     console.error(

@@ -1,26 +1,35 @@
 <template>
   <div
-    class="group w-full max-w-md h-[560px] flex flex-col overflow-hidden rounded-3xl bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl border-0 transition-all duration-300 hover:scale-102 hover:-translate-y-2 backdrop-blur-sm"
+    class="group relative h-full w-full max-w-md mx-auto flex flex-col overflow-hidden rounded-3xl
+           border border-white/70 dark:border-white/5 ring-1 ring-blue-500/10 hover:ring-blue-500/30
+           bg-gradient-to-br from-white via-slate-50 to-blue-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950
+           shadow-xl hover:shadow-2xl hover:shadow-blue-500/25 dark:hover:shadow-blue-400/25
+           transition-all duration-300 hover:-translate-y-1 hover:cursor-pointer p-4 sm:p-5 backdrop-blur-xl"
   >
     <!-- Header Image -->
     <div
-      class="relative h-48 w-full bg-blue-900 dark:bg-blue-900 overflow-hidden"
+      class="relative h-48 w-full overflow-hidden rounded-2xl ring-1 ring-slate-200/70 dark:ring-slate-700/60 bg-slate-100/70 dark:bg-slate-800/60"
     >
       <img
         v-if="headerImage"
         :src="headerImage"
         alt="Profile header"
-        class="h-full w-full object-cover opacity-90"
+        class="h-full w-full object-cover opacity-95 transition-transform duration-500 group-hover:scale-105"
       />
+      <div
+        class="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+      ></div>
     </div>
 
     <!-- Content -->
-    <div class="relative px-6 pb-6 flex-1 flex flex-col justify-between">
+    <div class="relative px-2 sm:px-3 pt-4 pb-2 flex-1 flex flex-col justify-between gap-4">
       <div class="flex-1">
         <!-- Profile Image -->
-        <div class="flex justify-left -translate-y-14">
+        <div class="flex justify-left -translate-y-16">
           <div
-            class="relative h-32 w-32 overflow-hidden rounded-full border-4 border-white dark:border-gray-800 bg-white dark:bg-gray-800 shadow-2xl ring-4 ring-white/50 dark:ring-gray-700/50 group-hover:ring-8 group-hover:ring-white/70 dark:group-hover:ring-gray-600/70 transition-all duration-300"
+            class="relative h-32 w-32 overflow-hidden rounded-full border-4 border-white dark:border-gray-800 bg-white dark:bg-gray-800 shadow-2xl
+                   ring-4 ring-white/50 dark:ring-gray-700/50 group-hover:ring-8 group-hover:ring-blue-300/60 dark:group-hover:ring-blue-500/60
+                   transition-all duration-300"
           >
             <img
               v-if="image"
@@ -38,14 +47,14 @@
         </div>
 
         <!-- Name and Main Skill -->
-        <div class="text-left -mt-4">
+        <div class="text-left -mt-6">
           <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white tracking-tight leading-tight group-hover:text-blue-800 dark:group-hover:text-blue-800 transition-colors duration-300"
+            class="text-2xl font-semibold text-slate-900 dark:text-white tracking-tight leading-tight group-hover:text-blue-900 dark:group-hover:text-blue-300 transition-colors duration-300"
           >
             {{ name }}
           </h2>
           <p
-            class="mt-2 text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide"
+            class="mt-1 text-xs font-semibold text-blue-900/70 dark:text-blue-200 uppercase tracking-[0.2em]"
           >
             {{ mainSkill }}
           </p>
@@ -60,7 +69,9 @@
               color="neutral"
               variant="soft"
               size="lg"
-              class="text-xs text-gray-700 dark:text-blue-300 px-3 py-1 rounded-xl border border-gray-200 dark:border-gray-600 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 font-medium"
+              class="text-xs text-slate-800 dark:text-blue-100 px-3 py-1 rounded-xl border border-slate-200 dark:border-slate-700
+                     bg-white/70 dark:bg-slate-800/70 shadow-sm cursor-pointer
+                     hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 font-semibold"
             >
               {{ tech }}
             </UBadge>
@@ -69,7 +80,8 @@
               color="neutral"
               variant="outline"
               size="lg"
-              class="text-xs bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-blue-300 px-3 py-1 rounded-xl border border-gray-300 dark:border-gray-500 font-medium hover:bg-blue-50 dark:hover:bg-blue-800/30 transition-all duration-300"
+              class="text-xs bg-slate-50/80 dark:bg-slate-800/70 text-slate-700 dark:text-blue-200 px-3 py-1 rounded-xl border border-slate-300 dark:border-slate-600 font-semibold
+                     hover:bg-blue-50 dark:hover:bg-blue-800/30 transition-all duration-300"
             >
               +{{ remainingTechCount }}
             </UBadge>
@@ -80,7 +92,7 @@
       <div class="flex-shrink-0">
         <!-- Stats Grid -->
         <div
-          class="mt-4 grid grid-cols-3 gap-4 bg-gray-50 dark:bg-gray-800 rounded-2xl p-4 border border-gray-200 dark:border-gray-600"
+          class="mt-4 grid grid-cols-3 gap-4 bg-white/80 dark:bg-slate-800/70 rounded-2xl p-4 ring-1 ring-slate-200/70 dark:ring-slate-700/60 shadow-sm"
         >
           <!-- Projects -->
           <div

@@ -10,27 +10,71 @@
       </div>
     </div>
 
+    <!-- Error State// Stats for teacher dashboard - computed from real data
+const stats = computed(() => {
+  // Get submissions from store
+  const submissions = projectsStore.submissionProjects || [];
+  const totalSubmissions = submissions.length;
+  const pendingReview = submissions.filter(
+    (s) => s.submissionStatus === "pending",
+  ).length;
+  const acceptedProjects = submissions.filter(
+    (s) => s.submissionStatus === "accepted",
+  ).length;iv
+      v-else-if="error"
+      class="min-h-screen flex items-center justify-center"
+    >
+      <div class="text-center space-y-6">
+        <div class="flex flex-col items-center">
+          <div
+            class="w-20 h-20 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-4"
+          >
+            <svg
+              class="w-12 h-12 text-blue-600 dark:text-blue-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+              ></path>
+            </svg>
+          </div>
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+            Authentication Required
+          </h2>
+          <p class="text-sm text-gray-600 dark:text-slate-400 max-w-md">
+            {{ error }}
+          </p>
+        </div>
+        <NuxtLink
+          to="/login"
+          class="inline-block px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
+        >
+          Back to Login
+        </NuxtLink>
+      </div>
+    </div>
+
     <!-- Dashboard Content -->
     <div v-else-if="!isLoading && teacher.name">
       <!-- Header Section -->
       <div
-        class="py-16 bg-gray-100 dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700"
+        class="py-16 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900 border-b border-blue-700/30 dark:border-slate-700"
       >
         <UContainer>
-          <div
-            class="flex flex-col sm:flex-row items-start sm:items-center justify-start gap-4 md:gap-8"
-          >
-            <div class="flex flex-col gap-2 flex-1">
-              <h1
-                class="text-2xl sm:text-3xl md:text-4xl font-black text-black dark:text-white leading-none"
-              >
-                Welcome back,
-                <span class="text-blue-400">{{ teacher.name }}</span>
+          <div class="space-y-2">
+            <div class="flex items-center gap-3">
+              <h1 class="text-4xl font-black text-white">
+                {{ GreetMessage }}, <span class="text-blue-200">{{ teacher.name }}</span>
               </h1>
-              <p class="text-sm sm:text-base text-gray-600 dark:text-slate-300">
-                Manage student projects and review submissions
-              </p>
             </div>
+            <p class="text-blue-100 dark:text-slate-300">
+              Manage student projects and review submissions
+            </p>
           </div>
         </UContainer>
       </div>
@@ -150,49 +194,43 @@
                 <!-- Header: Status Badge -->
                 <div class="flex justify-end mb-3">
                   <span
-                    :class="
-                      project.status === 'completed'
-                        ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
-                        : 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
-                    "
+                    :class="getStatusBadgeClass(project.submissionStatus || project.projectStatus)"
                     class="px-3 py-1 rounded-full text-xs font-medium"
                   >
-                    {{
-                      project.status === "completed" ? "Completed" : "Pending"
-                    }}
+                    {{ project.submissionStatus || project.projectStatus }}
                   </span>
                 </div>
 
                 <!-- Student Info -->
                 <div class="flex items-center gap-3 mb-4">
                   <div
-                    v-if="project.studentAvatar"
+                    v-if="project.author.avatar"
                     class="w-12 h-12 rounded-full overflow-hidden shrink-0 ring-2 ring-gray-100 dark:ring-slate-700"
                   >
                     <img
-                      :src="project.studentAvatar"
-                      :alt="project.studentName"
+                      :src="project.author.avatar"
+                      :alt="project.author.name"
                       class="w-full h-full object-cover"
                     />
                   </div>
-                  <div
+                  <!-- <div
                     v-else
                     class="w-12 h-12 rounded-full bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center shrink-0 ring-2 ring-gray-100 dark:ring-slate-700"
                   >
                     <span class="text-sm font-semibold text-white">{{
-                      project.studentInitials
+                      project.author.name
                     }}</span>
-                  </div>
+                  </div> -->
                   <div class="flex-1 min-w-0">
                     <div
                       class="font-semibold text-black dark:text-white text-sm truncate"
                     >
-                      {{ project.studentName }}
+                      {{ project.author.name }}
                     </div>
                     <div
                       class="text-xs text-gray-500 dark:text-slate-400 truncate"
                     >
-                      {{ project.studentEmail }}
+                      {{ project.author.email }}
                     </div>
                   </div>
                 </div>
@@ -202,7 +240,7 @@
                   <h3
                     class="font-semibold text-base text-black dark:text-white mb-2 line-clamp-1"
                   >
-                    {{ project.title }}
+                    {{ project.name }}
                   </h3>
                   <p
                     class="text-sm text-gray-600 dark:text-slate-400 line-clamp-2 leading-relaxed"
@@ -219,10 +257,10 @@
                     <UIcon name="i-heroicons-tag" class="w-4 h-4" />
                     <span>{{ project.category }}</span>
                   </div>
-                  <div class="flex items-center gap-1.5">
+                  <!-- <div class="flex items-center gap-1.5">
                     <UIcon name="i-heroicons-calendar" class="w-4 h-4" />
                     <span>{{ project.generation }}</span>
-                  </div>
+                  </div> -->
                 </div>
 
                 <!-- Divider -->
@@ -236,23 +274,24 @@
                     class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-slate-400"
                   >
                     <UIcon name="i-heroicons-clock" class="w-4 h-4" />
-                    <span>{{ project.submittedDate }}</span>
+                    <span>{{ project.updatedAt }}</span>
                   </div>
-                  <ButtonsPresetButton
-                    v-if="project.status !== 'pending'"
-                    preset="primary"
-                    label="View"
-                    icon="i-heroicons-arrow-right"
-                    size="xs"
-                    @click="viewProject(project)"
-                  />
-                  <ButtonsPresetButton
-                    v-if="project.status === 'pending'"
+                  <!-- <ButtonsPresetButton
+                    v-if="project.projectStatus !== 'pending'"
                     preset="primary"
                     label="View"
                     icon="i-heroicons-arrow-right"
                     size="xs"
                     :to="'/projects/' + project.id"
+                  /> -->
+
+
+                  <ButtonsPresetButton
+                    preset="primary"
+                    label="View"
+                    icon="i-heroicons-arrow-right"
+                    size="xs"
+                    :to="'/teacher/submissions/' + project.id"
                   />
                 </div>
               </div>
@@ -287,6 +326,7 @@ import { useAuthStore } from "~/stores/auth";
 import { useProjectStore } from "~/stores/projects";
 import ButtonsPresetButton from "~/components/buttons/PresetButton.vue";
 import SparklineChart from "~/components/SparklineChart.vue";
+import { getGreetingByTimeZone } from "#imports";
 
 const authStore = useAuthStore();
 const projectsStore = useProjectStore();
@@ -297,6 +337,10 @@ definePageMeta({
 
 // Local loading state
 const isLoading = ref(true);
+const error = ref("");
+const GreetMessage = getGreetingByTimeZone("Asia/Phnom_Penh");
+
+const submissions = computed(() => projectsStore.submissionProjects);
 
 // Fetch submissions on mount
 onMounted(async () => {
@@ -329,12 +373,16 @@ onMounted(async () => {
     console.log("🔄 Fetching submissions data...");
 
     // Fetch all submissions with error handling
-    const submissions = await projectsStore.fetchAllSubmissions();
+    // const submissions = await projectsStore.fetchAllSubmissions();
 
-    if (!submissions || submissions.length === 0) {
+    if(!projectsStore.submissionProjects || projectsStore.submissionProjects.length === 0) {
+      await projectsStore.fetchAllSubmissions();
+    }
+
+    if (!projectsStore.submissionProjects || projectsStore.submissionProjects.length === 0) {
       console.log("ℹ️ No submissions found");
     } else {
-      console.log(`✅ Loaded ${submissions.length} submissions successfully`);
+      console.log(`✅ Loaded ${projectsStore.submissionProjects.length} submissions successfully`);
     }
   } catch (error) {
     console.error("❌ Error loading dashboard data:", error);
@@ -357,130 +405,201 @@ const teacher = computed(() => ({
 }));
 
 // Transform projects from store to match teacher dashboard structure
-const projects = computed(() => {
-  return projectsStore.projects.map((project) => {
-    // Generate email from name
-    const emailName = project.author.name.toLowerCase().replace(" ", ".");
-    const studentEmail = `${emailName}@student.edu`;
+// const projects = computed(() => {
+//   return projectsStore.projects.map((project) => {
+//     // Generate email from name
+//     const emailName = project.author.name.toLowerCase().replace(" ", ".");
+//     const studentEmail = `${emailName}@student.edu`; // use as fallback email
 
-    // Generate initials
-    const nameParts = project.author.name.split(" ");
-    const studentInitials = nameParts
-      .map((part) => part.charAt(0))
-      .join("")
-      .toUpperCase();
+//     // Generate initials
+//     const nameParts = project.author.name.split(" ");
+//     const studentInitials = nameParts
+//       .map((part) => part.charAt(0))
+//       .join("")
+//       .toUpperCase();
 
-    // Map categories from projects.ts to teacher dashboard categories
-    const categoryMapping = {
-      "Artificial Intelligence": "AI/ML",
-      "Mobile Development": "Mobile App",
-      "Web Development": "Web Development",
-      "Environmental Tech": "Other",
-      "Data Science": "Data Science",
-      IoT: "Other",
-      Blockchain: "Other",
-      "Augmented Reality": "Mobile App",
-      "Machine Learning": "AI/ML",
-      "Data Analytics": "Data Science",
-      EdTech: "Other",
-      FinTech: "Other",
-      APIs: "Web Development",
-      "Virtual Reality": "Game Development",
-      "Smart Cities": "Other",
-    };
+//     // Map categories from projects.ts to teacher dashboard categories
+//     const categoryMapping = {
+//       "Artificial Intelligence": "AI/ML",
+//       "Mobile Development": "Mobile App",
+//       "Web Development": "Web Development",
+//       "Environmental Tech": "Other",
+//       "Data Science": "Data Science",
+//       IoT: "Other",
+//       Blockchain: "Other",
+//       "Augmented Reality": "Mobile App",
+//       "Machine Learning": "AI/ML",
+//       "Data Analytics": "Data Science",
+//       EdTech: "Other",
+//       FinTech: "Other",
+//       APIs: "Web Development",
+//       "Virtual Reality": "Game Development",
+//       "Smart Cities": "Other",
+//     };
 
-    const mappedCategory = categoryMapping[project.category] || "Other";
+//     const mappedCategory = categoryMapping[project.category] || "Other";
 
-    // Map semester to generation
-    const generationMapping = {
-      "Fall 2024": "2024",
-      "Spring 2025": "2025",
-    };
+//     // Map semester to generation
+//     const generationMapping = {
+//       "Fall 2024": "2024",
+//       "Spring 2025": "2025",
+//     };
 
-    const mappedGeneration = generationMapping[project.semester] || "2024";
+//     const mappedGeneration = generationMapping[project.semester] || "2024";
 
-    // Map status - show visibility state for submissions
-    const statusMapping = {
-      reviewing: "pending",
-      accepted: "completed",
-      public: "completed",
-    };
+//     // Map status - show visibility state for submissions
+//     const statusMapping = {
+//       pending: "pending",
+//       accepted: "completed",
+//       completed: "completed",
+//     };
 
-    const mappedStatus = statusMapping[project.visibility] || "pending";
+//     const mappedStatus = statusMapping[project.visibility] || "pending";
 
-    // Calculate due date (add some days to createdAt)
-    const createdDate = new Date(project.createdAt);
-    const dueDate = new Date(createdDate);
-    dueDate.setDate(dueDate.getDate() + 60); // Add 60 days
-    const dueDateString = dueDate.toISOString().split("T")[0];
+//     // Calculate due date (add some days to createdAt)
+//     const createdDate = new Date(project.createdAt);
+//     const dueDate = new Date(createdDate);
+//     dueDate.setDate(dueDate.getDate() + 60); // Add 60 days
+//     const dueDateString = dueDate.toISOString().split("T")[0];
 
-    // Check if overdue
-    const currentDate = new Date();
-    const isOverdue = currentDate > dueDate;
+//     // Check if overdue
+//     const currentDate = new Date();
+//     const isOverdue = currentDate > dueDate;
 
-    return {
-      id: project.id,
-      studentName: project.author.name,
-      studentEmail: studentEmail,
-      studentInitials: studentInitials,
-      studentAvatar: project.author.avatar,
-      title: project.name,
-      description: project.description,
-      category: mappedCategory,
-      generation: mappedGeneration,
-      status: mappedStatus,
-      submittedDate: project.createdAt,
-      dueDate: dueDateString,
-      isOverdue: isOverdue,
-    };
-  });
-});
+//     return {
+//       id: project.id,
+//       studentName: project.author.name,
+//       studentEmail: project.author.email || studentEmail,
+//       studentInitials: studentInitials,
+//       studentAvatar: project.author.avatar,
+//       title: project.name,
+//       description: project.description,
+//       category: mappedCategory,
+//       generation: mappedGeneration,
+//       status: mappedStatus,
+//       submittedDate: project.createdAt,
+//       dueDate: dueDateString,
+//       isOverdue: isOverdue,
+//     };
+//   });
+// });
 
 // Stats for teacher dashboard - computed from real data
 const stats = computed(() => {
-  const totalSubmissions = projectsStore.projects.length;
-  const pendingReview = projectsStore.projects.filter(
-    (p) => p.visibility === "reviewing",
+  // Get submissions from store
+  const submissions = projectsStore.submissionProjects || [];
+  const totalSubmissions = submissions.length;
+  const pendingReview = submissions.filter(
+    (s) => s.submissionStatus === "pending",
   ).length;
-  const acceptedProjects = projectsStore.projects.filter(
-    (p) => p.visibility === "accepted",
+  const acceptedProjects = submissions.filter(
+    (s) => s.submissionStatus === "accepted",
   ).length;
+
+  // Generate chart data based on actual submission dates over last 7 days
+  const generateChartData = (currentValue, filterFn = null) => {
+    const dataToAnalyze = filterFn ? submissions.filter(filterFn) : submissions;
+
+    // If no data, return zeros
+    if (dataToAnalyze.length === 0) {
+      return [0, 0, 0, 0, 0, 0, 0];
+    }
+
+    // Get last 7 days
+    const today = new Date();
+    today.setHours(23, 59, 59, 999); // End of today
+    const last7Days = [];
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      date.setHours(23, 59, 59, 999); // End of each day
+      last7Days.push(date);
+    }
+
+    // Count cumulative submissions created up to and including each day
+    const chartData = last7Days.map((targetDate) => {
+      return dataToAnalyze.filter((submission) => {
+        if (!submission.createdAt) return false;
+        const submissionDate = new Date(submission.createdAt);
+        // Include all submissions created on or before this date
+        return submissionDate <= targetDate;
+      }).length;
+    });
+
+    return chartData;
+  };
+
+  // Generate chart data for each stat
+  const totalSubmissionsChart = generateChartData(totalSubmissions);
+  const pendingReviewChart = generateChartData(
+    pendingReview,
+    (s) => s.submissionStatus === "pending",
+  );
+  const acceptedProjectsChart = generateChartData(
+    acceptedProjects,
+    (s) => s.submissionStatus === "accepted",
+  );
+
+  // Calculate changes from previous period (comparing last data point to second-to-last)
+  const calculateChange = (chartData) => {
+    if (chartData.length < 2) return { value: 0, percentage: 0 };
+    const current = chartData[chartData.length - 1];
+    const previous = chartData[chartData.length - 2];
+    const change = current - previous;
+    const percentage =
+      previous > 0 ? ((change / previous) * 100).toFixed(1) : 0;
+    return { value: change, percentage };
+  };
+
+  const totalChange = calculateChange(totalSubmissionsChart);
+  const pendingChange = calculateChange(pendingReviewChart);
+  const acceptedChange = calculateChange(acceptedProjectsChart);
 
   return [
     {
       label: "Total Submissions",
       value: totalSubmissions.toString(),
       icon: "i-heroicons-inbox-stack",
-      change: `${acceptedProjects} accepted`,
-      changeColor: "positive",
-      chartData: [95, 102, 88, 110, 95, 108, totalSubmissions],
+      change:
+        totalChange.value !== 0
+          ? `${totalChange.value > 0 ? "+" : ""}${totalChange.value} (${totalChange.percentage}%) from last period`
+          : "No change from last period",
+      changeColor: totalChange.value >= 0 ? "positive" : "negative",
+      chartData: totalSubmissionsChart,
     },
     {
       label: "Pending Review",
       value: pendingReview.toString(),
       icon: "i-heroicons-exclamation-circle",
-      change: "Awaiting approval",
-      changeColor: pendingReview > 0 ? "negative" : "positive",
-      chartData: [20, 14, 25, 19, 17, 21, pendingReview],
+      change:
+        pendingChange.value !== 0
+          ? `${pendingChange.value > 0 ? "+" : ""}${pendingChange.value} (${pendingChange.percentage}%) from last period`
+          : "No change from last period",
+      changeColor: pendingChange.value > 0 ? "negative" : "positive",
+      chartData: pendingReviewChart,
     },
     {
       label: "Accepted",
       value: acceptedProjects.toString(),
       icon: "i-heroicons-check-circle",
-      change: `${totalSubmissions - acceptedProjects} remaining`,
-      changeColor: "positive",
-      chartData: [76, 74, 80, 77, 79, 78, acceptedProjects],
+      change:
+        acceptedChange.value !== 0
+          ? `${acceptedChange.value > 0 ? "+" : ""}${acceptedChange.value} (${acceptedChange.percentage}%) from last period`
+          : "No change from last period",
+      changeColor: acceptedChange.value >= 0 ? "positive" : "negative",
+      chartData: acceptedProjectsChart,
     },
   ];
 });
 
-// Recent projects - show only 6 most recent projects
+// Recent projects - show only 6 most recent pending projects
 const recentProjects = computed(() => {
-  // Sort projects by submitted date (most recent first) and take first 6
-  return projects.value
+  // Filter for pending projects, sort by submitted date (most recent first), and take first 6
+  return submissions.value
+    .filter(project => (project.submissionStatus || project.projectStatus) === 'pending')
     .slice()
     .sort((a, b) => {
-      return new Date(b.submittedDate) - new Date(a.submittedDate);
+      return new Date(b.createdAt) - new Date(a.createdAt);
     })
     .slice(0, 6);
 });
@@ -494,5 +613,19 @@ const viewProject = (project) => {
 const reviewProject = (project) => {
   // TODO: Implement review project functionality
   console.log("Review project:", project);
+};
+
+// Helper function for status badge classes
+const getStatusBadgeClass = (status) => {
+  switch (status) {
+    case 'pending':
+      return 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
+    case 'accepted':
+      return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
+    case 'rejected':
+      return 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400';
+    default:
+      return 'bg-gray-50 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400';
+  }
 };
 </script>

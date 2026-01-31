@@ -4,17 +4,6 @@
   >
     <ScrollToTop />
 
-    <!-- Back Button -->
-    <div
-      class="top-20 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur border-b border-gray-200 dark:border-slate-700"
-    >
-      <UContainer class="py-4">
-        <div class="flex items-center justify-between">
-          <ButtonsPresetButton preset="back" to="/projects" />
-        </div>
-      </UContainer>
-    </div>
-
     <!-- Project Details -->
     <UContainer class="py-12">
       <div
@@ -30,12 +19,12 @@
         </div>
       </div>
 
+      <!-- no need to check any author for public view -->
       <ProjectDetails
         v-else-if="project && project.id"
         :project="project"
         :is-liked="isLiked"
         :user-role="authStore.userRole"
-        :is-owner="isOwner"
         @like="toggleLike"
         @share="shareProject"
         @hide="toggleVisibility"
@@ -51,9 +40,9 @@
 import { ref, computed, watch, onMounted } from "vue";
 import { useProjectStore } from "~/stores/projects";
 import { useAuthStore } from "~/stores/auth";
-import { is, tr } from "zod/locales";
 
 const route = useRoute();
+const router = useRouter();
 const projectStore = useProjectStore();
 const authStore = useAuthStore();
 const projectId = route.params.id as string;
@@ -117,11 +106,6 @@ const isLiked = computed(() => {
   return projectStore.isProjectLiked(project.value.id);
 });
 
-const isOwner = computed(() => {
-  if (!project.value || !authStore.user) return false;
-  return project.value.author?.name === authStore.user.name;
-});
-
 const toggleLike = async () => {
   if (!project.value) return;
 
@@ -131,9 +115,14 @@ const toggleLike = async () => {
     return;
   }
 
-  const newLikedState = await projectStore.likeProject(project.value.id);
-  // Save the updated likes to persistence layer
-  await projectStore.saveUserLikedProjects();
+  const wasLiked = isLiked.value;
+  const result = await projectStore.likeProject(project.value.id);
+  // Optimistically update local count to reflect toggle result
+  if (result) {
+    project.value.likes = (project.value.likes || 0) + (wasLiked ? -1 : 1);
+    if (project.value.likes < 0) project.value.likes = 0;
+  }
+  await projectStore.loadUserLikedProjects();
 };
 
 const shareProject = async () => {
@@ -207,6 +196,10 @@ const toggleVisibility = async () => {
       color: "error",
     });
   }
+};
+
+const goBack = () => {
+  router.back();
 };
 
 useHead({

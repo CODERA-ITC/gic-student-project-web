@@ -30,27 +30,35 @@
       v-else-if="error"
       class="min-h-screen flex items-center justify-center"
     >
-      <div class="text-center space-y-4">
-        <div class="text-red-600 dark:text-red-400">
-          <svg
-            class="w-16 h-16 mx-auto"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+      <div class="text-center space-y-6">
+        <div class="flex flex-col items-center">
+          <div
+            class="w-20 h-20 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-4"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            ></path>
-          </svg>
-          <h2 class="text-2xl font-semibold mt-4">Authentication Failed</h2>
-          <p class="text-sm mt-2">{{ error }}</p>
+            <svg
+              class="w-12 h-12 text-blue-600 dark:text-blue-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+              ></path>
+            </svg>
+          </div>
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+            Authentication Required
+          </h2>
+          <p class="text-sm text-gray-600 dark:text-slate-400 max-w-md">
+            {{ error }}
+          </p>
         </div>
         <NuxtLink
           to="/login"
-          class="inline-block px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          class="inline-block px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors"
         >
           Back to Login
         </NuxtLink>
@@ -60,32 +68,58 @@
     <!-- Dashboard Content -->
     <div v-else>
       <!-- Header Section -->
-      <div
-        class="py-16 bg-white dark:bg-slate-800 border-b border-blue-700/30 dark:border-slate-700"
-      >
+      <div class="relative overflow-hidden py-16">
+        <div
+          class="absolute -top-24 -left-24 w-80 h-80 bg-blue-500/40 rounded-full blur-3xl"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="absolute -bottom-32 right-0 w-96 h-96 bg-indigo-600/40 rounded-full blur-3xl"
+          aria-hidden="true"
+        ></div>
+        <div
+          class="absolute top-10 right-24 w-52 h-52 bg-cyan-400/30 rounded-full blur-3xl"
+          aria-hidden="true"
+        ></div>
+
         <UContainer>
           <div
-            class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0"
+            class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/25 bg-gradient-to-br from-blue-900 via-indigo-900 to-blue-700 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 shadow-2xl px-8 py-10"
           >
-            <div class="space-y-2">
-              <h1
-                class="text-3xl sm:text-4xl lg:text-5xl font-black text-black dark:text-white"
-              >
-                Welcome back,
-                <span class="text-blue-900 dark:text-blue-300">{{
-                  student.name
-                }}</span>
-              </h1>
-              <p class="text-blue-800 dark:text-slate-300">
-                Track and manage your projects
-              </p>
+            <div
+              class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.12),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.08),transparent_30%)] pointer-events-none"
+              aria-hidden="true"
+            ></div>
+
+            <div
+              class="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0"
+            >
+              <div class="space-y-3">
+                <div
+                  class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50/80 dark:bg-blue-900/30 text-blue-900 dark:text-blue-200 text-sm font-semibold"
+                >
+                  <UIcon name="i-heroicons-squares-2x2" class="w-4 h-4" />
+                  Dashboard
+                </div>
+                <h1
+                  class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-blue-300 dark:text-white"
+                >
+                  {{ GreetMessage }},
+                  <span class="text-white dark:text-blue-300">{{
+                    student.name
+                  }}</span>
+                </h1>
+                <p class="text-slate-300 dark:text-slate-300">
+                  Track and manage your projects
+                </p>
+              </div>
+              <ButtonsPresetButton
+                preset="createProject"
+                to="/projects/create"
+                size="md"
+                class="w-full sm:w-auto shadow-lg"
+              />
             </div>
-            <ButtonsPresetButton
-              preset="createProject"
-              to="/projects/create"
-              size="md"
-              class="w-full sm:w-auto"
-            />
           </div>
         </UContainer>
       </div>
@@ -294,11 +328,12 @@
                     {{ update.message }}
                   </p>
                   <div v-if="update.action" class="mt-2">
-                    <button
+                    <NuxtLink
+                      :to="`/student/my-projects/${update.projectId}`"
                       class="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                     >
                       {{ update.action }} →
-                    </button>
+                    </NuxtLink>
                   </div>
                 </div>
               </div>
@@ -324,9 +359,10 @@ const route = useRoute();
 definePageMeta({
   middleware: ["auth", "student"],
 });
-const isLoading = ref(false);
+const isLoading = ref(true);
 const error = ref("");
 const showSecurityQuestions = ref(false);
+const GreetMessage = getGreetingByTimeZone("Asia/Phnom_Penh");
 
 const handleSecurityQuestionsSubmit = async (answers) => {
   try {
@@ -354,7 +390,7 @@ onMounted(async () => {
       // Handle OAuth callback with the token
       const tokenStr = String(token);
       const refreshTokenStr = refreshToken ? String(refreshToken) : undefined;
-      await authStore.handleOAuthCallback(tokenStr, refreshTokenStr);
+      // await authStore.handleOAuthCallback(tokenStr, refreshTokenStr);
 
       // Check if user needs to set up security questions AFTER OAuth callback
       if (authStore.needsSecurityQuestions) {
@@ -421,10 +457,10 @@ const stats = computed(() => {
   const userProjects = projectStore.userProjects || [];
   const totalProjects = userProjects.length;
   const completedProjects = userProjects.filter(
-    (p) => p.status === "Completed",
+    (p) => p.projectStatus === "completed",
   ).length;
   const inProgressProjects = userProjects.filter(
-    (p) => p.status === "In Progress",
+    (p) => p.projectStatus === "in progress",
   ).length;
   const inReviewProjects = userProjects.filter(
     (p) =>
@@ -433,64 +469,97 @@ const stats = computed(() => {
       p.submissions.some((s) => s.status === "Under Review"),
   ).length;
 
-  // Generate simple chart data showing project growth over time
+  // Generate chart data based on actual project creation dates over last 7 days
   const getProjectsChartData = (filterFn = null) => {
     const projectsToAnalyze = filterFn
       ? userProjects.filter(filterFn)
       : userProjects;
 
-    const count = projectsToAnalyze.length;
-
     // If no projects, return zeros
-    if (count === 0) {
+    if (projectsToAnalyze.length === 0) {
       return [0, 0, 0, 0, 0, 0, 0];
     }
 
-    // Generate a growth trend: start low, gradually increase to current count
-    // This simulates project accumulation over time
-    const trend = [];
-    for (let i = 1; i <= 7; i++) {
-      const value = Math.max(1, Math.floor((count * i) / 7));
-      trend.push(value);
+    // Get last 7 days
+    const today = new Date();
+    today.setHours(23, 59, 59, 999); // End of today
+    const last7Days = [];
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      date.setHours(23, 59, 59, 999); // End of each day
+      last7Days.push(date);
     }
 
-    return trend;
+    // Count cumulative projects created up to and including each day
+    const chartData = last7Days.map((targetDate) => {
+      return projectsToAnalyze.filter((project) => {
+        if (!project.createdAt) return false;
+        const projectDate = new Date(project.createdAt);
+        // Include all projects created on or before this date
+        return projectDate <= targetDate;
+      }).length;
+    });
+
+    return chartData;
   };
 
   // Get chart data for different project types
   const totalProjectsWeekly = getProjectsChartData();
   const completedProjectsWeekly = getProjectsChartData(
-    (p) => p.status === "Completed",
+    (p) => p.projectStatus === "completed",
   );
   const inProgressProjectsWeekly = getProjectsChartData(
-    (p) => p.status === "In Progress",
+    (p) => p.projectStatus === "in progress",
   );
+
+  // Calculate changes from previous period (comparing last data point to second-to-last)
+  const calculateChange = (chartData) => {
+    if (chartData.length < 2) return { value: 0, percentage: 0 };
+    const current = chartData[chartData.length - 1];
+    const previous = chartData[chartData.length - 2];
+    const change = current - previous;
+    const percentage =
+      previous > 0 ? ((change / previous) * 100).toFixed(1) : 0;
+    return { value: change, percentage };
+  };
+
+  const totalChange = calculateChange(totalProjectsWeekly);
+  const completedChange = calculateChange(completedProjectsWeekly);
+  const inProgressChange = calculateChange(inProgressProjectsWeekly);
 
   return [
     {
       label: "Total Projects",
       value: String(totalProjects),
       icon: "i-heroicons-briefcase",
-      change: `${completedProjects} completed`,
-      changeColor: "positive",
+      change:
+        totalChange.value !== 0
+          ? `${totalChange.value > 0 ? "+" : ""}${totalChange.value} (${totalChange.percentage}%) from last period`
+          : "No change from last period",
+      changeColor: totalChange.value >= 0 ? "positive" : "negative",
       chartData: totalProjectsWeekly,
     },
     {
       label: "Completed",
       value: String(completedProjects),
       icon: "i-heroicons-check-circle",
-      change: `${((completedProjects / totalProjects) * 100 || 0).toFixed(
-        0,
-      )}% completion rate`,
-      changeColor: "positive",
+      change:
+        completedChange.value !== 0
+          ? `${completedChange.value > 0 ? "+" : ""}${completedChange.value} (${completedChange.percentage}%) from last period`
+          : "No change from last period",
+      changeColor: completedChange.value >= 0 ? "positive" : "negative",
       chartData: completedProjectsWeekly,
     },
     {
       label: "In Progress",
       value: String(inProgressProjects),
       icon: "i-heroicons-clock",
-      change: `${inReviewProjects} awaiting review`,
-      changeColor: inReviewProjects > 0 ? "negative" : "positive",
+      change:
+        inProgressChange.value !== 0
+          ? `${inProgressChange.value > 0 ? "+" : ""}${inProgressChange.value} (${inProgressChange.percentage}%) from last period`
+          : "No change from last period",
+      changeColor: inProgressChange.value >= 0 ? "positive" : "negative",
       chartData: inProgressProjectsWeekly,
     },
   ];
@@ -541,7 +610,7 @@ const recentProjects = computed(() => {
 
     return {
       id: projectId,
-      name: project.title,
+      name: project.name,
       category:
         typeof project.category === "object"
           ? project.category
@@ -566,7 +635,8 @@ const updates = computed(() => {
       projectUpdates.push({
         id: `approved-${project.id}`,
         title: "Project Approved! 🎉",
-        message: `Your "${project.title}" project has been approved and marked as completed`,
+        projectId: project.id,
+        message: `Your "${project.name}" project has been approved and marked as completed`,
         time: "Recently",
         icon: "i-heroicons-check-circle",
         iconColor: "text-emerald-600 dark:text-emerald-400",
@@ -586,7 +656,8 @@ const updates = computed(() => {
         projectUpdates.push({
           id: `review-${project.id}`,
           title: "Project Under Review",
-          message: `Your "${project.title}" project is currently being reviewed`,
+          projectId: project.id,
+          message: `Your "${project.name}" project is currently being reviewed`,
           time: "Recently",
           icon: "i-heroicons-clock",
           iconColor: "text-blue-600 dark:text-blue-400",
@@ -598,8 +669,9 @@ const updates = computed(() => {
       } else if (latestSubmission.status === "Approved") {
         projectUpdates.push({
           id: `submission-approved-${project.id}`,
+          projectId: project.id,
           title: "Submission Approved! ✅",
-          message: `Your submission for "${project.title}" has been approved`,
+          message: `Your submission for "${project.name}" has been approved`,
           time: "Recently",
           icon: "i-heroicons-check-badge",
           iconColor: "text-emerald-600 dark:text-emerald-400",
@@ -611,8 +683,9 @@ const updates = computed(() => {
       } else if (latestSubmission.status === "Rejected") {
         projectUpdates.push({
           id: `submission-rejected-${project.id}`,
+          projectId: project.id,
           title: "Submission Needs Revision",
-          message: `Your submission for "${project.title}" requires changes. Please review the feedback.`,
+          message: `Your submission for "${project.name}" requires changes. Please review the feedback.`,
           time: "Recently",
           icon: "i-heroicons-exclamation-triangle",
           iconColor: "text-red-600 dark:text-red-400",
@@ -628,8 +701,9 @@ const updates = computed(() => {
     if (project.status === "In Progress") {
       projectUpdates.push({
         id: `progress-${project.id}`,
+        projectId: project.id,
         title: "Project In Progress",
-        message: `Continue working on "${project.title}" to complete it`,
+        message: `Continue working on "${project.name}" to complete it`,
         time: "Recently",
         icon: "i-heroicons-rocket-launch",
         iconColor: "text-blue-600 dark:text-blue-400",

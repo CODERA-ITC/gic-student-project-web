@@ -1,3 +1,5 @@
+import type { ProjectFilters } from "~/services/ProjectService";
+
 export interface ProjectAuthor {
   id: string;
   name: string;
@@ -39,8 +41,9 @@ export interface Project {
   author: ProjectAuthor;
   technologies: string[];
   category: string;
-  status: "Completed" | "In Progress";
-  featured: boolean;
+  submissionStatus: "draft" | "pending" | "accepted" | "rejected";
+  projectStatus?: string; // For backward compatibility
+  highlighted: boolean;
   likes: number;
   views: number;
   demoUrl: string;
@@ -85,18 +88,16 @@ export interface ProjectState {
   availableCategories: string[];
   availableTags: string[];
   categoryObjects: any[]; // Store full category objects for ID lookup
-  availableCourses: string[];
+  availableCourses: Course[]; // Store full course objects
   courseObjects: Course[];
   tagObjects: any[]; // Store full tag objects for ID lookup
   likedProjects: Set<string | number>;
   loading: boolean;
   pagination: PaginationState;
   nextProjectId: number; // Track next project ID independently
-  filters: {
-    categories: string[];
-    search: string;
-    tags: any[];
-    year: string;
-    sort: string;
-  };
+  filters: ProjectFilters;
+  highlightedProjects: Project[];
+  submissionProjects: Project[];
+  totalProject: number;
+  likedProjectList: Project[];
 }

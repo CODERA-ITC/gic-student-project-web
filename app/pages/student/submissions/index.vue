@@ -1,29 +1,63 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-slate-900">
     <!-- Header Section -->
-    <div
-      class="py-16 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 dark:border-slate-700"
-    >
+    <div class="relative overflow-hidden py-16">
+      <div
+        class="absolute -top-24 -left-24 w-80 h-80 bg-blue-500/40 rounded-full blur-3xl"
+        aria-hidden="true"
+      ></div>
+      <div
+        class="absolute -bottom-32 right-0 w-96 h-96 bg-indigo-600/40 rounded-full blur-3xl"
+        aria-hidden="true"
+      ></div>
+      <div
+        class="absolute top-10 right-24 w-52 h-52 bg-cyan-400/30 rounded-full blur-3xl"
+        aria-hidden="true"
+      ></div>
+
       <UContainer>
-        <div class="flex flex-row items-center gap-4 mb-4">
+        <div
+          class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/25
+                 bg-gradient-to-br from-blue-900 via-indigo-900 to-blue-700 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950
+                 shadow-2xl px-8 py-10"
+        >
           <div
-            class="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-lg p-1 hover:bg-white/20 dark:hover:bg-white/10 transition-colors"
-          >
-            <ButtonsPresetButton
-              preset="back"
-              @click="$router.push('/student/dashboard')"
-              class="!text-white"
-            />
+            class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.12),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.08),transparent_30%)] pointer-events-none"
+            aria-hidden="true"
+          ></div>
+
+          <div class="relative space-y-3">
+            <div class="flex flex-col gap-3 mb-2">
+              <nav class="flex items-center flex-wrap gap-1 text-sm text-slate-600 dark:text-slate-300">
+                <template v-for="(crumb, idx) in breadcrumbs" :key="crumb.label">
+                  <NuxtLink
+                    :to="crumb.to || undefined"
+                    :class="[
+                      'transition-colors  ',
+                      crumb.to
+                        ? 'hover:text-blue-700 text-white dark:hover:text-blue-300'
+                        : 'text-slate-300 dark:text-white font-semibold',
+                    ]"
+                  >
+                    {{ crumb.label }}
+                  </NuxtLink>
+                  <span
+                    v-if="idx < breadcrumbs.length - 1"
+                    class="text-slate-400 dark:text-slate-500"
+                    >/</span
+                  >
+                </template>
+              </nav>
+              <div class="space-y-3">
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-white leading-tight">
+                  Project Submissions
+                </h1>
+                <p class="text-slate-300 dark:text-slate-300 max-w-2xl">
+                  Track submitted projects and their review status. Syncs with notifications.
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="space-y-2">
-          <div class="flex items-center gap-3">
-            <h1 class="text-4xl font-black text-white">Project Submissions</h1>
-          </div>
-          <p class="text-blue-100 dark:text-slate-300">
-            Track submitted projects and their review status. Syncs with
-            notifications.
-          </p>
         </div>
       </UContainer>
     </div>
@@ -82,6 +116,11 @@
                 <th
                   class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
                 >
+                  Category
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
+                >
                   Submitted
                 </th>
                 <th
@@ -103,30 +142,62 @@
                 class="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
               >
                 <td class="px-6 py-4">
-                  <div>
-                    <p
-                      class="text-sm font-semibold text-gray-900 dark:text-white"
+                  <div class="flex items-center gap-3">
+                    <!-- Preview Image -->
+                    <div
+                      class="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden bg-gray-200 dark:bg-slate-700"
                     >
-                      {{ submission.projectName }}
-                    </p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                      {{ submission.category }}
-                    </p>
+                      <img
+                        v-if="submission.images && submission.images.length > 0"
+                        :src="
+                          submission.images[0].thumbnailUrl ||
+                          submission.images[0].originalUrl
+                        "
+                        :alt="submission.name"
+                        class="w-full h-full object-cover"
+                      />
+                      <div
+                        v-else
+                        class="w-full h-full flex items-center justify-center text-gray-400 dark:text-slate-500"
+                      >
+                        <UIcon name="i-heroicons-photo" class="w-8 h-8" />
+                      </div>
+                    </div>
+                    <!-- Name and Description -->
+                    <div class="flex-1 min-w-0">
+                      <p
+                        class="text-sm font-semibold text-gray-900 dark:text-white truncate"
+                      >
+                        {{ submission.name }}
+                      </p>
+                      <p
+                        class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mt-1"
+                      >
+                        {{
+                          submission.description || "No description available"
+                        }}
+                      </p>
+                    </div>
                   </div>
                 </td>
+                <td class="px-6 py-4">
+                  <span class="text-sm text-gray-600 dark:text-slate-400">
+                    {{ submission.category || "Uncategorized" }}
+                  </span>
+                </td>
                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-slate-400">
-                  {{ submission.submittedDate }}
+                  {{ submission.updatedAt }}
                 </td>
                 <td class="px-6 py-4">
                   <span
-                    :class="getStatusBadgeClass(submission.status)"
+                    :class="getStatusBadgeClass(submission.submissionStatus)"
                     class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold"
                   >
                     <span
                       class="w-1.5 h-1.5 rounded-full"
-                      :class="getStatusDotClass(submission.status)"
+                      :class="getStatusDotClass(submission.submissionStatus)"
                     ></span>
-                    {{ submission.status }}
+                    {{ submission.submissionStatus }}
                   </span>
                 </td>
                 <td class="px-6 py-4">
@@ -134,24 +205,27 @@
                     <UButton
                       icon="i-heroicons-eye"
                       size="xs"
-                      color="primary"
+                      color="neutral"
                       variant="ghost"
                       label="View"
                       @click="viewSubmission(submission.id)"
+                      class="text-gray-700 dark:text-gray-300 disabled:text-gray-400 dark:disabled:text-gray-600 disabled:opacity-60"
                     />
                     <UButton
                       icon="i-heroicons-pencil"
                       size="xs"
-                      color="primary"
+                      color="neutral"
                       variant="ghost"
                       label="Edit"
                       @click="editSubmission(submission.id)"
+                      class="text-gray-700 dark:text-gray-300 disabled:text-gray-400 dark:disabled:text-gray-600 disabled:opacity-60"
                     />
-                    <UButton
+                    <!-- <UButton
                       v-if="
-                        submission.status === 'Under Review' ||
-                        submission.status === 'Needs Revision' ||
-                        submission.status === 'Rejected'
+                        submission.submissionStatus ===
+                          SubmissionStatus.PENDING ||
+                        submission.submissionStatus ===
+                          SubmissionStatus.REJECTED
                       "
                       icon="i-heroicons-x-circle"
                       size="xs"
@@ -159,7 +233,7 @@
                       variant="ghost"
                       label="Cancel"
                       @click="confirmCancel(submission.id)"
-                    />
+                    /> -->
                   </div>
                 </td>
               </tr>
@@ -317,6 +391,11 @@ import { useRouter } from "vue-router";
 import { useProjectStore } from "~/stores/projects";
 import { useAuthStore } from "~/stores/auth";
 
+const breadcrumbs = [
+  { label: "Dashboard", to: "/student/dashboard" },
+  { label: "Submissions" },
+];
+
 definePageMeta({
   middleware: ["auth", "student"],
 });
@@ -327,7 +406,6 @@ const authStore = useAuthStore();
 
 // State
 const isLoading = ref(false);
-const userSubmissions = ref<Project[]>([]);
 
 // Search and pagination
 const searchQuery = ref("");
@@ -339,41 +417,52 @@ const showCancelModal = ref(false);
 const selectedSubmissionId = ref<string | null>(null);
 const isCanceling = ref(false);
 
-// Get submitted projects from fetched data
+// Get submitted projects from store - filter by current user and non-draft status
 const submissions = computed(() => {
-  return userSubmissions.value.map((project) => {
-    // Map visibility to status
-    let status = "Under Review";
-    if (project.visibility === "accepted") {
-      status = "Approved";
-    } else if (project.visibility === "rejected") {
-      status = "Rejected";
-    } else if (project.visibility === "reviewing") {
-      status = "Under Review";
-    }
+  console.log("User Projects:", projectStore.userProjects);
+  console.log("SubmissionStatus.DRAFT value:", SubmissionStatus.DRAFT);
 
-    return {
-      id: project.id,
-      projectName: project.name,
-      category: project.category || "General",
-      submittedDate:
-        project.createdAt?.split("T")[0] ||
+  // Filter all projects from store (use userProjects which is populated by fetchUserProjects)
+  return projectStore.userProjects
+    .filter((project) => {
+      console.log(
+        `Project: ${project.name}, submissionStatus: "${project.submissionStatus}", type: ${typeof project.submissionStatus}`,
+      );
+
+      // Check if project is submitted (not draft)
+      const isSubmitted = project.submissionStatus !== SubmissionStatus.DRAFT;
+      console.log(`  isSubmitted: ${isSubmitted}`);
+
+      return isSubmitted;
+    })
+    .map((project) => ({
+      ...project,
+      // Format the date for display
+      updatedAt:
         project.updatedAt?.split("T")[0] ||
+        project.createdAt?.split("T")[0] ||
         new Date().toISOString().split("T")[0],
-      status: status,
-    };
-  });
+    }));
 });
 
 // Status counts for summary cards
 const underReviewCount = computed(
-  () => submissions.value.filter((s) => s.status === "Under Review").length,
+  () =>
+    submissions.value.filter(
+      (s) => s.submissionStatus === SubmissionStatus.PENDING,
+    ).length,
 );
 const approvedCount = computed(
-  () => submissions.value.filter((s) => s.status === "Approved").length,
+  () =>
+    submissions.value.filter(
+      (s) => s.submissionStatus === SubmissionStatus.ACCEPTED,
+    ).length,
 );
 const rejectedCount = computed(
-  () => submissions.value.filter((s) => s.status === "Rejected").length,
+  () =>
+    submissions.value.filter(
+      (s) => s.submissionStatus === SubmissionStatus.REJECTED,
+    ).length,
 );
 
 // Computed properties for search and pagination
@@ -385,9 +474,9 @@ const filteredSubmissions = computed(() => {
   const query = searchQuery.value.toLowerCase();
   return submissions.value.filter(
     (submission) =>
-      submission.projectName.toLowerCase().includes(query) ||
+      submission.name.toLowerCase().includes(query) ||
       submission.category.toLowerCase().includes(query) ||
-      submission.status.toLowerCase().includes(query),
+      submission.submissionStatus.toLowerCase().includes(query),
   );
 });
 
@@ -425,27 +514,33 @@ const handleSearch = () => {
 
 const getStatusBadgeClass = (status: string) => {
   const classes: Record<string, string> = {
-    Approved:
-      "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
-    "Under Review":
+    pending:
       "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
-    "Needs Revision":
-      "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
-    Rejected:
-      "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300",
+
+    accepted:
+      "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+    rejected: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+    // Legacy values
   };
-  return classes[status] || "bg-gray-100 text-gray-800";
+  return (
+    classes[status] ||
+    "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300"
+  );
 };
 
 const getStatusDotClass = (status: string) => {
   const classes: Record<string, string> = {
+    pending: "bg-yellow-600 dark:bg-yellow-400",
+    accepted: "bg-green-600 dark:bg-green-400",
+    rejected: "bg-red-600 dark:bg-red-400",
+    // Legacy values
     Approved: "bg-green-600 dark:bg-green-400",
     "Under Review": "bg-yellow-600 dark:bg-yellow-400",
     "Needs Revision": "bg-red-600 dark:bg-red-400",
-    Rejected: "bg-gray-600 dark:bg-gray-400",
+    Rejected: "bg-red-600 dark:bg-red-400",
   };
 
-  return classes[status] || "bg-gray-600";
+  return classes[status] || "bg-gray-600 dark:bg-gray-400";
 };
 
 const viewSubmission = (id: string) => {
@@ -469,13 +564,13 @@ const handleCancelConfirm = async () => {
     isCanceling.value = true;
 
     // Find the project in submissions
-    const projectIndex = userSubmissions.value.findIndex(
+    const projectIndex = submissions.value.findIndex(
       (p) => p.id === selectedSubmissionId.value,
     );
 
     if (projectIndex !== -1) {
       // Remove from local array
-      userSubmissions.value.splice(projectIndex, 1);
+      submissions.value.splice(projectIndex, 1);
 
       // Show success toast
       const toast = useToast();
@@ -517,11 +612,11 @@ onMounted(async () => {
     }
   }
 
-  // Fetch user's submission projects
+  // Fetch all user projects (they will be filtered in the computed property)
   isLoading.value = true;
   try {
-    userSubmissions.value = await projectStore.fetchUserSubmissions();
-    console.log(`Loaded ${userSubmissions.value.length} submission projects`);
+    await projectStore.fetchUserProjects();
+    console.log(`Loaded ${submissions.value.length} submitted projects`);
   } catch (error) {
     console.error("Error loading submissions:", error);
     const toast = useToast();

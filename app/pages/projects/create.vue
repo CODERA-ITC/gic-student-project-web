@@ -1,16 +1,42 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-slate-900 py-12">
+    <!-- Breadcrumbs -->
+    <UContainer class="mb-6">
+      <nav
+        class="flex items-center flex-wrap gap-1 text-sm text-slate-600 dark:text-slate-300"
+      >
+        <NuxtLink
+          to="/"
+          class="hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1"
+        >
+          <UIcon name="i-heroicons-home" class="w-4 h-4" />
+          <span class="hidden sm:inline">Home</span>
+        </NuxtLink>
+        <span class="text-slate-400 dark:text-slate-500">/</span>
+        <NuxtLink
+          to="/projects"
+          class="hover:text-blue-700 dark:hover:text-blue-300"
+        >
+          Projects
+        </NuxtLink>
+        <span class="text-slate-400 dark:text-slate-500">/</span>
+        <span class="text-slate-900 dark:text-white font-semibold">
+          {{ editMode ? "Edit Project" : "Create Project" }}
+        </span>
+      </nav>
+    </UContainer>
+
     <UContainer>
       <!-- Show main content only when authenticated -->
       <div v-if="!showAuthModal && authStore.isAuthenticated">
         <!-- Back Button -->
-        <div class="mb-8">
+        <!-- <div class="mb-8">
           <ButtonsPresetButton
             preset="back"
             to="/projects"
             @click="mobileMenuOpen = false"
           />
-        </div>
+        </div> -->
 
         <!-- Header -->
         <div class="max-w-3xl mx-auto mb-12">
@@ -882,7 +908,7 @@
                       :key="course"
                       :value="course"
                     >
-                      {{ course }}
+                      {{ course.name }}
                     </option>
                   </select>
                 </div>

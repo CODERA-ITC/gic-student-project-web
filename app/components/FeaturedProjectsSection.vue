@@ -3,16 +3,19 @@
     class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
   >
     <UContainer>
-      <div class="flex justify-between items-center mb-12">
-        <div>
-          <h2 class="text-4xl font-semibold text-gray-900 dark:text-white mb-2">
-            Featured Projects
-          </h2>
-          <p class="text-gray-700 dark:text-gray-300">
-            Discover the latest and greatest student creations
-          </p>
-        </div>
-        <!-- <NuxtLink to="/projects">
+      <section id="highlighted-projects">
+        <div class="flex justify-between items-center mb-12">
+          <div>
+            <h2
+              class="text-4xl font-semibold text-gray-900 dark:text-white mb-2"
+            >
+              Highlighted Projects
+            </h2>
+            <p class="text-gray-700 dark:text-gray-300">
+              Discover the latest and greatest student creations
+            </p>
+          </div>
+          <!-- <NuxtLink to="/projects">
           <UButton
             variant="outline"
             icon="i-heroicons-arrow-right"
@@ -23,20 +26,21 @@
           </UButton>
         </NuxtLink> -->
 
-        <ButtonsPresetButton preset="viewAll" to="/projects" size="sm" />
-      </div>
+          <ButtonsPresetButton preset="viewAll" to="/projects" size="sm" />
+        </div>
 
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- use the store instead! -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- use the store instead! -->
 
-        <ProjectCard
-          v-for="project in featuredProjects"
-          :key="project.id"
-          :project="project"
-          :liked-projects="projectStore.likedProjects"
-          @toggle-like="toggleLike"
-        />
-      </div>
+          <ProjectCard
+            v-for="project in featuredProjects"
+            :key="project.id"
+            :project="project"
+            :liked-projects="projectStore.likedProjects"
+            @toggle-like="toggleLike"
+          />
+        </div>
+      </section>
     </UContainer>
 
     <!-- Authentication Modal -->
@@ -48,15 +52,17 @@
 const projectStore = useProjectStore();
 const authStore = useAuthStore();
 
+const featuredProjects = computed(() => projectStore.getHighlightedProjects);
+
 const showAuthModal = ref(false);
 const authModalContext = ref("like"); // 'like' or 'create'
 
 onMounted(async () => {
-  await projectStore.fetchFeaturedProjects();
-  await projectStore.loadUserLikedProjects();
+  await Promise.all([
+    projectStore.fetchHighlightedProjects(),
+    projectStore.loadUserLikedProjects(),
+  ]);
 });
-
-const featuredProjects = computed(() => projectStore.getFeaturedProjects);
 
 const toggleLike = async (projectId) => {
   if (!authStore.isAuthenticated) {
@@ -66,8 +72,16 @@ const toggleLike = async (projectId) => {
     return;
   }
 
-  await projectStore.likeProject(projectId);
-  await projectStore.saveUserLikedProjects();
+  const wasLiked = projectStore.isProjectLiked(projectId);
+  const result = await projectStore.likeProject(projectId);
+  if (result) {
+    const card = featuredProjects.value.find((p) => p.id === projectId);
+    if (card) {
+      card.likes = (card.likes || 0) + (wasLiked ? -1 : 1);
+      if (card.likes < 0) card.likes = 0;
+    }
+  }
+  await projectStore.loadUserLikedProjects();
 };
 </script>
 

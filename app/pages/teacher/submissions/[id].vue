@@ -2,17 +2,6 @@
   <div
     class="min-h-screen bg-gray-50 dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
   >
-    <!-- Back Button -->
-    <div
-      class="top-20 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur border-b border-gray-200 dark:border-slate-700"
-    >
-      <UContainer class="py-4">
-        <div class="flex items-center justify-between">
-          <ButtonsPresetButton preset="back" to="/student/my-projects" />
-        </div>
-      </UContainer>
-    </div>
-
     <!-- Project Details -->
     <UContainer class="py-12">
       <div
@@ -34,6 +23,13 @@
         :is-liked="isLiked"
         :user-role="authStore.userRole"
         :is-owner="isOwner"
+        :show-submission-status="true"
+        :show-similar-projects="false"
+        :breadcrumb-base="{
+          label: 'Submissions',
+          path: '/teacher/submissions',
+          icon: 'i-heroicons-inbox-stack',
+        }"
         @like="toggleLike"
         @share="shareProject"
         @hide="toggleVisibility"
@@ -51,7 +47,7 @@
           />
         </template>
         <template #action-buttons>
-          <div class="flex flex-col sm:flex-row gap-3">
+          <!-- <div class="flex flex-col sm:flex-row gap-3">
             <ButtonsPresetButton
               label="Edit Project"
               icon="i-heroicons-pencil-square"
@@ -68,6 +64,27 @@
               class="flex-1"
               @click="showDeleteModal = true"
             />
+          </div> -->
+
+          <div class="flex gap-2">
+            <UButton
+              class="flex-1 justify-center rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 border border-blue-200 dark:border-blue-800"
+              size="md"
+            >
+              <template #leading>
+                <UIcon name="i-heroicons-check" class="w-5 h-5" />
+              </template>
+              Accept
+            </UButton>
+            <UButton
+              class="flex-1 justify-center rounded-lg bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-600 border border-gray-200 dark:border-slate-600"
+              size="md"
+            >
+              <template #leading>
+                <UIcon name="i-heroicons-x-mark" class="w-5 h-5" />
+              </template>
+              Reject
+            </UButton>
           </div>
         </template>
       </ProjectDetails>
@@ -200,11 +217,12 @@ onMounted(async () => {
     project.value = projectData;
 
     // Check ownership after project is loaded
-    if (!isOwner.value) {
-      console.log("User is not owner, redirecting to public view");
-      await navigateTo(`/projects/${projectId}`);
-      return;
-    }
+    // since teacher act as admin
+    // if (!isOwner.value) {
+    //   console.log("User is not owner, redirecting to public view");
+    //   await navigateTo(`/projects/${projectId}`);
+    //   return;
+    // }
 
     console.log("✅ User is owner, displaying project");
   } catch (error) {

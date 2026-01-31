@@ -168,7 +168,7 @@ export const BUTTON_SIZES = {
  * Enhanced for mobile accessibility with proper touch targets
  */
 export const BUTTON_BASE =
-  "inline-flex items-center font-medium justify-center gap-2 rounded-md transition-all duration-300 focus:outline-none touch-manipulation select-none active:scale-95";
+  "inline-flex items-center font-medium justify-center gap-2 rounded-xl transition-all duration-300 focus:outline-none touch-manipulation select-none active:scale-95";
 
 /**
  * Get button classes based on configuration
@@ -194,6 +194,13 @@ export const BUTTON_PRESETS = {
   // Primary Action Buttons
   exploreProjects: {
     label: "Explore Projects",
+    icon: "i-heroicons-rocket-launch",
+    color: "primary" as ButtonColor,
+    variant: "solid" as ButtonVariant,
+    size: "lg" as ButtonSize,
+  },
+  exploreHighlightedProjects: {
+    label: "Highlighted Projects",
     icon: "i-heroicons-rocket-launch",
     color: "primary" as ButtonColor,
     variant: "solid" as ButtonVariant,

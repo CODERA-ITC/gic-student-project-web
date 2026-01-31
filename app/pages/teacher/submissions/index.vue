@@ -15,45 +15,31 @@
 
     <!-- Manage Projects Content -->
     <div v-else>
-      <!-- Back Button -->
-      <div
-        class="top-20 z-40 bg-white/80 dark:bg-slate-800/80 backdrop-blur border-b border-gray-200 dark:border-slate-700"
-      >
-        <div
-          class="w-full max-w-(--ui-container) mx-auto px-4 sm:px-6 lg:px-8 py-4"
-        >
-          <div class="flex items-center justify-between">
-            <NuxtLink
-              to="/teacher/dashboard"
-              class="inline-flex items-center font-medium justify-center gap-2 rounded-md transition-all duration-300 focus:outline-none touch-manipulation select-none active:scale-95 text-indigo-900 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/20 hover:cursor-pointer px-4 py-2.5 text-base min-h-[44px]"
-            >
-              <UIcon name="i-heroicons-arrow-left" class="w-5 h-5" />
-              <span class="truncate">Back</span>
-            </NuxtLink>
-          </div>
-        </div>
-      </div>
-
       <!-- Header Section -->
       <div
-        class="py-16 bg-gray-100 dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700"
+        class="py-16 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900 border-b border-blue-700/30 dark:border-slate-700"
       >
-        <UContainer>
-          <div
-            class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
-          >
-            <div class="flex flex-col gap-2 flex-1">
-              <h1
-                class="text-2xl sm:text-3xl md:text-4xl font-black text-black dark:text-white leading-none"
+        <div class="w-full max-w-(--ui-container) mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-lg p-1 hover:bg-white/20 dark:hover:bg-white/10 transition-colors">
+              <NuxtLink
+                to="/teacher/dashboard"
+                class="inline-flex items-center font-medium justify-center gap-2 rounded-md transition-all duration-300 focus:outline-none touch-manipulation select-none active:scale-95 text-indigo-900 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/20 hover:cursor-pointer px-4 py-2.5 text-base min-h-[44px] !text-white"
               >
-                Manage Projects
-              </h1>
-              <p class="text-sm sm:text-base text-gray-600 dark:text-slate-300">
-                Search, filter, and manage all student project submissions
-              </p>
+                <UIcon name="i-heroicons-arrow-left" class="w-5 h-5" />
+                <span class="truncate">Back</span>
+              </NuxtLink>
             </div>
           </div>
-        </UContainer>
+          <div class="space-y-2">
+            <div class="flex items-center gap-3">
+              <h1 class="text-4xl font-black text-white">Manage Projects</h1>
+            </div>
+            <p class="text-blue-100 dark:text-slate-300">
+              Search, filter, and manage all student project submissions
+            </p>
+          </div>
+        </div>
       </div>
 
       <!-- Main Content -->
@@ -106,7 +92,7 @@
                     />
                     <ButtonsPresetButton
                       preset="primary"
-                      label="Completed Project"
+                      label="Accepted"
                       icon="i-heroicons-check-circle"
                       size="sm"
                       @click="setActiveFilter('completed')"
@@ -114,11 +100,19 @@
                     />
                     <ButtonsPresetButton
                       preset="primary"
-                      label="Pending Reviews"
+                      label="Pending"
                       icon="i-heroicons-exclamation-circle"
                       size="sm"
                       @click="setActiveFilter('pending')"
                       :class="{ 'bg-blue-800': activeFilter === 'pending' }"
+                    />
+                    <ButtonsPresetButton
+                      preset="primary"
+                      label="Rejected"
+                      icon="i-heroicons-x-circle"
+                      size="sm"
+                      @click="setActiveFilter('rejected')"
+                      :class="{ 'bg-blue-800': activeFilter === 'rejected' }"
                     />
                   </div>
                 </div>
@@ -132,7 +126,7 @@
                     <option value="web-development">Web Development</option>
                     <option value="mobile-app">Mobile App</option>
                     <option value="data-science">Data Science</option>
-                    <option value="ai-ml">AI/ML</option>
+                    <option value="ai-ml">AI</option>
                     <option value="game-dev">Game Development</option>
                     <option value="other">Other</option>
                   </select>
@@ -182,7 +176,7 @@
                       Submitted
                     </th>
                     <th
-                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
+                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-center p-3 border-b border-gray-200 dark:border-slate-700"
                     >
                       Actions
                     </th>
@@ -264,24 +258,16 @@
                     </td>
                     <td class="p-3 text-slate-100 align-top text-xs">
                       <span
-                        :class="
-                          project.status === 'completed'
-                            ? 'bg-green-600 text-white'
-                            : 'bg-yellow-600 text-white'
-                        "
+                        :class="getStatusBadgeClass(project.submissionStatus)"
                         class="px-2 py-1 rounded text-xs font-semibold inline-block"
                       >
-                        {{
-                          project.status === "completed"
-                            ? "Completed"
-                            : "Pending"
-                        }}
+                        {{ project.submissionStatus }}
                       </span>
                     </td>
                     <td
                       class="p-3 text-black dark:text-slate-100 align-top text-xs hidden md:table-cell"
                     >
-                      {{ project.submissions.date }}
+                      {{ project.createdAt }}
                     </td>
                     <td class="p-3 text-slate-100 align-top text-xs">
                       <div class="flex gap-2 flex-wrap">
@@ -293,7 +279,7 @@
                           @click="viewProject(project)"
                         />
                         <ButtonsPresetButton
-                          v-if="project.visibility === 'reviewing'"
+                          v-if="project.submissionStatus === 'pending'"
                           label="Accept"
                           icon="i-heroicons-check-circle"
                           color="success"
@@ -302,7 +288,7 @@
                           :loading="acceptingId === project.id"
                         />
                         <ButtonsPresetButton
-                          v-if="project.visibility === 'reviewing'"
+                          v-if="project.submissionStatus === 'pending'"
                           label="Reject"
                           icon="i-heroicons-x-circle"
                           color="danger"
@@ -526,6 +512,8 @@
   </div>
 </template>
 
+
+
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useAuthStore } from "~/stores/auth";
@@ -542,19 +530,23 @@ definePageMeta({
 });
 
 // Store submissions in a ref
-const submissions = ref([]);
-const isLoadingSubmissions = ref(false);
+// const submissions = ref([]); // Removed local ref, use store directly
+// const isLoadingSubmissions = ref(false);
 
-const projects = computed(() => submissions.value);
+const projects = computed(() => projectsStore.submissionProjects);
 
 // Fetch submissions on mount
 onMounted(async () => {
-  isLoadingSubmissions.value = true;
+  // isLoadingSubmissions.value = true; // Removed
   try {
     console.log("Fetching all submissions for teacher...");
-    submissions.value = await projectsStore.fetchAllSubmissions();
-    console.log(`✅ Loaded ${submissions.value.length} submissions`);
-    console.log("First submission sample:", submissions.value[0]);
+    // submissions.value = await projectsStore.fetchAllSubmissions(); // Removed, use store
+
+    if(projectsStore.submissionProjects.length === 0) {
+      await projectsStore.fetchAllSubmissions(); // Ensure store has data
+    }
+    console.log(`✅ Loaded ${projectsStore.submissionProjects.length} submissions`);
+    console.log("First submission sample:", projectsStore.submissionProjects[0]);
   } catch (error) {
     console.error("❌ Error loading submissions:", error);
     const toast = useToast();
@@ -564,7 +556,7 @@ onMounted(async () => {
       color: "error",
     });
   } finally {
-    isLoadingSubmissions.value = false;
+    // isLoadingSubmissions.value = false; // Removed
   }
 });
 
@@ -590,10 +582,10 @@ const itemsPerPage = ref(8);
 // Filtered projects computed property
 const filteredProjects = computed(() => {
   let filtered = projects.value.filter((project) => {
-    // Only show submitted projects (reviewing or accepted status)
+    // Only show submitted projects (pending, accepted, or rejected status)
     if (
-      !project.visibility ||
-      (project.visibility !== "reviewing" && project.visibility !== "accepted")
+      !project.submissionStatus ||
+      !['pending', 'accepted', 'rejected'].includes(project.submissionStatus)
     ) {
       return false;
     }
@@ -601,16 +593,22 @@ const filteredProjects = computed(() => {
     // Filter by active/pending status
     if (
       activeFilter.value === "completed" &&
-      project.visibility !== "accepted"
+      project.submissionStatus !== "accepted"
     ) {
       return false;
     }
     if (
       activeFilter.value === "pending" &&
-      project.visibility !== "reviewing"
+      project.submissionStatus !== "pending"
     ) {
       return false;
     }
+    if (
+      activeFilter.value === "rejected" &&
+      project.submissionStatus !== "rejected"
+    ) {
+      return false;
+    }``
 
     // Filter by search query
     if (searchQuery.value) {
@@ -631,7 +629,7 @@ const filteredProjects = computed(() => {
         "web-development": "Web Development",
         "mobile-app": "Mobile App",
         "data-science": "Data Science",
-        "ai-ml": "AI/ML",
+        "ai-ml": "AI",
         "game-dev": "Game Development",
         other: "Other",
       };
@@ -717,6 +715,20 @@ const visiblePages = computed(() => {
   return pages;
 });
 
+// Helper function for status badge classes
+const getStatusBadgeClass = (status) => {
+  switch (status) {
+    case 'pending':
+      return 'bg-yellow-600 text-white';
+    case 'accepted':
+      return 'bg-green-600 text-white';
+    case 'rejected':
+      return 'bg-red-600 text-white';
+    default:
+      return 'bg-gray-600 text-white'; // Fallback for unexpected statuses
+  }
+};
+
 // Methods
 const setActiveFilter = (filter) => {
   activeFilter.value = filter;
@@ -743,7 +755,7 @@ const prevPage = () => {
 
 // Action methods for project buttons
 const viewProject = (project) => {
-  // TODO: Implement view project functionality
+  // Navigate to project details page
   navigateTo(`/teacher/submissions/${project.id}`);
 };
 
@@ -766,7 +778,8 @@ const confirmAccept = async () => {
     await projectsStore.acceptProject(selectedProject.value.id);
 
     // Refresh submissions list after accepting
-    submissions.value = await projectsStore.fetchAllSubmissions();
+    // submissions.value = await projectsStore.fetchAllSubmissions(); // Removed, store will update
+    await projectsStore.fetchAllSubmissions(); // Refresh store
 
     const toast = useToast();
     toast.add({
@@ -798,7 +811,8 @@ const confirmReject = async () => {
     await projectsStore.rejectProject(selectedProject.value.id);
 
     // Refresh submissions list after rejecting
-    submissions.value = await projectsStore.fetchAllSubmissions();
+    // submissions.value = await projectsStore.fetchAllSubmissions(); // Removed
+    await projectsStore.fetchAllSubmissions(); // Refresh store
 
     const toast = useToast();
     toast.add({

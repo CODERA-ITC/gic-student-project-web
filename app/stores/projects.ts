@@ -9,6 +9,8 @@ import type {
 } from "~/services/ProjectService";
 
 import { projectsData } from "~/constants/projects";
+import { transformProjects, transformProject } from "~/utils/projectTransformer";
+import { string } from "zod";
 
 // Types
 
@@ -16,13 +18,14 @@ export const useProjectStore = defineStore("projects", {
   state: (): ProjectState => ({
     projects: [],
     userProjects: [],
-    availableCategories: ["All"],
+    availableCategories: [],
     availableTags: [],
     categoryObjects: [],
     tagObjects: [],
     availableCourses: [],
     courseObjects: [],
     likedProjects: new Set(),
+    likedProjectList: [],
     loading: false,
     nextProjectId: 1000, // Start user-created projects from 1000 to avoid conflicts
     pagination: {
@@ -32,12 +35,16 @@ export const useProjectStore = defineStore("projects", {
       totalPages: 0,
     },
     filters: {
-      categories: ["All"],
+      categoryId: "",
       search: "",
-      tags: [],
-      year: "",
+      courseId: "",
+      gen: "",
       sort: "recent",
+      ascending: true,
     },
+    highlightedProjects: [],
+    submissionProjects: [],
+    totalProject: 0,
   }),
 
   getters: {
@@ -51,10 +58,6 @@ export const useProjectStore = defineStore("projects", {
         const allDone = features.every((feature) => feature.status === "done");
         return allDone ? "Completed" : "In Progress";
       };
-    },
-
-    getFeaturedProjects(): Partial<Project[]> {
-      return this.projects.filter((project) => project.featured).slice(0, 3);
     },
 
     getCourseIdByName() {
@@ -84,6 +87,38 @@ export const useProjectStore = defineStore("projects", {
         );
       };
     },
+
+    // Get similar projects by category, excluding the current project
+    getSimilarProjects() {
+      return (
+        currentProjectId: string | number,
+        category?: string,
+      ): Project[] => {
+        let filteredProjects = this.projects.filter(
+          (p) => p.id !== currentProjectId,
+        );
+
+        // If category is provided, filter by same category first
+        if (category) {
+          const sameCategoryProjects = filteredProjects.filter(
+            (p) => p.category === category,
+          );
+          // If we have enough projects in the same category, use those
+          if (sameCategoryProjects.length >= 6) {
+            return sameCategoryProjects.slice(0, 6);
+          }
+          // Otherwise, prioritize same category and fill with others
+          const otherProjects = filteredProjects.filter(
+            (p) => p.category !== category,
+          );
+          return [...sameCategoryProjects, ...otherProjects].slice(0, 6);
+        }
+
+        // No category filter, just return first 6
+        return filteredProjects.slice(0, 6);
+      };
+    },
+
     // Get real-time calculated status for a project based on its features
 
     projectsByCategory(): Record<string, Partial<Project>[]> {
@@ -110,9 +145,11 @@ export const useProjectStore = defineStore("projects", {
     projectStats(): ProjectStats {
       return {
         total: this.projects.length,
-        completed: this.projects.filter((p) => p.status === "Completed").length,
-        inProgress: this.projects.filter((p) => p.status === "In Progress")
+        completed: this.projects.filter((p) => p.projectStatus === "Completed")
           .length,
+        inProgress: this.projects.filter(
+          (p) => p.projectStatus === "In Progress",
+        ).length,
         totalLikes: this.projects.reduce((sum, p) => sum + p.likes, 0),
         totalViews: this.projects.reduce((sum, p) => sum + p.views, 0),
         totalTeamMembers: this.projects.reduce(
@@ -121,6 +158,10 @@ export const useProjectStore = defineStore("projects", {
         ),
       };
     },
+
+    getHighlightedProjects: (state) => state.highlightedProjects,
+
+    getSubmissionProjects: (state) => state.submissionProjects,
   },
 
   actions: {
@@ -135,31 +176,31 @@ export const useProjectStore = defineStore("projects", {
     // In real application, this would involve API calls
     // 1. fetch Category data from server
 
-    async fetchFeaturedProjects(): Promise<Partial<Project[]>> {
-      this.loading = true;
-      try {
-        // If projects array is already populated, just return featured ones
-        if (this.projects.length > 0) {
-          return this.projects.filter((project) => project.featured);
-        }
+    // async fetchFeaturedProjects(): Promise<Partial<Project[]>> {
+    //   this.loading = true;
+    //   try {
+    //     // If projects array is already populated, just return featured ones
+    //     if (this.projects.length > 0) {
+    //       return this.projects.filter((project) => project.featured);
+    //     }
 
-        // Otherwise, fetch all projects first
-        await this.fetchProjects();
+    //     // Otherwise, fetch all projects first
+    //     await this.fetchProjects();
 
-        // Return featured projects
-        return this.projects.filter((project) => project.featured);
-      } catch (error) {
-        console.error(
-          "Error fetching featured projects, using fallback static data:",
-          error,
-        );
-        // Fallback: fetch from static data and filter featured
-        this.projects = projectsData;
-        return projectsData.filter((project) => project.featured);
-      } finally {
-        this.loading = false;
-      }
-    },
+    //     // Return featured projects
+    //     return this.projects.filter((project) => project.featured);
+    //   } catch (error) {
+    //     console.error(
+    //       "Error fetching featured projects, using fallback static data:",
+    //       error,
+    //     );
+    //     // Fallback: fetch from static data and filter featured
+    //     this.projects = projectsData;
+    //     return projectsData.filter((project) => project.featured);
+    //   } finally {
+    //     this.loading = false;
+    //   }
+    // },f
 
     async fetchCategories(): Promise<string[]> {
       this.loading = true;
@@ -255,22 +296,16 @@ export const useProjectStore = defineStore("projects", {
           page,
           limit,
           search: this.filters.search || undefined,
-          tags: this.filters.tags.length > 0 ? this.filters.tags : undefined,
-          year: this.filters.year || undefined,
+          courseId: this.filters.courseId || undefined,
+          gen: this.filters.gen || undefined,
           sort: this.filters.sort || undefined,
+          ascending: this.filters.ascending,
           categoryId: "", // will be set below if needed
         };
 
-        // Add category filter if not "All"
-        if (
-          this.filters.categories.length > 0 &&
-          !this.filters.categories.includes("All")
-        ) {
-          // use function map to convert category names to IDs
-
-          filters.categoryId = this.getCategoryIdByName(
-            this.filters.categories[0],
-          ); // always take the first category for filtering
+        // Add category filter if set
+        if (this.filters.categoryId) {
+          filters.categoryId = this.filters.categoryId;
         }
 
         // Use ProjectService to fetch
@@ -286,6 +321,7 @@ export const useProjectStore = defineStore("projects", {
 
         // Update pagination state from API response
         this.pagination.totalItems = pagination.total;
+        this.totalProject = pagination.total;
         this.pagination.totalPages = pagination.lastPage;
         this.pagination.currentPage =
           pagination.page || this.pagination.currentPage;
@@ -326,15 +362,20 @@ export const useProjectStore = defineStore("projects", {
       if (!authStore.isTokenValid()) {
         console.error("❌ Token is invalid or expired. Please log in again.");
         // Show notification to user (you can add a toast/notification here)
-        alert("Your session has expired. Please log in again.");
         // Optionally logout and redirect
-        await authStore.logout();
-        return false;
+
+        // call refresh to new one
+        authStore.refreshAccessToken();
+
+        // await authStore.logout();
+        // return false;
       }
 
-      const project = this.projects.find(
-        (p) => p.id?.toString() === projectId.toString(),
-      );
+      const project =
+        this.projects.find((p) => p.id?.toString() === projectId.toString()) ||
+        this.likedProjectList.find(
+          (p) => p.id?.toString() === projectId.toString(),
+        );
       if (!project) {
         console.warn("❌ Project not found:", projectId);
         return false;
@@ -411,38 +452,99 @@ export const useProjectStore = defineStore("projects", {
     // Load user's liked projects (would be from backend in real app)
     async loadUserLikedProjects(): Promise<void> {
       const authStore = useAuthStore();
-      if (!authStore.isAuthenticated || !authStore.user) {
-        this.likedProjects.clear();
-        return;
-      }
+      // if (!authStore.isAuthenticated || !authStore.user || !authStore.token) {
+      //   this.likedProjects.clear();
+      //   this.likedProjectList = [];
+      //   return;
+      // }
 
-      // In real app, fetch from backend based on user ID
-      // const userLikes = await api.getUserLikedProjects(authStore.user.id);
-      // this.likedProjects = new Set(userLikes);
+      try {
+        // Fetch user's liked projects from API
+        const likedData = await projectService.getUserLikedProjects();
 
-      // For now, simulate loading from localStorage with user-specific key
-      if (typeof window !== "undefined") {
-        const key = `likedProjects_${authStore.user.id}`;
-        try {
-          const stored = localStorage.getItem(key);
-          if (stored) {
-            const parsed = JSON.parse(stored);
-            if (Array.isArray(parsed)) {
-              this.likedProjects = new Set(parsed);
-              console.log(
-                `📚 Loaded ${parsed.length} liked project(s) for user ${authStore.user.name}`,
-              );
+        // API can return either:
+        // 1) like records with `project` object, or
+        // 2) raw project objects (as currently returned by /projects/me/likes).
+        const likedProjectObjects = likedData
+          .map((item: any) =>
+            item.project ? transformProject(item.project) : transformProject(item),
+          )
+          .filter((p: any) => p && p.id);
+
+        const finalIds = likedProjectObjects.map((p: any) => p.id);
+
+        this.likedProjects = new Set(finalIds);
+
+        // We already have full project objects from the API in most cases.
+        // If for some reason we didn't, fallback to fetching by id.
+        if (likedProjectObjects.length > 0) {
+          this.likedProjectList = likedProjectObjects;
+        } else if (finalIds.length > 0) {
+          const fetchedProjects = await Promise.all(
+            finalIds.map((id: string | number) =>
+              this.fetchProjectById(id.toString()),
+            ),
+          );
+          this.likedProjectList = fetchedProjects.filter(Boolean) as Project[];
+        } else {
+          this.likedProjectList = [];
+        }
+        console.log(
+          `📚 Loaded ${finalIds.length} liked project(s) for user ${authStore.user.name} from API`,
+        );
+      } catch (error) {
+        console.error("Error loading user liked projects from API:", error);
+
+        // Fallback to localStorage if API fails
+        if (typeof window !== "undefined") {
+          const key = `likedProjects_${authStore.user.id}`;
+          try {
+            const stored = localStorage.getItem(key);
+            if (stored) {
+              const parsed = JSON.parse(stored);
+              if (Array.isArray(parsed)) {
+                this.likedProjects = new Set(parsed);
+                this.likedProjectList = [];
+                console.log(
+                  `📚 Loaded ${parsed.length} liked project(s) from localStorage fallback`,
+                );
+              }
             }
-          } else {
-            console.log(
-              `📚 No liked projects found for user ${authStore.user.name}`,
-            );
+          } catch (e) {
+            console.warn("Error loading from localStorage fallback:", e);
+            this.likedProjects.clear();
+            this.likedProjectList = [];
           }
-        } catch (error) {
-          console.warn("Error loading user liked projects:", error);
-          this.likedProjects.clear();
         }
       }
+    },
+
+    async fetchHighlightedProjects(): Promise<void> {
+      ///  use api directly
+      let projects: Project[] = [];
+      let selectProject: Project[] = []; // only 3 projects will be selected
+
+      const highlightedProjects = await projectService.getHighlightedProjects();
+
+      // tranform api response
+
+      projects = transformProjects(highlightedProjects);
+      let total = projects.length;
+      let numToSelect = Math.min(6, total); // select up to 6 projects
+      selectProject = projects.slice(0, numToSelect);
+
+      // for (let i = 0; i < total; i++) {
+      //   let index = Math.floor(Math.random() * total);
+
+      //   if (!selectProject.includes(projects[index])) {
+      //     selectProject = [...selectProject, projects[index]];
+      //   }
+      //   if (numToSelect === selectProject.length) break;
+
+      //   // projects.splice(index, 1); // remove selected project to avoid duplicates
+      // }
+
+      this.highlightedProjects = selectProject;
     },
 
     // Save user's liked projects (would sync with backend in real app)
@@ -647,14 +749,15 @@ export const useProjectStore = defineStore("projects", {
      */
     async fetchAllSubmissions(): Promise<Project[]> {
       this.loading = true;
+
       try {
         const authStore = useAuthStore();
 
         // Check if user is authenticated and is a teacher
-        if (!authStore.isAuthenticated) {
-          console.warn("User not authenticated, cannot fetch submissions");
-          return [];
-        }
+        // if (!authStore.isAuthenticated) {
+        //   console.warn("User not authenticated, cannot fetch submissions");
+        //   return [];
+        // }
 
         // Use ProjectService to fetch submissions
         const response = await projectService.fetchAllSubmissions();
@@ -663,14 +766,16 @@ export const useProjectStore = defineStore("projects", {
 
         // Transform API response using ProjectTransformer
         // API returns array directly, not wrapped in data property
-        const submissions = Array.isArray(response)
-          ? response.map((item: any) => transformProject(item))
+        const submissions = Array.isArray(response.data)
+          ? response.data.map((item: any) => transformProject(item))
           : [];
 
         console.log(`Found ${submissions.length} total submissions`);
 
+        this.submissionProjects = submissions;
+
         // Update store state with fetched submissions
-        this.projects = submissions;
+        // projects = submissions;
 
         return submissions;
       } catch (error) {
@@ -709,11 +814,8 @@ export const useProjectStore = defineStore("projects", {
         const { projects } = ProjectTransformer.transformApiResponse(response);
 
         // Search categories from available categories
-        this.filters.categories.forEach((category) => {
-          if (
-            category.toLowerCase().includes(searchTerm) &&
-            category !== "All"
-          ) {
+        this.availableCategories.forEach((category) => {
+          if (category.toLowerCase().includes(searchTerm)) {
             const key = `category-${category}`;
             if (!addedItems.has(key)) {
               addedItems.add(key);
@@ -762,18 +864,22 @@ export const useProjectStore = defineStore("projects", {
     },
 
     // Filter management methods
-    setFilter(key: keyof ProjectState["filters"], value: any): void {
-      this.filters[key] = value;
+    setFilter<K extends keyof ProjectFilters>(
+      key: K,
+      value: ProjectFilters[K],
+    ): void {
+      (this.filters as any)[key] = value;
       this.pagination.currentPage = 1; // Reset to first page when filters change
     },
 
     clearFilters(): void {
       this.filters = {
-        categories: ["All"],
+        categoryId: "",
         search: "",
-        tags: [],
-        year: "",
+        courseId: "",
+        gen: "",
         sort: "recent",
+        ascending: true,
       };
       this.resetPagination();
     },
@@ -781,14 +887,7 @@ export const useProjectStore = defineStore("projects", {
     getFilteredProjects(): Partial<Project[]> {
       let filtered = [...this.projects];
 
-      // Filter by category
-      if (this.filters.categories && !this.filters.categories.includes("All")) {
-        filtered = filtered.filter((p) =>
-          this.filters.categories.includes(p.category),
-        );
-      }
-
-      // Filter by search
+      // Filter by search (client-side for immediate feedback)
       if (this.filters.search.trim()) {
         const search = this.filters.search.toLowerCase();
         filtered = filtered.filter(
@@ -797,21 +896,6 @@ export const useProjectStore = defineStore("projects", {
             p.description.toLowerCase().includes(search) ||
             p.category.toLowerCase().includes(search),
         );
-      }
-
-      // Filter by tags
-      if (this.filters.tags.length > 0) {
-        filtered = filtered.filter((p) =>
-          p.tags?.some((tag) => this.filters.tags.includes(tag)),
-        );
-      }
-
-      // Filter by year
-      if (this.filters.year) {
-        filtered = filtered.filter((p) => {
-          const year = p.academicYear?.match(/\d{4}/)?.[0];
-          return year === this.filters.year;
-        });
       }
 
       // Apply sorting
@@ -981,13 +1065,13 @@ export const useProjectStore = defineStore("projects", {
       // Update in user projects
       const userProject = this.userProjects.find((p) => p.id === projectId);
       if (userProject) {
-        userProject.status = status as any;
+        userProject.projectStatus = status as any;
       }
 
       // Update in all projects
       const project = this.projects.find((p) => p.id === projectId);
       if (project) {
-        project.status = status as any;
+        project.projectStatus = status as any;
       }
 
       // In real app, sync with backend
@@ -1034,7 +1118,7 @@ export const useProjectStore = defineStore("projects", {
 
       // If features are being updated, recalculate status
       if (updates.features) {
-        updates.status = this.calculateProjectStatus(updates.features);
+        updates.projectStatus = this.calculateProjectStatus(updates.features);
       }
 
       let updated = false;
@@ -1049,8 +1133,11 @@ export const useProjectStore = defineStore("projects", {
           ...updates,
         };
         // Recalculate status if not explicitly set and features exist
-        if (!updates.status && this.userProjects[userProjectIndex].features) {
-          this.userProjects[userProjectIndex].status =
+        if (
+          !updates.projectStatus &&
+          this.userProjects[userProjectIndex].features
+        ) {
+          this.userProjects[userProjectIndex].projectStatus =
             this.calculateProjectStatus(
               this.userProjects[userProjectIndex].features,
             );
@@ -1068,10 +1155,9 @@ export const useProjectStore = defineStore("projects", {
           ...updates,
         };
         // Recalculate status if not explicitly set and features exist
-        if (!updates.status && this.projects[projectIndex].features) {
-          this.projects[projectIndex].status = this.calculateProjectStatus(
-            this.projects[projectIndex].features,
-          );
+        if (!updates.projectStatus && this.projects[projectIndex].features) {
+          this.projects[projectIndex].projectStatus =
+            this.calculateProjectStatus(this.projects[projectIndex].features);
         }
         updated = true;
       }
@@ -1159,7 +1245,8 @@ export const useProjectStore = defineStore("projects", {
 
       console.log("Fetched courses:", this.courseObjects);
 
-      this.availableCourses = this.courseObjects.map((course) => course.name);
+      // Keep full course objects in availableCourses for use in dropdowns
+      this.availableCourses = this.courseObjects;
 
       return this.courseObjects;
     },
