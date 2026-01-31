@@ -374,13 +374,22 @@ const handleSecurityQuestionsSubmit = async (answers) => {
 };
 
 // Handle OAuth token from URL (if coming from OAuth callback)
-onMounted(async () => {
+const loadDashboard = async () => {
   // Check if user needs to set up security questions
   if (authStore.needsSecurityQuestions) {
     showSecurityQuestions.value = true;
   }
 
   try {
+    // Ensure auth is restored on full page refresh
+    if (!authStore.isAuthenticated) {
+      const restored = await authStore.restoreAuth();
+      if (!restored || !authStore.isAuthenticated) {
+        await navigateTo("/login");
+        return;
+      }
+    }
+
     const token = route.query.token;
     const refreshToken = route.query.refresh_token;
 
@@ -443,6 +452,11 @@ onMounted(async () => {
     // Always clear loading state
     isLoading.value = false;
   }
+};
+
+// Ensure data is loaded when client mounts (avoids SSR blocking/hydration issues)
+onMounted(() => {
+  loadDashboard();
 });
 
 // Get student info from auth store
@@ -453,20 +467,29 @@ const student = computed(() => ({
 }));
 
 // Stats for student dashboard - computed from real data
+const normalizeStatus = (p) =>
+  (p.projectStatus || p.status || "")
+    .toString()
+    .trim()
+    .toLowerCase();
+
 const stats = computed(() => {
   const userProjects = projectStore.userProjects || [];
   const totalProjects = userProjects.length;
   const completedProjects = userProjects.filter(
-    (p) => p.projectStatus === "completed",
+    (p) => normalizeStatus(p) === "completed",
   ).length;
-  const inProgressProjects = userProjects.filter(
-    (p) => p.projectStatus === "in progress",
-  ).length;
+  const inProgressProjects = userProjects.filter((p) => {
+    const s = normalizeStatus(p);
+    return s === "in progress" || s === "in-progress" || s === "progress";
+  }).length;
   const inReviewProjects = userProjects.filter(
     (p) =>
       p.submissions &&
       p.submissions.length > 0 &&
-      p.submissions.some((s) => s.status === "Under Review"),
+      p.submissions.some(
+        (s) => s.status?.toLowerCase?.() === "under review" || s.status === "Under Review",
+      ),
   ).length;
 
   // Generate chart data based on actual project creation dates over last 7 days
@@ -507,11 +530,12 @@ const stats = computed(() => {
   // Get chart data for different project types
   const totalProjectsWeekly = getProjectsChartData();
   const completedProjectsWeekly = getProjectsChartData(
-    (p) => p.projectStatus === "completed",
+    (p) => normalizeStatus(p) === "completed",
   );
-  const inProgressProjectsWeekly = getProjectsChartData(
-    (p) => p.projectStatus === "in progress",
-  );
+  const inProgressProjectsWeekly = getProjectsChartData((p) => {
+    const s = normalizeStatus(p);
+    return s === "in progress" || s === "in-progress" || s === "progress";
+  });
 
   // Calculate changes from previous period (comparing last data point to second-to-last)
   const calculateChange = (chartData) => {
@@ -570,9 +594,10 @@ const recentProjects = computed(() => {
   const userProjects = projectStore.userProjects || [];
 
   const getStatusColor = (status) => {
-    if (status === "Completed") {
+    const s = (status || "").toString().toLowerCase();
+    if (s === "completed") {
       return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
-    } else if (status === "In Progress") {
+    } else if (s === "in progress" || s === "in-progress" || s === "progress") {
       return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300";
     }
     return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300";
@@ -615,8 +640,8 @@ const recentProjects = computed(() => {
         typeof project.category === "object"
           ? project.category
           : { name: project.category },
-      status: project.status,
-      statusColor: getStatusColor(project.status),
+      status: project.projectStatus || project.status,
+      statusColor: getStatusColor(project.projectStatus || project.status),
       progress: getProgress(project),
       updated: formatDate(project.createdAt),
     };

@@ -326,9 +326,7 @@
                 <img
                   v-if="project.images && project.images[currentImageIndex]"
                   :key="currentImageIndex"
-                  :src="
-                    project.images[currentImageIndex].originalUrl.toString()
-                  "
+                  :src="getImageSrc(project.images[currentImageIndex])"
                   :alt="`${project.name} - Image ${currentImageIndex + 1}`"
                   class="absolute inset-0 w-full h-full object-cover cursor-pointer"
                   @click="openLightbox"
@@ -404,7 +402,7 @@
               ]"
             >
               <img
-                :src="img.originalUrl.toString()"
+                :src="getImageSrc(img)"
                 :alt="`Thumbnail ${idx + 1}`"
                 class="w-full h-full object-cover"
               />
@@ -692,7 +690,7 @@
             />
           </button>
           <img
-            :src="project.images[currentImageIndex].originalUrl.toString()"
+            :src="getImageSrc(project.images[currentImageIndex])"
             :alt="`${project.name} - Image ${currentImageIndex + 1}`"
             class="max-w-[95vw] sm:max-w-[90vw] max-h-[85vh] sm:max-h-[90vh] object-contain rounded-lg shadow-2xl"
           />
@@ -1189,6 +1187,20 @@ const linkCopied = ref(false);
 const scrollProgress = ref(0);
 const videoPopupOpen = ref(false);
 const sharePopupOpen = ref(false);
+
+const getImageSrc = (img: any): string => {
+  if (!img) return "";
+  if (typeof img === "string") return img;
+  return (
+    img.originalUrl ||
+    img.thumbnailUrl ||
+    img.url ||
+    img.imageUrl ||
+    img.path ||
+    img.preview ||
+    ""
+  );
+};
 
 // Similar projects
 const similarProjects = ref<Project[]>([]);

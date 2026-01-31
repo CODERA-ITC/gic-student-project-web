@@ -202,7 +202,9 @@
             :key="index"
             class="px-3 py-1.5 rounded-full bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium border border-purple-200 dark:border-purple-700 flex items-center gap-2"
           >
-            {{ course }}
+            {{
+             course.name
+            }}
             <button
               @click="removeCourse(index)"
               class="hover:bg-purple-200 dark:hover:bg-purple-800 rounded-full p-0.5 transition-colors"
@@ -409,6 +411,7 @@ import {
   type StudentUser,
   type TeacherUser,
 } from "~/stores/auth";
+import type { Course } from "~/utils/Interfaces";
 
 const authStore = useAuthStore();
 const userRole = computed(() => authStore.userRole);
@@ -438,7 +441,7 @@ const formData = ref({
   bio: "",
   avatar: authStore.currentUser?.avatar || undefined,
   skills: [] as string[],
-  courses: [] as string[],
+  courses: [] as (Course | string)[],
   yearsOfExperience: 0,
   socialLinks: {
     github: "",

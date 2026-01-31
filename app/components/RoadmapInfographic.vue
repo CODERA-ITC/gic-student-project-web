@@ -10,7 +10,7 @@ interface MilestoneData {
   name?: string; // Alternative to title
   description: string;
   icon: string; // Icon class string (e.g., "i-lucide-book-open")
-  date: string;
+  // date: string;
   status: MilestoneStatus;
 }
 
@@ -370,7 +370,7 @@ const IconCircle = (props: {
           class="milestone-item flex flex-col items-center gap-4 opacity-0 transition-all duration-700"
         >
           <div
-            class="rounded-xl p-6 border-2 max-w-[300px] text-center transition-all duration-500 ease-in-out cursor-pointer shadow-lg backdrop-blur-sm hover:shadow-2xl hover:scale-105 group"
+          class="milestone-card rounded-xl p-6 border-2 max-w-[300px] text-center transition-all duration-500 ease-in-out cursor-pointer shadow-lg backdrop-blur-sm hover:shadow-2xl hover:scale-105 group"
             :class="[
               milestoneShadowColors[0],
               sliceDesktopMilestones[0].status === 'pending'
@@ -396,11 +396,11 @@ const IconCircle = (props: {
             />
 
             <div class="flex items-center justify-center gap-2 mb-3">
-              <span
+              <!-- <span
                 class="text-xs text-blue-700 dark:text-blue-300 font-medium"
               >
                 {{ sliceDesktopMilestones[0].date }}
-              </span>
+              </span> -->
               <StatusBadge :status="sliceDesktopMilestones[0].status" />
             </div>
             <h3
@@ -506,7 +506,7 @@ const IconCircle = (props: {
           <template v-if="bulletData[index]?.isTop">
             <!-- Card first for top -->
             <div
-              class="rounded-xl p-4 border-2 max-w-[200px] text-center transition-all duration-500 ease-in-out cursor-pointer shadow-lg backdrop-blur-sm hover:shadow-2xl hover:scale-105 group"
+              class="milestone-card rounded-xl p-4 border-2 max-w-[200px] text-center transition-all duration-500 ease-in-out cursor-pointer shadow-lg backdrop-blur-sm hover:shadow-2xl hover:scale-105 group"
               :class="[
                 milestoneShadowColors[index],
                 milestone.status === 'pending'
@@ -532,11 +532,11 @@ const IconCircle = (props: {
               />
 
               <div class="flex items-center justify-center gap-2 mb-3">
-                <span
+                <!-- <span
                   class="text-xs font-semibold text-blue-800 dark:text-blue-200 tracking-wide"
                 >
                   {{ milestone.date }}
-                </span>
+                </span> -->
                 <StatusBadge :status="milestone.status" />
               </div>
               <h3
@@ -586,11 +586,11 @@ const IconCircle = (props: {
               }"
             >
               <div class="flex items-center justify-center gap-2 mb-2">
-                <span
+                <!-- <span
                   class="text-xs text-blue-700 dark:text-blue-300 font-medium"
                 >
                   {{ milestone.date }}
-                </span>
+                </span> -->
                 <StatusBadge :status="milestone.status" />
               </div>
               <h3
@@ -676,11 +676,11 @@ const IconCircle = (props: {
               class="flex items-center gap-2 mb-2"
               :class="index % 2 === 0 ? 'justify-end' : 'justify-start'"
             >
-              <span
+              <!-- <span
                 class="text-[10px] sm:text-xs text-blue-700 dark:text-blue-300 font-medium"
               >
                 {{ milestone.date }}
-              </span>
+              </span> -->
               <StatusBadge :status="milestone.status" />
             </div>
             <h3
@@ -798,6 +798,12 @@ const IconCircle = (props: {
 /* Hover state for cards */
 .milestone-item:hover {
   z-index: 50;
+}
+
+/* Smooth hover for milestone cards */
+.milestone-card {
+  will-change: transform, box-shadow;
+  transform: translateZ(0);
 }
 
 /* Dark mode transitions */

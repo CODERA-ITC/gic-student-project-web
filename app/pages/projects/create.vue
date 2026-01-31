@@ -133,9 +133,10 @@
                   placeholder="Enter a descriptive project title"
                   class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                   required
+                  maxlength="70"
                 />
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  Maximum 100 characters
+                  Maximum 70 characters
                 </p>
               </div>
 
@@ -152,9 +153,10 @@
                   rows="5"
                   class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-none"
                   required
+                  maxlength="300"
                 ></textarea>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  {{ form.description.length }}/500 characters
+                  {{ form.description.length }}/300 characters
                 </p>
               </div>
 
@@ -725,18 +727,18 @@
                   </div>
 
                   <!-- Feature Details -->
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div class="grid grid-cols-1 md:grid-cols-1 gap-3">
                     <input
                       v-model="featureInput.name"
                       type="text"
                       placeholder="Feature title (e.g., User Authentication)"
                       class="px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                     />
-                    <input
+                    <!-- <input
                       v-model="featureInput.date"
                       type="date"
                       class="px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    />
+                    /> -->
                   </div>
 
                   <!-- Status Selection -->
@@ -905,8 +907,8 @@
 
                     <option
                       v-for="course in availableCourses"
-                      :key="course"
-                      :value="course"
+                      :key="course.id || course.name || course"
+                      :value="course.id || course.name || course"
                     >
                       {{ course.name }}
                     </option>
@@ -1118,6 +1120,14 @@
 
               <div class="ml-auto flex gap-3">
                 <ButtonsPresetButton
+                  v-if="editMode && currentStep < steps.length - 1"
+                  label="Finish Update Now"
+                  icon="i-heroicons-forward"
+                  color="gray"
+                  variant="ghost"
+                  @click="skipToReview"
+                />
+                <ButtonsPresetButton
                   v-if="currentStep < steps.length - 1"
                   :label="`Next`"
                   :icon="`i-heroicons-arrow-right`"
@@ -1284,6 +1294,7 @@ import {
   technologiesOptions,
 } from "~/constants/project-options";
 import { getRandomProject } from "~/lib/RandomProject";
+const toast = useToast();
 
 const router = useRouter();
 const route = useRoute();
@@ -1387,27 +1398,64 @@ const loadProjectForEditing = async (projectId) => {
         };
       });
 
-      form = {
-        name: project.title || "",
+      const categoryValue =
+        typeof project.category === "object"
+          ? project.category.name || project.category.id || ""
+          : project.category || "";
+      const courseValue =
+        typeof project.course === "object"
+          ? project.course.name || project.course.id || project.course.code || ""
+          : project.course ||
+            project.courseName ||
+            project.courseId ||
+            project.courseCode ||
+            "";
+
+      const durationValue =
+        project.duration ||
+        project.projectDuration ||
+        project.durationLabel ||
+        project.durationText ||
+        project.timelineDuration ||
+        "";
+
+      const normalizedThumbnails = (project.images || [])
+        .map((img) => {
+          if (typeof img === "string") return img;
+          return (
+            img.originalUrl ||
+            img.thumbnailUrl ||
+            img.url ||
+            img.imageUrl ||
+            img.path ||
+            img.preview ||
+            ""
+          );
+        })
+        .filter(Boolean);
+
+      Object.assign(form, {
+        name: project.name || project.title || "",
         description: project.description || "",
-        thumbnails: project.images || [],
-        category: project.category || "",
+        thumbnails: normalizedThumbnails,
+        category: categoryValue,
         academicYear: project.academicYear || "",
         technologies: project.technologies || [],
         githubUrl: project.githubUrl || "",
         demoUrl: project.demoUrl || "",
         visibility: project.visibility || "public",
-        duration: project.duration || "",
+        duration: durationValue,
         teamSize: normalizedMembers.length || 1,
         teamMembers: normalizedMembers,
         feature: project.features || project.feature || [],
-        tags: project.tags || [],
-        course: project.course || "",
-      };
+        tags: Array.isArray(project.tags)
+          ? project.tags.map((t) => (typeof t === "string" ? t : t.name))
+          : [],
+        course: courseValue,
+      });
     }
   } catch (error) {
     console.error("Error loading project for editing:", error);
-    const toast = useToast();
     toast.add({
       title: "Error",
       description: "Failed to load project data for editing",
@@ -1672,7 +1720,6 @@ const restoreDraft = () => {
   showDraftModal.value = false;
   draftData.value = null;
 
-  const toast = useToast();
   toast.add({
     title: "Draft Restored",
     description: "Your previous work has been restored.",
@@ -1957,7 +2004,6 @@ const processThumbnailFiles = (files) => {
   const remainingSlots = MAX_IMAGES - currentCount;
 
   if (remainingSlots <= 0) {
-    const toast = useToast();
     toast.add({
       title: "Image Limit Reached",
       description: "You can only upload a maximum of 5 images per project.",
@@ -1969,7 +2015,6 @@ const processThumbnailFiles = (files) => {
   let filesProcessed = 0;
   Array.from(files).forEach((file) => {
     if (filesProcessed >= remainingSlots) {
-      const toast = useToast();
       toast.add({
         title: "Image Limit Reached",
         description: `Only ${remainingSlots} more image(s) can be added. Maximum is 5 images per project.`,
@@ -2091,7 +2136,7 @@ const submitForm = async () => {
     let result;
     if (editMode.value) {
       result = await projectStore.updateProject(
-        parseInt(editProjectId.value),
+        editProjectId.value,
         projectData,
       );
     } else {
@@ -2129,7 +2174,6 @@ const submitForm = async () => {
     }
 
     // Show success message with toast
-    const toast = useToast();
     toast.add({
       title: "Success!",
       description: `Project ${
@@ -2145,8 +2189,10 @@ const submitForm = async () => {
     // Navigate to the project details page
     const projectId = editMode.value ? editProjectId.value : result.id;
 
-    // Force refresh the store data before navigating
-    await projectStore.fetchUserProjects();
+    // For new creations, pull fresh list; for edits, keep local updated state
+    if (!editMode.value) {
+      await projectStore.fetchUserProjects();
+    }
 
     // Navigate with force flag to ensure fresh load
     await navigateTo(`/student/my-projects/${projectId}`, {
@@ -2158,7 +2204,6 @@ const submitForm = async () => {
       `Error ${editMode.value ? "updating" : "creating"} project:`,
       error,
     );
-    const toast = useToast();
     toast.add({
       title: "Error",
       description: `Failed to ${editMode.value ? "update" : "create"} project`,
@@ -2207,6 +2252,10 @@ const prevStep = () => {
   if (currentStep.value > 0) {
     currentStep.value--;
   }
+};
+
+const skipToReview = () => {
+  currentStep.value = steps.length - 1;
 };
 
 useHead({

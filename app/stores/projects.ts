@@ -1038,23 +1038,18 @@ export const useProjectStore = defineStore("projects", {
 
     // Get project by ID (works for both public and user projects)
     async getProjectById(id: string): Promise<Project | null> {
-      // First try to find in user projects
-
-      // This should handle fetch project from api for user projects as well
-
-      // let project = this.userProjects.find(
-      //   (p) => p.id === parseInt(id.toString()),
-      // );
-
-      let project = await this.fetchProjectById(id);
-      console.log("getProjectById fetched for user project:", project);
-
-      // If not found, try in all projects
-      if (!project) {
-        project = this.projects.find((p) => p.id === id);
+      // Prefer locally-updated state first (important after edits)
+      const cachedProject =
+        this.userProjects.find((p) => p.id === id) ||
+        this.projects.find((p) => p.id === id);
+      if (cachedProject) {
+        return cachedProject;
       }
 
-      return project || null;
+      // Fallback to API fetch
+      const fetchedProject = await this.fetchProjectById(id);
+      console.log("getProjectById fetched from API:", fetchedProject);
+      return fetchedProject || null;
     },
 
     // Update project status
@@ -1101,7 +1096,7 @@ export const useProjectStore = defineStore("projects", {
 
     // Update project fields
     async updateProject(
-      projectId: number,
+      projectId: string | number,
       updates: Partial<Project>,
     ): Promise<Project> {
       console.log("UpdateProject called with:", {
@@ -1116,9 +1111,25 @@ export const useProjectStore = defineStore("projects", {
       const stringProjectId =
         typeof projectId === "number" ? projectId.toString() : projectId;
 
+      // Send patch to backend first to get canonical data
+      let apiProject: Project | null = null;
+      try {
+        const response = await projectService.update(
+          stringProjectId,
+          updates as any,
+        );
+        apiProject = transformProject(response);
+      } catch (error) {
+        console.error("API update failed, aborting local update", error);
+        throw error;
+      }
+
+      // Use API response as the source of truth; fallback to updates if missing
+      const incoming = apiProject || (updates as Project);
+
       // If features are being updated, recalculate status
-      if (updates.features) {
-        updates.projectStatus = this.calculateProjectStatus(updates.features);
+      if (incoming.features) {
+        incoming.projectStatus = this.calculateProjectStatus(incoming.features);
       }
 
       let updated = false;
@@ -1130,11 +1141,11 @@ export const useProjectStore = defineStore("projects", {
       if (userProjectIndex !== -1) {
         this.userProjects[userProjectIndex] = {
           ...this.userProjects[userProjectIndex],
-          ...updates,
+          ...incoming,
         };
         // Recalculate status if not explicitly set and features exist
         if (
-          !updates.projectStatus &&
+          !incoming.projectStatus &&
           this.userProjects[userProjectIndex].features
         ) {
           this.userProjects[userProjectIndex].projectStatus =
@@ -1152,12 +1163,33 @@ export const useProjectStore = defineStore("projects", {
       if (projectIndex !== -1) {
         this.projects[projectIndex] = {
           ...this.projects[projectIndex],
-          ...updates,
+          ...incoming,
         };
         // Recalculate status if not explicitly set and features exist
-        if (!updates.projectStatus && this.projects[projectIndex].features) {
+        if (!incoming.projectStatus && this.projects[projectIndex].features) {
           this.projects[projectIndex].projectStatus =
             this.calculateProjectStatus(this.projects[projectIndex].features);
+        }
+        updated = true;
+      }
+
+      // Update in submission projects (used by teacher dashboards)
+      const submissionIndex = this.submissionProjects.findIndex(
+        (p) => p.id === stringProjectId,
+      );
+      if (submissionIndex !== -1) {
+        this.submissionProjects[submissionIndex] = {
+          ...this.submissionProjects[submissionIndex],
+          ...incoming,
+        };
+        if (
+          !incoming.projectStatus &&
+          this.submissionProjects[submissionIndex].features
+        ) {
+          this.submissionProjects[submissionIndex].projectStatus =
+            this.calculateProjectStatus(
+              this.submissionProjects[submissionIndex].features,
+            );
         }
         updated = true;
       }

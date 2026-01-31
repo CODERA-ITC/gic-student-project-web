@@ -14,61 +14,56 @@
 
         <!-- Modal Container -->
         <div
-          class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-xl shadow-2xl transform transition-all"
+          class="relative w-full max-w-sm bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/60 dark:border-slate-800/70 p-6 space-y-5 text-center"
         >
-          <div class="p-8">
-            <div class="flex items-center gap-3 mb-4">
-              <div
-                class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center"
-              >
-                <UIcon
-                  name="i-heroicons-exclamation-triangle"
-                  class="w-6 h-6 text-red-600 dark:text-red-400"
-                />
-              </div>
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                Delete Project?
-              </h3>
-            </div>
-            <p class="text-gray-600 dark:text-gray-300 mb-4">
-              Are you sure you want to delete "<span class="font-semibold">{{
-                projectTitle
-              }}</span
-              >"? This will permanently remove the project and all its data.
-            </p>
-
-            <!-- Verification Input -->
+          <div class="flex flex-col items-center gap-3">
             <div
-              class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6"
+              class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center"
             >
-              <p class="text-red-800 dark:text-red-300 font-medium mb-3">
-                To confirm, type
-                <span class="font-semibold">DELETE</span> below:
-              </p>
-              <input
-                v-model="deleteText"
-                type="text"
-                placeholder="Type DELETE to confirm"
-                class="w-full px-4 py-3 bg-white dark:bg-slate-800 border-2 border-red-300 dark:border-red-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition"
-                @keyup.enter="deleteText === 'DELETE' && handleConfirm()"
+              <UIcon
+                name="i-heroicons-exclamation-triangle"
+                class="w-6 h-6 text-red-600 dark:text-red-400"
               />
             </div>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+              Delete Project?
+            </h3>
+            <p class="text-sm text-gray-600 dark:text-gray-300">
+              This will permanently remove
+              <span class="font-semibold">"{{ projectTitle }}"</span>.
+            </p>
+          </div>
 
-            <div class="flex flex-col sm:flex-row gap-3 justify-center">
-              <ButtonsPresetButton
-                preset="cancel"
-                size="lg"
-                @click="closeModal"
-              />
-              <ButtonsPresetButton
-                preset="delete"
-                label="Delete Permanently"
-                size="lg"
-                :disabled="deleteText !== 'DELETE'"
-                :loading="isDeleting"
-                @click="handleConfirm"
-              />
-            </div>
+          <div class="space-y-3">
+            <input
+              v-model="deleteText"
+              type="text"
+              placeholder="Type DELETE to confirm"
+              class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+              @keyup.enter="deleteText === 'DELETE' && handleConfirm()"
+            />
+            <p class="text-xs text-red-500 dark:text-red-300">
+              Type DELETE to continue.
+            </p>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3">
+            <UButton
+              color="neutral"
+              block
+              variant="ghost"
+              label="Cancel"
+              @click="closeModal"
+            />
+            <UButton
+              color="error"
+              block
+              variant="solid"
+              label="Delete"
+              :disabled="deleteText !== 'DELETE'"
+              :loading="isDeleting"
+              @click="handleConfirm"
+            />
           </div>
         </div>
       </div>

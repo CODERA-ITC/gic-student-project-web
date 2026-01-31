@@ -31,7 +31,7 @@
         <NavLink
           v-for="item in navigationItems"
           :key="item.to"
-          :to="item.allow === false ? null : item.to"
+          :to="item.allow === false ? '' : item.to"
           :label="item.label"
           :is-active="isActiveRoute(item.to)"
           :badge="item.badge"
