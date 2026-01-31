@@ -30,20 +30,23 @@
         </div>
       </div>
     </UContainer>
+
+    <AuthModal v-model="showAuthModal" context="create" />
   </section>
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import { useAuthStore } from "~/stores/auth";
 import { useRouter } from "vue-router";
 
 const authStore = useAuthStore();
 const router = useRouter();
+const showAuthModal = ref(false);
 
 const handleSubmitProject = () => {
   if (!authStore.isAuthenticated) {
-    // Redirect to login page if not authenticated
-    router.push("/login");
+    showAuthModal.value = true;
   } else {
     // Redirect to create project page if authenticated
     router.push("/projects/create");

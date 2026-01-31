@@ -6,11 +6,11 @@
       :allow-close="false"
       @submit="handleSecurityQuestionsSubmit"
     />
-    <SecurityQuestionsModal
+    <!-- <SecurityQuestionsModal
       :is-open="showSecurityQuestions"
       :allow-close="false"
       @submit="handleSecurityQuestionsSubmit"
-    />
+    /> -->
 
     <!-- Loading State -->
     <div

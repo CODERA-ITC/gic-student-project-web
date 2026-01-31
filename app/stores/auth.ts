@@ -3,7 +3,6 @@
  * Handles user login, role assignment (student/teacher), and auth state
  */
 
-
 import { defineStore } from "pinia";
 import { Role } from "~/types/roles";
 import { getAvatarUrl } from "~/utils/avatar";
@@ -504,7 +503,12 @@ export const useAuthStore = defineStore("auth", {
         }
 
         return responseData.data
-          .filter((userData: any) => userData.id !== this.user?.id || userData.role !== Role.admin || userData.role !== Role.teacher  )
+          .filter(
+            (userData: any) =>
+              userData.id !== this.user?.id ||
+              userData.role !== Role.admin ||
+              userData.role !== Role.teacher,
+          )
 
           .map((userData: any) => ({
             id: userData.id,
@@ -825,27 +829,28 @@ export const useAuthStore = defineStore("auth", {
      * Logout user
      */
     logout(): void {
-      this.user = null;
-      this.isAuthenticated = false;
-      this.error = null;
-      this.needsSecurityQuestions = false;
-
       // Clear stored tokens
-      safeLocalStorage.removeItem("access_token");
-      safeLocalStorage.removeItem("refresh_token");
 
       // Best-effort revoke on backend
       try {
-        fetch("/api/users/logout", {
+        $fetch(`/api/users/logout/${this.user.id}`, {
           method: "POST",
+
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ token: null }),
         }).catch(() => {});
       } catch (e) {
         // ignore network errors on logout
       }
+
+      this.user = null;
+      this.isAuthenticated = false;
+      this.error = null;
+      // this.needsSecurityQuestions = false;
+
+      safeLocalStorage.removeItem("access_token");
+      safeLocalStorage.removeItem("refresh_token");
     },
 
     /**

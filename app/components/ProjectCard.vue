@@ -15,12 +15,7 @@
       <!-- Circular highlighted badge -->
       <template v-if="project.highlighted">
         <div class="absolute top-3 left-3 z-50">
-          <UBadge
-            icon="i-lucide-star"
-            size="md"
-            color="error"
-            variant="solid"
-          >
+          <UBadge icon="i-lucide-star" size="md" color="error" variant="solid">
             Highlighted
           </UBadge>
         </div>
@@ -167,7 +162,7 @@
 
         <!-- Description -->
         <p
-            class="text-blue-900/70 dark:text-gray-300/70 text-sm leading-relaxed line-clamp-2"
+          class="text-blue-900/70 dark:text-gray-300/70 text-sm leading-relaxed line-clamp-2"
         >
           {{ project.description }}
         </p>
@@ -371,9 +366,6 @@ const startAutoPlay = () => {
     Array.isArray(props.project.images) &&
     props.project.images.length > 1
   ) {
-    console.log(
-      `Starting carousel for project ${props.project.id} with ${props.project.images.length} images`,
-    );
     autoPlayInterval = setInterval(() => {
       // Simple increment with wrap-around
       currentImageIndex.value =
