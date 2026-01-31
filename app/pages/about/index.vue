@@ -9,11 +9,10 @@
           <h1
             class="text-4xl lg:text-6xl font-semibold tracking-tight leading-tight text-blue-900 dark:text-white"
           >
-            About GIC Student Portal
+            {{ t("aboutPage.heroTitle") }}
           </h1>
           <p class="text-xl text-blue-900/80 dark:text-gray-300">
-            Celebrating innovation, creativity, and collaboration in the GIC
-            program
+            {{ t("aboutPage.heroSubtitle") }}
           </p>
         </div>
       </UContainer>
@@ -26,7 +25,7 @@
         <div class="space-y-6">
           <div class="space-y-3">
             <h2 class="text-4xl font-semibold text-gray-900 dark:text-white">
-              Empowering Student Innovators
+              {{ t("aboutPage.missionTitle") }}
             </h2>
             <div
               class="h-1 w-20 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full"
@@ -72,13 +71,13 @@
       <div class="space-y-12">
         <div class="text-center space-y-3">
           <h2 class="text-4xl font-semibold text-gray-900 dark:text-white">
-            What We Believe In
+            {{ t("aboutPage.valuesTitle") }}
           </h2>
           <div
             class="h-1 w-20 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full mx-auto"
           ></div>
           <p class="text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
-            Our core values drive everything we do
+            {{ t("aboutPage.valuesSubtitle") }}
           </p>
         </div>
 
@@ -109,13 +108,13 @@
       <div class="space-y-12">
         <div class="text-center space-y-3">
           <h2 class="text-4xl font-semibold text-gray-900 dark:text-white">
-            Built for Students
+            {{ t("aboutPage.featuresTitle") }}
           </h2>
           <div
             class="h-1 w-20 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full mx-auto"
           ></div>
           <p class="text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
-            Everything you need to showcase your work and connect with others
+            {{ t("aboutPage.featuresSubtitle") }}
           </p>
         </div>
 
@@ -150,10 +149,10 @@
       >
         <div class="text-center mb-8">
           <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-2">
-            Our Impact
+            {{ t("aboutPage.impactTitle") }}
           </h2>
           <p class="text-gray-700 dark:text-gray-300">
-            Growing together as a community
+            {{ t("aboutPage.impactSubtitle") }}
           </p>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -164,7 +163,7 @@
               {{ stat.value }}
             </p>
             <p class="text-gray-700 dark:text-gray-300 font-medium">
-              {{ stat.label }}
+              {{ t(stat.label) }}
             </p>
           </div>
         </div>
@@ -174,13 +173,13 @@
       <div class="space-y-12">
         <div class="text-center space-y-3">
           <h2 class="text-4xl font-semibold text-gray-900 dark:text-white">
-            Meet Our Team
+            {{ t("aboutPage.teamTitle") }}
           </h2>
           <div
             class="h-1 w-20 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full mx-auto"
           ></div>
           <p class="text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
-            The passionate people behind the platform
+            {{ t("aboutPage.teamSubtitle") }}
           </p>
         </div>
 
@@ -218,13 +217,12 @@
           class="text-center text-gray-900 dark:text-white space-y-8 max-w-2xl mx-auto"
         >
           <h2 class="text-4xl lg:text-5xl font-semibold">
-            Ready to Showcase Your Innovation?
+            {{ t("aboutPage.ctaTitle") }}
           </h2>
           <p
             class="text-xl text-gray-700 dark:text-white dark:opacity-90 leading-relaxed"
           >
-            Join our community of innovators and showcase your amazing projects.
-            Get feedback, build your portfolio, and inspire others.
+            {{ t("aboutPage.ctaSubtitle") }}
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
             <ButtonsPresetButton
@@ -246,6 +244,8 @@
 </template>
 
 <script setup>
+const { t } = useI18n();
+
 const coreValues = [
   {
     title: "Innovation",
@@ -333,20 +333,19 @@ const teamMembers = [
 ];
 
 const statistics = [
-  { value: "500+", label: "Projects" },
-  { value: "200+", label: "Students" },
-  { value: "8", label: "Semesters" },
-  { value: "4.8/5", label: "Rating" },
+  { value: "500+", label: "stats.projects" },
+  { value: "200+", label: "stats.students" },
+  { value: "8", label: "stats.semesters" },
+  { value: "4.8/5", label: "aboutPage.rating" },
 ];
 
-useHead({
-  title: "About - GIC Student Portal",
+useHead(() => ({
+  title: `${t("aboutPage.heroTitle")} - GIC Student Portal`,
   meta: [
     {
       name: "description",
-      content:
-        "Learn about GIC Student Portal and our mission to celebrate student innovation",
+      content: t("aboutPage.heroSubtitle"),
     },
   ],
-});
+}));
 </script>

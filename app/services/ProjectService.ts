@@ -153,9 +153,11 @@ export class ProjectService {
    */
   async fetchAllSubmissions(): Promise<any> {
     try {
-      return await $fetch("/api/courses/submissions", {
+      const authStore = useAuthStore();
+
+      // Use centralized auth request to ensure token refresh and header
+      return await authStore.makeAuthRequest("/api/courses/submissions", {
         method: "GET",
-        headers: await this.getAuthHeaders(),
       });
     } catch (error) {
       console.error("ProjectService: Failed to fetch submissions", error);
@@ -279,8 +281,11 @@ export class ProjectService {
    */
   async rejectProject(projectId: string): Promise<any> {
     try {
-      const response = await $fetch(`${this.baseUrl}/reject/${projectId}`, {
+      const response = await $fetch(`${this.baseUrl}/${projectId}`, {
         method: "PATCH",
+        body: {
+          status: SubmissionStatus.REJECTED,
+        },
         headers: await this.getAuthHeaders(),
       });
       return response;

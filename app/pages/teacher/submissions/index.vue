@@ -15,31 +15,47 @@
 
     <!-- Manage Projects Content -->
     <div v-else>
-      <!-- Header Section -->
-      <div
-        class="py-16 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900 border-b border-blue-700/30 dark:border-slate-700"
-      >
-        <div class="w-full max-w-(--ui-container) mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex items-center gap-4 mb-4">
-            <div class="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-lg p-1 hover:bg-white/20 dark:hover:bg-white/10 transition-colors">
-              <NuxtLink
-                to="/teacher/dashboard"
-                class="inline-flex items-center font-medium justify-center gap-2 rounded-md transition-all duration-300 focus:outline-none touch-manipulation select-none active:scale-95 text-indigo-900 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/20 hover:cursor-pointer px-4 py-2.5 text-base min-h-[44px] !text-white"
-              >
-                <UIcon name="i-heroicons-arrow-left" class="w-5 h-5" />
-                <span class="truncate">Back</span>
-              </NuxtLink>
+      <!-- Header Section (clean card style) -->
+      <div class="py-14">
+        <UContainer>
+          <div
+            class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/15
+                   bg-white/90 dark:bg-slate-900/90 shadow-2xl px-8 py-10"
+          >
+            <div
+              class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.08),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(79,70,229,0.08),transparent_30%)] pointer-events-none"
+              aria-hidden="true"
+            ></div>
+
+            <div class="relative space-y-3">
+              <nav class="flex items-center flex-wrap gap-1 text-sm text-slate-600 dark:text-slate-300">
+                <NuxtLink
+                  to="/"
+                  class="hover:text-blue-600 dark:hover:text-blue-300 transition-colors"
+                >
+                  {{ t("home") }}
+                </NuxtLink>
+                <span class="text-slate-400 dark:text-slate-500">/</span>
+                <NuxtLink
+                  to="/teacher/dashboard"
+                  class="hover:text-blue-600 dark:hover:text-blue-300 transition-colors"
+                >
+                  {{ t("nav.teacherDashboard") }}
+                </NuxtLink>
+                <span class="text-slate-400 dark:text-slate-500">/</span>
+                <span class="text-slate-900 dark:text-white font-semibold">
+                  {{ t("nav.reviewSubmissions") }}
+                </span>
+              </nav>
+              <h1 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
+                {{ t("nav.reviewSubmissions") }}
+              </h1>
+              <p class="text-slate-700 dark:text-slate-300">
+                {{ t("teacherSubmissions.subtitle") }}
+              </p>
             </div>
           </div>
-          <div class="space-y-2">
-            <div class="flex items-center gap-3">
-              <h1 class="text-4xl font-black text-white">Manage Projects</h1>
-            </div>
-            <p class="text-blue-100 dark:text-slate-300">
-              Search, filter, and manage all student project submissions
-            </p>
-          </div>
-        </div>
+        </UContainer>
       </div>
 
       <!-- Main Content -->
@@ -520,6 +536,7 @@ import { useAuthStore } from "~/stores/auth";
 import { useProjectStore } from "~/stores/projects";
 import { getAvatarUrl } from "~/utils/avatar";
 import ButtonsPresetButton from "~/components/buttons/PresetButton.vue";
+const { t } = useI18n();
 
 const projectsStore = useProjectStore();
 

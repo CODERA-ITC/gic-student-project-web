@@ -10,17 +10,8 @@
       </div>
     </div>
 
-    <!-- Error State// Stats for teacher dashboard - computed from real data
-const stats = computed(() => {
-  // Get submissions from store
-  const submissions = projectsStore.submissionProjects || [];
-  const totalSubmissions = submissions.length;
-  const pendingReview = submissions.filter(
-    (s) => s.submissionStatus === "pending",
-  ).length;
-  const acceptedProjects = submissions.filter(
-    (s) => s.submissionStatus === "accepted",
-  ).length;iv
+    <!-- Error State -->
+    <div
       v-else-if="error"
       class="min-h-screen flex items-center justify-center"
     >
@@ -60,21 +51,39 @@ const stats = computed(() => {
     </div>
 
     <!-- Dashboard Content -->
-    <div v-else-if="!isLoading && teacher.name">
+    <div v-else-if="teacher.name">
       <!-- Header Section -->
-      <div
-        class="py-16 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900 border-b border-blue-700/30 dark:border-slate-700"
-      >
+      <div class="py-14">
         <UContainer>
-          <div class="space-y-2">
-            <div class="flex items-center gap-3">
-              <h1 class="text-4xl font-black text-white">
-                {{ GreetMessage }}, <span class="text-blue-200">{{ teacher.name }}</span>
+          <div
+            class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/15
+                   bg-white/90 dark:bg-slate-900/90 shadow-2xl px-8 py-10"
+          >
+            <div
+              class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.08),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(79,70,229,0.08),transparent_30%)] pointer-events-none"
+              aria-hidden="true"
+            ></div>
+
+            <div class="relative space-y-3">
+              <nav class="flex items-center flex-wrap gap-1 text-sm text-slate-600 dark:text-slate-300">
+                <NuxtLink
+                  to="/"
+                  class="hover:text-blue-600 dark:hover:text-blue-300 transition-colors"
+                >
+                  {{ t("home") }}
+                </NuxtLink>
+                <span class="text-slate-400 dark:text-slate-500">/</span>
+                <span class="text-slate-900 dark:text-white font-semibold">
+                  {{ t("nav.teacherDashboard") }}
+                </span>
+              </nav>
+              <h1 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
+                {{ GreetMessage }}, <span class="text-blue-600 dark:text-blue-300">{{ teacher.name }} 👋</span>
               </h1>
+              <p class="text-slate-700 dark:text-slate-300">
+                {{ t("teacherDashboard.subtitle") }}
+              </p>
             </div>
-            <p class="text-blue-100 dark:text-slate-300">
-              Manage student projects and review submissions
-            </p>
           </div>
         </UContainer>
       </div>
@@ -84,10 +93,10 @@ const stats = computed(() => {
         <!-- Activity Overview Title -->
         <div class="mb-6">
           <h2 class="text-xl font-semibold text-black dark:text-white">
-            Activity Overview
+            {{ t("teacherDashboard.activityTitle") }}
           </h2>
           <p class="text-xs text-gray-600 dark:text-slate-400 mt-1">
-            Track your project submissions and review progress
+            {{ t("teacherDashboard.activitySubtitle") }}
           </p>
         </div>
 
@@ -113,12 +122,10 @@ const stats = computed(() => {
             <div
               class="border-l border-gray-400 dark:border-gray-500 pl-8 relative before:content-[''] before:absolute before:top-0 before:left-0 before:w-2 before:h-1 before:border-t before:border-gray-400 dark:before:border-gray-500 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-2 after:h-1 after:border-b after:border-gray-400 dark:after:border-gray-500"
             >
-              <!-- Value and Graph on same line -->
               <div class="flex items-start justify-between gap-4 mb-3">
                 <div class="text-3xl font-semibold text-black dark:text-white">
                   {{ stat.value }}
                 </div>
-                <!-- Sparkline Chart -->
                 <div class="w-32 h-12 flex items-center justify-center">
                   <SparklineChart
                     :data="stat.chartData"
@@ -137,7 +144,6 @@ const stats = computed(() => {
                 </div>
               </div>
 
-              <!-- Change Info below -->
               <div class="flex items-center gap-1">
                 <UIcon
                   :name="
@@ -174,7 +180,7 @@ const stats = computed(() => {
               </p>
             </div>
             <NuxtLink
-              to="/teacher/submissions"
+              to="/projects"
               class="flex items-center gap-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
             >
               <span>View All Projects</span>
@@ -187,11 +193,9 @@ const stats = computed(() => {
             <div
               v-for="project in recentProjects"
               :key="project.id"
-              class="bg-white dark:bg-slate-800 rounded-xl border-1 border-gray-200 dark:border-slate-700/50"
+              class="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700/50"
             >
-              <!-- Card Content -->
               <div class="p-6">
-                <!-- Header: Status Badge -->
                 <div class="flex justify-end mb-3">
                   <span
                     :class="getStatusBadgeClass(project.submissionStatus || project.projectStatus)"
@@ -201,10 +205,9 @@ const stats = computed(() => {
                   </span>
                 </div>
 
-                <!-- Student Info -->
                 <div class="flex items-center gap-3 mb-4">
                   <div
-                    v-if="project.author.avatar"
+                    v-if="project.author?.avatar"
                     class="w-12 h-12 rounded-full overflow-hidden shrink-0 ring-2 ring-gray-100 dark:ring-slate-700"
                   >
                     <img
@@ -213,14 +216,6 @@ const stats = computed(() => {
                       class="w-full h-full object-cover"
                     />
                   </div>
-                  <!-- <div
-                    v-else
-                    class="w-12 h-12 rounded-full bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center shrink-0 ring-2 ring-gray-100 dark:ring-slate-700"
-                  >
-                    <span class="text-sm font-semibold text-white">{{
-                      project.author.name
-                    }}</span>
-                  </div> -->
                   <div class="flex-1 min-w-0">
                     <div
                       class="font-semibold text-black dark:text-white text-sm truncate"
@@ -235,7 +230,6 @@ const stats = computed(() => {
                   </div>
                 </div>
 
-                <!-- Project Title & Description -->
                 <div class="mb-4">
                   <h3
                     class="font-semibold text-base text-black dark:text-white mb-2 line-clamp-1"
@@ -249,7 +243,6 @@ const stats = computed(() => {
                   </p>
                 </div>
 
-                <!-- Meta Info -->
                 <div
                   class="flex items-center gap-4 mb-4 text-xs text-gray-500 dark:text-slate-400"
                 >
@@ -257,18 +250,12 @@ const stats = computed(() => {
                     <UIcon name="i-heroicons-tag" class="w-4 h-4" />
                     <span>{{ project.category }}</span>
                   </div>
-                  <!-- <div class="flex items-center gap-1.5">
-                    <UIcon name="i-heroicons-calendar" class="w-4 h-4" />
-                    <span>{{ project.generation }}</span>
-                  </div> -->
                 </div>
 
-                <!-- Divider -->
                 <div
                   class="border-t border-gray-100 dark:border-slate-700 mb-4"
                 ></div>
 
-                <!-- Footer: Date and Action -->
                 <div class="flex items-center justify-between gap-3">
                   <div
                     class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-slate-400"
@@ -276,16 +263,6 @@ const stats = computed(() => {
                     <UIcon name="i-heroicons-clock" class="w-4 h-4" />
                     <span>{{ project.updatedAt }}</span>
                   </div>
-                  <!-- <ButtonsPresetButton
-                    v-if="project.projectStatus !== 'pending'"
-                    preset="primary"
-                    label="View"
-                    icon="i-heroicons-arrow-right"
-                    size="xs"
-                    :to="'/projects/' + project.id"
-                  /> -->
-
-
                   <ButtonsPresetButton
                     preset="primary"
                     label="View"
@@ -298,7 +275,6 @@ const stats = computed(() => {
             </div>
           </div>
 
-          <!-- Empty State -->
           <div
             v-if="recentProjects.length === 0"
             class="text-center py-12 px-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg"
@@ -322,12 +298,14 @@ const stats = computed(() => {
 
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useAuthStore } from "~/stores/auth";
 import { useProjectStore } from "~/stores/projects";
 import ButtonsPresetButton from "~/components/buttons/PresetButton.vue";
 import SparklineChart from "~/components/SparklineChart.vue";
-import { getGreetingByTimeZone } from "#imports";
+import { getGreetingByTimeZone, useToast } from "#imports";
 
+const { t } = useI18n();
 const authStore = useAuthStore();
 const projectsStore = useProjectStore();
 
@@ -335,21 +313,17 @@ definePageMeta({
   middleware: ["auth", "teacher"],
 });
 
-// Local loading state
 const isLoading = ref(true);
 const error = ref("");
 const GreetMessage = getGreetingByTimeZone("Asia/Phnom_Penh");
 
 const submissions = computed(() => projectsStore.submissionProjects);
 
-// Fetch submissions on mount
 onMounted(async () => {
   try {
     isLoading.value = true;
 
-    // Wait for auth store to be ready
     if (authStore.isLoading) {
-      console.log("⏳ Waiting for authentication to complete...");
       await new Promise((resolve) => {
         const unwatch = watch(
           () => authStore.isLoading,
@@ -363,35 +337,24 @@ onMounted(async () => {
       });
     }
 
-    // Ensure user is authenticated
     if (!authStore.isAuthenticated || !authStore.currentUser) {
-      console.warn("⚠️ User not authenticated, redirecting...");
       await navigateTo("/login");
       return;
     }
 
-    console.log("🔄 Fetching submissions data...");
-
-    // Fetch all submissions with error handling
-    // const submissions = await projectsStore.fetchAllSubmissions();
-
-    if(!projectsStore.submissionProjects || projectsStore.submissionProjects.length === 0) {
+    if (
+      !projectsStore.submissionProjects ||
+      projectsStore.submissionProjects.length === 0
+    ) {
       await projectsStore.fetchAllSubmissions();
     }
-
-    if (!projectsStore.submissionProjects || projectsStore.submissionProjects.length === 0) {
-      console.log("ℹ️ No submissions found");
-    } else {
-      console.log(`✅ Loaded ${projectsStore.submissionProjects.length} submissions successfully`);
-    }
-  } catch (error) {
-    console.error("❌ Error loading dashboard data:", error);
-
-    // Show error toast to user
+  } catch (err) {
+    console.error("Error loading dashboard data:", err);
+    error.value = "Unable to load dashboard data. Please refresh.";
     const toast = useToast();
     toast.add({
-      title: "Error Loading Dashboard",
-      description: "Failed to load submissions. Please refresh the page.",
+      title: "Error",
+      description: "Failed to load submissions.",
       color: "error",
     });
   } finally {
@@ -399,161 +362,59 @@ onMounted(async () => {
   }
 });
 
-// Get teacher info from auth store
 const teacher = computed(() => ({
   name: authStore.currentUser?.name || "Teacher",
 }));
 
-// Transform projects from store to match teacher dashboard structure
-// const projects = computed(() => {
-//   return projectsStore.projects.map((project) => {
-//     // Generate email from name
-//     const emailName = project.author.name.toLowerCase().replace(" ", ".");
-//     const studentEmail = `${emailName}@student.edu`; // use as fallback email
-
-//     // Generate initials
-//     const nameParts = project.author.name.split(" ");
-//     const studentInitials = nameParts
-//       .map((part) => part.charAt(0))
-//       .join("")
-//       .toUpperCase();
-
-//     // Map categories from projects.ts to teacher dashboard categories
-//     const categoryMapping = {
-//       "Artificial Intelligence": "AI/ML",
-//       "Mobile Development": "Mobile App",
-//       "Web Development": "Web Development",
-//       "Environmental Tech": "Other",
-//       "Data Science": "Data Science",
-//       IoT: "Other",
-//       Blockchain: "Other",
-//       "Augmented Reality": "Mobile App",
-//       "Machine Learning": "AI/ML",
-//       "Data Analytics": "Data Science",
-//       EdTech: "Other",
-//       FinTech: "Other",
-//       APIs: "Web Development",
-//       "Virtual Reality": "Game Development",
-//       "Smart Cities": "Other",
-//     };
-
-//     const mappedCategory = categoryMapping[project.category] || "Other";
-
-//     // Map semester to generation
-//     const generationMapping = {
-//       "Fall 2024": "2024",
-//       "Spring 2025": "2025",
-//     };
-
-//     const mappedGeneration = generationMapping[project.semester] || "2024";
-
-//     // Map status - show visibility state for submissions
-//     const statusMapping = {
-//       pending: "pending",
-//       accepted: "completed",
-//       completed: "completed",
-//     };
-
-//     const mappedStatus = statusMapping[project.visibility] || "pending";
-
-//     // Calculate due date (add some days to createdAt)
-//     const createdDate = new Date(project.createdAt);
-//     const dueDate = new Date(createdDate);
-//     dueDate.setDate(dueDate.getDate() + 60); // Add 60 days
-//     const dueDateString = dueDate.toISOString().split("T")[0];
-
-//     // Check if overdue
-//     const currentDate = new Date();
-//     const isOverdue = currentDate > dueDate;
-
-//     return {
-//       id: project.id,
-//       studentName: project.author.name,
-//       studentEmail: project.author.email || studentEmail,
-//       studentInitials: studentInitials,
-//       studentAvatar: project.author.avatar,
-//       title: project.name,
-//       description: project.description,
-//       category: mappedCategory,
-//       generation: mappedGeneration,
-//       status: mappedStatus,
-//       submittedDate: project.createdAt,
-//       dueDate: dueDateString,
-//       isOverdue: isOverdue,
-//     };
-//   });
-// });
-
-// Stats for teacher dashboard - computed from real data
 const stats = computed(() => {
-  // Get submissions from store
-  const submissions = projectsStore.submissionProjects || [];
-  const totalSubmissions = submissions.length;
-  const pendingReview = submissions.filter(
-    (s) => s.submissionStatus === "pending",
-  ).length;
-  const acceptedProjects = submissions.filter(
-    (s) => s.submissionStatus === "accepted",
-  ).length;
+  const data = projectsStore.submissionProjects || [];
+  const totalSubmissions = data.length;
+  const pendingReview = data.filter((s) => s.submissionStatus === "pending")
+    .length;
+  const acceptedProjects = data.filter((s) => s.submissionStatus === "accepted")
+    .length;
 
-  // Generate chart data based on actual submission dates over last 7 days
-  const generateChartData = (currentValue, filterFn = null) => {
-    const dataToAnalyze = filterFn ? submissions.filter(filterFn) : submissions;
+  const generateChartData = (filterFn = null) => {
+    const items = filterFn ? data.filter(filterFn) : data;
+    if (items.length === 0) return [0, 0, 0, 0, 0, 0, 0];
 
-    // If no data, return zeros
-    if (dataToAnalyze.length === 0) {
-      return [0, 0, 0, 0, 0, 0, 0];
-    }
-
-    // Get last 7 days
     const today = new Date();
-    today.setHours(23, 59, 59, 999); // End of today
+    today.setHours(23, 59, 59, 999);
     const last7Days = [];
     for (let i = 6; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
-      date.setHours(23, 59, 59, 999); // End of each day
+      date.setHours(23, 59, 59, 999);
       last7Days.push(date);
     }
 
-    // Count cumulative submissions created up to and including each day
-    const chartData = last7Days.map((targetDate) => {
-      return dataToAnalyze.filter((submission) => {
+    return last7Days.map((targetDate) =>
+      items.filter((submission) => {
         if (!submission.createdAt) return false;
         const submissionDate = new Date(submission.createdAt);
-        // Include all submissions created on or before this date
         return submissionDate <= targetDate;
-      }).length;
-    });
-
-    return chartData;
+      }).length,
+    );
   };
 
-  // Generate chart data for each stat
-  const totalSubmissionsChart = generateChartData(totalSubmissions);
-  const pendingReviewChart = generateChartData(
-    pendingReview,
-    (s) => s.submissionStatus === "pending",
-  );
-  const acceptedProjectsChart = generateChartData(
-    acceptedProjects,
+  const change = (chart) => {
+    if (chart.length < 2) return { value: 0, percentage: 0 };
+    const current = chart.at(-1);
+    const previous = chart.at(-2);
+    const diff = current - previous;
+    const percentage = previous > 0 ? ((diff / previous) * 100).toFixed(1) : 0;
+    return { value: diff, percentage };
+  };
+
+  const totalChart = generateChartData();
+  const pendingChart = generateChartData((s) => s.submissionStatus === "pending");
+  const acceptedChart = generateChartData(
     (s) => s.submissionStatus === "accepted",
   );
 
-  // Calculate changes from previous period (comparing last data point to second-to-last)
-  const calculateChange = (chartData) => {
-    if (chartData.length < 2) return { value: 0, percentage: 0 };
-    const current = chartData[chartData.length - 1];
-    const previous = chartData[chartData.length - 2];
-    const change = current - previous;
-    const percentage =
-      previous > 0 ? ((change / previous) * 100).toFixed(1) : 0;
-    return { value: change, percentage };
-  };
-
-  const totalChange = calculateChange(totalSubmissionsChart);
-  const pendingChange = calculateChange(pendingReviewChart);
-  const acceptedChange = calculateChange(acceptedProjectsChart);
+  const totalChange = change(totalChart);
+  const pendingChange = change(pendingChart);
+  const acceptedChange = change(acceptedChart);
 
   return [
     {
@@ -565,7 +426,7 @@ const stats = computed(() => {
           ? `${totalChange.value > 0 ? "+" : ""}${totalChange.value} (${totalChange.percentage}%) from last period`
           : "No change from last period",
       changeColor: totalChange.value >= 0 ? "positive" : "negative",
-      chartData: totalSubmissionsChart,
+      chartData: totalChart,
     },
     {
       label: "Pending Review",
@@ -576,7 +437,7 @@ const stats = computed(() => {
           ? `${pendingChange.value > 0 ? "+" : ""}${pendingChange.value} (${pendingChange.percentage}%) from last period`
           : "No change from last period",
       changeColor: pendingChange.value > 0 ? "negative" : "positive",
-      chartData: pendingReviewChart,
+      chartData: pendingChart,
     },
     {
       label: "Accepted",
@@ -587,45 +448,32 @@ const stats = computed(() => {
           ? `${acceptedChange.value > 0 ? "+" : ""}${acceptedChange.value} (${acceptedChange.percentage}%) from last period`
           : "No change from last period",
       changeColor: acceptedChange.value >= 0 ? "positive" : "negative",
-      chartData: acceptedProjectsChart,
+      chartData: acceptedChart,
     },
   ];
 });
 
-// Recent projects - show only 6 most recent pending projects
-const recentProjects = computed(() => {
-  // Filter for pending projects, sort by submitted date (most recent first), and take first 6
-  return submissions.value
-    .filter(project => (project.submissionStatus || project.projectStatus) === 'pending')
+const recentProjects = computed(() =>
+  (submissions.value || [])
+    .filter(
+      (project) =>
+        (project.submissionStatus || project.projectStatus) === "pending",
+    )
     .slice()
-    .sort((a, b) => {
-      return new Date(b.createdAt) - new Date(a.createdAt);
-    })
-    .slice(0, 6);
-});
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 6),
+);
 
-// Action methods for project buttons
-const viewProject = (project) => {
-  // TODO: Implement view project functionality
-  console.log("View project:", project);
-};
-
-const reviewProject = (project) => {
-  // TODO: Implement review project functionality
-  console.log("Review project:", project);
-};
-
-// Helper function for status badge classes
 const getStatusBadgeClass = (status) => {
   switch (status) {
-    case 'pending':
-      return 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
-    case 'accepted':
-      return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
-    case 'rejected':
-      return 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400';
+    case "pending":
+      return "bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400";
+    case "accepted":
+      return "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400";
+    case "rejected":
+      return "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400";
     default:
-      return 'bg-gray-50 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400';
+      return "bg-gray-50 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400";
   }
 };
 </script>

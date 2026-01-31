@@ -1,39 +1,26 @@
 <template>
   <section
-    class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
+    class="py-20 px-4 sm:px-6 lg:px-8 bg-white dark:bg-neutral-900 border-t border-gray-200 dark:border-neutral-800"
   >
     <UContainer>
-      <section id="highlighted-projects">
+      <section id="popular-projects">
         <div class="flex justify-between items-center mb-12">
           <div>
             <h2
               class="text-4xl font-semibold text-gray-900 dark:text-white mb-2"
             >
-              {{ t("homePage.highlightedTitle") }}
+              {{ t("homePage.popularTitle") }}
             </h2>
             <p class="text-gray-700 dark:text-gray-300">
-              {{ t("homePage.highlightedSubtitle") }}
+              {{ t("homePage.popularSubtitle") }}
             </p>
           </div>
-          <!-- <NuxtLink to="/projects">
-          <UButton
-            variant="outline"
-            icon="i-heroicons-arrow-right"
-            icon-trailing
-            color="primary"
-          >
-            View All
-          </UButton>
-        </NuxtLink> -->
-
           <ButtonsPresetButton preset="viewAll" to="/projects" size="sm" />
         </div>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <!-- use the store instead! -->
-
           <ProjectCard
-            v-for="project in featuredProjects"
+            v-for="project in popularProjects"
             :key="project.id"
             :project="project"
             :liked-projects="projectStore.likedProjects"
@@ -53,21 +40,22 @@ const { t } = useI18n();
 const projectStore = useProjectStore();
 const authStore = useAuthStore();
 
-const featuredProjects = computed(() => projectStore.getHighlightedProjects);
-
 const showAuthModal = ref(false);
 const authModalContext = ref("like"); // 'like' or 'create'
 
+const popularProjects = computed(() =>
+  projectStore.getPopularProjects ? projectStore.getPopularProjects(6) : [],
+);
+
 onMounted(async () => {
-  await Promise.all([
-    projectStore.fetchHighlightedProjects(),
-    projectStore.loadUserLikedProjects(),
-  ]);
+  if (!projectStore.projects.length) {
+    await projectStore.fetchProjects();
+  }
+  await projectStore.loadUserLikedProjects();
 });
 
 const toggleLike = async (projectId) => {
   if (!authStore.isAuthenticated) {
-    // Show authentication modal for like action
     authModalContext.value = "like";
     showAuthModal.value = true;
     return;
@@ -76,7 +64,7 @@ const toggleLike = async (projectId) => {
   const wasLiked = projectStore.isProjectLiked(projectId);
   const result = await projectStore.likeProject(projectId);
   if (result) {
-    const card = featuredProjects.value.find((p) => p.id === projectId);
+    const card = popularProjects.value.find((p) => p.id === projectId);
     if (card) {
       card.likes = (card.likes || 0) + (wasLiked ? -1 : 1);
       if (card.likes < 0) card.likes = 0;

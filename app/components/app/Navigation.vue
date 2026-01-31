@@ -174,7 +174,7 @@
                 @click="mobileMenuOpen = false"
               >
                 <UIcon name="i-heroicons-chart-bar-square-20-solid" />
-                Dashboard
+                {{ t("nav.dashboard") }}
               </NuxtLink>
               <NuxtLink
                 to="/student/my-projects"
@@ -182,7 +182,7 @@
                 @click="mobileMenuOpen = false"
               >
                 <UIcon name="i-heroicons-folder-20-solid" />
-                My Projects
+                {{ t("nav.myProjects") }}
               </NuxtLink>
               <NuxtLink
                 to="/student/favorites"
@@ -190,7 +190,7 @@
                 @click="mobileMenuOpen = false"
               >
                 <UIcon name="i-heroicons-heart-20-solid" />
-                Favorites
+                {{ t("nav.favorites") }}
               </NuxtLink>
             </template>
 
@@ -202,7 +202,7 @@
                 @click="mobileMenuOpen = false"
               >
                 <UIcon name="i-heroicons-chart-bar-square-20-solid" />
-                Dashboard
+                {{ t("nav.dashboard") }}
               </NuxtLink>
               <NuxtLink
                 to="/teacher/submissions"
@@ -210,7 +210,7 @@
                 @click="mobileMenuOpen = false"
               >
                 <UIcon name="i-heroicons-inbox-stack-20-solid" />
-                Review Submissions
+                {{ t("nav.reviewSubmissions") }}
               </NuxtLink>
               <NuxtLink
                 to="/teacher/favorites"
@@ -218,7 +218,7 @@
                 @click="mobileMenuOpen = false"
               >
                 <UIcon name="i-heroicons-heart-20-solid" />
-                Favorites
+                {{ t("nav.favorites") }}
               </NuxtLink>
             </template>
 
@@ -230,14 +230,14 @@
               @click="mobileMenuOpen = false"
             >
               <UIcon name="i-heroicons-cog-6-tooth-20-solid" />
-              Profile Settings
+              {{ t("nav.profileSettings") }}
             </NuxtLink>
             <button
               class="w-full flex items-center gap-2 px-4 py-3 rounded-lg hover:bg-red-50 dark:hover:bg-red-950 text-red-600 dark:text-red-400 transition-colors"
               @click="handleLogout"
             >
               <UIcon name="i-heroicons-arrow-left-on-rectangle-20-solid" />
-              Sign Out
+              {{ t("nav.signOut") }}
             </button>
           </template>
           <template v-else>

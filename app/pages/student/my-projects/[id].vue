@@ -100,7 +100,7 @@
 
           <!-- Submit button for draft/private projects -->
           <UButton
-            v-if="canSubmit"
+            v-if="canSubmit && project.submissionStatus"
             @click="submitProject"
             :loading="isSubmitting"
             class="w-full justify-center rounded-lg bg-blue-900 hover:bg-blue-800 text-white"
@@ -220,6 +220,12 @@ const route = useRoute();
 const projectStore = useProjectStore();
 const authStore = useAuthStore();
 const projectId = route.params.id as string;
+const userFullName = computed(() => {
+  const user = authStore.user;
+  if (!user) return "";
+  if (user.name) return user.name.toLowerCase();
+  return `${user.firstName || ""} ${user.lastName || ""}`.trim().toLowerCase();
+});
 
 // Student-specific reactive variables
 const project = ref(null);
@@ -232,30 +238,21 @@ const isDeleting = ref(false);
 // Load user's liked projects and project data when component mounts
 onMounted(async () => {
   try {
-    console.log("=== LOADING PROJECT ===", projectId);
-    console.log("Store state:", {
-      totalProjects: projectStore.projects.length,
-      totalUserProjects: projectStore.userProjects.length,
-      projectIds: projectStore.projects.map((p) => p.id),
-      userProjectIds: projectStore.userProjects.map((p) => p.id),
-    });
+    // ensure auth restored before fetching ownership-dependent data
+    if (!authStore.isAuthenticated) {
+      await authStore.restoreAuth();
+    }
 
     // Load liked projects first
     await projectStore.loadUserLikedProjects();
+    // Ensure user-owned projects are loaded for ownership check
+    await projectStore.fetchUserProjects();
 
     let projectData = await projectStore.getProjectById(projectId);
 
     // If project still not found after fetch, something is wrong
     if (!projectData) {
       console.error("Project not found after fetch:", projectId);
-      console.error(
-        "Available project IDs:",
-        projectStore.projects.map((p) => p.id),
-      );
-      console.error(
-        "Available user project IDs:",
-        projectStore.userProjects.map((p) => p.id),
-      );
 
       throw createError({
         statusCode: 404,
@@ -287,8 +284,18 @@ const isOwner = computed(() => {
 
   // ensure user is either author or member
   return (
-    project.value.author.id === authStore.user.id ||
-    project.value.members?.some((member) => member.id === authStore.user.id)
+    project.value.author?.id === authStore.user.id ||
+    project.value.members?.some((member) => {
+      if (!member) return false;
+      const memberName = member.name?.toLowerCase?.() || "";
+      const memberEmail = member.email?.toLowerCase?.();
+      return (
+        (member.id && member.id === authStore.user.id) ||
+        (memberEmail &&
+          memberEmail === authStore.user.email?.toLowerCase?.()) ||
+        (memberName && userFullName.value && memberName === userFullName.value)
+      );
+    })
   );
 });
 
@@ -318,10 +325,13 @@ const showAuthModal = ref(false);
 const canSubmit = computed(() => {
   if (!isOwner.value || !project.value) return false;
 
-  // Only show submit button for draft projects
-  // Default to draft if visibility is not set (will be updated via API later)
-  const status = project.value.submissionStatus || "draft";
-  return status === "draft";
+  // Only show submit button for draft projects (or when explicitly marked draft)
+  const status =
+    project.value.submissionStatus ||
+    project.value.status ||
+    project.value.visibility ||
+    "draft";
+  return status.toLowerCase?.() === "draft";
 });
 
 // Get submission status mqessage

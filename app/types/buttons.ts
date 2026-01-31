@@ -33,6 +33,7 @@ export type ButtonSize = "xs" | "sm" | "md" | "lg" | "xl";
  */
 export interface ButtonConfig {
   label: string;
+  labelKey?: string;
   icon?: string;
   color: ButtonColor;
   variant: ButtonVariant;
@@ -194,6 +195,7 @@ export const BUTTON_PRESETS = {
   // Primary Action Buttons
   exploreProjects: {
     label: "Explore Projects",
+    labelKey: "buttons.exploreProjects",
     icon: "i-heroicons-rocket-launch",
     color: "primary" as ButtonColor,
     variant: "solid" as ButtonVariant,
@@ -201,6 +203,7 @@ export const BUTTON_PRESETS = {
   },
   exploreHighlightedProjects: {
     label: "Highlighted Projects",
+    labelKey: "buttons.exploreHighlightedProjects",
     icon: "i-heroicons-rocket-launch",
     color: "primary" as ButtonColor,
     variant: "solid" as ButtonVariant,
@@ -208,6 +211,7 @@ export const BUTTON_PRESETS = {
   },
   createProject: {
     label: "Create Project",
+    labelKey: "buttons.createProject",
     icon: "i-heroicons-plus",
     color: "primary",
     variant: "solid",
@@ -215,6 +219,7 @@ export const BUTTON_PRESETS = {
   },
   learnMore: {
     label: "Learn More",
+    labelKey: "buttons.learnMore",
     icon: "i-heroicons-arrow-top-right-on-square",
     color: "primary",
     variant: "outline",
@@ -224,6 +229,7 @@ export const BUTTON_PRESETS = {
   // Secondary Action Buttons
   meetStudent: {
     label: "Meet Our Student",
+    labelKey: "buttons.meetStudent",
     icon: "i-heroicons-user-group",
     color: "success",
     variant: "solid",
@@ -231,6 +237,7 @@ export const BUTTON_PRESETS = {
   },
   viewDashboard: {
     label: "View Dashboard",
+    labelKey: "buttons.viewDashboard",
     icon: "i-heroicons-chart-bar",
     color: "secondary",
     variant: "solid",
@@ -240,6 +247,7 @@ export const BUTTON_PRESETS = {
   // Tertiary Action Buttons
   viewCalendar: {
     label: "View Calendar",
+    labelKey: "buttons.viewCalendar",
     icon: "i-heroicons-calendar",
     color: "info",
     variant: "outline",
@@ -247,6 +255,7 @@ export const BUTTON_PRESETS = {
   },
   submitProject: {
     label: "Submit Your Project",
+    labelKey: "buttons.submitProject",
     icon: "i-heroicons-clipboard-document-check",
     color: "primary",
     variant: "outline",
@@ -254,6 +263,7 @@ export const BUTTON_PRESETS = {
   },
   viewProfileStudent: {
     label: "View Profile",
+    labelKey: "buttons.viewProfileStudent",
     color: "primary",
     variant: "solid",
     size: "lg",
@@ -262,6 +272,7 @@ export const BUTTON_PRESETS = {
   // Admin/Teacher Buttons
   manageStudents: {
     label: "Manage Students",
+    labelKey: "buttons.manageStudents",
     icon: "i-heroicons-user-group",
     color: "primary",
     variant: "solid",
@@ -269,6 +280,7 @@ export const BUTTON_PRESETS = {
   },
   reviewProjects: {
     label: "Review Projects",
+    labelKey: "buttons.reviewProjects",
     icon: "i-heroicons-document-check",
     color: "success",
     variant: "solid",
@@ -276,6 +288,7 @@ export const BUTTON_PRESETS = {
   },
   viewAnalytics: {
     label: "View Analytics",
+    labelKey: "buttons.viewAnalytics",
     icon: "i-heroicons-chart-bar",
     color: "primary",
     variant: "solid",
@@ -283,6 +296,7 @@ export const BUTTON_PRESETS = {
   },
   viewAll: {
     label: "View All",
+    labelKey: "buttons.viewAll",
     icon: "i-heroicons-arrow-right-20-solid",
     color: "primary",
     variant: "outline",
@@ -292,6 +306,7 @@ export const BUTTON_PRESETS = {
   // Common Buttons
   save: {
     label: "Save",
+    labelKey: "buttons.save",
     icon: "i-heroicons-check",
     color: "success",
     variant: "solid",
@@ -299,6 +314,7 @@ export const BUTTON_PRESETS = {
   },
   cancel: {
     label: "Cancel",
+    labelKey: "buttons.cancel",
     icon: "i-heroicons-x-mark",
     color: "danger",
     variant: "ghost",
@@ -306,12 +322,14 @@ export const BUTTON_PRESETS = {
   },
   secondary: {
     label: "Secondary",
+    labelKey: "buttons.secondary",
     color: "secondary",
     variant: "outline",
     size: "md",
   },
   delete: {
     label: "Delete",
+    labelKey: "buttons.delete",
     icon: "i-heroicons-trash",
     color: "danger",
     variant: "outline",
@@ -319,6 +337,7 @@ export const BUTTON_PRESETS = {
   },
   edit: {
     label: "Edit",
+    labelKey: "buttons.edit",
     icon: "i-heroicons-pencil",
     color: "info",
     variant: "outline",
@@ -326,6 +345,7 @@ export const BUTTON_PRESETS = {
   },
   back: {
     label: "Back",
+    labelKey: "buttons.back",
     icon: "i-heroicons-arrow-left",
     color: "secondary",
     variant: "ghost",
@@ -333,6 +353,7 @@ export const BUTTON_PRESETS = {
   },
   signin: {
     label: "Sign In",
+    labelKey: "buttons.signin",
     icon: "i-heroicons-arrow-right-on-rectangle-20-solid",
     color: "primary",
     variant: "solid",
@@ -340,6 +361,7 @@ export const BUTTON_PRESETS = {
   },
   signup: {
     label: "Sign Up",
+    labelKey: "buttons.signup",
     icon: "i-heroicons-user-plus-20-solid",
     color: "primary",
     variant: "solid",
@@ -347,6 +369,7 @@ export const BUTTON_PRESETS = {
   },
   submit: {
     label: "Submit",
+    labelKey: "buttons.submit",
     icon: "i-heroicons-check",
     color: "primary",
     variant: "solid",
@@ -354,6 +377,7 @@ export const BUTTON_PRESETS = {
   },
   confirm: {
     label: "Confirm",
+    labelKey: "buttons.confirm",
     icon: "i-heroicons-check",
     color: "primary",
     variant: "solid",
@@ -361,6 +385,7 @@ export const BUTTON_PRESETS = {
   },
   close: {
     label: "Close",
+    labelKey: "buttons.close",
     icon: "i-heroicons-x-mark",
     color: "secondary",
     variant: "ghost",
@@ -368,6 +393,7 @@ export const BUTTON_PRESETS = {
   },
   search: {
     label: "Search",
+    labelKey: "buttons.search",
     icon: "i-heroicons-magnifying-glass",
     color: "primary",
     variant: "solid",
@@ -375,6 +401,7 @@ export const BUTTON_PRESETS = {
   },
   filter: {
     label: "Filter",
+    labelKey: "buttons.filter",
     icon: "i-heroicons-funnel",
     color: "secondary",
     variant: "outline",
@@ -382,6 +409,7 @@ export const BUTTON_PRESETS = {
   },
   reset: {
     label: "Reset",
+    labelKey: "buttons.reset",
     icon: "i-heroicons-arrow-path",
     color: "warning",
     variant: "ghost",
@@ -389,6 +417,7 @@ export const BUTTON_PRESETS = {
   },
   viewDetails: {
     label: "View Details",
+    labelKey: "buttons.viewDetails",
     icon: null,
     color: "primary",
     variant: "solid",
@@ -397,6 +426,7 @@ export const BUTTON_PRESETS = {
   },
   clearFilters: {
     label: "Clear Filters",
+    labelKey: "buttons.clearFilters",
     icon: "i-heroicons-trash",
     color: "danger",
     variant: "solid",
@@ -413,6 +443,7 @@ export const BUTTON_PRESETS = {
 
   activeProjects: {
     label: "Active Project",
+    labelKey: "buttons.activeProjects",
     icon: "",
     color: "primary",
     variant: "solid",
@@ -420,6 +451,7 @@ export const BUTTON_PRESETS = {
   },
   pendingReviews: {
     label: "Pending Reviews",
+    labelKey: "buttons.pendingReviews",
     icon: null,
     color: "blue",
     variant: "solid",

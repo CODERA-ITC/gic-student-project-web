@@ -1,32 +1,50 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-slate-900">
-    <!-- Header Section -->
-    <div
-      class="py-16 bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900 border-b border-blue-700/30 dark:border-slate-700"
-    >
+    <!-- Header Section (clean card style) -->
+    <div class="py-14">
       <UContainer>
-        <div class="flex items-center gap-4 mb-4">
+        <div
+          class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/15
+                 bg-white/90 dark:bg-slate-900/90 shadow-2xl px-8 py-10"
+        >
           <div
-            class="bg-white/10 dark:bg-white/5 backdrop-blur-sm rounded-lg p-1 hover:bg-white/20 dark:hover:bg-white/10 transition-colors"
-          >
-            <ButtonsPresetButton
-              preset="back"
-              @click="$router.push('/teacher/dashboard')"
-              class="!text-white"
-            />
+            class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.08),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(79,70,229,0.08),transparent_30%)] pointer-events-none"
+            aria-hidden="true"
+          ></div>
+
+          <div class="relative space-y-3">
+            <nav class="flex items-center flex-wrap gap-1 text-sm text-slate-600 dark:text-slate-300">
+              <NuxtLink
+                to="/"
+                class="hover:text-blue-600 dark:hover:text-blue-300 transition-colors"
+              >
+                {{ t("home") }}
+              </NuxtLink>
+              <span class="text-slate-400 dark:text-slate-500">/</span>
+              <NuxtLink
+                to="/teacher/dashboard"
+                class="hover:text-blue-600 dark:hover:text-blue-300 transition-colors"
+              >
+                {{ t("nav.teacherDashboard") }}
+              </NuxtLink>
+              <span class="text-slate-400 dark:text-slate-500">/</span>
+              <span class="text-slate-900 dark:text-white font-semibold">
+                {{ t("nav.userManagement") }}
+              </span>
+            </nav>
+            <div class="flex items-center gap-3">
+              <UIcon
+                name="i-heroicons-academic-cap-solid"
+                class="w-10 h-10 text-blue-500 dark:text-blue-300"
+              />
+              <h1 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
+                {{ t("nav.userManagement") }}
+              </h1>
+            </div>
+            <p class="text-slate-700 dark:text-slate-300">
+              {{ t("teacherUserManagement.subtitle") }}
+            </p>
           </div>
-        </div>
-        <div class="space-y-2">
-          <div class="flex items-center gap-3">
-            <UIcon
-              name="i-heroicons-academic-cap-solid"
-              class="w-10 h-10 text-blue-300"
-            />
-            <h1 class="text-4xl font-black text-white">Student Management</h1>
-          </div>
-          <p class="text-blue-100 dark:text-slate-300">
-            Manage and monitor all students in the system
-          </p>
         </div>
       </UContainer>
     </div>
@@ -770,6 +788,7 @@ import { useAuthStore } from "~/stores/auth";
 import { useStudentStore } from "~/stores/students";
 import type { APIStudent } from "~/stores/students";
 import { useDebounceFn } from "@vueuse/core";
+const { t } = useI18n();
 
 definePageMeta({
   middleware: ["auth", "teacher"],

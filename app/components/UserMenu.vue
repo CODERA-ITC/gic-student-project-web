@@ -107,7 +107,7 @@
                   name="i-heroicons-chart-bar-square-20-solid"
                   class="w-4 h-4"
                 />
-                My Dashboard
+                {{ t("nav.studentDashboard") }}
               </NuxtLink>
               <NuxtLink
                 to="/student/my-projects"
@@ -115,7 +115,7 @@
                 @click="closeMenu"
               >
                 <UIcon name="i-heroicons-folder-20-solid" class="w-4 h-4" />
-                My Projects
+                {{ t("nav.myProjects") }}
               </NuxtLink>
               <NuxtLink
                 to="/student/submissions"
@@ -123,7 +123,7 @@
                 @click="closeMenu"
               >
                 <UIcon name="i-heroicons-inbox-20-solid" class="w-4 h-4" />
-                Submissions
+                {{ t("nav.submissions") }}
               </NuxtLink>
 
               <NuxtLink
@@ -132,7 +132,7 @@
                 @click="closeMenu"
               >
                 <UIcon name="i-heroicons-heart-20-solid" class="w-4 h-4" />
-                Favorites
+                {{ t("nav.favorites") }}
               </NuxtLink>
             </template>
 
@@ -147,7 +147,7 @@
                   name="i-heroicons-chart-bar-square-20-solid"
                   class="w-4 h-4"
                 />
-                Teacher Dashboard
+                {{ t("nav.teacherDashboard") }}
               </NuxtLink>
               <!-- <NuxtLink to="/teacher/manage-projects"
                 class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
@@ -164,7 +164,7 @@
                   name="i-heroicons-inbox-stack-20-solid"
                   class="w-4 h-4"
                 />
-                Review Submissions
+                {{ t("nav.reviewSubmissions") }}
               </NuxtLink>
               <NuxtLink
                 to="/teacher/favorites"
@@ -172,7 +172,7 @@
                 @click="closeMenu"
               >
                 <UIcon name="i-heroicons-heart-20-solid" class="w-4 h-4" />
-                Favorites
+                {{ t("nav.favorites") }}
               </NuxtLink>
               <NuxtLink
                 to="/teacher/user-management"
@@ -180,7 +180,7 @@
                 @click="closeMenu"
               >
                 <UIcon name="i-heroicons-users-20-solid" class="w-4 h-4" />
-                User Management
+                {{ t("nav.userManagement") }}
               </NuxtLink>
             </template>
 
@@ -192,7 +192,7 @@
               @click="closeMenu"
             >
               <UIcon name="i-heroicons-user-circle-20-solid" class="w-4 h-4" />
-              Profile Settings
+              {{ t("nav.profileSettings") }}
             </NuxtLink>
 
             <!-- Sign Out -->
@@ -205,7 +205,7 @@
                 name="i-heroicons-arrow-left-on-rectangle-20-solid"
                 class="w-4 h-4"
               />
-              Sign Out
+              {{ t("nav.signOut") }}
             </button>
           </div>
         </Transition>
@@ -229,6 +229,7 @@ import { ref, computed, onMounted } from "vue";
 import { useAuthStore } from "~/stores/auth";
 import { useUiStore } from "~/stores/ui";
 import type { Notification } from "~/stores/ui";
+const { t } = useI18n();
 
 const props = defineProps({
   isAuthenticated: {
@@ -265,10 +266,6 @@ const notifications = computed(() => {
 
 // Debug on mount
 onMounted(() => {
-  console.log("🔥 UserMenu mounted");
-  console.log("🔥 UI Store state:", uiStore.$state);
-  console.log("🔥 Notifications on mount:", uiStore.notifications);
-  console.log("🔥 Notifications count:", uiStore.notifications.length);
 
   // Force alert to verify code is running
   if (uiStore.notifications.length === 0) {

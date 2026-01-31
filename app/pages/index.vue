@@ -2,7 +2,12 @@
   <div>
     <HeroSection />
 
+    <!-- highlighted or featured -->
     <FeaturedProjectsSection />
+
+    <!-- popular project -->
+    <PopularProjectsSection />
+
     <CTASection />
 
     <ScrollToTop />
@@ -10,14 +15,15 @@
 </template>
 
 <script setup>
-useHead({
-  title: "GIC Student Portal - Showcase Your Innovation",
+const { t } = useI18n();
+
+useHead(() => ({
+  title: t("homePage.metaTitle"),
   meta: [
     {
       name: "description",
-      content:
-        "Join thousands of talented GIC students showcasing amazing projects. From AI innovations to mobile apps, discover the future of technology.",
+      content: t("homePage.metaDescription"),
     },
   ],
-});
+}));
 </script>

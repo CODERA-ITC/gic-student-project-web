@@ -161,6 +161,18 @@ export const useProjectStore = defineStore("projects", {
 
     getHighlightedProjects: (state) => state.highlightedProjects,
 
+    /**
+     * Top popular projects by views (fallback to likes), limited to count
+     */
+    getPopularProjects: (state) => (limit: number = 6) =>
+      [...state.projects]
+        .sort(
+          (a, b) =>
+            (b.views || 0) - (a.views || 0) ||
+            (b.likes || 0) - (a.likes || 0),
+        )
+        .slice(0, limit),
+
     getSubmissionProjects: (state) => state.submissionProjects,
   },
 
@@ -766,8 +778,10 @@ export const useProjectStore = defineStore("projects", {
 
         // Transform API response using ProjectTransformer
         // API returns array directly, not wrapped in data property
-        const submissions = Array.isArray(response.data)
-          ? response.data.map((item: any) => transformProject(item))
+        const submissions = Array.isArray(response?.data || response)
+          ? (response.data || response).map((item: any) =>
+              transformProject(item),
+            )
           : [];
 
         console.log(`Found ${submissions.length} total submissions`);

@@ -52,7 +52,7 @@ export interface Project {
   createdAt: string;
   updatedAt?: string;
   tags: string[];
-  members?: { name: string; image: string }[];
+  members?: { id?: string; email?: string; name: string; image: string }[];
   features?: FeatureItem[];
   duration?: string;
   course?: string;

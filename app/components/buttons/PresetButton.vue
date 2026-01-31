@@ -43,6 +43,7 @@ const emit = defineEmits<{
   click: [event: MouseEvent];
 }>();
 
+const { t } = useI18n();
 const authStore = useAuthStore();
 
 const buttonConfig = computed<ButtonConfig>(() => {
@@ -78,6 +79,14 @@ const buttonConfig = computed<ButtonConfig>(() => {
     config.variant = "solid";
   }
 
-  return config;
+  // Apply localization without mutating shared presets
+  const localizedLabel =
+    props.label ||
+    (config.labelKey ? t(config.labelKey) : config.label || "Button");
+
+  return {
+    ...config,
+    label: localizedLabel,
+  };
 });
 </script>

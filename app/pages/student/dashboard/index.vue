@@ -99,18 +99,18 @@
                   class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50/80 dark:bg-blue-900/30 text-blue-900 dark:text-blue-200 text-sm font-semibold"
                 >
                   <UIcon name="i-heroicons-squares-2x2" class="w-4 h-4" />
-                  Dashboard
+                  {{ t("nav.studentDashboard") }}
                 </div>
                 <h1
                   class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-blue-300 dark:text-white"
                 >
                   {{ GreetMessage }},
-                  <span class="text-white dark:text-blue-300">{{
-                    student.name
-                  }}</span>
+                  <span class="text-white dark:text-blue-300"
+                    >{{ student.name }} 👋</span
+                  >
                 </h1>
                 <p class="text-slate-300 dark:text-slate-300">
-                  Track and manage your projects
+                  {{ t("studentDashboard.subtitle") }}
                 </p>
               </div>
               <ButtonsPresetButton
@@ -129,10 +129,10 @@
         <!-- Activity Overview Title -->
         <div class="mb-6">
           <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-            Activity Overview
+            {{ t("studentDashboard.activityTitle") }}
           </h2>
           <p class="text-xs text-gray-600 dark:text-slate-400 mt-1">
-            Track your project submissions and progress
+            {{ t("studentDashboard.activitySubtitle") }}
           </p>
         </div>
 
@@ -213,13 +213,13 @@
         >
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-semibold text-black dark:text-white">
-              Recent Projects
+              {{ t("studentDashboard.recentProjects") }}
             </h2>
             <NuxtLink
               to="my-projects"
               class="text-blue-400 hover:text-blue-300 text-sm font-semibold"
             >
-              View All →
+              {{ t("studentDashboard.viewAll") }} →
             </NuxtLink>
           </div>
 
@@ -347,11 +347,14 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
 import { useAuthStore } from "~/stores/auth";
 import { useProjectStore } from "~/stores/projects";
 import SparklineChart from "~/components/SparklineChart.vue";
 import { useRouter, useRoute } from "vue-router";
+import { getGreetingByTimeZone } from "#imports";
 
+const { t } = useI18n();
 const authStore = useAuthStore();
 const projectStore = useProjectStore();
 const router = useRouter();
@@ -468,10 +471,7 @@ const student = computed(() => ({
 
 // Stats for student dashboard - computed from real data
 const normalizeStatus = (p) =>
-  (p.projectStatus || p.status || "")
-    .toString()
-    .trim()
-    .toLowerCase();
+  (p.projectStatus || p.status || "").toString().trim().toLowerCase();
 
 const stats = computed(() => {
   const userProjects = projectStore.userProjects || [];
@@ -488,7 +488,9 @@ const stats = computed(() => {
       p.submissions &&
       p.submissions.length > 0 &&
       p.submissions.some(
-        (s) => s.status?.toLowerCase?.() === "under review" || s.status === "Under Review",
+        (s) =>
+          s.status?.toLowerCase?.() === "under review" ||
+          s.status === "Under Review",
       ),
   ).length;
 

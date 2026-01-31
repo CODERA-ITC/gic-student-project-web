@@ -118,16 +118,21 @@ export class ProjectTransformer {
    */
   static transformMembers(
     membersData: any,
-  ): Array<{ name: string; image: string }> {
+  ): Array<{ id?: string; email?: string; name: string; image: string }> {
     if (!Array.isArray(membersData) || membersData.length === 0) {
       return [];
     }
 
     return membersData.map((member: any) => {
-      const firstName = member.firstName || "";
-      const lastName = member.lastName || "";
+      const firstName = member.firstName || member.name?.split(" ")[0] || "";
+      const lastName =
+        member.lastName ||
+        member.name?.split(" ").slice(1).join(" ") ||
+        "";
 
       return {
+        id: member.id || member.userId || member.user?.id,
+        email: member.email || member.user?.email,
         name: `${firstName} ${lastName}`.trim() || "Unknown",
         image: getAvatarUrl(member.avatar, firstName, lastName),
       };

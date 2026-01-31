@@ -15,7 +15,7 @@
         class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1 flex-shrink-0"
       >
         <UIcon name="i-heroicons-home" class="w-4 h-4" />
-        <span class="hidden sm:inline">Home</span>
+        <span class="hidden sm:inline">{{ t("home") }}</span>
       </NuxtLink>
       <UIcon
         name="i-heroicons-chevron-right"
@@ -49,50 +49,7 @@
       <div class="lg:col-span-2 space-y-4 sm:space-y-6 order-2 lg:order-1">
         <!-- Project Header: Title, Badges, Description -->
         <div class="space-y-4">
-          <!-- Category & Status Row -->
-          <div class="flex items-center justify-between flex-wrap gap-2">
-            <div class="flex gap-2 flex-wrap">
-              <UBadge
-                class="bg-blue-900 text-white shadow-sm"
-                variant="solid"
-                size="sm"
-              >
-                <UIcon name="i-heroicons-folder" class="w-3 h-3 mr-1" />
-                {{ project.category }}
-              </UBadge>
-              <UBadge color="info" variant="soft" size="sm">
-                <UIcon name="i-heroicons-calendar" class="w-3 h-3 mr-1" />
-                {{ project.academicYear }}
-              </UBadge>
-              <UBadge
-                :color="currentStatus === 'Completed' ? 'success' : 'warning'"
-                variant="soft"
-                size="sm"
-              >
-                <UIcon
-                  :name="
-                    currentStatus === 'Completed'
-                      ? 'i-heroicons-check-circle'
-                      : 'i-heroicons-clock'
-                  "
-                  class="w-3 h-3 mr-1"
-                />
-                {{ currentStatus }}
-              </UBadge>
-              <!-- Submission Status Badge -->
-              <UBadge
-                v-if="showSubmissionStatus && project.submissionStatus"
-                :color="submissionStatusColor"
-                variant="soft"
-                size="sm"
-              >
-                <UIcon :name="submissionStatusIcon" class="w-3 h-3 mr-1" />
-                {{ submissionStatusLabel }}
-              </UBadge>
-            </div>
-          </div>
-
-          <!-- Project Title with Accent -->
+          <!-- Project Title with Accent (first on page) -->
           <div class="relative pl-4 sm:pl-0">
             <div
               class="absolute left-0 sm:-left-4 top-0 bottom-0 w-1 bg-blue-900 rounded-full"
@@ -111,13 +68,31 @@
             {{ project.description }}
           </p>
 
+          <!-- Category & Status Row -->
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <div class="flex gap-2 flex-wrap">
+              <UBadge
+                class="bg-blue-900 text-white shadow-sm"
+                variant="solid"
+                size="sm"
+              >
+                <UIcon name="i-heroicons-folder" class="w-3 h-3 mr-1" />
+                {{ project.category }}
+              </UBadge>
+              <UBadge color="info" variant="soft" size="sm">
+                <UIcon name="i-heroicons-calendar" class="w-3 h-3 mr-1" />
+                {{ project.academicYear }}
+              </UBadge>
+            </div>
+          </div>
+
           <!-- Created Date -->
           <p
             v-if="project.createdAt"
             class="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1"
           >
             <UIcon name="i-heroicons-calendar-days" class="w-4 h-4" />
-            Created {{ formatDate(project.createdAt) }}
+            {{ t("projectDetails.created") }} {{ formatDate(project.createdAt) }}
           </p>
 
           <!-- Demo & GitHub Links -->
@@ -130,7 +105,7 @@
               class="inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-lg text-sm font-medium transition-colors"
             >
               <UIcon name="i-heroicons-play-circle" class="w-4 h-4" />
-              Watch Demo
+              {{ t("projectDetails.watchDemo") }}
             </button>
             <a
               v-if="project.githubUrl"
@@ -140,7 +115,7 @@
               class="inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-medium transition-colors"
             >
               <UIcon name="i-simple-icons-github" class="w-4 h-4" />
-              Repository
+              {{ t("projectDetails.repository") }}
             </a>
           </div>
         </div>
@@ -166,7 +141,7 @@
                 <p
                   class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide"
                 >
-                  Course
+                  {{ t("projectDetails.course") }}
                 </p>
                 <p
                   class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white truncate"
@@ -196,7 +171,7 @@
                 <p
                   class="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide"
                 >
-                  Duration
+                  {{ t("projectDetails.duration") }}
                 </p>
                 <p
                   class="text-xs sm:text-sm font-medium text-gray-900 dark:text-white truncate"
@@ -222,7 +197,7 @@
             <h3
               class="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide"
             >
-              Tech Stack
+              {{ t("projectDetails.techStack") }}
             </h3>
           </div>
           <div class="flex gap-1.5 sm:gap-2 flex-wrap">
@@ -250,7 +225,7 @@
             <h3
               class="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wide"
             >
-              Team
+              {{ t("projectDetails.team") }}
             </h3>
           </div>
 
@@ -297,7 +272,7 @@
                 name="i-heroicons-photo"
                 class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400"
               />
-              Gallery
+              {{ t("projectDetails.gallery") }}
               <span
                 v-if="project.images"
                 class="text-[10px] sm:text-xs font-normal text-gray-500"
@@ -313,7 +288,7 @@
                 name="i-heroicons-arrows-pointing-out"
                 class="w-3.5 h-3.5 sm:w-4 sm:h-4"
               />
-              <span class="hidden sm:inline">Fullscreen</span>
+              <span class="hidden sm:inline">{{ t("projectDetails.fullscreen") }}</span>
             </button>
           </div>
 
@@ -466,7 +441,7 @@
               <p
                 class="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider"
               >
-                Stats
+                {{ t("projectDetails.stats") }}
               </p>
             </div>
             <div class="flex items-center justify-around">
@@ -484,7 +459,9 @@
                     {{ formatNumber(project.views) }}
                   </span>
                 </div>
-                <p class="text-xs text-gray-500 dark:text-gray-400">Views</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                  {{ t("projectDetails.views") }}
+                </p>
               </div>
               <div class="h-8 sm:h-10 w-px bg-gray-200 dark:bg-slate-600"></div>
               <div class="text-center">
@@ -501,7 +478,9 @@
                     {{ formatNumber(likesCount) }}
                   </span>
                 </div>
-                <p class="text-xs text-gray-500 dark:text-gray-400">Likes</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                  {{ t("projectDetails.likes") }}
+                </p>
               </div>
             </div>
           </div>
@@ -518,7 +497,7 @@
               <p
                 class="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider"
               >
-                Actions
+                {{ t("projectDetails.actions") }}
               </p>
             </div>
             <div class="space-y-2 sm:space-y-3">
@@ -527,6 +506,40 @@
 
               <!-- Edit and Delete Buttons (Owner only) - via slot -->
               <slot name="action-buttons"></slot>
+
+              <!-- Teacher Actions: Accept / Reject -->
+              <div
+                v-if="canReview"
+                class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3"
+              >
+                <UButton
+                  :loading="accepting"
+                  @click="handleAccept"
+                  class="w-full justify-center rounded-lg"
+                  color="primary"
+                  variant="solid"
+                  size="md"
+                >
+                  <template #leading>
+                    <UIcon name="i-heroicons-check-circle" class="w-5 h-5" />
+                  </template>
+                  {{ t("projectDetails.accept") }}
+                </UButton>
+
+                <UButton
+                  :loading="rejecting"
+                  @click="handleReject"
+                  class="w-full justify-center rounded-lg"
+                  color="warning"
+                  variant="outline"
+                  size="md"
+                >
+                  <template #leading>
+                    <UIcon name="i-heroicons-x-circle" class="w-5 h-5" />
+                  </template>
+                  {{ t("projectDetails.reject") }}
+                </UButton>
+              </div>
 
               <!-- Hide/Show Project Button (Teacher only when project is not public) -->
               <UButton
@@ -551,8 +564,8 @@
                 </template>
                 {{
                   project.visibility === "private"
-                    ? "Show Project"
-                    : "Hide Project"
+                    ? t("projectDetails.showProject")
+                    : t("projectDetails.hideProject")
                 }}
               </UButton>
 
@@ -576,7 +589,11 @@
                     class="w-5 h-5"
                   />
                 </template>
-                {{ isLiked ? "Liked" : "Like this project" }}
+                {{
+                  isLiked
+                    ? t("projectDetails.liked")
+                    : t("projectDetails.likeThisProject")
+                }}
               </UButton>
 
               <!-- Share Button -->
@@ -588,7 +605,7 @@
                 <template #leading>
                   <UIcon name="i-heroicons-share" class="w-5 h-5" />
                 </template>
-                Share Project
+                {{ t("projectDetails.shareProject") }}
               </UButton>
             </div>
           </div>
@@ -606,7 +623,7 @@
               <p
                 class="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider"
               >
-                Resources
+                {{ t("projectDetails.resources") }}
               </p>
             </div>
             <div class="space-y-2 sm:space-y-3">
@@ -623,7 +640,9 @@
                   <UIcon name="i-heroicons-play-circle" class="w-4 h-4" />
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-sm font-medium">Live Demo</p>
+                  <p class="text-sm font-medium">
+                    {{ t("projectDetails.liveDemo") }}
+                  </p>
                   <p class="text-xs text-blue-500 dark:text-blue-300 truncate">
                     {{ project.demoUrl }}
                   </p>
@@ -646,9 +665,11 @@
                   <UIcon name="i-simple-icons-github" class="w-4 h-4" />
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-sm font-medium">Source Code</p>
+                  <p class="text-sm font-medium">
+                    {{ t("projectDetails.sourceCode") }}
+                  </p>
                   <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
-                    View on GitHub
+                    {{ t("projectDetails.viewOnGithub") }}
                   </p>
                 </div>
                 <UIcon
@@ -749,7 +770,9 @@
                   >
                     {{ project.name }}
                   </h3>
-                  <p class="text-gray-400 text-xs sm:text-sm">Demo Video</p>
+                  <p class="text-gray-400 text-xs sm:text-sm">
+                    {{ t("projectDetails.demoVideo") }}
+                  </p>
                 </div>
               </div>
               <a
@@ -762,7 +785,7 @@
                   name="i-heroicons-arrow-top-right-on-square"
                   class="w-4 h-4"
                 />
-                Open in new tab
+                {{ t("projectDetails.openInNewTab") }}
               </a>
             </div>
 
@@ -807,7 +830,9 @@
                   name="i-heroicons-video-camera"
                   class="w-16 h-16 text-gray-600 mb-4"
                 />
-                <p class="text-gray-400 mb-4">Video preview not available</p>
+                <p class="text-gray-400 mb-4">
+                  {{ t("projectDetails.videoNotAvailable") }}
+                </p>
                 <a
                   :href="project.demoUrl"
                   target="_blank"
@@ -815,7 +840,7 @@
                   class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
                 >
                   <UIcon name="i-heroicons-play" class="w-4 h-4" />
-                  Open Demo Link
+                  {{ t("projectDetails.openDemoLink") }}
                 </a>
               </div>
             </div>
@@ -824,18 +849,20 @@
             <div
               class="mt-2 sm:mt-4 flex items-center justify-center sm:justify-between text-xs sm:text-sm text-gray-400"
             >
-              <p class="hidden sm:block">Press ESC or click outside to close</p>
+              <p class="hidden sm:block">
+                {{ t("projectDetails.closeHint") }}
+              </p>
               <div class="flex items-center gap-3 sm:gap-4">
                 <span class="flex items-center gap-1">
                   <UIcon name="i-heroicons-eye" class="w-3 h-3 sm:w-4 sm:h-4" />
-                  {{ formatNumber(project.views) }} views
+                  {{ formatNumber(project.views) }} {{ t("projectDetails.views") }}
                 </span>
                 <span class="flex items-center gap-1">
                   <UIcon
                     name="i-heroicons-heart"
                     class="w-3 h-3 sm:w-4 sm:h-4"
                   />
-                  {{ formatNumber(likesCount) }} likes
+                  {{ formatNumber(likesCount) }} {{ t("projectDetails.likes") }}
                 </span>
               </div>
             </div>
@@ -870,10 +897,10 @@
                   <h3
                     class="text-lg font-semibold text-gray-900 dark:text-white"
                   >
-                    Share Project
+                    {{ t("projectDetails.shareProject") }}
                   </h3>
                   <p class="text-sm text-gray-500 dark:text-gray-400">
-                    Share with friends and colleagues
+                    {{ t("projectDetails.shareSubtitle") }}
                   </p>
                 </div>
               </div>
@@ -893,7 +920,7 @@
               <p
                 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3"
               >
-                Share via
+                {{ t("projectDetails.shareVia") }}
               </p>
               <div class="grid grid-cols-4 gap-3">
                 <!-- Facebook -->
@@ -1010,21 +1037,42 @@
       </Transition>
     </Teleport>
 
-    <!-- Project Roadmap Section -->
+    <!-- Feature List -->
     <div
-      v-if="roadmap.length > 0"
+      v-if="featureList.length"
       class="bg-white dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-xl p-4 sm:p-6"
     >
-      <h3
-        class="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 text-gray-900 dark:text-white flex items-center gap-2"
-      >
+      <div class="flex items-center gap-2 mb-4 sm:mb-6">
         <UIcon
-          name="i-heroicons-flag"
-          class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400"
+          name="i-heroicons-sparkles"
+          class="w-5 h-5 text-blue-600 dark:text-blue-400"
         />
-        Development Roadmap
-      </h3>
-      <RoadmapInfographic :milestones="roadmap" />
+        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
+          {{ t("projectDetails.features") }}
+        </h3>
+      </div>
+
+      <div class="space-y-3">
+        <div
+          v-for="feature in featureList"
+          :key="feature.name + feature.date"
+          class="flex gap-3 p-3 sm:p-4 rounded-lg border border-gray-100 dark:border-slate-700 bg-gray-50/70 dark:bg-slate-800/70"
+        >
+          <div
+            class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0"
+          >
+            <UIcon :name="feature.icon || 'i-lucide-star'" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mb-1">
+              {{ feature.name }}
+            </p>
+            <p class="text-sm text-gray-700 dark:text-gray-300">
+              {{ feature.description }}
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Similar Projects Section -->
@@ -1112,11 +1160,15 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Role } from "~/types/roles";
 import { useProjectStore } from "~/stores/projects";
 import type { Project } from "~/utils/Interfaces";
+import { useToast, useRouter } from "#imports";
+const { t } = useI18n();
 
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
 
 const projectStore = useProjectStore();
+const toast = useToast();
+const router = useRouter();
 
 // Template refs for animations
 const courseRef = ref<HTMLElement | null>(null);
@@ -1187,6 +1239,18 @@ const linkCopied = ref(false);
 const scrollProgress = ref(0);
 const videoPopupOpen = ref(false);
 const sharePopupOpen = ref(false);
+const accepting = ref(false);
+const rejecting = ref(false);
+
+const isTeacherOrAdmin = computed(
+  () => props.userRole === Role.teacher || props.userRole === Role.admin,
+);
+const canReview = computed(() => {
+  const status = (props.project?.submissionStatus || "").toLowerCase();
+  return (
+    isTeacherOrAdmin.value && status !== "accepted" && status !== "rejected"
+  );
+});
 
 const getImageSrc = (img: any): string => {
   if (!img) return "";
@@ -1230,63 +1294,6 @@ const nextSimilarProjects = () => {
     similarProjectsIndex.value++;
   }
 };
-
-// Submission status computed properties
-const submissionStatusColor = computed(() => {
-  const status = props.project?.submissionStatus?.toLowerCase();
-  switch (status) {
-    case "draft":
-      return "neutral";
-    case "pending":
-    case "reviewing":
-      return "warning";
-    case "accepted":
-    case "public":
-      return "success";
-    case "rejected":
-      return "error";
-    default:
-      return "neutral";
-  }
-});
-
-const submissionStatusIcon = computed(() => {
-  const status = props.project?.submissionStatus?.toLowerCase();
-  switch (status) {
-    case "draft":
-      return "i-heroicons-document";
-    case "pending":
-    case "reviewing":
-      return "i-heroicons-clock";
-    case "accepted":
-    case "public":
-      return "i-heroicons-check-circle";
-    case "rejected":
-      return "i-heroicons-x-circle";
-    default:
-      return "i-heroicons-document";
-  }
-});
-
-const submissionStatusLabel = computed(() => {
-  const status = props.project?.submissionStatus?.toLowerCase();
-  switch (status) {
-    case "draft":
-      return "Draft";
-    case "pending":
-      return "Pending Review";
-    case "reviewing":
-      return "Under Review";
-    case "accepted":
-      return "Accepted";
-    case "public":
-      return "Published";
-    case "rejected":
-      return "Rejected";
-    default:
-      return status || "Unknown";
-  }
-});
 
 // Fetch similar projects based on category or course
 // Fetch similar projects using store getter
@@ -1420,6 +1427,56 @@ const shareToTelegram = () => {
   );
 };
 
+const handleAccept = async () => {
+  if (!props.project?.id || !canReview.value) return;
+  try {
+    accepting.value = true;
+    await projectStore.acceptProject(props.project.id);
+    toast.add({
+      title: t("projectDetails.acceptedToastTitle"),
+      description: t("projectDetails.acceptedToastDesc", {
+        name: props.project.name,
+      }),
+      color: "success",
+    });
+    await router.push("/teacher/submissions");
+  } catch (error) {
+    console.error("Accept failed:", error);
+    toast.add({
+      title: t("projectDetails.acceptFailed"),
+      description: t("projectDetails.tryAgain"),
+      color: "error",
+    });
+  } finally {
+    accepting.value = false;
+  }
+};
+
+const handleReject = async () => {
+  if (!props.project?.id || !canReview.value) return;
+  try {
+    rejecting.value = true;
+    await projectStore.rejectProject(props.project.id);
+    toast.add({
+      title: t("projectDetails.rejectedToastTitle"),
+      description: t("projectDetails.rejectedToastDesc", {
+        name: props.project.name,
+      }),
+      color: "warning",
+    });
+    await router.push("/teacher/submissions");
+  } catch (error) {
+    console.error("Reject failed:", error);
+    toast.add({
+      title: t("projectDetails.rejectFailed"),
+      description: t("projectDetails.tryAgain"),
+      color: "error",
+    });
+  } finally {
+    rejecting.value = false;
+  }
+};
+
 // Format number (1000 -> 1K)
 const formatNumber = (num: number): string => {
   if (!num) return "0";
@@ -1482,8 +1539,8 @@ const previousImage = () => {
   }
 };
 
-// Timeline/Roadmap computed
-const roadmap = computed(() => {
+// Feature list
+const featureList = computed(() => {
   if (!props.project?.features) return [];
   return props.project.features.map((feature: any) => ({
     date: feature.date || "No date",
@@ -1519,13 +1576,6 @@ const getInitials = (name: string): string => {
   if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 };
-
-// Real-time status calculation
-const currentStatus = computed(() => {
-  return props.project
-    ? projectStore.getProjectStatus(props.project.features)
-    : "In Progress";
-});
 
 // GSAP Animations
 onMounted(() => {

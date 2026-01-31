@@ -10,18 +10,20 @@
           class="hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1"
         >
           <UIcon name="i-heroicons-home" class="w-4 h-4" />
-          <span class="hidden sm:inline">Home</span>
+          <span class="hidden sm:inline">{{ t("home") }}</span>
         </NuxtLink>
         <span class="text-slate-400 dark:text-slate-500">/</span>
         <NuxtLink
           to="/projects"
           class="hover:text-blue-700 dark:hover:text-blue-300"
         >
-          Projects
+          {{ t("projects") }}
         </NuxtLink>
         <span class="text-slate-400 dark:text-slate-500">/</span>
         <span class="text-slate-900 dark:text-white font-semibold">
-          {{ editMode ? "Edit Project" : "Create Project" }}
+          {{
+            editMode ? t("projectForm.editTitle") : t("projectForm.createTitle")
+          }}
         </span>
       </nav>
     </UContainer>
@@ -44,7 +46,11 @@
             <h1
               class="text-5xl font-black font-semibold text-gray-900 dark:text-white"
             >
-              {{ editMode ? "Edit Project" : "Create New Project" }}
+              {{
+                editMode
+                  ? t("projectForm.editTitle")
+                  : t("projectForm.createTitle")
+              }}
             </h1>
             <div v-if="!editMode" class="flex items-center gap-2 text-sm">
               <UIcon
@@ -61,10 +67,12 @@
               <span class="text-gray-600 dark:text-gray-400">
                 {{
                   isSaving
-                    ? "Saving..."
+                    ? t("projectForm.saving")
                     : lastSaved
-                      ? `Saved ${formatTimeAgo(lastSaved)}`
-                      : "Auto-save enabled"
+                      ? t("projectForm.saved", {
+                          time: formatTimeAgo(lastSaved),
+                        })
+                      : t("projectForm.autoSave")
                 }}
               </span>
             </div>
@@ -72,8 +80,8 @@
           <p class="text-xl text-gray-600 dark:text-gray-300">
             {{
               editMode
-                ? "Update your project information"
-                : "Share your amazing project with the GIC community"
+                ? t("projectForm.editSubtitle")
+                : t("projectForm.createSubtitle")
             }}
           </p>
         </div>
@@ -117,7 +125,7 @@
             <!-- Step 1: Basic Info -->
             <div v-if="currentStep === 0" class="space-y-6 animate-fadeIn">
               <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
-                Basic Information
+                {{ t("projectForm.basicInfo") }}
               </h2>
 
               <!-- Project Title -->
@@ -125,18 +133,18 @@
                 <label
                   class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2"
                 >
-                  Project Title *
+                  {{ t("projectForm.projectTitle") }}
                 </label>
                 <input
                   v-model="form.name"
                   type="text"
-                  placeholder="Enter a descriptive project title"
+                  :placeholder="t('projectForm.projectTitlePlaceholder')"
                   class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                   required
                   maxlength="70"
                 />
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  Maximum 70 characters
+                  {{ t("projectForm.titleHint") }}
                 </p>
               </div>
 
@@ -145,18 +153,22 @@
                 <label
                   class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2"
                 >
-                  Description *
+                  {{ t("projectForm.description") }}
                 </label>
                 <textarea
                   v-model="form.description"
-                  placeholder="Describe your project in detail. What does it do? Why is it important?"
+                  :placeholder="t('projectForm.descriptionPlaceholder')"
                   rows="5"
                   class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-none"
                   required
                   maxlength="300"
                 ></textarea>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  {{ form.description.length }}/300 characters
+                  {{
+                    t("projectForm.descriptionCount", {
+                      count: form.description.length,
+                    })
+                  }}
                 </p>
               </div>
 
@@ -165,11 +177,10 @@
                 <label
                   class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2"
                 >
-                  Project Thumbnails/Previews *
+                  {{ t("projectForm.thumbnailsLabel") }}
                 </label>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
-                  Upload 2-5 images showcasing your project (screenshots,
-                  mockups, demos)
+                  {{ t("projectForm.thumbnailsHint") }}
                 </p>
 
                 <div class="space-y-4">
@@ -217,17 +228,16 @@
                         >
                           {{
                             isDragging
-                              ? "Drop your images here!"
-                              : "Drop project images here or click to browse"
+                              ? t("projectForm.dropActive")
+                              : t("projectForm.dropDefault")
                           }}
                         </p>
                         <p class="text-sm text-gray-600 dark:text-gray-400">
-                          PNG, JPG, GIF up to 5MB each • Maximum 5 images
-                          required
+                          {{ t("projectForm.fileHint") }}
                         </p>
                       </div>
                       <ButtonsPresetButton
-                        label="Add Images"
+                        :label="t('projectForm.addImages')"
                         icon="i-heroicons-plus"
                         color="primary"
                         variant="solid"
@@ -337,10 +347,18 @@
                   <input
                     v-model="form.academicYear"
                     type="text"
+                    list="academic-year-options"
                     class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    placeholder="e.g., 2024-2025"
+                    placeholder="e.g., 2025-2026"
                     required
                   />
+                  <datalist id="academic-year-options">
+                    <option
+                      v-for="year in academicYearOptions"
+                      :key="year"
+                      :value="year"
+                    />
+                  </datalist>
                 </div>
               </div>
             </div>
@@ -502,32 +520,6 @@
                   class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                 />
               </div>
-
-              <!-- Repository Visibility -->
-              <div>
-                <label
-                  class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3"
-                >
-                  Project Visibility
-                </label>
-                <div class="flex gap-4">
-                  <label
-                    v-for="visibility in ['public', 'private']"
-                    :key="visibility"
-                    class="flex items-center gap-2 cursor-pointer"
-                  >
-                    <input
-                      type="radio"
-                      :value="visibility"
-                      v-model="form.visibility"
-                      class="w-4 h-4 text-blue-600"
-                    />
-                    <span class="text-gray-900 dark:text-white capitalize">{{
-                      visibility
-                    }}</span>
-                  </label>
-                </div>
-              </div>
             </div>
 
             <!-- Step 3: Project Details -->
@@ -537,7 +529,7 @@
               </h2>
 
               <!-- Team Size and Level -->
-              <div class="grid md:grid-cols-2 gap-6">
+              <!-- <div class="grid md:grid-cols-2 gap-6">
                 <div>
                   <label
                     class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2"
@@ -554,14 +546,14 @@
                     Team size updates automatically based on selected members
                   </p>
                 </div>
-              </div>
+              </div> -->
 
               <!-- Team Members -->
               <div>
                 <label
                   class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3"
                 >
-                  Team Members
+                  Team Members ({{ form.teamMembers.length }})
                 </label>
                 <div class="space-y-4">
                   <!-- Prerendered Team Member Selection -->
@@ -676,11 +668,27 @@
 
               <!-- Project Features -->
               <div>
-                <label
-                  class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3"
+                <div
+                  class="flex flex-wrap items-center justify-between gap-2 mb-3"
                 >
-                  Project Features / Milestones
-                </label>
+                  <label
+                    class="block text-sm font-semibold text-gray-700 dark:text-gray-200"
+                  >
+                    Project Features / Milestones
+                  </label>
+                  <span
+                    :class="[
+                      'text-xs font-medium',
+                      featureCountState.color === 'success'
+                        ? 'text-green-600 dark:text-green-400'
+                        : featureCountState.color === 'warning'
+                          ? 'text-amber-600 dark:text-amber-400'
+                          : 'text-red-600 dark:text-red-400',
+                    ]"
+                  >
+                    {{ featureCountState.message }}
+                  </span>
+                </div>
                 <div class="space-y-4">
                   <!-- Icon Selection -->
                   <div>
@@ -735,36 +743,9 @@
                       class="px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                     />
                     <!-- <input
-                      v-model="featureInput.date"
-                      type="date"
+                                            type="date"
                       class="px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                     /> -->
-                  </div>
-
-                  <!-- Status Selection -->
-                  <div>
-                    <label
-                      class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2"
-                    >
-                      Status
-                    </label>
-                    <div class="flex gap-3">
-                      <label
-                        v-for="statusOption in availableStatuses"
-                        :key="statusOption.value"
-                        class="flex items-center gap-2 cursor-pointer"
-                      >
-                        <input
-                          type="radio"
-                          :value="statusOption.value"
-                          v-model="featureInput.status"
-                          class="w-4 h-4 text-blue-600"
-                        />
-                        <span class="text-sm text-gray-700 dark:text-gray-300">
-                          {{ statusOption.label }}
-                        </span>
-                      </label>
-                    </div>
                   </div>
 
                   <div class="flex gap-2">
@@ -792,7 +773,10 @@
                       variant="solid"
                       size="lg"
                       :disabled="
-                        !featureInput.name || !featureInput.description
+                        !featureInput.name ||
+                        !featureInput.description ||
+                        (form.feature.length >= MAX_FEATURES &&
+                          editingFeatureIndex < 0)
                       "
                       @click="addFeature"
                     />
@@ -823,16 +807,6 @@
                             class="font-medium text-gray-900 dark:text-white"
                             >{{ feature.name }}</span
                           >
-                          <UBadge
-                            :color="getStatusColor(feature.status)"
-                            variant="soft"
-                            size="sm"
-                          >
-                            {{ getStatusLabel(feature.status) }}
-                          </UBadge>
-                          <UBadge color="gray" variant="soft" size="sm">{{
-                            feature.date || "TBD"
-                          }}</UBadge>
                         </div>
                         <p class="text-sm text-gray-600 dark:text-gray-300">
                           {{ feature.description }}
@@ -1073,11 +1047,9 @@
                           {{ feature.name }}
                         </span>
                         <UBadge
-                          :color="getStatusColor(feature.status)"
                           variant="soft"
                           size="xs"
                         >
-                          {{ getStatusLabel(feature.status) }}
                         </UBadge>
                       </div>
                       <p
@@ -1101,8 +1073,8 @@
                 <span class="text-sm text-gray-700 dark:text-gray-300">
                   {{
                     editMode
-                      ? "I confirm that all updated information is accurate and the project remains my original work."
-                      : "I agree that my project will be shared with the GIC community and confirm all information is accurate and original work."
+                      ? t("projectForm.termsEdit")
+                      : t("projectForm.termsCreate")
                   }}
                 </span>
               </label>
@@ -1121,7 +1093,7 @@
               <div class="ml-auto flex gap-3">
                 <ButtonsPresetButton
                   v-if="editMode && currentStep < steps.length - 1"
-                  label="Finish Update Now"
+                  :label="t('projectForm.finishUpdate')"
                   icon="i-heroicons-forward"
                   color="gray"
                   variant="ghost"
@@ -1129,7 +1101,7 @@
                 />
                 <ButtonsPresetButton
                   v-if="currentStep < steps.length - 1"
-                  :label="`Next`"
+                  :label="t('projectForm.next')"
                   :icon="`i-heroicons-arrow-right`"
                   color="primary"
                   variant="solid"
@@ -1148,11 +1120,11 @@
                   {{
                     isSubmitting
                       ? editMode
-                        ? "Updating..."
-                        : "Creating..."
+                        ? t("projectForm.updating")
+                        : t("projectForm.creating")
                       : editMode
-                        ? "Update Project"
-                        : "Create Project"
+                        ? t("projectForm.updateProject")
+                        : t("projectForm.createProject")
                   }}
                 </ButtonsPresetButton>
               </div>
@@ -1278,19 +1250,15 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useProjectStore } from "~/stores/projects";
 import { useAuthStore } from "~/stores/auth";
+const { t } = useI18n();
 import {
   availableIcons,
   searchIcons,
   getFeaturedIcons,
 } from "~/constants/icons";
 import {
-  availableStatuses,
-  getStatusColor,
-  getStatusLabel,
   searchTeamMembers,
   durationOptions,
-  academicYearOptions,
-  visibilityOptions,
   technologiesOptions,
 } from "~/constants/project-options";
 import { getRandomProject } from "~/lib/RandomProject";
@@ -1404,7 +1372,10 @@ const loadProjectForEditing = async (projectId) => {
           : project.category || "";
       const courseValue =
         typeof project.course === "object"
-          ? project.course.name || project.course.id || project.course.code || ""
+          ? project.course.name ||
+            project.course.id ||
+            project.course.code ||
+            ""
           : project.course ||
             project.courseName ||
             project.courseId ||
@@ -1443,7 +1414,6 @@ const loadProjectForEditing = async (projectId) => {
         technologies: project.technologies || [],
         githubUrl: project.githubUrl || "",
         demoUrl: project.demoUrl || "",
-        visibility: project.visibility || "public",
         duration: durationValue,
         teamSize: normalizedMembers.length || 1,
         teamMembers: normalizedMembers,
@@ -1489,12 +1459,43 @@ const debouncedMemberSearchQuery = ref("");
 const memberSearchQuery = ref("");
 const iconSearchQuery = ref("");
 const editingFeatureIndex = ref(-1);
+const MIN_FEATURES = 4;
+const MAX_FEATURES = 10;
+
 const featureInput = ref({
   name: "",
   description: "",
-  date: "",
   icon: "i-heroicons-star",
-  status: "pending",
+});
+
+const featureCountState = computed(() => {
+  const count = form.feature.length;
+  if (count === 0) {
+    return {
+      color: "warning",
+      message: `Add ${MIN_FEATURES} features`,
+    };
+  }
+  if (count < MIN_FEATURES) {
+    return {
+      color: "warning",
+      message: `${count}/${MIN_FEATURES} added · need ${
+        MIN_FEATURES - count
+      } more`,
+    };
+  }
+  if (count > MAX_FEATURES) {
+    return {
+      color: "error",
+      message: `${count}/${MAX_FEATURES} · remove ${
+        count - MAX_FEATURES
+      } to continue`,
+    };
+  }
+  return {
+    color: "success",
+    message: `${count} features ready`,
+  };
 });
 
 // Draft restoration modal
@@ -1615,6 +1616,13 @@ const filteredIcons = computed(() => {
 
 // For demo purposes, pre-fill form with sample data
 const form = reactive(getRandomProject());
+const academicYearOptions = computed(() => {
+  const current = new Date().getFullYear();
+  const previous = current - 1;
+  const earlier = previous - 1;
+  return [`${previous}-${current}`, `${earlier}-${previous}`];
+});
+form.academicYear = academicYearOptions.value[0];
 
 // LocalStorage management
 const FORM_STORAGE_KEY = "gic-project-draft";
@@ -1702,11 +1710,10 @@ const restoreDraft = () => {
   form.description = parsed.description || "";
   // Don't restore thumbnails - they weren't saved to avoid quota issues
   form.category = parsed.category || "";
-  form.academicYear = parsed.academicYear || "";
+  form.academicYear = parsed.academicYear || academicYearOptions.value[0];
   form.technologies = parsed.technologies || [];
   form.githubUrl = parsed.githubUrl || "";
   form.demoUrl = parsed.demoUrl || "";
-  form.visibility = parsed.visibility || "public";
   form.duration = parsed.duration || "";
   form.teamSize = parsed.teamSize || 1;
   form.teamMembers = parsed.teamMembers || [];
@@ -1898,9 +1905,7 @@ const addFeature = () => {
     const newFeature = {
       name: featureInput.value.name.trim(),
       description: featureInput.value.description.trim(),
-      date: featureInput.value.date || "",
       icon: featureInput.value.icon || "i-heroicons-star",
-      status: featureInput.value.status || "pending",
     };
 
     if (editingFeatureIndex.value >= 0) {
@@ -1912,21 +1917,11 @@ const addFeature = () => {
       form.feature.push(newFeature);
     }
 
-    // Sort features by date (earliest first, empty dates last)
-    form.feature.sort((a, b) => {
-      if (!a.date && !b.date) return 0;
-      if (!a.date) return 1;
-      if (!b.date) return -1;
-      return new Date(a.date) - new Date(b.date);
-    });
-
     // Reset form
     featureInput.value = {
       name: "",
       description: "",
-      date: "",
       icon: "i-heroicons-star",
-      status: "pending",
     };
   }
 };
@@ -1936,9 +1931,7 @@ const editFeature = (index) => {
   featureInput.value = {
     name: feature.name || feature.title, // Support old features with 'title'
     description: feature.description,
-    date: feature.date,
     icon: feature.icon,
-    status: feature.status,
   };
   editingFeatureIndex.value = index;
 };
@@ -1948,9 +1941,7 @@ const cancelEditFeature = () => {
   featureInput.value = {
     name: "",
     description: "",
-    date: "",
     icon: "i-heroicons-star",
-    status: "pending",
   };
 };
 
@@ -2067,6 +2058,17 @@ const submitForm = async () => {
   try {
     isSubmitting.value = true;
 
+    const featureCount = form.feature.length;
+    if (featureCount < MIN_FEATURES || featureCount > MAX_FEATURES) {
+      toast.add({
+        title: "Add project features",
+        description: `Please include between ${MIN_FEATURES} and ${MAX_FEATURES} features before submitting. Currently ${featureCount}.`,
+        color: "warning",
+      });
+      isSubmitting.value = false;
+      return;
+    }
+
     // Generate tags
     // form.tags = generateTags();
 
@@ -2107,7 +2109,6 @@ const submitForm = async () => {
       category: form.category,
       status: editMode.value ? undefined : "In Progress", // Keep existing status when editing
       featured: false,
-      visibility: form.visibility || "public", // Ensure visibility is included
       demoUrl:
         form.demoUrl ||
         `https://${form.name.toLowerCase().replace(/\s+/g, "-")}.demo.com`,
@@ -2130,8 +2131,6 @@ const submitForm = async () => {
       duration: form.duration || "3 months",
       course: form.course || "Project Development",
     };
-
-    console.log("!!! Submitting project data:", projectData);
 
     let result;
     if (editMode.value) {

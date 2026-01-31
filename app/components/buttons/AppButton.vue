@@ -28,7 +28,7 @@
     />
 
     <!-- Label -->
-    <span class="truncate">{{ label }}</span>
+    <span class="truncate">{{ displayLabel }}</span>
   </NuxtLink>
 
   <button
@@ -60,7 +60,7 @@
     />
 
     <!-- Label -->
-    <span class="truncate">{{ label }}</span>
+    <span class="truncate">{{ displayLabel }}</span>
   </button>
 </template>
 
@@ -68,9 +68,11 @@
 import { computed } from "vue";
 import type { ButtonVariant, ButtonColor, ButtonSize } from "~/types/buttons";
 import { getButtonClasses } from "~/types/buttons";
+const { t } = useI18n();
 
 interface Props {
   label: string;
+  labelKey?: string;
   color?: ButtonColor;
   variant?: ButtonVariant;
   size?: ButtonSize;
@@ -97,6 +99,10 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   click: [event: MouseEvent];
 }>();
+
+const displayLabel = computed(() =>
+  props.labelKey ? t(props.labelKey) : props.label,
+);
 
 const iconSize = computed(() => {
   const sizes: Record<ButtonSize, string> = {

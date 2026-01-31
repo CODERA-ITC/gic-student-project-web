@@ -49,15 +49,33 @@
             >
               Password
             </label>
-            <input
-              v-model="password"
-              type="password"
-              placeholder="••••••••"
-              required
-              :disabled="authStore.isLoading"
-              @blur="validatePassword"
-              class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            />
+            <div class="relative">
+              <input
+                v-model="password"
+                :type="showPassword ? 'text' : 'password'"
+                placeholder="••••••••"
+                required
+                :disabled="authStore.isLoading"
+                @blur="validatePassword"
+                class="w-full px-4 py-3 pr-11 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              />
+              <button
+                type="button"
+                class="absolute inset-y-0 right-3 flex items-center text-slate-500 dark:text-slate-400 hover:text-blue-900 dark:hover:text-blue-300 transition-colors"
+                @click="showPassword = !showPassword"
+                :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                :disabled="authStore.isLoading"
+              >
+                <UIcon
+                  :name="
+                    showPassword
+                      ? 'i-heroicons-eye-slash'
+                      : 'i-heroicons-eye'
+                  "
+                  class="w-5 h-5"
+                />
+              </button>
+            </div>
             <div
               v-if="passwordError"
               class="text-xs text-red-600 dark:text-red-400 mt-1"
@@ -189,6 +207,7 @@ const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3017";
 
 const email = ref("");
 const password = ref("");
+const showPassword = ref(false);
 const rememberMe = ref(false);
 const emailError = ref("");
 const passwordError = ref("");

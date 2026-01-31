@@ -23,7 +23,7 @@
             <h1
               class="text-5xl lg:text-6xl font-semibold text-gray-900 dark:text-white leading-tight"
             >
-              Showcase Your Innovation
+              {{ t("hero.title") }}
             </h1>
             <p
               class="text-xl text-gray-700 dark:text-gray-300 leading-relaxed max-w-lg typewriter"
@@ -55,7 +55,9 @@
               >
                 {{ projects }}+
               </div>
-              <p class="text-sm text-gray-600 dark:text-gray-400">Projects</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                {{ t("stats.projects") }}
+              </p>
             </div>
             <div>
               <div
@@ -63,7 +65,9 @@
               >
                 {{ students }}+
               </div>
-              <p class="text-sm text-gray-600 dark:text-gray-400">Students</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                {{ t("stats.students") }}
+              </p>
             </div>
             <div>
               <div
@@ -71,7 +75,9 @@
               >
                 {{ gens }}
               </div>
-              <p class="text-sm text-gray-600 dark:text-gray-400">Gens</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                {{ t("stats.gens") }}
+              </p>
             </div>
           </div>
         </div>
@@ -87,20 +93,23 @@
 
 <script setup>
 import { tokenize } from "khmertokenizer";
+import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 
-const subtitle = "បង្កើតដោយនិស្សិត សម្រាប់និស្សិត ₍^.  ̫.^₎";
-const typeWriterChars = computed(() => tokenize(subtitle).length);
+const { t } = useI18n();
+
+const subtitle = computed(() => t("hero.subtitle"));
+const typeWriterChars = computed(
+  () => tokenize(subtitle.value).length || subtitle.value.length,
+);
 const typeWriterSpeed = "4s";
 const projectStore = useProjectStore();
 
 // fetch stats data from API by using store
 const stats = [
-  { label: "Projects", value: 247, suffix: "+" },
-  { label: "Students", value: 156, suffix: "+" },
-  { label: "Semesters", value: 27, suffix: "" },
+  { value: 247, suffix: "+" },
+  { value: 156, suffix: "+" },
+  { value: 27, suffix: "" },
 ];
-
-import { ref, onMounted } from "vue";
 
 let projects = ref(0);
 const students = ref(0);
