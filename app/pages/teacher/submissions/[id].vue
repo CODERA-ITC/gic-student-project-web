@@ -47,7 +47,7 @@
           />
         </template>
         <template #action-buttons>
-          <div class="flex flex-col sm:flex-row gap-3">
+          <!-- <div class="flex flex-col sm:flex-row gap-3">
             <ButtonsPresetButton
               label="Edit Project"
               icon="i-heroicons-pencil-square"
@@ -64,6 +64,27 @@
               class="flex-1"
               @click="showDeleteModal = true"
             />
+          </div> -->
+
+          <div class="flex gap-2">
+            <UButton
+              class="flex-1 justify-center rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 border border-blue-200 dark:border-blue-800"
+              size="md"
+            >
+              <template #leading>
+                <UIcon name="i-heroicons-check" class="w-5 h-5" />
+              </template>
+              Accept
+            </UButton>
+            <UButton
+              class="flex-1 justify-center rounded-lg bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-600 border border-gray-200 dark:border-slate-600"
+              size="md"
+            >
+              <template #leading>
+                <UIcon name="i-heroicons-x-mark" class="w-5 h-5" />
+              </template>
+              Reject
+            </UButton>
           </div>
         </template>
       </ProjectDetails>
