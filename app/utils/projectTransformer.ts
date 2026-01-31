@@ -212,11 +212,23 @@ export class ProjectTransformer {
       tags,
       members,
       features,
-      duration: projectData.duration || "",
+      duration:
+        projectData.duration ||
+        projectData.projectDuration ||
+        projectData.durationLabel ||
+        projectData.durationText ||
+        projectData.timelineDuration ||
+        "",
       course:
         typeof projectData.course === "string"
           ? projectData.course
-          : projectData.course?.name || "",
+          : projectData.course?.name ||
+            projectData.course?.code ||
+            projectData.course?.id ||
+            projectData.courseName ||
+            projectData.courseCode ||
+            projectData.courseId ||
+            "",
       visibility: projectData.visibility || "draft",
       submissions: projectData.submissions || {
         id: projectData.id || "",

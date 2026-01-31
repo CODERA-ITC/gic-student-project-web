@@ -441,7 +441,7 @@ const formData = ref({
   bio: "",
   avatar: authStore.currentUser?.avatar || undefined,
   skills: [] as string[],
-  courses: [] as (Course | string)[],
+  courses: [],
   yearsOfExperience: 0,
   socialLinks: {
     github: "",

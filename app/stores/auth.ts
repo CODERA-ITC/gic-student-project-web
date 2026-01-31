@@ -67,7 +67,7 @@ export interface TeacherUser extends BaseUser {
   teacherId: string;
   department: string;
   position: string;
-  courses?: string[];
+  courses?: Course[];
   yearsOfExperience?: number;
 }
 
