@@ -1,5 +1,21 @@
 <template>
-  <div class="min-h-screen bg-white dark:bg-slate-900">
+  <div class="min-h-screen bg-white dark:bg-slate-900 relative">
+    <transition name="fade">
+      <div
+        v-if="showPostAuthSplash"
+        class="absolute inset-0 z-20 flex items-center justify-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm"
+      >
+        <div class="flex flex-col items-center gap-3">
+          <div
+            class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"
+          ></div>
+          <p class="text-sm text-slate-700 dark:text-slate-200">
+            Loading your dashboard...
+          </p>
+        </div>
+      </div>
+    </transition>
+
     <!-- Loading State -->
     <div v-if="isLoading" class="min-h-screen flex items-center justify-center">
       <div class="text-center space-y-4">
@@ -315,6 +331,7 @@ definePageMeta({
 
 const isLoading = ref(true);
 const error = ref("");
+const showPostAuthSplash = ref(false);
 const GreetMessage = getGreetingByTimeZone("Asia/Phnom_Penh");
 
 const submissions = computed(() => projectsStore.submissionProjects);
@@ -347,6 +364,14 @@ onMounted(async () => {
       projectsStore.submissionProjects.length === 0
     ) {
       await projectsStore.fetchAllSubmissions();
+    }
+
+    if (sessionStorage.getItem("post_auth_splash") === "1") {
+      showPostAuthSplash.value = true;
+      sessionStorage.removeItem("post_auth_splash");
+      setTimeout(() => {
+        showPostAuthSplash.value = false;
+      }, 1000);
     }
   } catch (err) {
     console.error("Error loading dashboard data:", err);

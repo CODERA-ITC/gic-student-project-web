@@ -267,8 +267,8 @@ const handleLogin = async () => {
       localStorage.removeItem("remembered_email");
     }
 
-    // Small delay for better UX
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    // Flag for dashboards to show a short splash instead of blocking login page
+    sessionStorage.setItem("post_auth_splash", "1");
 
     // Check for redirect query parameter
     const redirectTo = route.query.redirect;

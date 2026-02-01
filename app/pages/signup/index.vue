@@ -572,8 +572,8 @@ const handleSignup = async () => {
     // Show success state
     modalStatus.value = "success";
 
-    // Wait for animation to complete before navigating
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    // Flag dashboards to show a quick splash after navigation
+    sessionStorage.setItem("post_auth_splash", "1");
 
     // Step 3: Navigate to dashboard based on role
     // The dashboard will automatically show the security questions modal

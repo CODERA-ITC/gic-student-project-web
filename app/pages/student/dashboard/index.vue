@@ -352,7 +352,7 @@ import { useAuthStore } from "~/stores/auth";
 import { useProjectStore } from "~/stores/projects";
 import SparklineChart from "~/components/SparklineChart.vue";
 import { useRouter, useRoute } from "vue-router";
-import { getGreetingByTimeZone } from "#imports";
+import { getGreetingByTimeZone, SubmissionStatus } from "#imports";
 
 const { t } = useI18n();
 const authStore = useAuthStore();
@@ -658,7 +658,7 @@ const updates = computed(() => {
   // Generate notifications based on project status and submissions
   userProjects.forEach((project) => {
     // Check for completed/approved projects
-    if (project.status === "Completed") {
+    if (project.submissionStatus === SubmissionStatus.ACCEPTED) {
       projectUpdates.push({
         id: `approved-${project.id}`,
         title: "Project Approved! 🎉",

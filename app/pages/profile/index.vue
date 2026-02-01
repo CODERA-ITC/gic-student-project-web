@@ -131,8 +131,8 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import auth from "~/middleware/auth";
 import { useAuthStore, type User } from "~/stores/auth";
+import type { UpdateProfilePayload } from "~/types/user-profile";
 
 const breadcrumbs = [
   { label: "Dashboard", to: "/student/dashboard" },
@@ -333,68 +333,102 @@ const currentProfile = computed(() => {
 });
 
 // Event handlers
-const handleProfileSave = async (data: any) => {
+const profileEquals = (payload: UpdateProfilePayload, current: User | null) => {
+  if (!current) return false;
+
+  // Normalize comparable subset
+  const normalize = (d: any) =>
+    JSON.stringify({
+      name: d.name ?? current.name,
+      bio: d.bio ?? current.bio,
+      phone: d.phone ?? current.phone,
+      avatar: d.avatar ?? current.avatar,
+      skills: d.skills ?? (current as any).skills,
+      socialLinks: d.socialLinks ?? (current as any).socialLinks,
+      // student
+      studentId: d.studentId ?? (current as any).studentId,
+      program: d.program ?? (current as any).program ?? (current as any).department,
+      year: d.year ?? (current as any).year,
+      gen: d.gen ?? (current as any).gen,
+      // teacher
+      teacherId: d.teacherId ?? (current as any).teacherId,
+      department: d.department ?? (current as any).department,
+      position: d.position ?? (current as any).position,
+      courses: d.courses ?? (current as any).courses,
+      yearsOfExperience:
+        d.yearsOfExperience ?? (current as any).yearsOfExperience,
+      // admin
+      adminId: d.adminId ?? (current as any).adminId,
+    });
+
+  return normalize(payload) === normalize({});
+};
+
+const handleProfileSave = async (data: UpdateProfilePayload) => {
   console.log("Profile saved:", data);
 
   try {
-    // TODO: Implement API call to save profile data to backend
-    // await $fetch('/api/users/profile', { method: 'PUT', body: data });
+    if (profileEquals(data, authStore.currentUser)) {
+      console.log("No profile changes detected; skipping update.");
+      return;
+    }
+
+    await authStore.updateUserProfile(data);
 
     // After successful save, refetch user data from server to ensure consistency
     await authStore.fetchCurrentUser();
 
+    // Helper to map array of social link items back to object shape for form binding
+    const toSocialObj = (links: any[] | undefined) =>
+      (links || []).reduce(
+        (acc, item) => {
+          if (item?.name && item?.url) acc[item.name] = item.url;
+          return acc;
+        },
+        { github: "", linkedin: "", twitter: "", portfolio: "" } as Record<string, string>,
+      );
+
+    const syncProfileFromStore = () => {
+      if (authStore.isStudent) {
+        const user = authStore.studentProfile;
+        Object.assign(StudentProfile, {
+          bio: user?.bio || "",
+          skills: user?.skills || [],
+          program: user?.program || "",
+          year: user?.year || "",
+          studentId: user?.studentId || "",
+          gen: user?.gen || "",
+          phone: user?.phone || "",
+          socialLinks: toSocialObj((user as any)?.socialLinks),
+          projectCount: user?.projectCount || 0,
+          achievements: user?.achievements || 0,
+        });
+      } else if (authStore.isTeacher) {
+        const user = authStore.teacherProfile;
+        Object.assign(TeacherProfile, {
+          bio: user?.bio || "",
+          skills: user?.skills || [],
+          department: user?.department || "",
+          position: user?.position || "",
+          teacherId: user?.teacherId || "",
+          phone: user?.phone || "",
+          courses: user?.courses || [],
+          yearsOfExperience: user?.yearsOfExperience || 0,
+          socialLinks: toSocialObj((user as any)?.socialLinks),
+        });
+      } else if (authStore.isAdmin) {
+        const user = authStore.adminProfile;
+        Object.assign(AdminProfile, {
+          bio: user?.bio || "",
+          skills: user?.skills || [],
+          adminId: user?.adminId || "",
+          socialLinks: toSocialObj((user as any)?.socialLinks),
+        });
+      }
+    };
+
     // Update local reactive state with fresh data from store
-    if (authStore.isStudent) {
-      const studentUser = authStore.studentProfile;
-      Object.assign(StudentProfile, {
-        bio: studentUser?.bio || "",
-        skills: studentUser?.skills || [],
-        program: studentUser?.program || "",
-        year: studentUser?.year || "",
-        studentId: studentUser?.studentId || "",
-        gen: studentUser?.gen || "",
-        phone: studentUser?.phone || "",
-        socialLinks: studentUser?.socialLinks || {
-          github: "",
-          linkedin: "",
-          twitter: "",
-          portfolio: "",
-        },
-        projectCount: studentUser?.projectCount || 0,
-        achievements: studentUser?.achievements || 0,
-      });
-    } else if (authStore.isTeacher) {
-      const teacherUser = authStore.teacherProfile;
-      Object.assign(TeacherProfile, {
-        bio: teacherUser?.bio || "",
-        skills: teacherUser?.skills || [],
-        department: teacherUser?.department || "",
-        position: teacherUser?.position || "",
-        teacherId: teacherUser?.teacherId || "",
-        phone: teacherUser?.phone || "",
-        courses: teacherUser?.courses || [],
-        yearsOfExperience: teacherUser?.yearsOfExperience || 0,
-        socialLinks: teacherUser?.socialLinks || {
-          github: "",
-          linkedin: "",
-          twitter: "",
-          portfolio: "",
-        },
-      });
-    } else if (authStore.isAdmin) {
-      const adminUser = authStore.adminProfile;
-      Object.assign(AdminProfile, {
-        bio: adminUser?.bio || "",
-        skills: adminUser?.skills || [],
-        adminId: adminUser?.adminId || "",
-        socialLinks: adminUser?.socialLinks || {
-          github: "",
-          linkedin: "",
-          twitter: "",
-          portfolio: "",
-        },
-      });
-    }
+    syncProfileFromStore();
 
     console.log("✅ Profile updated and store refreshed");
   } catch (error) {
@@ -405,35 +439,9 @@ const handleProfileSave = async (data: any) => {
 
 const handlePasswordUpdate = async (data: any) => {
   try {
-    const token = authStore.token;
-
-    console.log("=== Password Change Debug ===");
-    console.log("Token exists:", !!token);
-    console.log("Token length:", token?.length);
-    console.log("User:", authStore.user?.email);
-    console.log("Request data:", data);
-
-    if (!token) {
-      throw new Error("No authentication token found. Please log in again.");
-    }
-
-    const apiBaseUrl = useRuntimeConfig().public.apiBase;
-    const url = `${apiBaseUrl}/users/change-password`;
-
-    console.log("API URL:", url);
-    console.log("Authorization header:", `Bearer ${token.substring(0, 20)}...`);
-
-    // Call API to change password
-    const response = await $fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: {
-        answers: data.answers,
-        newPassword: data.newPassword,
-      },
+    const response = await authStore.changePassword({
+      answers: data.answers,
+      newPassword: data.newPassword,
     });
 
     console.log("Password changed successfully:", response);

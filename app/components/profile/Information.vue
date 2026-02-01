@@ -411,6 +411,7 @@ import {
   type StudentUser,
   type TeacherUser,
 } from "~/stores/auth";
+import type { UpdateProfilePayload } from "~/types/user-profile";
 import type { Course } from "~/utils/Interfaces";
 
 const authStore = useAuthStore();
@@ -422,7 +423,10 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-const emit = defineEmits(["save", "cancel"]);
+const emit = defineEmits<{
+  (e: "save", payload: UpdateProfilePayload): void;
+  (e: "cancel"): void;
+}>();
 
 const isSaving = ref(false);
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -679,20 +683,37 @@ const handleSave = async () => {
       description: "No changes detected to update.",
       icon: "i-heroicons-information-circle",
       color: "warning",
+      class:
+        "bg-amber-50 text-amber-900 border border-amber-100 dark:bg-slate-800 dark:text-amber-100 dark:border-slate-700",
     });
     return;
   }
 
   isSaving.value = true;
   try {
-    // TODO: Implement API call to save profile
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
 
-    // Prepare data to emit
-    const dataToSave = {
-      ...formData.value,
-      year: formData.value.year.label || formData.value.year,
-      position: formData.value.position.label || formData.value.position,
+    const socialLinksArray = Object.entries(formData.value.socialLinks)
+      .filter(([, url]) => !!url)
+      .map(([name, url]) => ({ name, url }));
+
+    // Prepare typed payload to emit
+    const dataToSave: UpdateProfilePayload = {
+      name: formData.value.name,
+      bio: formData.value.bio,
+      phone: formData.value.phone,
+      avatar: formData.value.avatar,
+      skills: formData.value.skills,
+      socialLinks: socialLinksArray,
+      // student fields
+      program: formData.value.program,
+      year: formData.value.year.label || (formData.value.year as any),
+      gen: formData.value.gen,
+      // teacher fields
+      department: formData.value.program,
+      position: formData.value.position.label || (formData.value.position as any),
+      courses: formData.value.courses,
+      yearsOfExperience: formData.value.yearsOfExperience,
+      // admin field
     };
 
     emit("save", dataToSave);
@@ -704,7 +725,8 @@ const handleSave = async () => {
       title: "Success",
       description: "Profile updated successfully!",
       icon: "i-heroicons-check-circle",
-      class: "bg-green-50 dark:bg-green-900/30",
+      class:
+        "bg-green-50 text-green-900 border border-green-100 dark:bg-green-900/30 dark:text-green-100 dark:border-green-800",
     });
   } catch (error) {
     toast.add({
@@ -712,6 +734,8 @@ const handleSave = async () => {
       description: "Failed to update profile. Please try again.",
       icon: "i-heroicons-x-circle",
       color: "error",
+      class:
+        "bg-red-50 text-red-900 border border-red-100 dark:bg-red-900/30 dark:text-red-100 dark:border-red-800",
     });
   } finally {
     isSaving.value = false;
