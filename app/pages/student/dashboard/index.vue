@@ -208,7 +208,7 @@
         </div>
 
         <!-- My Projects -->
-        <div
+        <!-- <div
           class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 mb-8"
         >
           <div class="flex items-center justify-between mb-6">
@@ -269,9 +269,63 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
 
-        <!-- Updates - Full Width -->
+        <!-- Recent Projects Section -->
+        <div class="mb-8">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h2 class="text-xl font-semibold text-black dark:text-white">
+                Recent Projects
+              </h2>
+              <p class="text-xs text-gray-600 dark:text-slate-400 mt-1">
+                Latest student project submissions
+              </p>
+            </div>
+            <NuxtLink
+              to="/projects"
+              class="flex items-center gap-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+            >
+              <span>View All Projects</span>
+              <UIcon name="i-heroicons-arrow-right" class="w-4 h-4" />
+            </NuxtLink>
+          </div>
+
+          <div v-if="loadingCounts || loadingProjects" class="space-y-3">
+            <USkeleton class="h-48 w-full" />
+            <USkeleton class="h-48 w-full" />
+          </div>
+
+          <div
+            v-else-if="recentProjects.length === 0"
+            class="text-center py-12 px-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg"
+          >
+            <UIcon
+              name="i-heroicons-inbox-stack"
+              class="w-16 h-16 text-slate-500 mx-auto mb-4"
+            />
+            <h3 class="text-black dark:text-white text-lg font-semibold mb-2">
+              No recent projects
+            </h3>
+            <p class="text-slate-400 text-sm">
+              Student project submissions will appear here.
+            </p>
+          </div>
+
+          <!-- Projects Grid -->
+          <div
+            v-else
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+          >
+            <RecentProjectCard
+              v-for="project in recentProjects"
+              :key="project.id"
+              :project="project"
+              view-base="/admin/projects/"
+            />
+          </div>
+        </div>
+        <!-- Updates - Full Width
         <div
           class="bg-white dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-6"
         >
@@ -339,7 +393,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
       </UContainer>
     </div>
   </div>
@@ -507,12 +561,13 @@ const stats = computed(() => {
       last7Days.push(date);
     }
 
-    return last7Days.map((targetDate) =>
-      projectsToAnalyze.filter((project) => {
-        if (!project.createdAt) return false;
-        const projectDate = new Date(project.createdAt);
-        return projectDate <= targetDate;
-      }).length,
+    return last7Days.map(
+      (targetDate) =>
+        projectsToAnalyze.filter((project) => {
+          if (!project.createdAt) return false;
+          const projectDate = new Date(project.createdAt);
+          return projectDate <= targetDate;
+        }).length,
     );
   };
 

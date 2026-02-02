@@ -76,7 +76,7 @@
               color="primary"
               variant="solid"
               size="sm"
-              @click="openCreateStudent"
+              @click="showCreateModal = true"
             />
             <input
               ref="fileInput"
@@ -346,6 +346,145 @@
       </div>
     </UContainer>
 
+    <!-- Student Details Modal -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div
+          v-if="showDetailsModal"
+          class="fixed inset-0 z-50 flex items-center justify-center p-4"
+          @click.self="showDetailsModal = false"
+        >
+          <!-- Backdrop -->
+          <div
+            class="absolute inset-0 bg-gray-900/75 dark:bg-gray-900/90 backdrop-blur-sm"
+            @click="showDetailsModal = false"
+          ></div>
+
+          <!-- Modal Container -->
+          <div
+            class="relative w-full max-w-2xl bg-white dark:bg-slate-800 rounded-xl shadow-2xl transform transition-all max-h-[90vh] overflow-y-auto"
+          >
+            <div class="p-6">
+              <div class="flex items-center justify-between mb-6">
+                <h3
+                  class="text-2xl font-semibold text-gray-900 dark:text-white"
+                >
+                  Student Details
+                </h3>
+                <button
+                  @click="showDetailsModal = false"
+                  class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                >
+                  <UIcon name="i-heroicons-x-mark" class="w-6 h-6" />
+                </button>
+              </div>
+
+              <div v-if="selectedStudent" class="space-y-4">
+                <div class="flex items-center gap-4 mb-6">
+                  <img
+                    :src="
+                      selectedStudent.avatar ||
+                      `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedStudent.firstName + ' ' + (selectedStudent.lastName || ''))}&background=3b82f6&color=fff&size=128`
+                    "
+                    :alt="selectedStudent.firstName"
+                    class="w-20 h-20 rounded-full object-cover ring-4 ring-gray-200 dark:ring-slate-600"
+                  />
+                  <div>
+                    <h4
+                      class="text-xl font-semibold text-gray-900 dark:text-white"
+                    >
+                      {{ selectedStudent.firstName }}
+                      {{ selectedStudent.lastName || "" }}
+                    </h4>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                      {{ selectedStudent.email }}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label
+                      class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                      >Phone</label
+                    >
+                    <p class="text-gray-900 dark:text-white">
+                      {{ selectedStudent.phone || "N/A" }}
+                    </p>
+                  </div>
+                  <div>
+                    <label
+                      class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                      >Generation</label
+                    >
+                    <p class="text-gray-900 dark:text-white">
+                      {{
+                        selectedStudent.generation
+                          ? `Gen ${selectedStudent.generation}`
+                          : "N/A"
+                      }}
+                    </p>
+                  </div>
+                  <div>
+                    <label
+                      class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                      >Year</label
+                    >
+                    <p class="text-gray-900 dark:text-white">
+                      {{
+                        selectedStudent.year
+                          ? `Year ${selectedStudent.year}`
+                          : "N/A"
+                      }}
+                    </p>
+                  </div>
+                  <div>
+                    <label
+                      class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                      >Department</label
+                    >
+                    <p class="text-gray-900 dark:text-white">
+                      {{ selectedStudent.department?.name || "N/A" }}
+                    </p>
+                  </div>
+                </div>
+
+                <div v-if="selectedStudent.bio">
+                  <label
+                    class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                    >Bio</label
+                  >
+                  <p class="text-gray-900 dark:text-white mt-1">
+                    {{ selectedStudent.bio }}
+                  </p>
+                </div>
+
+                <div
+                  v-if="
+                    selectedStudent.skill && selectedStudent.skill.length > 0
+                  "
+                >
+                  <label
+                    class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                    >Skills</label
+                  >
+                  <div class="flex flex-wrap gap-2 mt-2">
+                    <span
+                      v-for="skill in selectedStudent.skill"
+                      :key="skill"
+                      class="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300"
+                    >
+                      {{ skill }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
     <!-- Delete Confirmation Modal -->
     <Teleport to="body">
       <Transition name="modal">
@@ -459,47 +598,231 @@
       </Transition>
     </Teleport>
 
-    <UserFormModal
-      v-model="showStudentModal"
-      :loading="creating"
-      :mode="userModalMode"
-      :user="selectedStudentForModal"
-      fixed-role="STUDENT"
-      @submit="handleStudentSubmit"
-    />
+    <!-- Create Student Modal -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div
+          v-if="showCreateModal"
+          class="fixed inset-0 z-50 flex items-center justify-center p-4"
+          @click.self="showCreateModal = false"
+        >
+          <!-- Backdrop -->
+          <div
+            class="absolute inset-0 bg-gray-900/75 dark:bg-gray-900/90 backdrop-blur-sm"
+            @click="showCreateModal = false"
+          ></div>
+
+          <!-- Modal Container -->
+          <div
+            class="relative w-full max-w-2xl bg-white dark:bg-slate-800 rounded-xl shadow-2xl transform transition-all max-h-[90vh] overflow-y-auto"
+          >
+            <div class="p-6">
+              <div class="flex items-center justify-between mb-6">
+                <h3
+                  class="text-2xl font-semibold text-gray-900 dark:text-white"
+                >
+                  Create New Student
+                </h3>
+                <button
+                  @click="showCreateModal = false"
+                  class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                >
+                  <UIcon name="i-heroicons-x-mark" class="w-6 h-6" />
+                </button>
+              </div>
+
+              <form @submit.prevent="createStudent" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label
+                      class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    >
+                      First Name <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                      v-model="newStudent.firstName"
+                      type="text"
+                      required
+                      class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Enter first name"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    >
+                      Last Name
+                    </label>
+                    <input
+                      v-model="newStudent.lastName"
+                      type="text"
+                      class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Enter last name"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Email <span class="text-red-500">*</span>
+                  </label>
+                  <input
+                    v-model="newStudent.email"
+                    type="email"
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="student@example.com"
+                  />
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label
+                      class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    >
+                      Phone
+                    </label>
+                    <input
+                      v-model="newStudent.phone"
+                      type="tel"
+                      class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="+1234567890"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    >
+                      Generation <span class="text-red-500">*</span>
+                    </label>
+                    <select
+                      v-model="newStudent.generation"
+                      required
+                      class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="" disabled>Select generation</option>
+                      <option
+                        v-for="gen in availableGenerations"
+                        :key="gen"
+                        :value="gen"
+                      >
+                        Generation {{ gen }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label
+                      class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    >
+                      Year
+                    </label>
+                    <input
+                      v-model.number="newStudent.year"
+                      type="number"
+                      min="1"
+                      max="6"
+                      class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="1-6"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    >
+                      Department ID
+                    </label>
+                    <input
+                      v-model="newStudent.departmentId"
+                      type="text"
+                      class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Department ID"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Bio
+                  </label>
+                  <textarea
+                    v-model="newStudent.bio"
+                    rows="3"
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Brief description about the student"
+                  ></textarea>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 justify-end pt-4">
+                  <ButtonsPresetButton
+                    preset="cancel"
+                    size="lg"
+                    type="button"
+                    @click="showCreateModal = false"
+                  />
+                  <ButtonsPresetButton
+                    label="Create Student"
+                    icon="i-heroicons-plus"
+                    color="primary"
+                    size="lg"
+                    type="submit"
+                    :disabled="creating"
+                    :loading="creating"
+                  />
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, onMounted, watch } from "vue";
+import { useAuthStore } from "~/stores/auth";
 import { useStudentStore } from "~/stores/students";
 import type { APIStudent } from "~/stores/students";
 import { useDebounceFn } from "@vueuse/core";
-import { useAuthStore } from "~/stores/auth";
-import UserFormModal from "~/components/UserFormModal.vue";
 const { t } = useI18n();
 
 definePageMeta({
-  middleware: ["auth", "teacher"],
+  middleware: ["auth", "admin"],
 });
 
-const studentStore = useStudentStore();
 const authStore = useAuthStore();
+const studentStore = useStudentStore();
 const config = useRuntimeConfig();
 const toast = useToast();
 
 // Local state
-const showStudentModal = ref(false);
-const userModalMode = ref<"create" | "edit">("create");
+const showDetailsModal = ref(false);
 const selectedStudent = ref<APIStudent | null>(null);
-const selectedStudentForModal = ref<any | null>(null);
 const showDeleteModal = ref(false);
 const studentToDelete = ref<APIStudent | null>(null);
 const deleting = ref(false);
 const fileInput = ref<HTMLInputElement | null>(null);
 const uploading = ref(false);
 const deleteText = ref("");
+const showCreateModal = ref(false);
 const creating = ref(false);
+const newStudent = ref({
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  generation: "",
+  year: null as number | null,
+  departmentId: "",
+  bio: "",
+});
 
 // Computed properties from store
 const students = computed(() => studentStore.apiStudents);
@@ -550,12 +873,12 @@ const changePage = async (page: number) => {
   await studentStore.changePage(page, authStore.token);
 };
 
-// View/Edit student details in single modal
+// View student details
 const viewStudent = (student: APIStudent) => {
+  console.log("View student clicked:", student);
   selectedStudent.value = student;
-  selectedStudentForModal.value = student;
-  userModalMode.value = "edit";
-  showStudentModal.value = true;
+  showDetailsModal.value = true;
+  console.log("showDetailsModal:", showDetailsModal.value);
 };
 
 // Confirm delete student
@@ -649,68 +972,42 @@ const handleFileSelect = async (event: Event) => {
   }
 };
 
-// Handle create or update from modal
-const handleStudentSubmit = async (payload: any) => {
-  const isEdit = userModalMode.value === "edit" && selectedStudent.value;
+// Create new student
+const createStudent = async () => {
   creating.value = true;
   try {
-    if (isEdit) {
-      await studentStore.updateStudent(
-        selectedStudent.value!.id,
-        mapUserPayloadToStudent(payload),
-        authStore.token,
-      );
-      toast.add({
-        title: "Success",
-        description: "Student updated successfully",
-        color: "success",
-      });
-    } else {
-      await studentStore.createStudent(
-        mapUserPayloadToStudent(payload),
-        authStore.token,
-      );
-      toast.add({
-        title: "Success",
-        description: "Student created successfully",
-        color: "success",
-      });
-    }
-    showStudentModal.value = false;
-    selectedStudent.value = null;
-    selectedStudentForModal.value = null;
+    await studentStore.createStudent(newStudent.value, authStore.token);
+
+    toast.add({
+      title: "Success",
+      description: "Student created successfully",
+      color: "success",
+    });
+
+    showCreateModal.value = false;
+    // Reset form
+    newStudent.value = {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      generation: "",
+      year: null,
+      departmentId: "",
+      bio: "",
+    };
+
+    // Reload students
     await loadStudents();
   } catch (error: any) {
     toast.add({
       title: "Error",
-      description: error.message || "Failed to save student",
+      description: error.message || "Failed to create student",
       color: "error",
     });
   } finally {
     creating.value = false;
   }
-};
-
-const mapUserPayloadToStudent = (payload: any) => {
-  return {
-    firstName: payload.name?.split(" ")?.[0] || payload.firstName || "",
-    lastName:
-      payload.name?.split(" ").slice(1).join(" ") || payload.lastName || "",
-    email: payload.email,
-    phone: payload.phone,
-    generation: payload.generation || "",
-    year: payload.year || null,
-    departmentId: payload.departmentCode || payload.departmentId || "",
-    bio: payload.bio || "",
-    password: payload.password || "",
-  };
-};
-
-const openCreateStudent = () => {
-  selectedStudent.value = null;
-  selectedStudentForModal.value = null;
-  userModalMode.value = "create";
-  showStudentModal.value = true;
 };
 
 // Export students to CSV

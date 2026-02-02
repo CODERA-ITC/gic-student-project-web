@@ -3,38 +3,36 @@
  * Ensures only admins can access admin-specific routes
  */
 
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware(async (to) => {
   const authStore = useAuthStore();
+  if (import.meta.server) return;
 
-  // Allow OAuth callback URLs with token to pass through
-  // The page will handle the token and authenticate
-  if (to.query.token || to.query.refresh_token) {
-    console.log("Admin middleware: Token found in URL, allowing through");
-    return;
+  // Only allow bypass for the actual auth callback route
+  const isAuthCallback = to.path === "/auth/callback";
+  if (isAuthCallback && (to.query.token || to.query.refresh_token)) return;
+
+  // Restore if needed
+  if (!authStore.isAuthenticated) {
+    await authStore.restoreAuth();
   }
 
-  // Check if user is authenticated
-  if (!authStore.isAuthenticated || !authStore.user) {
-    return navigateTo({
-      path: "/login",
-      query: { redirect: to.path },
-    });
-  }
-
-  // Check if user is an admin
-  if (!authStore.isAdmin) {
-    console.warn("Access denied: Admin role required");
-
-    // Redirect to appropriate dashboard based on role
-    if (authStore.isStudent) {
-      return navigateTo("/student/dashboard");
-    } else if (authStore.isTeacher) {
-      return navigateTo("/teacher/dashboard");
+  // If token invalid, refresh (store should lock concurrent refresh calls)
+  if (authStore.isAuthenticated && !authStore.isTokenValid()) {
+    const ok = await authStore.refreshAccessToken();
+    if (!ok) {
+      return navigateTo({ path: "/login", query: { redirect: to.fullPath } });
     }
+  }
 
+  // Must be authenticated
+  if (!authStore.isAuthenticated || !authStore.user) {
+    return navigateTo({ path: "/login", query: { redirect: to.fullPath } });
+  }
+
+  // Must be admin
+  if (!authStore.isAdmin) {
+    if (authStore.isStudent) return navigateTo("/student/dashboard");
+    if (authStore.isTeacher) return navigateTo("/teacher/dashboard");
     return navigateTo("/");
   }
-
-  // User is an admin, allow access
-  return;
 });

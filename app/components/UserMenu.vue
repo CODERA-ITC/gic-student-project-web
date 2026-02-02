@@ -137,7 +137,7 @@
             </template>
 
             <!-- Teacher Menu Items -->
-            <template v-if="isTeacher || isAdmin">
+            <template v-if="isTeacher">
               <NuxtLink
                 to="/teacher/dashboard"
                 class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
@@ -182,6 +182,44 @@
                 <UIcon name="i-heroicons-users-20-solid" class="w-4 h-4" />
                 {{ t("nav.userManagement") }}
               </NuxtLink>
+            </template>
+
+            <!-- Admin Quick Links -->
+            <template v-if="isAdmin">
+              <hr class="border-gray-200 dark:border-slate-700" />
+              <NuxtLink
+                to="/admin/dashboard"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                @click="closeMenu"
+              >
+                <UIcon name="i-heroicons-command-line" class="w-4 h-4" />
+                Admin Dashboard
+              </NuxtLink>
+              <NuxtLink
+                to="/admin/projects"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                @click="closeMenu"
+              >
+                <UIcon name="i-heroicons-squares-2x2" class="w-4 h-4" />
+                Project Management
+              </NuxtLink>
+              <NuxtLink
+                to="/admin/users"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                @click="closeMenu"
+              >
+                <UIcon name="i-heroicons-user-group" class="w-4 h-4" />
+                User Management
+              </NuxtLink>
+
+              <!-- <NuxtLink
+                to="/teacher/dashboard"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                @click="closeMenu"
+              >
+                <UIcon name="i-heroicons-arrow-path" class="w-4 h-4" />
+                Switch to Teacher View
+              </NuxtLink> -->
             </template>
 
             <!-- Common Menu Items -->
@@ -266,7 +304,6 @@ const notifications = computed(() => {
 
 // Debug on mount
 onMounted(() => {
-
   // Force alert to verify code is running
   if (uiStore.notifications.length === 0) {
     console.error("❌ PROBLEM: Store has 0 notifications!");

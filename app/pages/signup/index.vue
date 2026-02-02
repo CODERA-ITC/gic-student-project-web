@@ -577,9 +577,16 @@ const handleSignup = async () => {
 
     // Step 3: Navigate to dashboard based on role
     // The dashboard will automatically show the security questions modal
-    const dashboardRoute = authStore.isTeacher
-      ? "/teacher/dashboard"
-      : "/student/dashboard";
+    const dashboardRoute = "";
+
+    if (authStore.isAdmin) {
+      dashboardRoute = "/admin/dashboard";
+    } else if (authStore.isTeacher) {
+      dashboardRoute = "/teacher/dashboard";
+    } else {
+      dashboardRoute = "/student/dashboard";
+    }
+
     await router.push(dashboardRoute);
   } catch (err) {
     // Show failed state

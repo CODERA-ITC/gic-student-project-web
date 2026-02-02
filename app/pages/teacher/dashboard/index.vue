@@ -72,8 +72,7 @@
       <div class="py-14">
         <UContainer>
           <div
-            class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/15
-                   bg-white/90 dark:bg-slate-900/90 shadow-2xl px-8 py-10"
+            class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/15 bg-white/90 dark:bg-slate-900/90 shadow-2xl px-8 py-10"
           >
             <div
               class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.08),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(79,70,229,0.08),transparent_30%)] pointer-events-none"
@@ -81,7 +80,9 @@
             ></div>
 
             <div class="relative space-y-3">
-              <nav class="flex items-center flex-wrap gap-1 text-sm text-slate-600 dark:text-slate-300">
+              <nav
+                class="flex items-center flex-wrap gap-1 text-sm text-slate-600 dark:text-slate-300"
+              >
                 <NuxtLink
                   to="/"
                   class="hover:text-blue-600 dark:hover:text-blue-300 transition-colors"
@@ -93,8 +94,13 @@
                   {{ t("nav.teacherDashboard") }}
                 </span>
               </nav>
-              <h1 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
-                {{ GreetMessage }}, <span class="text-blue-600 dark:text-blue-300">{{ teacher.name }} 👋</span>
+              <h1
+                class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white"
+              >
+                {{ GreetMessage }},
+                <span class="text-blue-600 dark:text-blue-300"
+                  >{{ teacher.name }} 👋</span
+                >
               </h1>
               <p class="text-slate-700 dark:text-slate-300">
                 {{ t("teacherDashboard.subtitle") }}
@@ -204,95 +210,13 @@
             </NuxtLink>
           </div>
 
-          <!-- Projects Grid -->
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            <div
-              v-for="project in recentProjects"
-              :key="project.id"
-              class="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700/50"
-            >
-              <div class="p-6">
-                <div class="flex justify-end mb-3">
-                  <span
-                    :class="getStatusBadgeClass(project.submissionStatus || project.projectStatus)"
-                    class="px-3 py-1 rounded-full text-xs font-medium"
-                  >
-                    {{ project.submissionStatus || project.projectStatus }}
-                  </span>
-                </div>
-
-                <div class="flex items-center gap-3 mb-4">
-                  <div
-                    v-if="project.author?.avatar"
-                    class="w-12 h-12 rounded-full overflow-hidden shrink-0 ring-2 ring-gray-100 dark:ring-slate-700"
-                  >
-                    <img
-                      :src="project.author.avatar"
-                      :alt="project.author.name"
-                      class="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div class="flex-1 min-w-0">
-                    <div
-                      class="font-semibold text-black dark:text-white text-sm truncate"
-                    >
-                      {{ project.author.name }}
-                    </div>
-                    <div
-                      class="text-xs text-gray-500 dark:text-slate-400 truncate"
-                    >
-                      {{ project.author.email }}
-                    </div>
-                  </div>
-                </div>
-
-                <div class="mb-4">
-                  <h3
-                    class="font-semibold text-base text-black dark:text-white mb-2 line-clamp-1"
-                  >
-                    {{ project.name }}
-                  </h3>
-                  <p
-                    class="text-sm text-gray-600 dark:text-slate-400 line-clamp-2 leading-relaxed"
-                  >
-                    {{ project.description }}
-                  </p>
-                </div>
-
-                <div
-                  class="flex items-center gap-4 mb-4 text-xs text-gray-500 dark:text-slate-400"
-                >
-                  <div class="flex items-center gap-1.5">
-                    <UIcon name="i-heroicons-tag" class="w-4 h-4" />
-                    <span>{{ project.category }}</span>
-                  </div>
-                </div>
-
-                <div
-                  class="border-t border-gray-100 dark:border-slate-700 mb-4"
-                ></div>
-
-                <div class="flex items-center justify-between gap-3">
-                  <div
-                    class="flex items-center gap-1.5 text-xs text-gray-500 dark:text-slate-400"
-                  >
-                    <UIcon name="i-heroicons-clock" class="w-4 h-4" />
-                    <span>{{ project.updatedAt }}</span>
-                  </div>
-                  <ButtonsPresetButton
-                    preset="primary"
-                    label="View"
-                    icon="i-heroicons-arrow-right"
-                    size="xs"
-                    :to="'/teacher/submissions/' + project.id"
-                  />
-                </div>
-              </div>
-            </div>
+          <div v-if="loadingCounts || loadingProjects" class="space-y-3">
+            <USkeleton class="h-48 w-full" />
+            <USkeleton class="h-48 w-full" />
           </div>
 
           <div
-            v-if="recentProjects.length === 0"
+            v-else-if="recentProjects.length === 0"
             class="text-center py-12 px-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg"
           >
             <UIcon
@@ -305,6 +229,19 @@
             <p class="text-slate-400 text-sm">
               Student project submissions will appear here.
             </p>
+          </div>
+
+          <!-- Projects Grid -->
+          <div
+            v-else
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+          >
+            <RecentProjectCard
+              v-for="project in recentProjects"
+              :key="project.id"
+              :project="project"
+              view-base="/submissions/projects/"
+            />
           </div>
         </div>
       </UContainer>
@@ -394,10 +331,12 @@ const teacher = computed(() => ({
 const stats = computed(() => {
   const data = projectsStore.submissionProjects || [];
   const totalSubmissions = data.length;
-  const pendingReview = data.filter((s) => s.submissionStatus === "pending")
-    .length;
-  const acceptedProjects = data.filter((s) => s.submissionStatus === "accepted")
-    .length;
+  const pendingReview = data.filter(
+    (s) => s.submissionStatus === "pending",
+  ).length;
+  const acceptedProjects = data.filter(
+    (s) => s.submissionStatus === "accepted",
+  ).length;
 
   const generateChartData = (filterFn = null) => {
     const items = filterFn ? data.filter(filterFn) : data;
@@ -413,12 +352,13 @@ const stats = computed(() => {
       last7Days.push(date);
     }
 
-    return last7Days.map((targetDate) =>
-      items.filter((submission) => {
-        if (!submission.createdAt) return false;
-        const submissionDate = new Date(submission.createdAt);
-        return submissionDate <= targetDate;
-      }).length,
+    return last7Days.map(
+      (targetDate) =>
+        items.filter((submission) => {
+          if (!submission.createdAt) return false;
+          const submissionDate = new Date(submission.createdAt);
+          return submissionDate <= targetDate;
+        }).length,
     );
   };
 
@@ -432,7 +372,9 @@ const stats = computed(() => {
   };
 
   const totalChart = generateChartData();
-  const pendingChart = generateChartData((s) => s.submissionStatus === "pending");
+  const pendingChart = generateChartData(
+    (s) => s.submissionStatus === "pending",
+  );
   const acceptedChart = generateChartData(
     (s) => s.submissionStatus === "accepted",
   );

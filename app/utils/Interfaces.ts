@@ -6,6 +6,7 @@ export interface ProjectAuthor {
   avatar: string;
   program: string;
   year: string;
+  email?: string;
 }
 
 export interface FeatureItem {

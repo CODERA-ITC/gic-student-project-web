@@ -68,9 +68,7 @@
               >
                 <UIcon
                   :name="
-                    showPassword
-                      ? 'i-heroicons-eye-slash'
-                      : 'i-heroicons-eye'
+                    showPassword ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'
                   "
                   class="w-5 h-5"
                 />
@@ -150,23 +148,35 @@
 
         <!-- Social Login -->
         <div class="grid grid-cols-2 gap-3">
-          <button type="button" disabled
-            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 group opacity-50 cursor-not-allowed">
+          <button
+            type="button"
+            disabled
+            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 group opacity-50 cursor-not-allowed"
+          >
             <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
               <UIcon name="i-logos-google-icon" class="w-6 h-6" />
             </div>
-            <span class="text-sm text-slate-700 dark:text-neutral-300 transition-colors">
+            <span
+              class="text-sm text-slate-700 dark:text-neutral-300 transition-colors"
+            >
               GOOGLE
             </span>
           </button>
 
-          <button type="button" disabled
-            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 group opacity-50 cursor-not-allowed">
+          <button
+            type="button"
+            disabled
+            class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 group opacity-50 cursor-not-allowed"
+          >
             <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
-              <UIcon name="i-simple-icons-github"
-                class="w-6 h-6 text-slate-700 dark:text-neutral-300 transition-colors" />
+              <UIcon
+                name="i-simple-icons-github"
+                class="w-6 h-6 text-slate-700 dark:text-neutral-300 transition-colors"
+              />
             </div>
-            <span class="text-sm text-slate-700 dark:text-neutral-300 transition-colors">
+            <span
+              class="text-sm text-slate-700 dark:text-neutral-300 transition-colors"
+            >
               GITHUB
             </span>
           </button>
@@ -288,8 +298,10 @@ const handleLogin = async () => {
       authStore.isStudent,
     );
 
-    if (authStore.isTeacher || authStore.isAdmin) {
+    if (authStore.isTeacher) {
       await router.push("/teacher/dashboard");
+    } else if (authStore.isAdmin) {
+      await router.push("/admin/dashboard");
     } else {
       await router.push("/student/dashboard");
     }

@@ -40,6 +40,7 @@ export class ProjectTransformer {
     const firstName = authorData?.firstName || "";
     const lastName = authorData?.lastName || "";
     const avatarUrl = authorData?.avatar || "";
+    const email = authorData?.email || " ";
 
     return {
       id: authorData?.id || "",
@@ -49,6 +50,7 @@ export class ProjectTransformer {
       avatar: avatarUrl || getAvatarUrl("", firstName, lastName),
       program: authorData?.program || "",
       year: authorData?.year || "",
+      email: email
     };
   }
 
@@ -126,9 +128,7 @@ export class ProjectTransformer {
     return membersData.map((member: any) => {
       const firstName = member.firstName || member.name?.split(" ")[0] || "";
       const lastName =
-        member.lastName ||
-        member.name?.split(" ").slice(1).join(" ") ||
-        "";
+        member.lastName || member.name?.split(" ").slice(1).join(" ") || "";
 
       return {
         id: member.id || member.userId || member.user?.id,

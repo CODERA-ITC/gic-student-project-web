@@ -5,6 +5,7 @@ import {
   studentPrograms,
   studentYears,
 } from "~/constants/students";
+import { authService } from "~/services/AuthService";
 
 // Types
 export interface StudentSocial {
@@ -384,6 +385,31 @@ export const useStudentStore = defineStore("students", {
       }
     },
 
+    async updateStudent(studentId: string, studentData: any, token: string) {
+      try {
+        await $fetch(`/api/users/${studentId}`, {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: {
+            ...studentData,
+            role: "STUDENT",
+          },
+        });
+
+        // Refresh local state
+        const idx = this.apiStudents.findIndex((s) => s.id === studentId);
+        if (idx !== -1) {
+          this.apiStudents[idx] = { ...this.apiStudents[idx], ...studentData };
+        }
+      } catch (error: any) {
+        console.error("Error updating student:", error);
+        throw new Error(error.data?.message || "Failed to update student");
+      }
+    },
+
     async deleteStudent(studentId: string, token: string) {
       try {
         await $fetch(`/api/users/${studentId}`, {
@@ -412,17 +438,17 @@ export const useStudentStore = defineStore("students", {
       }
     },
 
-    async uploadStudentsCSV(file: File, token: string) {
+    async uploadStudentsCSV(file: File) {
       try {
         const formData = new FormData();
+
+        const headers = await authService.getAuthHeaders();
         formData.append("file", file);
 
         // this api is use to upload csv file to server
         const response = await $fetch("/api/real-student/upload", {
           method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers,
           body: formData,
         });
 
