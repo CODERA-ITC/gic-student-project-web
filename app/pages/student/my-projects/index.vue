@@ -304,14 +304,16 @@
                   <span
                     :class="[
                       'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
-                      project.projectStatus === ProjectStatus.Completed
+                      getStatus(project) === SubmissionStatus.ACCEPTED
                         ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                        : project.status === ProjectStatus.InProgress
-                          ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-                          : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300',
+                        : getStatus(project) === SubmissionStatus.PENDING
+                          ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300'
+                          : getStatus(project) === SubmissionStatus.DRAFT
+                            ? 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
+                            : 'bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300',
                     ]"
                   >
-                    {{ project.projectStatus }}
+                    {{ getStatusLabel(getStatus(project)) }}
                   </span>
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-slate-400">
@@ -417,6 +419,7 @@ definePageMeta({
 import { ref, computed, onMounted, watch } from "vue";
 import { useProjectStore } from "~/stores/projects";
 import { useAuthStore } from "~/stores/auth";
+import { SubmissionStatus } from "#imports";
 
 const projectStore = useProjectStore();
 const authStore = useAuthStore();
@@ -619,14 +622,19 @@ const myProjects = computed(() => {
 const tabs = computed(() => [
   { label: "All Projects", value: "all", count: myProjects.value.length },
   {
-    label: "In Progress",
-    value: "in-progress",
-    count: getProjectsByStatus("In Progress").length,
+    label: "Accepted",
+    value: SubmissionStatus.ACCEPTED,
+    count: getProjectsByStatus(SubmissionStatus.ACCEPTED).length,
   },
   {
-    label: "Completed",
-    value: "completed",
-    count: getProjectsByStatus("Completed").length,
+    label: "Pending",
+    value: SubmissionStatus.PENDING,
+    count: getProjectsByStatus(SubmissionStatus.PENDING).length,
+  },
+  {
+    label: "Draft",
+    value: SubmissionStatus.DRAFT,
+    count: getProjectsByStatus(SubmissionStatus.DRAFT).length,
   },
 ]);
 
@@ -635,13 +643,7 @@ const filteredProjects = computed(() => {
 
   // Filter by tab
   if (activeTab.value !== "all") {
-    const statusMap = {
-      "in-progress": "In Progress",
-      completed: "Completed",
-    };
-    projects = projects.filter(
-      (p) => getStatus(p) === statusMap[activeTab.value],
-    );
+    projects = projects.filter((p) => getStatus(p) === activeTab.value);
   }
 
   // Filter by search query
@@ -764,17 +766,16 @@ watch([selectedTag, selectedCategory, activeTab], () => {
 });
 
 // Methods
-const getProjectsByStatus = (status) => {
-  return myProjects.value.filter((p) => getStatus(p) === status);
-};
+const getProjectsByStatus = (status) =>
+  myProjects.value.filter((p) => getStatus(p) === status);
 
 const getQuickActions = (project) => {
   return [
     [
       {
-        label: "Mark as In Progress",
-        icon: "i-heroicons-play",
-        click: () => updateProjectStatus(project.id, "In Progress"),
+        label: "Mark as Pending",
+        icon: "i-heroicons-arrow-path-rounded-square",
+        click: () => updateProjectStatus(project.id, SubmissionStatus.PENDING),
       },
     ],
     [
@@ -786,16 +787,16 @@ const getQuickActions = (project) => {
     ],
     [
       {
-        label: "Duplicate Project",
-        icon: "i-heroicons-document-duplicate",
-        click: () => duplicateProject(project.id),
+        label: "Mark as Draft",
+        icon: "i-heroicons-pencil-square",
+        click: () => updateProjectStatus(project.id, SubmissionStatus.DRAFT),
       },
     ],
     [
       {
-        label: "Archive Project",
-        icon: "i-heroicons-archive-box",
-        click: () => archiveProject(project.id),
+        label: "Mark as Accepted",
+        icon: "i-heroicons-check-badge",
+        click: () => updateProjectStatus(project.id, SubmissionStatus.ACCEPTED),
       },
     ],
   ];
@@ -824,7 +825,7 @@ const updateProjectStatus = async (projectId, newStatus) => {
 
 const submitProjectForReview = async (projectId) => {
   try {
-    await projectStore.updateProjectStatus(projectId, "In Review");
+    await projectStore.updateProjectStatus(projectId, SubmissionStatus.PENDING);
     const toast = useToast();
     toast.add({
       title: "Submitted for Review",
@@ -849,7 +850,7 @@ const duplicateProject = async (projectId) => {
       const duplicatedProject = {
         ...project,
         title: `${project.title} (Copy)`,
-        status: "Draft",
+        submissionStatus: SubmissionStatus.DRAFT,
       };
       delete duplicatedProject.id; // Remove ID so a new one is generated
       await projectStore.createProject(duplicatedProject);
@@ -891,20 +892,38 @@ const archiveProject = async (projectId) => {
   }
 };
 
+const normalizeSubmissionStatus = (project) =>
+  (project.submissionStatus || project.projectStatus || project.status || "")
+    .toString()
+    .trim()
+    .toLowerCase();
+
+const getStatus = (project) => normalizeSubmissionStatus(project);
+
+const getStatusLabel = (status) => {
+  switch (status) {
+    case SubmissionStatus.ACCEPTED:
+      return "Accepted";
+    case SubmissionStatus.PENDING:
+      return "Pending";
+    case SubmissionStatus.DRAFT:
+      return "Draft";
+    case SubmissionStatus.REJECTED:
+      return "Rejected";
+    default:
+      return "Pending";
+  }
+};
+
 const getStatusColor = (status) => {
   const colors = {
-    Completed: "green",
-    "In Progress": "blue",
-    "In Review": "yellow",
-    Submitted: "purple",
-    Draft: "gray",
+    [SubmissionStatus.ACCEPTED]: "green",
+    [SubmissionStatus.PENDING]: "amber",
+    [SubmissionStatus.DRAFT]: "gray",
+    [SubmissionStatus.REJECTED]: "red",
   };
   return colors[status] || "gray";
 };
-
-// Normalize project status (some data uses status, others projectStatus)
-const getStatus = (project) =>
-  (project.projectStatus || project.status || "").toString();
 
 const shareProject = (project) => {
   const url = `${window.location.origin}/student/my-projects/${project.id}`;

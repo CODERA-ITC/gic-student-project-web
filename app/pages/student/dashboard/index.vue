@@ -137,7 +137,7 @@
         </div>
 
         <!-- Stats Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
           <div
             v-for="stat in stats"
             :key="stat.label"
@@ -471,122 +471,104 @@ const student = computed(() => ({
 
 // Stats for student dashboard - computed from real data
 const normalizeStatus = (p) =>
-  (p.projectStatus || p.status || "").toString().trim().toLowerCase();
+  (p.submissionStatus || p.projectStatus || p.status || "")
+    .toString()
+    .trim()
+    .toLowerCase();
 
 const stats = computed(() => {
   const userProjects = projectStore.userProjects || [];
-  const totalProjects = userProjects.length;
-  const completedProjects = userProjects.filter(
-    (p) => normalizeStatus(p) === "completed",
-  ).length;
-  const inProgressProjects = userProjects.filter((p) => {
-    const s = normalizeStatus(p);
-    return s === "in progress" || s === "in-progress" || s === "progress";
-  }).length;
-  const inReviewProjects = userProjects.filter(
-    (p) =>
-      p.submissions &&
-      p.submissions.length > 0 &&
-      p.submissions.some(
-        (s) =>
-          s.status?.toLowerCase?.() === "under review" ||
-          s.status === "Under Review",
-      ),
-  ).length;
 
-  // Generate chart data based on actual project creation dates over last 7 days
+  const countByStatus = (matchers) =>
+    userProjects.filter((p) => matchers.includes(normalizeStatus(p))).length;
+
+  const isAccepted = (project) =>
+    normalizeStatus(project) === "accepted" ||
+    project.submissionStatus === SubmissionStatus.ACCEPTED ||
+    project.submissionStatus === "Accepted";
+
+  const accepted = userProjects.filter(isAccepted).length;
+  const pending = countByStatus(["pending", "submitted", "awaiting review"]);
+  const draft = countByStatus(["draft"]);
+
   const getProjectsChartData = (filterFn = null) => {
     const projectsToAnalyze = filterFn
       ? userProjects.filter(filterFn)
       : userProjects;
+    if (projectsToAnalyze.length === 0) return [0, 0, 0, 0, 0, 0, 0];
 
-    // If no projects, return zeros
-    if (projectsToAnalyze.length === 0) {
-      return [0, 0, 0, 0, 0, 0, 0];
-    }
-
-    // Get last 7 days
     const today = new Date();
-    today.setHours(23, 59, 59, 999); // End of today
+    today.setHours(23, 59, 59, 999);
     const last7Days = [];
     for (let i = 6; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
-      date.setHours(23, 59, 59, 999); // End of each day
+      date.setHours(23, 59, 59, 999);
       last7Days.push(date);
     }
 
-    // Count cumulative projects created up to and including each day
-    const chartData = last7Days.map((targetDate) => {
-      return projectsToAnalyze.filter((project) => {
+    return last7Days.map((targetDate) =>
+      projectsToAnalyze.filter((project) => {
         if (!project.createdAt) return false;
         const projectDate = new Date(project.createdAt);
-        // Include all projects created on or before this date
         return projectDate <= targetDate;
-      }).length;
-    });
-
-    return chartData;
+      }).length,
+    );
   };
 
-  // Get chart data for different project types
-  const totalProjectsWeekly = getProjectsChartData();
-  const completedProjectsWeekly = getProjectsChartData(
-    (p) => normalizeStatus(p) === "completed",
-  );
-  const inProgressProjectsWeekly = getProjectsChartData((p) => {
-    const s = normalizeStatus(p);
-    return s === "in progress" || s === "in-progress" || s === "progress";
-  });
-
-  // Calculate changes from previous period (comparing last data point to second-to-last)
-  const calculateChange = (chartData) => {
-    if (chartData.length < 2) return { value: 0, percentage: 0 };
-    const current = chartData[chartData.length - 1];
-    const previous = chartData[chartData.length - 2];
-    const change = current - previous;
+  const chartFor = (filterFn) => {
+    const data = getProjectsChartData(filterFn);
+    const current = data[data.length - 1] || 0;
+    const previous = data[data.length - 2] || 0;
+    const changeValue = current - previous;
     const percentage =
-      previous > 0 ? ((change / previous) * 100).toFixed(1) : 0;
-    return { value: change, percentage };
+      previous > 0 ? ((changeValue / previous) * 100).toFixed(1) : "0";
+    const changeText =
+      changeValue !== 0
+        ? `${changeValue > 0 ? "+" : ""}${changeValue} (${percentage}%) from last period`
+        : "No change from last period";
+    return { data, changeValue, changeText };
   };
 
-  const totalChange = calculateChange(totalProjectsWeekly);
-  const completedChange = calculateChange(completedProjectsWeekly);
-  const inProgressChange = calculateChange(inProgressProjectsWeekly);
+  const totalChart = chartFor(null);
+  const acceptedChart = chartFor((p) => isAccepted(p));
+  const pendingChart = chartFor((p) =>
+    ["pending", "submitted", "awaiting review"].includes(normalizeStatus(p)),
+  );
+  const draftChart = chartFor((p) => normalizeStatus(p) === "draft");
 
   return [
     {
       label: "Total Projects",
-      value: String(totalProjects),
+      value: String(userProjects.length),
       icon: "i-heroicons-briefcase",
-      change:
-        totalChange.value !== 0
-          ? `${totalChange.value > 0 ? "+" : ""}${totalChange.value} (${totalChange.percentage}%) from last period`
-          : "No change from last period",
-      changeColor: totalChange.value >= 0 ? "positive" : "negative",
-      chartData: totalProjectsWeekly,
+      change: totalChart.changeText,
+      changeColor: totalChart.changeValue >= 0 ? "positive" : "negative",
+      chartData: totalChart.data,
     },
     {
-      label: "Completed",
-      value: String(completedProjects),
-      icon: "i-heroicons-check-circle",
-      change:
-        completedChange.value !== 0
-          ? `${completedChange.value > 0 ? "+" : ""}${completedChange.value} (${completedChange.percentage}%) from last period`
-          : "No change from last period",
-      changeColor: completedChange.value >= 0 ? "positive" : "negative",
-      chartData: completedProjectsWeekly,
+      label: "Accepted",
+      value: String(accepted),
+      icon: "i-heroicons-check-badge",
+      change: acceptedChart.changeText,
+      changeColor: acceptedChart.changeValue >= 0 ? "positive" : "negative",
+      chartData: acceptedChart.data,
     },
     {
-      label: "In Progress",
-      value: String(inProgressProjects),
-      icon: "i-heroicons-clock",
-      change:
-        inProgressChange.value !== 0
-          ? `${inProgressChange.value > 0 ? "+" : ""}${inProgressChange.value} (${inProgressChange.percentage}%) from last period`
-          : "No change from last period",
-      changeColor: inProgressChange.value >= 0 ? "positive" : "negative",
-      chartData: inProgressProjectsWeekly,
+      label: "Pending",
+      value: String(pending),
+      icon: "i-heroicons-queue-list",
+      change: pendingChart.changeText,
+      changeColor: pendingChart.changeValue >= 0 ? "positive" : "negative",
+      chartData: pendingChart.data,
+    },
+    {
+      label: "Draft",
+      value: String(draft),
+      icon: "i-heroicons-pencil-square",
+      change: draftChart.changeText,
+      changeColor: draftChart.changeValue >= 0 ? "positive" : "negative",
+      chartData: draftChart.data,
     },
   ];
 });
@@ -595,14 +577,38 @@ const stats = computed(() => {
 const recentProjects = computed(() => {
   const userProjects = projectStore.userProjects || [];
 
-  const getStatusColor = (status) => {
-    const s = (status || "").toString().toLowerCase();
-    if (s === "completed") {
-      return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
-    } else if (s === "in progress" || s === "in-progress" || s === "progress") {
-      return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300";
+  const getStatusMeta = (project) => {
+    const s = normalizeStatus(project);
+    if (
+      s === "accepted" ||
+      project.submissionStatus === SubmissionStatus.ACCEPTED ||
+      project.submissionStatus === "Accepted"
+    ) {
+      return {
+        label: "Accepted",
+        color:
+          "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+      };
     }
-    return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300";
+    if (["pending", "submitted", "awaiting review"].includes(s)) {
+      return {
+        label: "Pending",
+        color:
+          "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
+      };
+    }
+    if (s === "draft") {
+      return {
+        label: "Draft",
+        color:
+          "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300",
+      };
+    }
+    return {
+      label: "Pending",
+      color:
+        "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
+    };
   };
 
   const getProgress = (project) => {
@@ -642,8 +648,8 @@ const recentProjects = computed(() => {
         typeof project.category === "object"
           ? project.category
           : { name: project.category },
-      status: project.projectStatus || project.status,
-      statusColor: getStatusColor(project.projectStatus || project.status),
+      status: getStatusMeta(project).label,
+      statusColor: getStatusMeta(project).color,
       progress: getProgress(project),
       updated: formatDate(project.createdAt),
     };
