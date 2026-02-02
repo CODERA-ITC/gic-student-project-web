@@ -55,7 +55,11 @@
                 </template>
               </nav>
               <div class="space-y-3">
-                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semiboldl text-white leading-tight">My Projects</h1>
+                <h1
+                  class="text-3xl sm:text-4xl lg:text-5xl font-semiboldl text-white leading-tight"
+                >
+                  My Projects
+                </h1>
                 <p class="text-slate-300 dark:text-slate-300">
                   Create, manage, and organize all your projects
                 </p>
@@ -211,7 +215,7 @@
               :project="project"
               base-route="/student/my-projects"
               :show-like-button="true"
-              :show-edit-button="true"
+              :show-edit-button="isOwnerOf(project)"
               :liked-projects="likedProjects"
               @toggle-like="handleToggleLike"
               @edit="handleEdit"
@@ -323,22 +327,24 @@
                       label="View"
                       @click="navigateTo(`/student/my-projects/${project.id}`)"
                     />
-                    <UButton
-                      icon="i-heroicons-pencil"
-                      size="xs"
-                      color="neutral"
-                      variant="ghost"
-                      label="Edit"
-                      @click="handleEdit(project.id)"
-                    />
-                    <UButton
-                      icon="i-heroicons-trash"
-                      size="xs"
-                      color="error"
-                      variant="ghost"
-                      label="Delete"
-                      @click="handleDelete(project.id)"
-                    />
+                    <template v-if="isOwnerOf(project)">
+                      <UButton
+                        icon="i-heroicons-pencil"
+                        size="xs"
+                        color="neutral"
+                        variant="ghost"
+                        label="Edit"
+                        @click="handleEdit(project.id)"
+                      />
+                      <UButton
+                        icon="i-heroicons-trash"
+                        size="xs"
+                        color="error"
+                        variant="ghost"
+                        label="Delete"
+                        @click="handleDelete(project.id)"
+                      />
+                    </template>
                   </div>
                 </td>
               </tr>
@@ -504,6 +510,11 @@ const getProjectTitle = (projectId) => {
   if (!projectId) return "this project";
   const project = myProjects.value.find((p) => p.id === projectId);
   return project?.title || "this project";
+};
+
+const isOwnerOf = (project) => {
+  if (!project || !authStore.user) return false;
+  return project.author?.id === authStore.user.id;
 };
 
 const confirmDelete = async () => {

@@ -25,14 +25,48 @@
         :project="project"
         :is-liked="isLiked"
         :user-role="authStore.userRole"
+        :is-owner="isOwner"
         @like="toggleLike"
         @share="shareProject"
         @hide="toggleVisibility"
-      />
+      >
+        <template #action-buttons>
+          <div v-if="isOwner" class="flex gap-2">
+            <UButton
+              @click="editProject"
+              class="flex-1 justify-center rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 border border-blue-200 dark:border-blue-800"
+              size="md"
+            >
+              <template #leading>
+                <UIcon name="i-heroicons-pencil-square" class="w-5 h-5" />
+              </template>
+              Edit
+            </UButton>
+            <UButton
+              @click="showDeleteModal = true"
+              class="flex-1 justify-center rounded-lg bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-600 border border-gray-200 dark:border-slate-600"
+              size="md"
+            >
+              <template #leading>
+                <UIcon name="i-heroicons-trash" class="w-5 h-5" />
+              </template>
+              Delete
+            </UButton>
+          </div>
+        </template>
+      </ProjectDetails>
     </UContainer>
 
     <!-- Authentication Modal -->
     <AuthModal v-model="showAuthModal" context="like" />
+
+    <!-- Delete Confirmation Modal -->
+    <DeleteConfirmationModal
+      v-model="showDeleteModal"
+      :project-title="project?.name || project?.title || 'this project'"
+      :is-deleting="isDeleting"
+      @confirm="confirmDelete"
+    />
   </div>
 </template>
 
@@ -50,6 +84,8 @@ const projectId = route.params.id as string;
 // Get project from store
 const project = ref(null);
 const isLoading = ref(true);
+const showDeleteModal = ref(false);
+const isDeleting = ref(false);
 
 let projectData = await projectStore.fetchProjectById(projectId);
 if (!projectData) {
@@ -60,6 +96,16 @@ if (!projectData) {
 }
 project.value = projectData;
 isLoading.value = false;
+
+const isOwner = computed(() => {
+  if (!project.value || !authStore.user) return false;
+
+  const currentUserId = String(authStore.user.id ?? "");
+  const authorId = String(project.value.author?.id ?? "");
+
+  // owner is strictly the author
+  return authorId === currentUserId;
+});
 
 // Like functionality - using store with authentication
 const showAuthModal = ref(false);
@@ -195,6 +241,46 @@ const toggleVisibility = async () => {
       description: "Failed to update project visibility.",
       color: "error",
     });
+  }
+};
+
+const editProject = () => {
+  console.log("Edit button clicked from public view!");
+  if (!project.value) return;
+  navigateTo(`/projects/create?edit=${project.value.id}`);
+};
+
+const closeDeleteModal = () => {
+  showDeleteModal.value = false;
+};
+
+const confirmDelete = async () => {
+  if (!project.value) return;
+  try {
+    isDeleting.value = true;
+    const result = await projectStore.deleteProject(project.value.id);
+    if (result) {
+      const toast = useToast();
+      toast.add({
+        title: "Project Deleted",
+        description: "Project has been removed successfully.",
+        color: "success",
+      });
+      closeDeleteModal();
+      await navigateTo("/projects");
+    } else {
+      throw new Error("Delete operation returned false");
+    }
+  } catch (error) {
+    console.error("Error deleting project:", error);
+    const toast = useToast();
+    toast.add({
+      title: "Delete Failed",
+      description: "Failed to delete project. Please try again.",
+      color: "error",
+    });
+  } finally {
+    isDeleting.value = false;
   }
 };
 

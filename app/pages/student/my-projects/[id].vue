@@ -262,12 +262,12 @@ onMounted(async () => {
 
     project.value = projectData;
 
-    // Check ownership after project is loaded
-    if (!isOwner.value) {
-      console.log("User is not owner, redirecting to public view");
-      await navigateTo(`/projects/${projectId}`);
-      return;
-    }
+    // // Check ownership after project is loaded
+    // if (!isOwner.value) {
+    //   console.log("User is not owner, redirecting to public view");
+    //   await navigateTo(`/projects/${projectId}`);
+    //   return;
+    // }
 
     console.log("✅ User is owner, displaying project");
   } catch (error) {
@@ -282,21 +282,11 @@ onMounted(async () => {
 const isOwner = computed(() => {
   if (!project.value || !authStore.user) return false;
 
-  // ensure user is either author or member
-  return (
-    project.value.author?.id === authStore.user.id ||
-    project.value.members?.some((member) => {
-      if (!member) return false;
-      const memberName = member.name?.toLowerCase?.() || "";
-      const memberEmail = member.email?.toLowerCase?.();
-      return (
-        (member.id && member.id === authStore.user.id) ||
-        (memberEmail &&
-          memberEmail === authStore.user.email?.toLowerCase?.()) ||
-        (memberName && userFullName.value && memberName === userFullName.value)
-      );
-    })
-  );
+  const currentUserId = String(authStore.user.id ?? "");
+  const authorId = String(project.value.author?.id ?? "");
+
+  // owner is strictly the author
+  return authorId === currentUserId;
 });
 
 // Image carousel
@@ -325,13 +315,9 @@ const showAuthModal = ref(false);
 const canSubmit = computed(() => {
   if (!isOwner.value || !project.value) return false;
 
-  // Only show submit button for draft projects (or when explicitly marked draft)
-  const status =
-    project.value.submissionStatus ||
-    project.value.status ||
-    project.value.visibility ||
-    "draft";
-  return status.toLowerCase?.() === "draft";
+  // Show submit button only when submission status is draft or rejected
+  const status = project.value.submissionStatus?.toLowerCase?.();
+  return status === "draft" || status === "rejected";
 });
 
 // Get submission status mqessage
