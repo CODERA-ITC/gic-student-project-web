@@ -287,7 +287,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useAuthStore } from "~/stores/auth";
 import { useUiStore } from "~/stores/ui";
 import type { Notification } from "~/stores/ui";
@@ -366,6 +366,11 @@ const closeMenu = () => {
   menuOpen.value = false;
 };
 
+const handleWindowScroll = () => {
+  if (!menuOpen.value) return;
+  closeMenu();
+};
+
 const handleLogout = () => {
   emit("logout");
   closeMenu();
@@ -384,4 +389,12 @@ const handleClearNotifications = () => {
     uiStore.removeNotification(n.id);
   });
 };
+
+onMounted(() => {
+  window.addEventListener("scroll", handleWindowScroll, { passive: true });
+});
+
+onUnmounted(() => {
+  window.removeEventListener("scroll", handleWindowScroll);
+});
 </script>

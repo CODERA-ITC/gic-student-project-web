@@ -377,7 +377,7 @@ const searchContext = computed(() => {
 const navigationItems = computed(() => [
   { label: t("home"), to: "/" },
   { label: t("projects"), to: "/projects" },
-  { label: t("students"), to: "/students", badge: "beta", allow: false },
+  { label: t("students"), to: "/students"},
   { label: t("about"), to: "/about" },
 ]);
 

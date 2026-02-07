@@ -354,160 +354,90 @@
   </div>
 </template>
 
-<script setup>
-import { computed } from "vue";
+<script setup lang="ts">
+import { computed, onMounted, watch } from "vue";
+import { useStudentStore } from "~/stores/students";
 
 const route = useRoute();
-const studentId = parseInt(route.params.id);
+const studentStore = useStudentStore();
+const studentId = computed(() => String(route.params.id || ""));
 
-// Mock student data
-const students = [
-  {
-    id: 1,
-    name: "Sarah Chen",
-    role: "Full Stack Developer",
-    department: "Computer Science",
-    year: 3,
-    gpa: "3.8",
-    bio: "Passionate about AI and machine learning with 3+ years of development experience. Love working on innovative projects that solve real-world problems.",
-    email: "sarah.chen@gic.edu",
-    phone: "+1 (555) 123-4567",
-    skills: [
-      "Python",
-      "GPT-3",
-      "NLP",
-      "React",
-      "Node.js",
-      "Docker",
-      "AWS",
-      "TensorFlow",
-    ],
-    achievements: [
-      {
-        title: "AI Innovation Award 2024",
-        description: "Recognized for outstanding contributions to AI projects",
-      },
-      {
-        title: "Dean's List",
-        description: "Maintained 3.8+ GPA for 3 consecutive semesters",
-      },
-      {
-        title: "Hackathon Winner",
-        description: "Won first place in Regional Tech Hackathon 2024",
-      },
-    ],
-    projectsContributed: [
-      {
-        id: 1,
-        title: "AI Chat Assistant",
-        emoji: "🤖",
-        category: "AI/ML",
-        year: "2024",
-      },
-    ],
-    contributions: 145,
-    followers: 342,
-    github: "https://github.com",
-    linkedin: "https://linkedin.com",
-    portfolio: "https://sarahchen.dev",
-  },
-  {
-    id: 2,
-    name: "Alex Rodriguez",
-    role: "Mobile App Developer",
-    department: "Software Engineering",
-    year: 2,
-    gpa: "3.7",
-    bio: "Mobile-first developer specializing in React Native and cross-platform applications. Enthusiast of clean code and user experience design.",
-    email: "alex.rodriguez@gic.edu",
-    phone: "+1 (555) 234-5678",
-    skills: [
-      "React Native",
-      "Firebase",
-      "UI/UX",
-      "TypeScript",
-      "JavaScript",
-      "Swift",
-      "Kotlin",
-    ],
-    achievements: [
-      {
-        title: "Mobile App Excellence 2024",
-        description: "Best mobile application design",
-      },
-      {
-        title: "App Store Feature",
-        description: "App featured on multiple app stores",
-      },
-    ],
-    projectsContributed: [
-      {
-        id: 2,
-        title: "Mobile Fitness App",
-        emoji: "💪",
-        category: "Mobile",
-        year: "2024",
-      },
-    ],
-    contributions: 98,
-    followers: 256,
-    github: "https://github.com",
-    linkedin: "https://linkedin.com",
-    portfolio: "https://alexrodriguez.dev",
-  },
-  {
-    id: 3,
-    name: "Priya Patel",
-    role: "Full Stack Engineer",
-    department: "Computer Science",
-    year: 4,
-    gpa: "3.9",
-    bio: "Experienced full-stack engineer with expertise in both frontend and backend development. Passionate about scalable architecture and DevOps.",
-    email: "priya.patel@gic.edu",
-    phone: "+1 (555) 345-6789",
-    skills: [
-      "Node.js",
-      "Vue.js",
-      "MongoDB",
-      "Stripe",
-      "AWS",
-      "Docker",
-      "Kubernetes",
-      "PostgreSQL",
-    ],
-    achievements: [
-      {
-        title: "Technical Excellence Award",
-        description: "Outstanding code quality and architecture",
-      },
-      {
-        title: "Leadership Award",
-        description: "Led 15+ student developers in projects",
-      },
-      {
-        title: "Published Research",
-        description: "Paper published in peer-reviewed conference",
-      },
-    ],
-    projectsContributed: [
-      {
-        id: 3,
-        title: "E-Commerce Platform",
-        emoji: "🛍️",
-        category: "Web",
-        year: "2024",
-      },
-    ],
-    contributions: 267,
-    followers: 489,
-    github: "https://github.com",
-    linkedin: "https://linkedin.com",
-    portfolio: "https://priyapatel.dev",
-  },
-];
+const loadStudent = async (id: string) => {
+  if (!id) return;
+  await studentStore.fetchPublicStudentById(id);
+};
+
+onMounted(async () => {
+  await loadStudent(studentId.value);
+});
+
+watch(studentId, async (nextId) => {
+  await loadStudent(nextId);
+});
 
 const student = computed(() => {
-  return students.find((s) => s.id === studentId) || students[0];
+  const current = (studentStore.apiStudents || []).find(
+    (s) => String(s.id) === studentId.value,
+  );
+
+  if (!current) {
+    return {
+      id: studentId.value,
+      name: "Student",
+      role: "Student",
+      department: "GIC",
+      year: "-",
+      gpa: "-",
+      bio: "No profile information available.",
+      email: "",
+      phone: "-",
+      skills: [],
+      achievements: [],
+      projectsContributed: [],
+      contributions: 0,
+      followers: 0,
+      github: "",
+      linkedin: "",
+      portfolio: "",
+    };
+  }
+
+  const socialList = Array.isArray(current.socialLinks)
+    ? current.socialLinks
+    : [];
+  const socialMap = socialList.reduce(
+    (acc: Record<string, string>, item) => {
+      if (!item?.name || !item?.url) return acc;
+      acc[String(item.name).toLowerCase()] = String(item.url);
+      return acc;
+    },
+    {},
+  );
+
+  const name =
+    `${current.firstName || ""} ${current.lastName || ""}`.trim() ||
+    current.email ||
+    "Student";
+
+  return {
+    id: current.id,
+    name,
+    role: "Student",
+    department: current.department?.name || current.department?.code || "GIC",
+    year: current.year || "-",
+    gpa: "-",
+    bio: current.bio || "No bio added yet.",
+    email: current.email || "",
+    phone: current.phone || "-",
+    skills: Array.isArray(current.skill) ? current.skill : [],
+    achievements: [],
+    projectsContributed: [],
+    contributions: 0,
+    followers: 0,
+    github: socialMap.github || "",
+    linkedin: socialMap.linkedin || "",
+    portfolio: socialMap.portfolio || "",
+  };
 });
 
 useHead({

@@ -231,34 +231,64 @@
 
           <!-- All Team Members -->
           <div class="grid grid-cols-2 gap-2 sm:gap-3">
-            <div
-              v-for="(member, idx) in allTeamMembers"
-              :key="idx"
-              class="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-lg bg-gray-50 dark:bg-slate-700/30"
-            >
-              <img
-                v-if="member.image"
-                :src="member.image"
-                :alt="member.name"
-                class="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover flex-shrink-0"
-                @error="
-                  (e) => ((e.target as HTMLElement).style.display = 'none')
-                "
-              />
+            <template v-for="(member, idx) in allTeamMembers" :key="idx">
+              <NuxtLink
+                v-if="member.id"
+                :to="`/students/${member.id}`"
+                class="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-lg bg-gray-50 dark:bg-slate-700/30 hover:bg-blue-50 dark:hover:bg-slate-700/60 transition-colors cursor-pointer"
+              >
+                <img
+                  v-if="member.image"
+                  :src="member.image"
+                  :alt="member.name"
+                  class="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover flex-shrink-0"
+                  @error="
+                    (e) => ((e.target as HTMLElement).style.display = 'none')
+                  "
+                />
+                <div
+                  v-else
+                  class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-900 flex items-center justify-center flex-shrink-0"
+                >
+                  <span
+                    class="text-white text-[10px] sm:text-xs font-semibold"
+                  >
+                    {{ getInitials(member.name) }}
+                  </span>
+                </div>
+                <p class="text-xs sm:text-sm truncate text-blue-700 dark:text-blue-300">
+                  {{ member.name }}
+                </p>
+              </NuxtLink>
+
               <div
                 v-else
-                class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-900 flex items-center justify-center flex-shrink-0"
+                class="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-lg bg-gray-50 dark:bg-slate-700/30"
               >
-                <span class="text-white text-[10px] sm:text-xs font-semibold">{{
-                  getInitials(member.name)
-                }}</span>
+                <img
+                  v-if="member.image"
+                  :src="member.image"
+                  :alt="member.name"
+                  class="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover flex-shrink-0"
+                  @error="
+                    (e) => ((e.target as HTMLElement).style.display = 'none')
+                  "
+                />
+                <div
+                  v-else
+                  class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-900 flex items-center justify-center flex-shrink-0"
+                >
+                  <span
+                    class="text-white text-[10px] sm:text-xs font-semibold"
+                  >
+                    {{ getInitials(member.name) }}
+                  </span>
+                </div>
+                <p class="text-xs sm:text-sm truncate text-gray-700 dark:text-gray-200">
+                  {{ member.name }}
+                </p>
               </div>
-              <p
-                class="text-xs sm:text-sm text-gray-700 dark:text-gray-200 truncate"
-              >
-                {{ member.name }}
-              </p>
-            </div>
+            </template>
           </div>
         </div>
 
@@ -405,7 +435,11 @@
                 Project Lead
               </p>
             </div>
-            <div class="flex items-center gap-3 sm:gap-4">
+            <NuxtLink
+              v-if="authorProfileId"
+              :to="`/students/${authorProfileId}`"
+              class="flex items-center gap-3 sm:gap-4 hover:bg-blue-50 dark:hover:bg-slate-700/60 rounded-lg p-2 -m-2 transition-colors cursor-pointer"
+            >
               <img
                 :src="
                   project.author?.avatar ||
@@ -416,7 +450,29 @@
               />
               <div class="flex-1 min-w-0">
                 <p
-                  class="text-sm sm:text-base font-semibold text-gray-900 dark:text-white truncate"
+                  class="text-sm sm:text-base font-semibold truncate text-blue-700 dark:text-blue-300"
+                >
+                  {{ project.author.name }}
+                </p>
+                <p
+                  class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate"
+                >
+                  {{ project.author.program }}
+                </p>
+              </div>
+            </NuxtLink>
+            <div v-else class="flex items-center gap-3 sm:gap-4">
+              <img
+                :src="
+                  project.author?.avatar ||
+                  'https://img.icons8.com/nolan/1200/user-default.jpg'
+                "
+                :alt="project.author.name"
+                class="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover ring-2 ring-blue-100 dark:ring-slate-600 shadow"
+              />
+              <div class="flex-1 min-w-0">
+                <p
+                  class="text-sm sm:text-base font-semibold truncate text-gray-900 dark:text-white"
                 >
                   {{ project.author.name }}
                 </p>
@@ -1560,13 +1616,34 @@ const filteredMembers = computed(() => {
   );
 });
 
+const authorProfileId = computed(() => {
+  const author = props.project?.author as any;
+  const id =
+    author?.id ||
+    author?.userId ||
+    author?.user?.id ||
+    author?.studentId ||
+    null;
+  return id ? String(id) : null;
+});
+
 // All team members (only from members array, excludes author)
 const allTeamMembers = computed(() => {
   if (!props.project?.members) return [];
-  return props.project.members.map((member: any) => ({
-    name: member.name,
-    image: member.image || null,
-  }));
+  return props.project.members.map((member: any) => {
+    if (typeof member === "string") {
+      return {
+        name: member,
+        image: null,
+        id: null,
+      };
+    }
+    return {
+      name: member?.name || "Member",
+      image: member?.image || member?.avatar || null,
+      id: member?.id || member?.userId || member?.user?.id || null,
+    };
+  });
 });
 
 // Get initials from name

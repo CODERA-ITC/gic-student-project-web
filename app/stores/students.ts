@@ -50,6 +50,10 @@ export interface APIStudent {
   };
   courses?: any[];
   role?: string;
+  socialLinks?: Array<{
+    url: string;
+    name: string;
+  }> | null;
 }
 
 export interface PaginatedResponse {
@@ -74,6 +78,22 @@ export interface StudentStats {
   graduating2026: number;
 }
 
+export interface PublicStudentCard {
+  id: string;
+  name: string;
+  program: string;
+  year: number | string;
+  avatar: string;
+  bio: string;
+  skills: string[];
+  projectCount: number;
+  gpa: number;
+  achievements: any[];
+  graduationYear: number;
+  gen: number;
+  social: Record<string, string>;
+}
+
 export interface StudentState {
   students: Student[];
   programs: string[];
@@ -89,6 +109,8 @@ export interface StudentState {
   selectedGeneration: string | number;
   availableGenerations: number[];
   searchQuery: string;
+  publicSelectedGeneration: number;
+  publicGenerations: number[];
 }
 
 export const useStudentStore = defineStore("students", {
@@ -112,6 +134,8 @@ export const useStudentStore = defineStore("students", {
     selectedGeneration: "all",
     availableGenerations: [25, 26, 27, 28, 29, 30],
     searchQuery: "",
+    publicSelectedGeneration: 25,
+    publicGenerations: [27, 26, 25, 24, 23, 22, 21, 20],
   }),
 
   getters: {
@@ -185,6 +209,35 @@ export const useStudentStore = defineStore("students", {
         graduating2026: this.students.filter((s) => s.graduationYear === 2026)
           .length,
       };
+    },
+
+    publicMappedStudents(): PublicStudentCard[] {
+      return (this.apiStudents || []).map((student: APIStudent) => {
+        const firstName = (student.firstName || "").toString();
+        const lastName = (student.lastName || "").toString();
+        const fullName =
+          (firstName + " " + lastName).trim() ||
+          student.email ||
+          "Student";
+        return {
+          id: student.id,
+          name: fullName,
+          program: student.department?.name || "GIC",
+          year: student.year || "",
+          avatar: student.avatar || "",
+          bio: student.bio || "",
+          skills: Array.isArray(student.skill) ? student.skill : [],
+          projectCount: 0,
+          gpa: 0,
+          achievements: [],
+          graduationYear: 0,
+          gen:
+            typeof student.generation === "number"
+              ? student.generation
+              : Number(student.generation || this.publicSelectedGeneration || 25),
+          social: {},
+        };
+      });
     },
 
     // topPerformers(): Student[] {
@@ -456,6 +509,148 @@ export const useStudentStore = defineStore("students", {
       } catch (error: any) {
         console.error("Error uploading CSV:", error);
         throw new Error(error.data?.message || "Failed to upload CSV file");
+      }
+    },
+
+    async fetchPublicStudentById(studentId: string): Promise<APIStudent | null> {
+      this.loading = true;
+      try {
+        let response: any = null;
+
+        // Prefer public people endpoint
+        try {
+          response = await $fetch(
+            `/api/users/${studentId}`,
+            { method: "GET" },
+          );
+        } catch {
+          // Fallback to local API users endpoint
+          response = await $fetch(`/api/users/${studentId}`, { method: "GET" });
+        }
+
+        const raw = response?.data || response;
+        if (!raw) return null;
+
+        const mapped: APIStudent = {
+          id: String(raw.id || raw._id || studentId),
+          firstName: raw.firstName || raw.firstname || raw.name || "Student",
+          lastName: raw.lastName || raw.lastname || "",
+          email: raw.email || "",
+          phone: raw.phone || "",
+          year:
+            typeof raw.year === "number"
+              ? raw.year
+              : Number(raw.year || 0) || undefined,
+          generation:
+            typeof raw.generation === "number"
+              ? raw.generation
+              : Number(raw.generation || 0) || undefined,
+          avatar: raw.avatar || "",
+          bio: raw.bio || "",
+          skill: Array.isArray(raw.skill)
+            ? raw.skill
+            : Array.isArray(raw.skills)
+              ? raw.skills
+              : [],
+          department: raw.department
+            ? {
+                id: String(raw.department.id || ""),
+                name: raw.department.name || "",
+                code: raw.department.code || "",
+              }
+            : undefined,
+          courses: Array.isArray(raw.courses) ? raw.courses : [],
+          role: raw.role || "STUDENT",
+          socialLinks: Array.isArray(raw.socialLinks) ? raw.socialLinks : [],
+        };
+
+        const idx = this.apiStudents.findIndex((s) => s.id === mapped.id);
+        if (idx >= 0) this.apiStudents[idx] = mapped;
+        else this.apiStudents.unshift(mapped);
+
+        return mapped;
+      } catch (error) {
+        console.error("Error fetching public student by id:", error);
+        return null;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async loadPublicStudentsByGeneration(
+      generation = 25,
+      page = 1,
+      limit = 10,
+      ascending = false,
+    ) {
+      this.loading = true;
+      try {
+        const response = (await $fetch(
+          "https://gic-project.darororo.dev/people/users",
+          {
+            method: "GET",
+            query: { page, limit, ascending, generation },
+          },
+        )) as PaginatedResponse | { data?: any[] };
+
+        const list = Array.isArray((response as any)?.data)
+          ? (response as any).data
+          : [];
+
+        this.apiStudents = list.map((u: any) => ({
+          id: String(u.id || u._id || ""),
+          firstName: u.firstName || u.firstname || u.name || "Student",
+          lastName: u.lastName || u.lastname || "",
+          email: u.email || "",
+          phone: u.phone || "",
+          year: typeof u.year === "number" ? u.year : Number(u.year || 0) || undefined,
+          generation:
+            typeof u.generation === "number"
+              ? u.generation
+              : Number(u.generation || generation),
+          avatar: u.avatar || "",
+          bio: u.bio || "",
+          skill: Array.isArray(u.skill)
+            ? u.skill
+            : Array.isArray(u.skills)
+              ? u.skills
+              : [],
+          department: u.department
+            ? {
+                id: String(u.department.id || ""),
+                name: u.department.name || "",
+                code: u.department.code || "",
+              }
+            : undefined,
+          courses: Array.isArray(u.courses) ? u.courses : [],
+          role: u.role || "STUDENT",
+        }));
+
+        this.publicSelectedGeneration = generation;
+        this.currentPage =
+          typeof (response as any)?.page === "number"
+            ? (response as any).page
+            : page;
+        this.limit =
+          typeof (response as any)?.limit === "number"
+            ? (response as any).limit
+            : limit;
+        this.total =
+          typeof (response as any)?.total === "number"
+            ? (response as any).total
+            : this.apiStudents.length;
+        this.lastPage =
+          typeof (response as any)?.lastPage === "number"
+            ? (response as any).lastPage
+            : 1;
+      } catch (error) {
+        console.error("Error loading public students by generation:", error);
+        this.apiStudents = [];
+        this.total = 0;
+        this.currentPage = 1;
+        this.lastPage = 1;
+      } finally {
+        this.loading = false;
       }
     },
   },
