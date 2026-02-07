@@ -94,6 +94,30 @@
                   autocomplete="new-password"
                   :placeholder="passwordPlaceholder"
                 />
+                <div class="mt-2 flex flex-wrap gap-2">
+                  <UButton
+                    type="button"
+                    size="xs"
+                    color="primary"
+                    variant="outline"
+                    icon="i-heroicons-sparkles"
+                    class="!text-blue-900 !border-blue-900 hover:!bg-blue-50"
+                    @click="generatePassword"
+                  >
+                    Auto Generate (8)
+                  </UButton>
+                  <UButton
+                    type="button"
+                    size="xs"
+                    color="neutral"
+                    variant="outline"
+                    icon="i-heroicons-clipboard-document"
+                    :disabled="!formState.password"
+                    @click="copyPassword"
+                  >
+                    Copy
+                  </UButton>
+                </div>
               </UFormGroup>
               <UFormGroup
                 v-if="formState.role === 'STUDENT'"
@@ -237,6 +261,43 @@ const submit = () => {
 const setRole = (role: string) => {
   if (isFixedRole.value) return;
   formState.role = role;
+};
+
+const generatePassword = () => {
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  const numbers = "0123456789";
+  const symbols = "!@#$%^&*()-_=+[]{}?";
+  const all = letters + numbers + symbols;
+
+  const pick = (chars: string) =>
+    chars[Math.floor(Math.random() * chars.length)];
+
+  const passwordChars = [
+    pick(letters),
+    pick(numbers),
+    pick(symbols),
+    pick(all),
+    pick(all),
+    pick(all),
+    pick(all),
+    pick(all),
+  ];
+
+  for (let i = passwordChars.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [passwordChars[i], passwordChars[j]] = [passwordChars[j], passwordChars[i]];
+  }
+
+  formState.password = passwordChars.join("");
+};
+
+const copyPassword = async () => {
+  if (!formState.password) return;
+  try {
+    await navigator.clipboard.writeText(formState.password);
+  } catch (error) {
+    console.error("Failed to copy password", error);
+  }
 };
 </script>
 

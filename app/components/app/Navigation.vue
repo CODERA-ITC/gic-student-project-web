@@ -220,6 +220,66 @@
                 <UIcon name="i-heroicons-heart-20-solid" />
                 {{ t("nav.favorites") }}
               </NuxtLink>
+              <NuxtLink
+                to="/teacher/user-management"
+                class="flex items-center gap-2 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors text-neutral-700 dark:text-neutral-200"
+                @click="mobileMenuOpen = false"
+              >
+                <UIcon name="i-heroicons-users-20-solid" />
+                {{ t("nav.userManagement") }}
+              </NuxtLink>
+            </template>
+
+            <!-- Admin Menu -->
+            <template v-if="authStore.isAdmin">
+              <NuxtLink
+                to="/admin/dashboard"
+                class="flex items-center gap-2 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors text-neutral-700 dark:text-neutral-200"
+                @click="mobileMenuOpen = false"
+              >
+                <UIcon name="i-heroicons-command-line" />
+                Admin Dashboard
+              </NuxtLink>
+              <NuxtLink
+                to="/admin/projects"
+                class="flex items-center gap-2 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors text-neutral-700 dark:text-neutral-200"
+                @click="mobileMenuOpen = false"
+              >
+                <UIcon name="i-heroicons-squares-2x2" />
+                Project Management
+              </NuxtLink>
+              <NuxtLink
+                to="/admin/users"
+                class="flex items-center gap-2 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors text-neutral-700 dark:text-neutral-200"
+                @click="mobileMenuOpen = false"
+              >
+                <UIcon name="i-heroicons-user-group" />
+                User Management
+              </NuxtLink>
+              <NuxtLink
+                to="/admin/categories"
+                class="flex items-center gap-2 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors text-neutral-700 dark:text-neutral-200"
+                @click="mobileMenuOpen = false"
+              >
+                <UIcon name="i-heroicons-rectangle-stack" />
+                Category Management
+              </NuxtLink>
+              <NuxtLink
+                to="/admin/courses"
+                class="flex items-center gap-2 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors text-neutral-700 dark:text-neutral-200"
+                @click="mobileMenuOpen = false"
+              >
+                <UIcon name="i-heroicons-book-open" />
+                Course Management
+              </NuxtLink>
+              <NuxtLink
+                to="/admin/tags"
+                class="flex items-center gap-2 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors text-neutral-700 dark:text-neutral-200"
+                @click="mobileMenuOpen = false"
+              >
+                <UIcon name="i-heroicons-tag" />
+                Tag Management
+              </NuxtLink>
             </template>
 
             <!-- Common Links -->

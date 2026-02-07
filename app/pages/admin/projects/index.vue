@@ -104,6 +104,25 @@
           >
             Refresh
           </UButton>
+
+          <div class="flex items-center gap-2 lg:ml-auto">
+            <UButton
+              :color="viewMode === 'grid' ? 'primary' : 'neutral'"
+              :variant="viewMode === 'grid' ? 'solid' : 'outline'"
+              icon="i-heroicons-squares-2x2"
+              @click="viewMode = 'grid'"
+            >
+              Grid
+            </UButton>
+            <UButton
+              :color="viewMode === 'list' ? 'primary' : 'neutral'"
+              :variant="viewMode === 'list' ? 'solid' : 'outline'"
+              icon="i-heroicons-list-bullet"
+              @click="viewMode = 'list'"
+            >
+              List
+            </UButton>
+          </div>
         </div>
       </div>
 
@@ -124,7 +143,7 @@
         </div>
 
         <div
-          v-else
+          v-else-if="viewMode === 'grid'"
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           <div
@@ -149,6 +168,109 @@
             />
           </div>
         </div>
+
+        <div v-else class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-gray-50 dark:bg-slate-900">
+              <tr>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
+                >
+                  Project
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
+                >
+                  Category
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
+                >
+                  Status
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
+                >
+                  Created
+                </th>
+                <th
+                  class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
+                >
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-slate-700">
+              <tr
+                v-for="project in filteredProjects"
+                :key="project.id"
+                class="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
+              >
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <img
+                      v-if="project.images && project.images[0]"
+                      :src="project.images[0].thumbnailUrl || project.images[0].url"
+                      :alt="project.name || 'Project'"
+                      class="w-12 h-12 rounded-lg object-cover"
+                    />
+                    <div
+                      v-else
+                      class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center"
+                    >
+                      <UIcon
+                        name="i-heroicons-cube"
+                        class="w-6 h-6 text-white"
+                      />
+                    </div>
+                    <div class="min-w-0">
+                      <p
+                        class="text-sm font-semibold text-gray-900 dark:text-white truncate"
+                      >
+                        {{ project.name || "Untitled Project" }}
+                      </p>
+                      <p
+                        class="text-xs text-gray-500 dark:text-gray-400 line-clamp-1"
+                      >
+                        {{ project.description || "No description" }}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <span
+                    class="inline-flex text-center items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+                  >
+                    {{ project.category || "Uncategorized" }}
+                  </span>
+                </td>
+                <td class="px-6 py-4">
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    :class="getStatusBadgeClass(projectStatus(project))"
+                  >
+                    {{ projectStatus(project).toUpperCase() }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-600 dark:text-slate-400">
+                  {{ formatDate(project.createdAt) }}
+                </td>
+                <td class="px-6 py-4">
+                  <div class="flex items-center justify-end gap-2">
+                    <UButton
+                      icon="i-heroicons-eye"
+                      size="xs"
+                      color="neutral"
+                      variant="ghost"
+                      label="View"
+                      :to="`${baseRoute}/${project.id}`"
+                    />
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </UContainer>
   </div>
@@ -171,6 +293,7 @@ const { projects, availableCategories, loading } = storeToRefs(projectStore);
 const search = ref("");
 const selectedStatus = ref("ALL");
 const selectedCategory = ref("");
+const viewMode = ref<"grid" | "list">("grid");
 const statusOptions = ["ALL", "draft", "pending", "accepted", "rejected"];
 const baseRoute = "/admin/projects";
 
@@ -227,6 +350,11 @@ const getStatusBadgeClass = (status: string) => {
   if (s === "rejected")
     return "bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400";
   return "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-200";
+};
+
+const formatDate = (date: string) => {
+  if (!date) return "—";
+  return new Date(date).toLocaleDateString();
 };
 
 onMounted(async () => {

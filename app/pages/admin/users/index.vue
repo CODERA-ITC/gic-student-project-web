@@ -243,14 +243,13 @@
               </td>
               <td class="px-4 py-3">
                 <UBadge
-                  :color="
-                    user.role === 'ADMIN'
-                      ? 'primary'
-                      : user.role === 'TEACHER'
-                        ? 'secondary'
-                        : 'neutral'
-                  "
+                  :color="user.role === 'TEACHER' ? 'secondary' : 'neutral'"
                   variant="soft"
+                  :class="
+                    user.role === 'ADMIN'
+                      ? '!bg-blue-100 !text-blue-900 dark:!bg-blue-900/30 dark:!text-blue-300'
+                      : ''
+                  "
                 >
                   {{ user.role || "STUDENT" }}
                 </UBadge>
@@ -275,7 +274,16 @@
                     size="xs"
                     color="primary"
                     variant="ghost"
+                    class="!text-blue-900 hover:!bg-blue-50 dark:!text-blue-300 dark:hover:!bg-blue-900/20"
                     @click="editUser(user)"
+                  />
+                  <UButton
+                    icon="i-heroicons-key"
+                    size="xs"
+                    color="warning"
+                    variant="ghost"
+                    title="Reset password"
+                    @click="openResetPasswordModal(user)"
                   />
                   <UButton
                     icon="i-heroicons-trash"
@@ -358,7 +366,10 @@
                     </p>
                   </div>
                 </div>
-                <UBadge variant="soft" color="primary">
+                <UBadge
+                  variant="soft"
+                  class="!bg-blue-100 !text-blue-900 dark:!bg-blue-900/30 dark:!text-blue-300"
+                >
                   {{ (selectedUser.role || "STUDENT").toUpperCase() }}
                 </UBadge>
               </div>
@@ -494,6 +505,98 @@
       :is-deleting="deleting"
       @confirm="confirmDelete"
     />
+
+    <!-- Reset Password Modal -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div
+          v-if="showResetPasswordModal"
+          class="fixed inset-0 z-50 flex items-center justify-center p-4"
+          @click.self="closeResetPasswordModal"
+        >
+          <div class="absolute inset-0 bg-gray-900/70 backdrop-blur-sm" />
+          <div
+            class="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden"
+          >
+            <form class="p-6 space-y-4" @submit.prevent="submitResetPassword">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    Reset Password
+                  </h3>
+                  <p class="text-sm text-gray-500 dark:text-slate-400">
+                    {{ resetPasswordTarget?.email || "Selected user" }}
+                  </p>
+                </div>
+                <UButton
+                  icon="i-heroicons-x-mark"
+                  color="neutral"
+                  variant="ghost"
+                  type="button"
+                  @click="closeResetPasswordModal"
+                />
+              </div>
+
+              <UFormGroup label="New Password" required>
+                <UInput
+                  v-model="resetPasswordValue"
+                  type="text"
+                  autocomplete="off"
+                  placeholder="Enter new password"
+                  required
+                />
+                <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">
+                  Minimum 8 characters.
+                </p>
+              </UFormGroup>
+
+              <div class="flex flex-wrap gap-2">
+                <UButton
+                  type="button"
+                  color="primary"
+                  variant="outline"
+                  icon="i-heroicons-sparkles"
+                  class="!text-blue-900 !border-blue-900 hover:!bg-blue-50"
+                  @click="generatePassword"
+                >
+                  Auto Generate (8)
+                </UButton>
+                <UButton
+                  type="button"
+                  color="neutral"
+                  variant="outline"
+                  icon="i-heroicons-clipboard-document"
+                  :disabled="!resetPasswordValue"
+                  @click="copyGeneratedPassword"
+                >
+                  Copy
+                </UButton>
+              </div>
+
+              <div class="flex justify-end gap-3 pt-2">
+                <UButton
+                  type="button"
+                  variant="ghost"
+                  color="neutral"
+                  @click="closeResetPasswordModal"
+                >
+                  Cancel
+                </UButton>
+                <UButton
+                  color="warning"
+                  type="submit"
+                  icon="i-heroicons-key"
+                  :loading="resettingPassword"
+                  :disabled="resettingPassword || resetPasswordValue.trim().length < 8"
+                >
+                  Reset Password
+                </UButton>
+              </div>
+            </form>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -534,6 +637,10 @@ const fileInput = ref<HTMLInputElement | null>(null);
 const showDeleteModal = ref(false);
 const deleting = ref(false);
 const userToDelete = ref<any | null>(null);
+const showResetPasswordModal = ref(false);
+const resettingPassword = ref(false);
+const resetPasswordTarget = ref<any | null>(null);
+const resetPasswordValue = ref("");
 const isCreateDisabled = computed(
   () => !newUser.value.name.trim() || !newUser.value.email.trim(),
 );
@@ -647,6 +754,83 @@ const editUser = async (user) => {
   } catch (error) {
     console.error("Failed to update user", error);
     toast.add({ title: "Update failed", color: "error" });
+  }
+};
+
+const openResetPasswordModal = (user) => {
+  resetPasswordTarget.value = user;
+  resetPasswordValue.value = "";
+  showResetPasswordModal.value = true;
+  generatePassword();
+};
+
+const closeResetPasswordModal = () => {
+  showResetPasswordModal.value = false;
+  resetPasswordTarget.value = null;
+  resetPasswordValue.value = "";
+};
+
+const generatePassword = () => {
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  const numbers = "0123456789";
+  const symbols = "!@#$%^&*()-_=+[]{}?";
+  const all = letters + numbers + symbols;
+
+  const pick = (chars: string) =>
+    chars[Math.floor(Math.random() * chars.length)];
+
+  const passwordChars = [
+    pick(letters),
+    pick(numbers),
+    pick(symbols),
+    pick(all),
+    pick(all),
+    pick(all),
+    pick(all),
+    pick(all),
+  ];
+
+  for (let i = passwordChars.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [passwordChars[i], passwordChars[j]] = [passwordChars[j], passwordChars[i]];
+  }
+
+  resetPasswordValue.value = passwordChars.join("");
+};
+
+const copyGeneratedPassword = async () => {
+  if (!resetPasswordValue.value) return;
+  try {
+    await navigator.clipboard.writeText(resetPasswordValue.value);
+    toast.add({ title: "Password copied", color: "success" });
+  } catch (error) {
+    console.error("Failed to copy password", error);
+    toast.add({ title: "Copy failed", color: "error" });
+  }
+};
+
+const submitResetPassword = async () => {
+  if (!resetPasswordTarget.value?.id) return;
+  if (resetPasswordValue.value.trim().length < 8) {
+    toast.add({
+      title: "Password must be at least 8 characters",
+      color: "warning",
+    });
+    return;
+  }
+
+  resettingPassword.value = true;
+  try {
+    await adminStore.updateUser(resetPasswordTarget.value.id, {
+      password: resetPasswordValue.value.trim(),
+    });
+    toast.add({ title: "Password reset successful", color: "success" });
+    closeResetPasswordModal();
+  } catch (error) {
+    console.error("Failed to reset password", error);
+    toast.add({ title: "Password reset failed", color: "error" });
+  } finally {
+    resettingPassword.value = false;
   }
 };
 

@@ -211,6 +211,30 @@
                 <UIcon name="i-heroicons-user-group" class="w-4 h-4" />
                 User Management
               </NuxtLink>
+              <NuxtLink
+                to="/admin/categories"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                @click="closeMenu"
+              >
+                <UIcon name="i-heroicons-rectangle-stack" class="w-4 h-4" />
+                Category Management
+              </NuxtLink>
+              <NuxtLink
+                to="/admin/courses"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                @click="closeMenu"
+              >
+                <UIcon name="i-heroicons-book-open" class="w-4 h-4" />
+                Course Management
+              </NuxtLink>
+              <NuxtLink
+                to="/admin/tags"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-slate-200 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                @click="closeMenu"
+              >
+                <UIcon name="i-heroicons-tag" class="w-4 h-4" />
+                Tag Management
+              </NuxtLink>
 
               <!-- <NuxtLink
                 to="/teacher/dashboard"
