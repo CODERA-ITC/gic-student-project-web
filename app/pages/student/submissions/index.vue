@@ -47,7 +47,7 @@
     <!-- Main Content -->
     <UContainer class="py-12">
       <!-- Submissions List -->
-      <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700">
+      <div class="bg-white dark:bg-slate-800 rounded-3xl border border-gray-200 dark:border-slate-700">
         <div class="p-6 border-b border-gray-200 dark:border-slate-700">
           <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
@@ -63,7 +63,7 @@
                 <UIcon name="i-heroicons-magnifying-glass"
                   class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-slate-500 w-4 h-4" />
                 <input v-model="searchQuery" type="text" placeholder="Search..."
-                  class="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                  class="w-full pl-9 pr-3 py-2 min-h-[44px] bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-3xl text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                   @input="handleSearch" />
               </div>
               <span class="text-sm text-gray-500 dark:text-slate-400 whitespace-nowrap">
@@ -186,7 +186,7 @@
                 @click="currentPage--" />
               <div class="flex items-center gap-1">
                 <button v-for="page in displayedPages" :key="page" :class="[
-                  'px-3 py-1 text-sm rounded-lg transition-colors',
+                  'px-3 py-1 min-h-[44px] rounded-3xl text-sm transition-colors',
                   page === currentPage
                     ? 'bg-blue-600 text-white'
                     : 'text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700',
@@ -237,7 +237,7 @@
 
           <!-- Modal Container -->
           <div
-            class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-xl shadow-2xl transform transition-all">
+            class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl shadow-2xl transform transition-all">
             <div class="p-8">
               <div class="flex items-center gap-3 mb-4">
                 <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">

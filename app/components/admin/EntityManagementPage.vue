@@ -66,30 +66,30 @@
               v-model="search"
               type="text"
               placeholder="Search by name or code..."
-              class="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+              class="w-full pl-10 pr-4 py-2 min-h-[44px] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-3xl text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
               @keyup.enter="applyFilters"
             />
           </div>
           <div class="flex flex-wrap gap-2">
-            <UButton
+            <ButtonsPresetButton
+              :label="`Create ${singularLabel}`"
               color="primary"
               variant="solid"
               icon="i-heroicons-plus"
+              size="sm"
               class="!bg-blue-900 !text-white hover:!bg-blue-800"
               @click="openCreate"
-            >
-              Create {{ singularLabel }}
-            </UButton>
-            <UButton
+            />
+            <ButtonsPresetButton
+              label="Refresh"
               color="primary"
               variant="outline"
               icon="i-heroicons-arrow-path"
+              size="sm"
               class="!text-blue-900 !border-blue-900 hover:!bg-blue-50"
               :loading="loading"
               @click="loadItems"
-            >
-              Refresh
-            </UButton>
+            />
           </div>
         </div>
       </div>
@@ -140,17 +140,19 @@
               </td>
               <td class="px-4 py-3">
                 <div class="flex justify-end gap-2">
-                  <UButton
+                  <ButtonsPresetButton
+                    label=""
                     icon="i-heroicons-pencil-square"
                     size="xs"
                     color="primary"
                     variant="ghost"
                     @click="openEdit(item)"
                   />
-                  <UButton
+                  <ButtonsPresetButton
+                    label=""
                     icon="i-heroicons-trash"
                     size="xs"
-                    color="error"
+                    color="danger"
                     variant="ghost"
                     @click="openDelete(item)"
                   />
@@ -165,16 +167,20 @@
             of {{ filteredItems.length }}
           </span>
           <div class="flex items-center gap-2">
-            <UButton
+            <ButtonsPresetButton
+              label=""
               icon="i-heroicons-chevron-left"
               size="xs"
+              color="secondary"
               variant="ghost"
               :disabled="page === 1"
               @click="changePage(page - 1)"
             />
-            <UButton
+            <ButtonsPresetButton
+              label=""
               icon="i-heroicons-chevron-right"
               size="xs"
+              color="secondary"
               variant="ghost"
               :disabled="page * pageSize >= filteredItems.length"
               @click="changePage(page + 1)"
@@ -193,50 +199,57 @@
         >
           <div class="absolute inset-0 bg-gray-900/70 backdrop-blur-sm" />
           <div
-            class="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden"
+            class="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden"
           >
             <form class="p-5 space-y-4" @submit.prevent="saveItem">
               <div class="flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                   {{ formMode === "create" ? `Create ${singularLabel}` : `Update ${singularLabel}` }}
                 </h3>
-                <UButton
+                <ButtonsPresetButton
+                  label=""
                   icon="i-heroicons-x-mark"
-                  color="neutral"
+                  color="secondary"
                   variant="ghost"
+                  size="xs"
                   type="button"
                   @click="showFormModal = false"
                 />
               </div>
 
               <UFormGroup label="Name" required>
-                <UInput v-model="form.name" placeholder="Enter name" required />
+                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="form.name" placeholder="Enter name" required />
               </UFormGroup>
               <UFormGroup v-if="supportsCode" label="Code">
-                <UInput v-model="form.code" placeholder="Enter code" />
+                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="form.code" placeholder="Enter code" />
               </UFormGroup>
               <UFormGroup label="Description">
                 <textarea
                   v-model="form.description"
                   rows="3"
-                  class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="w-full px-3 py-2 rounded-3xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Optional description"
                 />
               </UFormGroup>
 
               <div class="flex justify-end gap-3 pt-2">
-                <UButton variant="ghost" color="neutral" type="button" @click="showFormModal = false">
-                  Cancel
-                </UButton>
-                <UButton
+                <ButtonsPresetButton
+                  label="Cancel"
+                  variant="ghost"
+                  color="secondary"
+                  size="sm"
+                  type="button"
+                  @click="showFormModal = false"
+                />
+                <ButtonsPresetButton
+                  :label="formMode === 'create' ? 'Create' : 'Update'"
                   color="primary"
+                  size="sm"
                   type="submit"
                   :loading="saving"
                   :disabled="saving || !form.name.trim()"
                   class="!bg-blue-900 !text-white hover:!bg-blue-800"
-                >
-                  {{ formMode === "create" ? "Create" : "Update" }}
-                </UButton>
+                />
               </div>
             </form>
           </div>

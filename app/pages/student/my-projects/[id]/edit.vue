@@ -52,21 +52,21 @@
                 <label class="block text-sm font-medium text-gray-300 mb-2">
                   Project Title *
                 </label>
-                <UInput v-model="editForm.title" placeholder="Enter project title" size="sm" required />
+                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="editForm.title" placeholder="Enter project title" size="sm" required />
               </div>
 
               <div class="md:col-span-2">
                 <label class="block text-sm font-medium text-gray-300 mb-2">
                   Description *
                 </label>
-                <UTextarea v-model="editForm.description" placeholder="Describe your project" rows="4" required />
+                <UTextarea :ui="{ base: '!rounded-3xl' }" v-model="editForm.description" placeholder="Describe your project" rows="4" required />
               </div>
 
               <div>
                 <label class="block text-sm font-medium text-gray-300 mb-2">
                   Category *
                 </label>
-                <USelect v-model="editForm.category" :options="categoryOptions" placeholder="Select category"
+                <USelect :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="editForm.category" :options="categoryOptions" placeholder="Select category"
                   required />
               </div>
 
@@ -74,7 +74,7 @@
                 <label class="block text-sm font-medium text-gray-300 mb-2">
                   Semester *
                 </label>
-                <USelect v-model="editForm.semester" :options="semesterOptions" placeholder="Select semester"
+                <USelect :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="editForm.semester" :options="semesterOptions" placeholder="Select semester"
                   required />
               </div>
 
@@ -82,14 +82,14 @@
                 <label class="block text-sm font-medium text-gray-300 mb-2">
                   Duration
                 </label>
-                <USelect v-model="editForm.duration" :options="durationOptions" placeholder="Select duration" />
+                <USelect :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="editForm.duration" :options="durationOptions" placeholder="Select duration" />
               </div>
 
               <div>
                 <label class="block text-sm font-medium text-gray-300 mb-2">
                   Course
                 </label>
-                <UInput v-model="editForm.course" placeholder="Enter course name" />
+                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="editForm.course" placeholder="Enter course name" />
               </div>
             </div>
           </div>
@@ -102,14 +102,14 @@
                 <label class="block text-sm font-medium text-gray-300 mb-2">
                   GitHub Repository
                 </label>
-                <UInput v-model="editForm.githubUrl" placeholder="https://github.com/username/repo" type="url" />
+                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="editForm.githubUrl" placeholder="https://github.com/username/repo" type="url" />
               </div>
 
               <div>
                 <label class="block text-sm font-medium text-gray-300 mb-2">
                   Live Demo
                 </label>
-                <UInput v-model="editForm.demoUrl" placeholder="https://your-demo.com" type="url" />
+                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="editForm.demoUrl" placeholder="https://your-demo.com" type="url" />
               </div>
             </div>
           </div>
@@ -119,7 +119,7 @@
             <h2 class="text-xl font-semibold text-white mb-6">Technologies</h2>
             <div class="space-y-4">
               <div class="flex gap-2">
-                <UInput v-model="techInput" placeholder="Add a technology..." @keydown.enter.prevent="addTechnology"
+                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="techInput" placeholder="Add a technology..." @keydown.enter.prevent="addTechnology"
                   class="flex-1" />
                 <UButton @click="addTechnology" color="blue" variant="solid" icon="i-heroicons-plus"
                   :disabled="!techInput.trim()">
@@ -179,12 +179,12 @@
               <div v-for="(feature, index) in editForm.feature" :key="index" class="p-4 bg-slate-700/50 rounded-lg">
                 <div class="flex items-start justify-between gap-4">
                   <div class="flex-1 space-y-3">
-                    <UInput v-model="feature.title" placeholder="Feature title" />
-                    <UTextarea v-model="feature.description" placeholder="Feature description" rows="2" />
+                    <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="feature.title" placeholder="Feature title" />
+                    <UTextarea :ui="{ base: '!rounded-3xl' }" v-model="feature.description" placeholder="Feature description" rows="2" />
                     <div class="grid grid-cols-3 gap-3">
-                      <UInput v-model="feature.date" type="date" placeholder="Due date" />
-                      <USelect v-model="feature.status" :options="featureStatusOptions" placeholder="Status" />
-                      <UInput v-model="feature.icon" placeholder="Icon name" />
+                      <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="feature.date" type="date" placeholder="Due date" />
+                      <USelect :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="feature.status" :options="featureStatusOptions" placeholder="Status" />
+                      <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="feature.icon" placeholder="Icon name" />
                     </div>
                   </div>
                   <UButton @click="removeFeature(index)" color="red" variant="soft" size="sm" icon="i-heroicons-trash">

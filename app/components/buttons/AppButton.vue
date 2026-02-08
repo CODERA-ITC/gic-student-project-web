@@ -29,7 +29,7 @@
     />
 
     <!-- Label -->
-    <span class="truncate">{{ displayLabel }}</span>
+    <span v-if="displayLabel" class="truncate">{{ displayLabel }}</span>
   </NuxtLink>
 
   <button
@@ -62,7 +62,7 @@
     />
 
     <!-- Label -->
-    <span class="truncate">{{ displayLabel }}</span>
+    <span v-if="displayLabel" class="truncate">{{ displayLabel }}</span>
   </button>
 </template>
 
@@ -73,7 +73,7 @@ import { getButtonClasses } from "~/types/buttons";
 const { t } = useI18n();
 
 interface Props {
-  label: string;
+  label?: string;
   labelKey?: string;
   color?: ButtonColor;
   variant?: ButtonVariant;
@@ -104,7 +104,7 @@ const emit = defineEmits<{
 }>();
 
 const displayLabel = computed(() =>
-  props.labelKey ? t(props.labelKey) : props.label,
+  props.labelKey ? t(props.labelKey) : (props.label ?? ""),
 );
 
 const iconSize = computed(() => {

@@ -2,38 +2,22 @@
   <div class="min-h-screen bg-gray-50 dark:bg-slate-900">
     <!-- Hero -->
     <div class="py-14 relative overflow-hidden">
-      <div
-        class="absolute -top-24 -left-24 w-80 h-80 bg-blue-500/30 rounded-full blur-3xl"
-        aria-hidden="true"
-      ></div>
-      <div
-        class="absolute -bottom-32 right-0 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl"
-        aria-hidden="true"
-      ></div>
+      <div class="absolute -top-24 -left-24 w-80 h-80 bg-blue-500/30 rounded-full blur-3xl" aria-hidden="true"></div>
+      <div class="absolute -bottom-32 right-0 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl" aria-hidden="true">
+      </div>
 
       <UContainer>
         <div
-          class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/15 bg-white/90 dark:bg-slate-900/90 shadow-2xl px-8 py-10"
-        >
+          class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/15 bg-white/90 dark:bg-slate-900/90 shadow-2xl px-8 py-10">
           <div
             class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.08),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(79,70,229,0.08),transparent_30%)] pointer-events-none"
-            aria-hidden="true"
-          ></div>
+            aria-hidden="true"></div>
 
           <div class="relative space-y-3">
-            <nav
-              class="flex items-center flex-wrap gap-1 text-sm text-slate-600 dark:text-slate-300"
-            >
-              <NuxtLink
-                to="/"
-                class="hover:text-blue-600 dark:hover:text-blue-300 transition-colors"
-                >Home</NuxtLink
-              >
+            <nav class="flex items-center flex-wrap gap-1 text-sm text-slate-600 dark:text-slate-300">
+              <NuxtLink to="/" class="hover:text-blue-600 dark:hover:text-blue-300 transition-colors">Home</NuxtLink>
               <span class="text-slate-400 dark:text-slate-500">/</span>
-              <NuxtLink
-                to="/admin/dashboard"
-                class="hover:text-blue-600 dark:hover:text-blue-300 transition-colors"
-              >
+              <NuxtLink to="/admin/dashboard" class="hover:text-blue-600 dark:hover:text-blue-300 transition-colors">
                 Admin Dashboard
               </NuxtLink>
               <span class="text-slate-400 dark:text-slate-500">/</span>
@@ -42,13 +26,8 @@
               </span>
             </nav>
             <div class="flex items-center gap-3">
-              <UIcon
-                name="i-heroicons-users"
-                class="w-10 h-10 text-blue-500 dark:text-blue-300"
-              />
-              <h1
-                class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white"
-              >
+              <UIcon name="i-heroicons-users" class="w-10 h-10 text-blue-500 dark:text-blue-300" />
+              <h1 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
                 User Management
               </h1>
             </div>
@@ -64,26 +43,16 @@
     <UContainer class="pb-14 space-y-8">
       <!-- KPI cards -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div
-          v-for="kpi in kpis"
-          :key="kpi.label"
-          class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm"
-        >
+        <div v-for="kpi in kpis" :key="kpi.label"
+          class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-3">
-              <div
-                class="w-11 h-11 rounded-lg flex items-center justify-center"
-                :class="kpi.iconBg"
-              >
-                <UIcon
-                  :name="kpi.icon"
-                  class="w-5 h-5"
-                  :class="kpi.iconColor"
-                />
+              <div class="w-11 h-11 rounded-lg flex items-center justify-center" :class="kpi.iconBg">
+                <UIcon :name="kpi.icon" class="w-5 h-5" :class="kpi.iconColor" />
               </div>
               <span class="text-sm text-gray-600 dark:text-slate-400">{{
                 kpi.label
-              }}</span>
+                }}</span>
             </div>
             <!-- <UBadge color="neutral" variant="soft" size="xs">Live</UBadge> -->
           </div>
@@ -98,102 +67,47 @@
       </div>
 
       <!-- Filters & Actions -->
-      <div
-        class="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-4"
-      >
-        <div
-          class="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center"
-        >
+      <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-4">
+        <div class="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center">
           <div class="flex-1 relative">
-            <UIcon
-              name="i-heroicons-magnifying-glass"
-              class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 w-5 h-5"
-            />
-            <input
-              v-model="search"
-              type="text"
-              placeholder="Search by name or email..."
-              class="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-              @keyup.enter="applyFilters"
-            />
+            <UIcon name="i-heroicons-magnifying-glass"
+              class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 w-5 h-5" />
+            <input v-model="search" type="text" placeholder="Search by name or email..."
+              class="w-full pl-10 pr-4 py-2 min-h-[44px] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-3xl text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+              @keyup.enter="applyFilters" />
           </div>
-          <USelect
-            v-model="selectedRole"
-            :items="roleOptions"
-            class="w-full sm:w-52"
-            placeholder="Filter by role"
-            @change="applyFilters"
-          />
+          <USelect v-model="selectedRole" :items="roleOptions" :ui="{ base: '!rounded-3xl !min-h-[44px]' }"
+            class="w-full sm:w-52 [&_button]:!rounded-3xl [&_button]:min-h-[44px]" placeholder="Filter by role"
+            @change="applyFilters" />
           <div class="flex flex-wrap gap-2">
-          <UButton
-            color="primary"
-            variant="solid"
-            icon="i-heroicons-plus"
-            class="!bg-blue-900 !text-white hover:!bg-blue-800"
-            @click="openCreateUser"
-          >
-              Create User
-            </UButton>
-            <input
-              ref="fileInput"
-              type="file"
-              accept=".csv"
-              class="hidden"
-              @change="handleFileSelect"
-            />
-            <UButton
-              color="primary"
-              variant="outline"
-              icon="i-heroicons-arrow-up-tray"
-              class="!text-blue-900 !border-blue-900 hover:!bg-blue-50"
-              :loading="uploading"
-              :disabled="uploading"
-              @click="triggerFileInput"
-            >
-              Import CSV
-            </UButton>
-            <UButton
-              color="neutral"
-              variant="outline"
-              icon="i-heroicons-arrow-down-tray"
-              @click="exportUsers"
-            >
-              Export
-            </UButton>
-            <UButton
-              color="primary"
-              variant="outline"
-              icon="i-heroicons-arrow-path"
-              class="!text-blue-900 !border-blue-900 hover:!bg-blue-50"
-              :loading="loadingUsers"
-              @click="applyFilters"
-            >
-              Refresh
-            </UButton>
+            <ButtonsPresetButton label="Create User" size="sm" color="primary" variant="solid" icon="i-heroicons-plus"
+              class="!bg-blue-900 !text-white hover:!bg-blue-800" @click="openCreateUser" />
+            <input ref="fileInput" type="file" accept=".csv" class="hidden" @change="handleFileSelect" />
+            <ButtonsPresetButton label="Import CSV" color="primary" variant="outline" size="sm"
+              icon="i-heroicons-arrow-up-tray" class="!text-blue-900 !border-blue-900 hover:!bg-blue-50"
+              :loading="uploading" :disabled="uploading" @click="triggerFileInput" />
+            <ButtonsPresetButton label="Export" size="sm" variant="outline" icon="i-heroicons-arrow-down-tray"
+              @click="exportUsers" />
+            <ButtonsPresetButton label="Refresh" size="sm" color="primary" variant="outline"
+              icon="i-heroicons-arrow-path" class="!text-blue-900 !border-blue-900 hover:!bg-blue-50"
+              :loading="loadingUsers" @click="applyFilters" />
           </div>
         </div>
       </div>
 
       <!-- Users table -->
-      <div
-        class="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden"
-      >
+      <div class="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden">
         <div v-if="loadingUsers" class="p-8 flex flex-col gap-3">
           <USkeleton class="h-5 w-1/3" />
           <USkeleton class="h-5 w-1/4" />
           <USkeleton class="h-5 w-full" />
           <USkeleton class="h-5 w-full" />
         </div>
-        <div
-          v-else-if="filteredUsers.length === 0"
-          class="p-8 text-center text-sm text-gray-600 dark:text-slate-400"
-        >
+        <div v-else-if="filteredUsers.length === 0" class="p-8 text-center text-sm text-gray-600 dark:text-slate-400">
           No users found.
         </div>
         <table v-else class="w-full text-sm">
-          <thead
-            class="bg-gray-50 dark:bg-slate-900 text-gray-500 dark:text-slate-400"
-          >
+          <thead class="bg-gray-50 dark:bg-slate-900 text-gray-500 dark:text-slate-400">
             <tr>
               <th class="px-4 py-3 text-left">User</th>
               <th class="px-4 py-3 text-left">Role</th>
@@ -203,54 +117,36 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200 dark:divide-slate-700">
-            <tr
-              v-for="user in displayedUsers"
-              :key="user.id"
-              class="hover:bg-gray-50 dark:hover:bg-slate-700/40"
-            >
+            <tr v-for="user in displayedUsers" :key="user.id" class="hover:bg-gray-50 dark:hover:bg-slate-700/40">
               <td class="px-4 py-3">
                 <div class="flex items-center gap-3">
                   <div
-                    class="w-10 h-10 rounded-full overflow-hidden bg-blue-600 dark:bg-blue-700 flex items-center justify-center text-white text-sm font-semibold"
-                  >
-                    <img
-                      v-if="user.avatar"
-                      :src="user.avatar"
-                      :alt="user.name || user.email"
-                      class="w-full h-full object-cover"
-                    />
+                    class="w-10 h-10 rounded-full overflow-hidden bg-blue-600 dark:bg-blue-700 flex items-center justify-center text-white text-sm font-semibold">
+                    <img v-if="user.avatar" :src="user.avatar" :alt="user.name || user.email"
+                      class="w-full h-full object-cover" />
                     <span v-else>{{
                       (user.name || user.email || "U").charAt(0).toUpperCase()
-                    }}</span>
+                      }}</span>
                   </div>
                   <div class="min-w-0">
-                    <p
-                      class="text-sm font-semibold text-gray-900 dark:text-white truncate"
-                    >
+                    <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">
                       {{
                         user.name ||
                         `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
                         "—"
                       }}
                     </p>
-                    <p
-                      class="text-xs text-gray-500 dark:text-slate-400 truncate"
-                    >
+                    <p class="text-xs text-gray-500 dark:text-slate-400 truncate">
                       {{ user.email }}
                     </p>
                   </div>
                 </div>
               </td>
               <td class="px-4 py-3">
-                <UBadge
-                  :color="user.role === 'TEACHER' ? 'secondary' : 'neutral'"
-                  variant="soft"
-                  :class="
-                    user.role === 'ADMIN'
-                      ? '!bg-blue-100 !text-blue-900 dark:!bg-blue-900/30 dark:!text-blue-300'
-                      : ''
-                  "
-                >
+                <UBadge :color="user.role === 'TEACHER' ? 'secondary' : 'neutral'" variant="soft" :class="user.role === 'ADMIN'
+                    ? '!bg-blue-100 !text-blue-900 dark:!bg-blue-900/30 dark:!text-blue-300'
+                    : ''
+                  ">
                   {{ user.role || "STUDENT" }}
                 </UBadge>
               </td>
@@ -262,101 +158,55 @@
               </td>
               <td class="px-4 py-3">
                 <div class="flex justify-end gap-2">
-                  <UButton
-                    icon="i-heroicons-eye"
-                    size="xs"
-                    color="neutral"
-                    variant="ghost"
-                    @click="viewUser(user)"
-                  />
-                  <UButton
-                    icon="i-heroicons-pencil-square"
-                    size="xs"
-                    color="primary"
+                  <ButtonsPresetButton label="" icon="i-heroicons-eye" size="sm" variant="ghost"
+                    @click="viewUser(user)" />
+                  <ButtonsPresetButton label="" icon="i-heroicons-pencil-square" size="sm" color="primary"
                     variant="ghost"
                     class="!text-blue-900 hover:!bg-blue-50 dark:!text-blue-300 dark:hover:!bg-blue-900/20"
-                    @click="editUser(user)"
-                  />
-                  <UButton
-                    icon="i-heroicons-key"
-                    size="xs"
-                    color="warning"
-                    variant="ghost"
-                    title="Reset password"
-                    @click="openResetPasswordModal(user)"
-                  />
-                  <UButton
-                    icon="i-heroicons-trash"
-                    size="xs"
-                    color="error"
-                    variant="ghost"
-                    @click="deleteUser(user)"
-                  />
+                    @click="editUser(user)" />
+                  <ButtonsPresetButton label="" icon="i-heroicons-key" size="sm" color="warning" variant="ghost"
+                    title="Reset password" @click="openResetPasswordModal(user)" />
+                  <ButtonsPresetButton label="" icon="i-heroicons-trash" size="sm" variant="ghost"
+                    @click="deleteUser(user)" />
                 </div>
               </td>
             </tr>
           </tbody>
         </table>
-        <div
-          class="flex items-center justify-between mt-4"
-          v-if="total > pageSize"
-        >
+        <div class="flex items-center justify-between mt-4" v-if="total > pageSize">
           <span class="text-xs text-gray-500 dark:text-slate-400">
             Showing {{ (page - 1) * pageSize + 1 }} -
             {{ Math.min(page * pageSize, total) }} of {{ total }}
           </span>
           <div class="flex items-center gap-2">
-            <UButton
-              icon="i-heroicons-chevron-left"
-              size="xs"
-              variant="ghost"
-              :disabled="page === 1"
-              @click="changePage(page - 1)"
-            />
-            <UButton
-              icon="i-heroicons-chevron-right"
-              size="xs"
-              variant="ghost"
-              :disabled="page * pageSize >= total"
-              @click="changePage(page + 1)"
-            />
+            <ButtonsPresetButton label="" icon="i-heroicons-chevron-left" size="sm" variant="ghost"
+              :disabled="page === 1" @click="changePage(page - 1)" />
+            <ButtonsPresetButton label="" icon="i-heroicons-chevron-right" size="sm" variant="ghost"
+              :disabled="page * pageSize >= total" @click="changePage(page + 1)" />
           </div>
         </div>
       </div>
     </UContainer>
 
     <!-- Create / Edit User Modal -->
-    <UserFormModal
-      v-model="showCreateModal"
-      :user="formUser"
-      :mode="formMode"
-      :loading="creating"
-      @submit="handleCreateSubmit"
-    />
+    <UserFormModal v-model="showCreateModal" :user="formUser" :mode="formMode" :loading="creating"
+      @submit="handleCreateSubmit" />
 
     <!-- View User Modal (Teleport) -->
     <Teleport to="body">
       <Transition name="modal">
-        <div
-          v-if="showUserModal"
-          class="fixed inset-0 z-50 flex items-center justify-center p-4"
-          @click.self="showUserModal = false"
-        >
+        <div v-if="showUserModal" class="fixed inset-0 z-50 flex items-center justify-center p-4"
+          @click.self="showUserModal = false">
           <div class="absolute inset-0 bg-gray-900/70 backdrop-blur-sm" />
           <div
-            class="relative w-full max-w-3xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden"
-          >
+            class="relative w-full max-w-3xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden">
             <div class="p-6 space-y-4" v-if="selectedUser">
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                  <img
-                    :src="
-                      selectedUser.avatar ||
-                      `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedUser.name || selectedUser.email || 'User')}&background=0D8ABC&color=fff`
-                    "
-                    alt="avatar"
-                    class="w-14 h-14 rounded-full object-cover ring-2 ring-blue-100 dark:ring-slate-700"
-                  />
+                  <img :src="selectedUser.avatar ||
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedUser.name || selectedUser.email || 'User')}&background=0D8ABC&color=fff`
+                    " alt="avatar"
+                    class="w-14 h-14 rounded-full object-cover ring-2 ring-blue-100 dark:ring-slate-700" />
                   <div>
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                       {{ selectedUser.name || selectedUser.email }}
@@ -366,10 +216,7 @@
                     </p>
                   </div>
                 </div>
-                <UBadge
-                  variant="soft"
-                  class="!bg-blue-100 !text-blue-900 dark:!bg-blue-900/30 dark:!text-blue-300"
-                >
+                <UBadge variant="soft" class="!bg-blue-100 !text-blue-900 dark:!bg-blue-900/30 dark:!text-blue-300">
                   {{ (selectedUser.role || "STUDENT").toUpperCase() }}
                 </UBadge>
               </div>
@@ -427,66 +274,36 @@
               <div v-if="selectedUser.skills?.length" class="space-y-2">
                 <p class="text-gray-500 dark:text-slate-400 text-sm">Skills</p>
                 <div class="flex flex-wrap gap-2">
-                  <UBadge
-                    v-for="skill in selectedUser.skills"
-                    :key="skill"
-                    color="neutral"
-                    variant="soft"
-                  >
+                  <UBadge v-for="skill in selectedUser.skills" :key="skill" color="neutral" variant="soft">
                     {{ skill }}
                   </UBadge>
                 </div>
               </div>
 
-              <div
-                v-if="selectedUser.socialLinks && hasSocialLinks(selectedUser.socialLinks)"
-                class="space-y-2"
-              >
+              <div v-if="selectedUser.socialLinks && hasSocialLinks(selectedUser.socialLinks)" class="space-y-2">
                 <p class="text-gray-500 dark:text-slate-400 text-sm">Social Links</p>
                 <div class="flex flex-wrap gap-2">
-                  <NuxtLink
-                    v-if="selectedUser.socialLinks.github"
-                    :href="selectedUser.socialLinks.github"
-                    target="_blank"
-                    rel="noopener"
-                    class="text-blue-600 dark:text-blue-300 text-sm underline"
-                  >
+                  <NuxtLink v-if="selectedUser.socialLinks.github" :href="selectedUser.socialLinks.github"
+                    target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-300 text-sm underline">
                     GitHub
                   </NuxtLink>
-                  <NuxtLink
-                    v-if="selectedUser.socialLinks.linkedin"
-                    :href="selectedUser.socialLinks.linkedin"
-                    target="_blank"
-                    rel="noopener"
-                    class="text-blue-600 dark:text-blue-300 text-sm underline"
-                  >
+                  <NuxtLink v-if="selectedUser.socialLinks.linkedin" :href="selectedUser.socialLinks.linkedin"
+                    target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-300 text-sm underline">
                     LinkedIn
                   </NuxtLink>
-                  <NuxtLink
-                    v-if="selectedUser.socialLinks.twitter"
-                    :href="selectedUser.socialLinks.twitter"
-                    target="_blank"
-                    rel="noopener"
-                    class="text-blue-600 dark:text-blue-300 text-sm underline"
-                  >
+                  <NuxtLink v-if="selectedUser.socialLinks.twitter" :href="selectedUser.socialLinks.twitter"
+                    target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-300 text-sm underline">
                     Twitter
                   </NuxtLink>
-                  <NuxtLink
-                    v-if="selectedUser.socialLinks.portfolio"
-                    :href="selectedUser.socialLinks.portfolio"
-                    target="_blank"
-                    rel="noopener"
-                    class="text-blue-600 dark:text-blue-300 text-sm underline"
-                  >
+                  <NuxtLink v-if="selectedUser.socialLinks.portfolio" :href="selectedUser.socialLinks.portfolio"
+                    target="_blank" rel="noopener" class="text-blue-600 dark:text-blue-300 text-sm underline">
                     Portfolio
                   </NuxtLink>
                 </div>
               </div>
 
               <div class="flex justify-end">
-                <UButton variant="ghost" color="neutral" @click="showUserModal = false">
-                  Close
-                </UButton>
+                <ButtonsPresetButton label="Close" variant="ghost" @click="showUserModal = false" />
               </div>
             </div>
             <div v-else class="p-6">
@@ -499,25 +316,17 @@
     </Teleport>
 
     <!-- Delete confirmation -->
-    <DeleteConfirmationModal
-      v-model="showDeleteModal"
-      :project-title="userToDelete?.email || 'this user'"
-      :is-deleting="deleting"
-      @confirm="confirmDelete"
-    />
+    <DeleteConfirmationModal v-model="showDeleteModal" :project-title="userToDelete?.email || 'this user'"
+      :is-deleting="deleting" @confirm="confirmDelete" />
 
     <!-- Reset Password Modal -->
     <Teleport to="body">
       <Transition name="modal">
-        <div
-          v-if="showResetPasswordModal"
-          class="fixed inset-0 z-50 flex items-center justify-center p-4"
-          @click.self="closeResetPasswordModal"
-        >
+        <div v-if="showResetPasswordModal" class="fixed inset-0 z-50 flex items-center justify-center p-4"
+          @click.self="closeResetPasswordModal">
           <div class="absolute inset-0 bg-gray-900/70 backdrop-blur-sm" />
           <div
-            class="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden"
-          >
+            class="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden">
             <form class="p-6 space-y-4" @submit.prevent="submitResetPassword">
               <div class="flex items-center justify-between">
                 <div>
@@ -528,69 +337,30 @@
                     {{ resetPasswordTarget?.email || "Selected user" }}
                   </p>
                 </div>
-                <UButton
-                  icon="i-heroicons-x-mark"
-                  color="neutral"
-                  variant="ghost"
-                  type="button"
-                  @click="closeResetPasswordModal"
-                />
+                <ButtonsPresetButton label="" icon="i-heroicons-x-mark" variant="ghost" type="button"
+                  @click="closeResetPasswordModal" />
               </div>
 
               <UFormGroup label="New Password" required>
-                <UInput
-                  v-model="resetPasswordValue"
-                  type="text"
-                  autocomplete="off"
-                  placeholder="Enter new password"
-                  required
-                />
+                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="resetPasswordValue" type="text" autocomplete="off"
+                  placeholder="Enter new password" required />
                 <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">
                   Minimum 8 characters.
                 </p>
               </UFormGroup>
 
               <div class="flex flex-wrap gap-2">
-                <UButton
-                  type="button"
-                  color="primary"
-                  variant="outline"
-                  icon="i-heroicons-sparkles"
-                  class="!text-blue-900 !border-blue-900 hover:!bg-blue-50"
-                  @click="generatePassword"
-                >
-                  Auto Generate (8)
-                </UButton>
-                <UButton
-                  type="button"
-                  color="neutral"
-                  variant="outline"
-                  icon="i-heroicons-clipboard-document"
-                  :disabled="!resetPasswordValue"
-                  @click="copyGeneratedPassword"
-                >
-                  Copy
-                </UButton>
+                <ButtonsPresetButton label="Auto Generate (8)" type="button" color="primary" variant="outline"
+                  icon="i-heroicons-sparkles" class="!text-blue-900 !border-blue-900 hover:!bg-blue-50"
+                  @click="generatePassword" />
+                <ButtonsPresetButton label="Copy" type="button" variant="outline" icon="i-heroicons-clipboard-document"
+                  :disabled="!resetPasswordValue" @click="copyGeneratedPassword" />
               </div>
 
               <div class="flex justify-end gap-3 pt-2">
-                <UButton
-                  type="button"
-                  variant="ghost"
-                  color="neutral"
-                  @click="closeResetPasswordModal"
-                >
-                  Cancel
-                </UButton>
-                <UButton
-                  color="warning"
-                  type="submit"
-                  icon="i-heroicons-key"
-                  :loading="resettingPassword"
-                  :disabled="resettingPassword || resetPasswordValue.trim().length < 8"
-                >
-                  Reset Password
-                </UButton>
+                <ButtonsPresetButton label="Cancel" type="button" variant="ghost" @click="closeResetPasswordModal" />
+                <ButtonsPresetButton label="Reset Password" color="warning" type="submit" icon="i-heroicons-key"
+                  :loading="resettingPassword" :disabled="resettingPassword || resetPasswordValue.trim().length < 8" />
               </div>
             </form>
           </div>

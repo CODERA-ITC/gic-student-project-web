@@ -45,41 +45,36 @@
             <UIcon name="i-heroicons-magnifying-glass"
               class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 w-5 h-5" />
             <input v-model="search" type="text" placeholder="Search by project name or description..."
-              class="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+              class="w-full pl-10 pr-4 py-2 min-h-[44px] bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-3xl text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
               @keyup.enter="applyFilters" />
           </div>
 
-          <USelect v-model="selectedCategory" :items="categoryOptions" class="w-full sm:w-52"
-            placeholder="All categories" />
+          <USelect v-model="selectedCategory" :items="categoryOptions" :ui="{ base: '!rounded-3xl !min-h-[44px]' }"
+            class="w-full sm:w-52 [&_button]:!rounded-3xl [&_button]:min-h-[44px]" placeholder="All categories" />
 
-          <USelect v-model="selectedStatus" :items="statusOptions" class="w-full sm:w-48"
-            placeholder="Filter by status" />
+          <USelect v-model="selectedStatus" :items="statusOptions" :ui="{ base: '!rounded-3xl !min-h-[44px]' }"
+            class="w-full sm:w-48 [&_button]:!rounded-3xl [&_button]:min-h-[44px]" placeholder="Filter by status" />
 
-          <UButton color="primary" variant="outline" :class="[
-            'text-blue-800 border-blue-800 hover:text-blue-700 hover:border-blue-700'
-
-          ]" icon="i-heroicons-arrow-path" :loading="loading" @click="applyFilters">
-            Refresh
-          </UButton>
+          <ButtonsPresetButton label="Refresh" color="primary" variant="outline" size="sm"
+            :class="['text-blue-800 border-blue-800 hover:text-blue-700 hover:border-blue-700']"
+            icon="i-heroicons-arrow-path" :loading="loading" @click="applyFilters" />
 
           <div class="flex lg:ml-auto rounded-xl bg-gray-100 dark:bg-gray-800 p-1">
-            <UButton icon="i-heroicons-squares-2x2" :variant="viewMode === 'grid' ? 'solid' : 'ghost'" :class="[
-              'rounded-lg transition-all',
-              viewMode === 'grid'
-                ? 'bg-blue-800 text-white hover:bg-blue-700'
-                : 'text-gray-600 dark:text-gray-300'
-            ]" @click="viewMode = 'grid'">
-              Grid
-            </UButton>
+            <ButtonsPresetButton label="Grid" icon="i-heroicons-squares-2x2" size="sm"
+              :variant="viewMode === 'grid' ? 'solid' : 'ghost'" :class="[
+                'rounded-lg transition-all',
+                viewMode === 'grid'
+                  ? 'bg-blue-800 text-white hover:bg-blue-700'
+                  : 'text-gray-600 dark:text-gray-300',
+              ]" @click="viewMode = 'grid'" />
 
-            <UButton icon="i-heroicons-list-bullet" :variant="viewMode === 'list' ? 'solid' : 'ghost'" :class="[
-              'rounded-lg transition-all',
-              viewMode === 'list'
-                ? 'bg-blue-800 text-white hover:bg-blue-700'
-                : 'text-gray-600 dark:text-gray-300'
-            ]" @click="viewMode = 'list'">
-              List
-            </UButton>
+            <ButtonsPresetButton label="List" icon="i-heroicons-list-bullet" size="sm"
+              :variant="viewMode === 'list' ? 'solid' : 'ghost'" :class="[
+                'rounded-lg transition-all',
+                viewMode === 'list'
+                  ? 'bg-blue-800 text-white hover:bg-blue-700'
+                  : 'text-gray-600 dark:text-gray-300',
+              ]" @click="viewMode = 'list'" />
           </div>
 
         </div>
@@ -176,7 +171,7 @@
                 </td>
                 <td class="px-6 py-4">
                   <div class="flex items-center justify-end gap-2">
-                    <UButton icon="i-heroicons-eye" size="xs" color="neutral" variant="ghost" label="View"
+                    <ButtonsPresetButton label="View" icon="i-heroicons-eye" size="sm" variant="ghost"
                       :to="`${baseRoute}/${project.id}`" />
                   </div>
                 </td>

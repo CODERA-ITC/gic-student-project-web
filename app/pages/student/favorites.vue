@@ -47,7 +47,7 @@
     <!-- Main Content -->
     <UContainer class="py-12">
       <!-- Stats & Search -->
-      <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-6 mb-8">
+      <div class="bg-white dark:bg-slate-800 rounded-3xl border border-gray-200 dark:border-slate-700 p-6 mb-8">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-1">
@@ -62,7 +62,7 @@
               <UIcon name="i-heroicons-magnifying-glass"
                 class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 w-4 h-4" />
               <input v-model="searchQuery" type="text" placeholder="Search favorites..."
-                class="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" />
+                class="w-full pl-9 pr-3 py-2 min-h-[44px] bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-3xl text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" />
             </div>
             <div v-if="favoriteProjects.length > 0" class="flex items-center gap-2 justify-end">
               <ButtonsPresetButton label="Clear All" icon="i-heroicons-trash" color="danger" variant="outline" size="sm"

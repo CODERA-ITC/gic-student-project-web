@@ -31,7 +31,7 @@
 
           <!-- Modal Container -->
           <div
-            class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-xl shadow-2xl transform transition-all">
+            class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl shadow-2xl transform transition-all">
             <div class="p-8">
               <div class="flex items-center gap-3 mb-4">
                 <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">

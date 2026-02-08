@@ -68,14 +68,14 @@
       </div>
 
       <!-- Search and Filters -->
-      <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-6 mb-8">
+      <div class="bg-white dark:bg-slate-800 rounded-3xl border border-gray-200 dark:border-slate-700 p-6 mb-8">
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div class="flex items-center gap-3 w-full sm:w-auto">
             <div class="relative flex-1 sm:flex-initial sm:w-80">
               <UIcon name="i-heroicons-magnifying-glass"
                 class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-slate-500 w-4 h-4" />
               <input v-model="searchQuery" type="text" placeholder="Search projects..."
-                class="w-full pl-9 pr-9 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                class="w-full pl-9 pr-9 py-2 min-h-[44px] bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-3xl text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                 @keyup.enter.prevent="applyImmediateSearch" @keyup.esc="clearSearch" />
               <div v-if="isSearching" class="absolute right-3 top-1/2 -translate-y-1/2">
                 <UIcon name="i-heroicons-arrow-path" class="w-4 h-4 animate-spin text-blue-500" />
@@ -93,12 +93,13 @@
               class="flex-1 sm:w-40"
             /> -->
             <USelect v-model="selectedCategory" :items="categoryOptions" placeholder="All Categories"
-              class="flex-1 sm:w-40" />
+              :ui="{ base: '!rounded-3xl !min-h-[44px]' }"
+              class="flex-1 sm:w-40 [&_button]:!rounded-3xl [&_button]:min-h-[44px]" />
 
             <!-- View Mode Toggle -->
-            <div class="flex gap-1 bg-gray-100 dark:bg-slate-700 rounded-lg p-1">
+            <div class="flex gap-1 bg-gray-100 dark:bg-slate-700 rounded-3xl p-1">
               <button @click="viewMode = 'grid'" :class="[
-                'p-2 rounded transition-all duration-200',
+                'p-2 min-h-[44px] rounded-3xl transition-all duration-200',
                 viewMode === 'grid'
                   ? 'bg-blue-900 text-white shadow-md'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-600',
@@ -106,7 +107,7 @@
                 <UIcon name="i-heroicons-squares-2x2" class="w-4 h-4" />
               </button>
               <button @click="viewMode = 'list'" :class="[
-                'p-2 rounded transition-all duration-200',
+                'p-2 min-h-[44px] rounded-3xl transition-all duration-200',
                 viewMode === 'list'
                   ? 'bg-blue-900 text-white shadow-md'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-600',
@@ -124,7 +125,7 @@
         actionText="Create Project" actionTo="/projects/create" />
 
       <!-- Projects Section -->
-      <div v-else class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700">
+      <div v-else class="bg-white dark:bg-slate-800 rounded-3xl border border-gray-200 dark:border-slate-700">
         <!-- Grid View -->
         <div v-if="viewMode === 'grid'" class="p-6">
           <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -236,7 +237,7 @@
                 @click="currentPage--" />
               <div class="flex items-center gap-1">
                 <button v-for="page in displayedPages" :key="page" :class="[
-                  'px-3 py-1 text-sm rounded-lg transition-colors',
+                  'px-3 py-1 min-h-[44px] text-sm rounded-3xl transition-colors',
                   page === currentPage
                     ? 'bg-blue-600 text-white'
                     : 'text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700',

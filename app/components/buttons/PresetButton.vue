@@ -56,7 +56,7 @@ const buttonConfig = computed<ButtonConfig>(() => {
     config = BUTTON_PRESETS[props.preset] as ButtonConfig;
   } else {
     config = {
-      label: props.label || "Button",
+      label: props.label ?? "Button",
       color: props.color || "primary",
       variant: props.variant || "solid",
       size: props.size || "md",
@@ -66,7 +66,7 @@ const buttonConfig = computed<ButtonConfig>(() => {
   }
 
   // Override with props
-  if (props.label) config.label = props.label;
+  if (props.label !== undefined) config.label = props.label;
   if (props.color) config.color = props.color;
   if (props.variant) config.variant = props.variant;
   if (props.size) config.size = props.size;
@@ -81,7 +81,7 @@ const buttonConfig = computed<ButtonConfig>(() => {
 
   // Apply localization without mutating shared presets
   const localizedLabel =
-    props.label ||
+    props.label ??
     (config.labelKey ? t(config.labelKey) : config.label || "Button");
 
   return {

@@ -70,7 +70,7 @@
 
           <!-- Submit button for draft/private projects -->
           <UButton v-if="canSubmit && project.submissionStatus" @click="submitProject" :loading="isSubmitting"
-            class="w-full justify-center rounded-lg bg-blue-900 hover:bg-blue-800 text-white" size="md">
+            class="w-full justify-center rounded-3xl bg-blue-900 hover:bg-blue-800 text-white" size="md">
             <template #leading>
               <UIcon name="i-heroicons-paper-airplane" class="w-5 h-5" />
             </template>
@@ -80,7 +80,7 @@
         <template #action-buttons>
           <div class="flex gap-2">
             <UButton @click="editProject"
-              class="flex-1 justify-center rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 border border-blue-200 dark:border-blue-800"
+              class="flex-1 justify-center rounded-3xl bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 border border-blue-200 dark:border-blue-800"
               size="md">
               <template #leading>
                 <UIcon name="i-heroicons-pencil-square" class="w-5 h-5" />
@@ -88,7 +88,7 @@
               Edit
             </UButton>
             <UButton @click="showDeleteModal = true"
-              class="flex-1 justify-center rounded-lg bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-600 border border-gray-200 dark:border-slate-600"
+              class="flex-1 justify-center rounded-3xl bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-600 border border-gray-200 dark:border-slate-600"
               size="md">
               <template #leading>
                 <UIcon name="i-heroicons-trash" class="w-5 h-5" />
@@ -111,7 +111,7 @@
 
           <!-- Modal Container -->
           <div
-            class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-xl shadow-2xl transform transition-all">
+            class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl shadow-2xl transform transition-all">
             <div class="p-8">
               <div class="flex items-center gap-3 mb-4">
                 <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
