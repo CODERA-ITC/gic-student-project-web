@@ -136,7 +136,7 @@ export class ProjectService {
   async fetchAllSubmissions(): Promise<any> {
     try {
       // Use centralized auth request to ensure token refresh and header
-      return await authService.makeAuthRequest("/api/courses/submissions", {
+      return await authService.makeAuthRequest("/api/projects/submissions", {
         method: "GET",
       });
     } catch (error) {

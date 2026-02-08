@@ -139,7 +139,7 @@
             </p>
           </div>
           <NuxtLink
-            to="/projects"
+            to="/admin/projects"
             class="flex items-center gap-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
           >
             <span>View All Projects</span>

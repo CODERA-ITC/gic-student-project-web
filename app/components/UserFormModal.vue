@@ -30,10 +30,13 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <UFormGroup label="Full Name" required>
-                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="formState.name" placeholder="Full name" required />
+
+                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px] !min-w-[200px]' }" v-model="formState.name"
+                  placeholder="Full name" required />
               </UFormGroup>
               <UFormGroup label="Email" required>
-                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="formState.email" type="email" placeholder="user@example.com" required />
+                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]  !min-w-[300px]' }" v-model="formState.email"
+                  type="email" placeholder="user@example.com" required />
               </UFormGroup>
               <div class="sm:col-span-2">
                 <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -52,17 +55,19 @@
                 </div>
               </div>
               <UFormGroup label="Phone Number">
-                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="formState.phone" placeholder="+855..." />
+                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px] !min-w-[200px]' }" v-model="formState.phone"
+                  placeholder="+855..." />
               </UFormGroup>
               <UFormGroup label="Department Code">
-                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="formState.departmentCode" placeholder="e.g., GIC" />
+                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px] ' }" v-model="formState.departmentCode"
+                  placeholder="e.g., GIC" />
                 <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">
                   Use the department short code (e.g., GIC).
                 </p>
               </UFormGroup>
               <UFormGroup :label="passwordLabel">
-                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="formState.password" type="password" autocomplete="new-password"
-                  :placeholder="passwordPlaceholder" />
+                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px] !min-w-[200px]' }" v-model="formState.password"
+                  type="password" autocomplete="new-password" :placeholder="passwordPlaceholder" />
                 <div class="mt-2 flex flex-row gap-2 ">
                   <ButtonsPresetButton label="Auto Generate (8)" type="button" size="sm" color="primary"
                     variant="outline" icon="i-heroicons-sparkles"
@@ -72,10 +77,12 @@
                 </div>
               </UFormGroup>
               <UFormGroup v-if="formState.role === 'STUDENT'" label="Generation (Gen)">
-                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="formState.generation" placeholder="e.g., 19" />
+                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="formState.generation"
+                  placeholder="GEN e.g., 19" />
               </UFormGroup>
               <UFormGroup v-if="formState.role === 'STUDENT'" label="Academic Year">
-                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="formState.year" placeholder="e.g., 3" />
+                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px] !min-w-[200px]' }" v-model="formState.year"
+                  placeholder="Joined e.g. 2026" />
               </UFormGroup>
             </div>
 

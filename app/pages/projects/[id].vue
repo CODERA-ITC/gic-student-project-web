@@ -8,14 +8,28 @@
     <UContainer class="py-12">
       <div
         v-if="isLoading"
-        class="flex items-center justify-center min-h-[400px]"
+        class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 animate-pulse"
       >
-        <div class="text-center">
-          <UIcon
-            name="i-heroicons-arrow-path"
-            class="w-8 h-8 text-blue-400 animate-spin mx-auto mb-4"
-          />
-          <p class="text-gray-300 dark:text-gray-300">Loading project...</p>
+        <div class="lg:col-span-2 space-y-4 sm:space-y-6">
+          <div class="h-10 w-2/3 bg-gray-200 dark:bg-slate-700 rounded-lg"></div>
+          <div class="h-5 w-full bg-gray-200 dark:bg-slate-700 rounded"></div>
+          <div class="h-5 w-5/6 bg-gray-200 dark:bg-slate-700 rounded"></div>
+
+          <div class="h-64 sm:h-80 bg-gray-200 dark:bg-slate-700 rounded-2xl"></div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="h-24 bg-gray-200 dark:bg-slate-700 rounded-2xl"></div>
+            <div class="h-24 bg-gray-200 dark:bg-slate-700 rounded-2xl"></div>
+          </div>
+
+          <div class="h-36 bg-gray-200 dark:bg-slate-700 rounded-2xl"></div>
+          <div class="h-36 bg-gray-200 dark:bg-slate-700 rounded-2xl"></div>
+        </div>
+
+        <div class="lg:col-span-1 space-y-4">
+          <div class="h-36 bg-gray-200 dark:bg-slate-700 rounded-2xl"></div>
+          <div class="h-48 bg-gray-200 dark:bg-slate-700 rounded-2xl"></div>
+          <div class="h-36 bg-gray-200 dark:bg-slate-700 rounded-2xl"></div>
         </div>
       </div>
 

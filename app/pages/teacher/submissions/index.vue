@@ -70,7 +70,7 @@
                     <UIcon name="i-heroicons-magnifying-glass"
                       class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-500" />
                     <input v-model="searchQuery" type="text" placeholder="Search projects..."
-                      class="w-full pl-10 pr-3 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-md text-black dark:text-white text-sm placeholder-gray-500 dark:placeholder-slate-500 focus:outline-none" />
+                      class="w-full pl-10 pr-4 min-h-[44px] bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-3xl text-black dark:text-white text-sm placeholder-gray-500 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30" />
                   </div>
                   <div class="flex gap-2">
                     <ButtonsPresetButton preset="primary" label="All Projects" icon="i-heroicons-list-bullet" size="sm"
@@ -87,7 +87,7 @@
 
                 <div class="flex gap-4 flex-wrap">
                   <select v-model="selectedCategory"
-                    class="w-full sm:w-auto px-3 py-1.5 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-md text-black dark:text-white text-sm min-w-40 focus:outline-none">
+                    class="w-full sm:w-auto px-4 min-h-[44px] bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-3xl text-black dark:text-white text-sm min-w-40 focus:outline-none focus:ring-2 focus:ring-blue-500/30">
                     <option value="">All Categories</option>
                     <option value="web-development">Web Development</option>
                     <option value="mobile-app">Mobile App</option>
@@ -98,7 +98,7 @@
                   </select>
 
                   <select v-model="selectedGeneration"
-                    class="w-full sm:w-auto px-3 py-1.5 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-md text-black dark:text-white text-sm min-w-40 focus:outline-none">
+                    class="w-full sm:w-auto px-4 min-h-[44px] bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-3xl text-black dark:text-white text-sm min-w-40 focus:outline-none focus:ring-2 focus:ring-blue-500/30">
                     <option value="">All Years</option>
                     <option value="gen-2024">2024-2025</option>
                     <option value="gen-2025">2025-2026</option>

@@ -17,7 +17,8 @@
 
           <!-- Action Buttons -->
           <div class="flex flex-col sm:flex-row gap-3 justify-center items-center flex-wrap">
-            <ButtonsPresetButton v-if="searchQuery || categoryFilter" preset="clearFilters" @click="clearSearch">
+            <ButtonsPresetButton v-if="searchQuery || categoryFilter" preset="clearFilters" size="sm"
+              @click="clearSearch">
               <template #default>Clear & View All Projects</template>
             </ButtonsPresetButton>
           </div>
@@ -59,7 +60,7 @@
           <p class="text-gray-300 mb-6">
             Try adjusting your search terms or browse all projects
           </p>
-          <ButtonsPresetButton @click="clearSearch">
+          <ButtonsPresetButton size="sm" @click="clearSearch">
             <template #default>View All Projects</template>
           </ButtonsPresetButton>
         </div>

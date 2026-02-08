@@ -108,16 +108,6 @@ const authStore = useAuthStore();
 const activeTab = ref("profile");
 const isLoading = ref(false);
 
-const goBack = () => {
-  // Navigate back to role-specific dashboard
-  if (authStore.isStudent) {
-    router.push("/student/dashboard");
-  } else if (authStore.isTeacher) {
-    router.push("/teacher/dashboard");
-  } else {
-    router.push("/");
-  }
-};
 
 const tabs = computed(() => {
   const allTabs = [
@@ -189,9 +179,10 @@ const AdminProfile = reactive({
 onMounted(async () => {
   isLoading.value = true;
   try {
-    // TODO: Replace with actual API endpoint
-    const userId = authStore.currentUser?.id;
-    const role = authStore.userRole;
+    // Ensure auth user is hydrated before reading role-specific profiles
+    if (!authStore.currentUser) {
+      await authStore.fetchCurrentUser();
+    }
 
     if (authStore.isStudent) {
       // Fetch student profile

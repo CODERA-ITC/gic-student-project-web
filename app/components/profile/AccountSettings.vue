@@ -23,7 +23,7 @@
             <span class="text-red-500">*</span>
           </label>
           <UInput v-model="securityAnswers[question.id]" type="text" placeholder="Enter your answer" size="sm"
-            required />
+            :ui="fieldUi" class="w-full" required />
         </div>
       </div>
       <div v-else class="flex justify-center py-4">
@@ -35,7 +35,8 @@
           4. New Password
           <span class="text-red-500">*</span>
         </label>
-        <UInput v-model="passwordData.new" type="password" placeholder="Enter new password" size="sm" required />
+        <UInput v-model="passwordData.new" type="password" placeholder="Enter new password" size="sm" :ui="fieldUi"
+          class="w-full" required />
         <p class="text-xs text-slate-500 dark:text-neutral-500 mt-1">
           Must be at least 8 characters long
         </p>
@@ -45,7 +46,8 @@
           5. Confirm New Password
           <span class="text-red-500">*</span>
         </label>
-        <UInput v-model="passwordData.confirm" type="password" placeholder="Confirm new password" size="sm" required />
+        <UInput v-model="passwordData.confirm" type="password" placeholder="Confirm new password" size="sm"
+          :ui="fieldUi" class="w-full" required />
       </div>
 
       <!-- Error Message -->
@@ -85,6 +87,7 @@ const passwordData = ref({
   new: "",
   confirm: "",
 });
+const fieldUi = { base: "!w-full !rounded-3xl !min-h-[44px]" };
 
 // Fetch security questions on mount
 onMounted(async () => {

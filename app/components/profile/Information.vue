@@ -27,7 +27,7 @@
         <ButtonsPresetButton preset="secondary" label="Change Avatar" icon="i-heroicons-camera" size="sm"
           @click="triggerFileInput" />
         <p class="text-xs text-gray-500 dark:text-slate-400 mt-2">
-          JPG, PNG or GIF. Max size 2MB.
+          JPG, PNG or GIF. Max size 5MB.
         </p>
       </div>
     </div>
@@ -38,14 +38,15 @@
         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           Full Name
         </label>
-        <UInput v-model="formData.name" placeholder="Enter your full name" size="sm" />
+        <UInput v-model="formData.name" placeholder="Enter your full name" size="sm" :ui="fieldUi" />
       </div>
 
       <div>
         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           Email Address
         </label>
-        <UInput v-model="formData.email" type="email" placeholder="your.email@example.com" size="sm" disabled />
+        <UInput v-model="formData.email" type="email" placeholder="your.email@example.com" size="sm" :ui="fieldUi"
+          disabled />
         <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">
           Email cannot be changed. Contact admin for assistance.
         </p>
@@ -70,7 +71,8 @@
         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           Teacher ID
         </label>
-        <UInput v-model="formData.teacherId" placeholder="Enter teacher ID" size="sm" :disabled="true" />
+        <UInput v-model="formData.teacherId" placeholder="Enter teacher ID" size="sm" :ui="fieldUi"
+          :disabled="true" />
       </div>
 
       <div>
@@ -80,7 +82,7 @@
         <UInput v-model="formData.program" :placeholder="userRole === 'TEACHER'
             ? 'e.g., Computer Science Department'
             : 'e.g., Computer Science'
-          " size="sm" />
+          " size="sm" :ui="fieldUi" />
       </div>
 
       <!-- Student Year Level -->
@@ -88,7 +90,7 @@
         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           Year Level
         </label>
-        <USelectMenu v-model="formData.year" :items="yearOptions" size="sm" />
+        <USelectMenu v-model="formData.year" :items="yearOptions" size="sm" :ui="fieldUi" />
       </div>
 
       <!-- Teacher Position -->
@@ -96,7 +98,7 @@
         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           Position
         </label>
-        <USelectMenu v-model="formData.position" :items="positionOptions" size="sm" />
+        <USelectMenu v-model="formData.position" :items="positionOptions" size="sm" :ui="fieldUi" />
       </div>
 
       <!-- Teacher Years of Experience -->
@@ -104,7 +106,7 @@
         <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           Years of Experience
         </label>
-        <UInput v-model="formData.yearsOfExperience" type="number" placeholder="e.g., 5" size="sm" />
+        <UInput v-model="formData.yearsOfExperience" type="number" placeholder="e.g., 5" size="sm" :ui="fieldUi" />
       </div>
 
       <!-- Teacher Courses -->
@@ -117,8 +119,8 @@
           course.
         </p>
         <div class="flex gap-2 mb-3">
-          <UInput v-model="newCourse" placeholder="e.g., Web Development, Database Systems..." size="sm" class="flex-1"
-            @keyup.enter="addCourse" />
+          <UInput v-model="newCourse" placeholder="e.g., Web Development, Database Systems..." size="sm"
+            :ui="fieldUi" class="flex-1" @keyup.enter="addCourse" />
           <ButtonsPresetButton preset="secondary" label="Add" icon="i-heroicons-plus" size="sm" @click="addCourse"
             :disabled="!newCourse.trim()" />
         </div>
@@ -147,7 +149,7 @@
         <UTextarea v-model="formData.bio" :placeholder="userRole === 'TEACHER'
             ? 'Tell students about your expertise and teaching philosophy...'
             : 'Tell others about yourself...'
-          " :rows="5" :cols="100" size="xl" />
+          " :rows="5" :cols="100" size="xl" :ui="textareaUi" />
       </div>
 
       <!-- Skills & Expertise -->
@@ -159,8 +161,8 @@
           Add skills one by one. Press Enter or click Add to include each skill.
         </p>
         <div class="flex gap-2 mb-3">
-          <UInput v-model="newSkill" placeholder="e.g., JavaScript, Python, React..." size="sm" class="flex-1"
-            @keyup.enter="addSkill" />
+          <UInput v-model="newSkill" placeholder="e.g., JavaScript, Python, React..." size="sm" :ui="fieldUi"
+            class="flex-1" @keyup.enter="addSkill" />
           <ButtonsPresetButton preset="secondary" label="Add" icon="i-heroicons-plus" size="sm" @click="addSkill"
             :disabled="!newSkill.trim()" />
         </div>
@@ -191,46 +193,47 @@
           <div class="flex items-center gap-2">
             <UIcon name="i-simple-icons-github" class="w-5 h-5 text-gray-700 dark:text-gray-300" />
             <UInput v-model="formData.socialLinks.github" placeholder="https://github.com/username" size="sm"
-              class="flex-1" />
+              :ui="fieldUi" class="flex-1" />
           </div>
           <div class="flex items-center gap-2">
             <UIcon name="i-simple-icons-linkedin" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
             <UInput v-model="formData.socialLinks.linkedin" placeholder="https://linkedin.com/in/username" size="sm"
-              class="flex-1" />
+              :ui="fieldUi" class="flex-1" />
           </div>
           <div class="flex items-center gap-2">
             <UIcon name="i-simple-icons-twitter" class="w-5 h-5 text-sky-500 dark:text-sky-400" />
             <UInput v-model="formData.socialLinks.twitter" placeholder="https://twitter.com/username" size="sm"
-              class="flex-1" />
+              :ui="fieldUi" class="flex-1" />
           </div>
           <div class="flex items-center gap-2">
             <UIcon name="i-heroicons-globe-alt" class="w-5 h-5 text-purple-600 dark:text-purple-400" />
             <UInput v-model="formData.socialLinks.portfolio" placeholder="https://yourportfolio.com" size="sm"
-              class="flex-1" />
+              :ui="fieldUi" class="flex-1" />
           </div>
         </div>
       </div>
 
       <!-- Phone & GPA (Student) -->
-      <div v-if="userRole === 'STUDENT'" class="grid grid-cols-3 gap-4">
+      <div v-if="userRole === 'STUDENT'" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
             Phone Number
           </label>
-          <UInput v-model="formData.phone" placeholder="+855 12 345 678" size="sm" />
+          <UInput v-model="formData.phone" placeholder="+855 12 345 678" size="sm" :ui="fieldUi" />
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
             Student ID
           </label>
-          <UInput v-model="formData.studentId" type="text" :disabled="true" placeholder="123456" size="sm" />
+          <UInput v-model="formData.studentId" type="text" :disabled="true" placeholder="123456" size="sm"
+            :ui="fieldUi" />
         </div>
 
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
             Gen
           </label>
-          <UInput v-model="formData.gen" type="text" :disabled="true" placeholder="25" size="sm"
+          <UInput v-model="formData.gen" type="text" :disabled="true" placeholder="25" size="sm" :ui="fieldUi"
             class="font-semibold" />
         </div>
       </div>
@@ -243,14 +246,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import {
   useAuthStore,
+  type AdminUser,
   type StudentUser,
   type TeacherUser,
 } from "~/stores/auth";
+import { Role } from "~/types/roles";
 import type { UpdateProfilePayload } from "~/types/user-profile";
-import type { Course } from "~/utils/Interfaces";
 
 const authStore = useAuthStore();
 const userRole = computed(() => authStore.userRole);
@@ -270,6 +274,8 @@ const isSaving = ref(false);
 const fileInput = ref<HTMLInputElement | null>(null);
 const newSkill = ref("");
 const newCourse = ref("");
+const fieldUi = { base: "!w-full !rounded-3xl !min-h-[44px] !min-w-[200px]" };
+const textareaUi = { base: "!w-full !rounded-3xl" };
 
 const formData = ref({
   name: authStore.currentUser?.name || "",
@@ -298,55 +304,54 @@ const formData = ref({
 // Store the initial state for change detection
 const initialFormData = ref<any>(null);
 
-// Load initial data from props
-onMounted(() => {
-  if (props.initialData) {
-    // Load common fields
-    formData.value.bio = props.initialData.bio || "";
-    formData.value.skills = [...(props.initialData.skills || [])];
-    formData.value.socialLinks = {
-      ...formData.value.socialLinks,
-      ...(props.initialData.socialLinks || {}),
-    };
-    formData.value.phone = props.initialData.phone || "";
+const hydrateFormData = (sourceData?: StudentUser | TeacherUser | AdminUser) => {
+  if (!sourceData) return;
 
-    // Load role-specific fields based on user role
-    if (props.initialData.role === Role.student) {
-      const studentData = props.initialData as StudentUser;
-      formData.value.program = studentData.program || "";
-      formData.value.studentId = studentData.studentId || "";
-      formData.value.gen = studentData.gen || "";
+  // Load common fields
+  formData.value.name = sourceData.name || "";
+  formData.value.email = sourceData.email || "";
+  formData.value.avatar = sourceData.avatar || undefined;
+  formData.value.bio = sourceData.bio || "";
+  formData.value.skills = [...(sourceData.skills || [])];
+  formData.value.socialLinks = {
+    ...formData.value.socialLinks,
+    ...(sourceData.socialLinks || {}),
+  };
+  formData.value.phone = sourceData.phone || "";
 
-      if (studentData.year) {
-        const yearMatch = yearOptions.find(
-          (opt) => opt.label === studentData.year,
-        );
-        if (yearMatch) {
-          formData.value.year = yearMatch;
-        }
+  // Load role-specific fields
+  if (sourceData.role === Role.student) {
+    const studentData = sourceData as StudentUser;
+    formData.value.program = studentData.program || "";
+    formData.value.studentId = studentData.studentId || "";
+    formData.value.gen = studentData.gen || "";
+
+    if (studentData.year) {
+      const yearMatch = yearOptions.find((opt) => opt.label === studentData.year);
+      if (yearMatch) {
+        formData.value.year = yearMatch;
       }
-    } else if (props.initialData.role === Role.teacher) {
-      const teacherData = props.initialData as TeacherUser;
-      formData.value.program = teacherData.department || "";
-      formData.value.teacherId = teacherData.teacherId || "";
-      formData.value.courses = [...(teacherData.courses || [])];
-      formData.value.yearsOfExperience = teacherData.yearsOfExperience || 0;
-
-      if (teacherData.position) {
-        const positionMatch = positionOptions.find(
-          (opt) => opt.label === teacherData.position,
-        );
-        if (positionMatch) {
-          formData.value.position = positionMatch;
-        }
-      }
-    } else if (props.initialData.role === Role.admin) {
-      const adminData = props.initialData as AdminUser;
-      formData.value.adminId = adminData.adminId || "";
     }
+  } else if (sourceData.role === Role.teacher) {
+    const teacherData = sourceData as TeacherUser;
+    formData.value.program = teacherData.department || "";
+    formData.value.teacherId = teacherData.teacherId || "";
+    formData.value.courses = [...(teacherData.courses || [])];
+    formData.value.yearsOfExperience = teacherData.yearsOfExperience || 0;
+
+    if (teacherData.position) {
+      const positionMatch = positionOptions.find(
+        (opt) => opt.label === teacherData.position,
+      );
+      if (positionMatch) {
+        formData.value.position = positionMatch;
+      }
+    }
+  } else if (sourceData.role === Role.admin) {
+    const adminData = sourceData as AdminUser;
+    formData.value.adminId = adminData.adminId || "";
   }
 
-  // Create a deep copy of initial state for comparison
   initialFormData.value = JSON.parse(
     JSON.stringify({
       ...formData.value,
@@ -354,7 +359,27 @@ onMounted(() => {
       position: formData.value.position.label,
     }),
   );
+};
+
+// Load initial profile source and keep form synchronized when parent data updates.
+onMounted(async () => {
+  if (!props.initialData && !authStore.currentUser) {
+    await authStore.fetchCurrentUser();
+  }
+  hydrateFormData(
+    (props.initialData as StudentUser | TeacherUser | AdminUser | undefined) ||
+      (authStore.currentUser as StudentUser | TeacherUser | AdminUser | undefined),
+  );
 });
+
+watch(
+  () => props.initialData,
+  (newData) => {
+    if (!newData) return;
+    hydrateFormData(newData as StudentUser | TeacherUser | AdminUser);
+  },
+  { deep: true },
+);
 
 const yearOptions = [
   { label: "1st Year", value: "1" },
@@ -403,12 +428,12 @@ const handleFileChange = async (event: Event) => {
     return;
   }
 
-  // Validate file size (2MB)
-  const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+  // Validate file size (5MB)
+  const maxSize = 5 * 1024 * 1024; // 5MB in bytes
   if (file.size > maxSize) {
     toast.add({
       title: "File Too Large",
-      description: "File size must be less than 2MB",
+      description: "File size must be less than 5MB",
       icon: "i-heroicons-exclamation-triangle",
       color: "warning",
     });

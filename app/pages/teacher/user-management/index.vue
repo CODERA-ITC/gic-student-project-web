@@ -72,14 +72,14 @@
               <UIcon name="i-heroicons-magnifying-glass"
                 class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
               <input v-model="searchQuery" type="text" placeholder="Search by name, email, or phone..."
-                class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent outline-none" />
+                class="w-full pl-10 pr-4 min-h-[44px] border border-gray-300 dark:border-slate-600 rounded-3xl bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent outline-none" />
             </div>
           </div>
           <div class="flex items-center gap-2">
             <span class="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">Filter by
               Generation:</span>
             <select v-model="selectedGeneration" @change="loadStudents"
-              class="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent outline-none">
+              class="px-4 min-h-[44px] border border-gray-300 dark:border-slate-600 rounded-3xl bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent outline-none">
               <option value="all">All Generations</option>
               <option v-for="gen in availableGenerations" :key="gen" :value="gen">
                 Generation {{ gen }}
