@@ -1,31 +1,32 @@
 <template>
-  <section
-    class="py-20 px-4 sm:px-6 lg:px-8 rounded-t-4xl overflow-hidden border border-blue-200/30 dark:border-blue-700/50 bg-gradient-to-br from-blue-800 via-blue-900 to-indigo-900 dark:from-blue-900 dark:via-blue-950 dark:to-indigo-950 shadow-2xl">
-    <UContainer>
-      <div class="text-center space-y-8 max-w-2xl mx-auto">
-        <h2 class="text-4xl lg:text-5xl font-semibold text-white">
-          {{ t("homePage.ctaTitle") }}
-        </h2>
-        <p class="text-xl leading-relaxed text-blue-100 dark:text-slate-300">
-          {{ t("homePage.ctaSubtitle") }}
-        </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-          <ButtonsPresetButton
-            preset="exploreProjects"
-            size="sm"
-            to="/projects"
-            class="!bg-white !text-blue-900 !border-white hover:!bg-blue-50 !shadow-xl"
-          />
+  <section class="py-20 bg-white dark:bg-slate-900">
+    <div
+      class="w-full rounded-t-4xl overflow-hidden border border-blue-200/30 dark:border-blue-700/50 bg-gradient-to-br from-blue-800 via-blue-900 to-indigo-900 dark:from-blue-900 dark:via-blue-950 dark:to-indigo-950 shadow-2xl"
+    >
+      <div class="text-center space-y-8 max-w-2xl mx-auto py-12 sm:py-14 px-4 sm:px-6 lg:px-8">
+          <h2 class="text-4xl lg:text-5xl font-semibold text-white">
+            {{ t("homePage.ctaTitle") }}
+          </h2>
+          <p class="text-xl leading-relaxed text-blue-100 dark:text-slate-300">
+            {{ t("homePage.ctaSubtitle") }}
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+            <ButtonsPresetButton
+              preset="exploreProjects"
+              size="sm"
+              to="/projects"
+              class="!bg-white !text-blue-900 !border-white hover:!bg-blue-50 !shadow-xl"
+            />
 
-          <ButtonsPresetButton
-            preset="submitProject"
-            size="sm"
-            class="!border-white !text-white hover:!bg-white/10 dark:!border-slate-300 dark:!text-slate-100"
-            @click="handleSubmitProject"
-          />
-        </div>
+            <ButtonsPresetButton
+              preset="submitProject"
+              size="sm"
+              class="!border-white !text-white hover:!bg-white/10 dark:!border-slate-300 dark:!text-slate-100"
+              @click="handleSubmitProject"
+            />
+          </div>
       </div>
-    </UContainer>
+    </div>
 
     <AuthModal v-model="showAuthModal" context="create" />
   </section>
