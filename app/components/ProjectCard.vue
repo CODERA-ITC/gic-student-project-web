@@ -3,12 +3,12 @@
   <div class="block group cursor-pointer">
     <div
       :class="[
-        'relative h-full rounded-3xl overflow-hidden transition-all duration-300',
+        'relative h-full rounded-3xl overflow-hidden transition-all duration-500 ease-out transform-gpu',
         'border border-white/70 dark:border-white/5 ring-1 ring-blue-500/10 hover:ring-blue-500/30',
         'bg-gradient-to-br from-white via-slate-50 to-blue-50 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 backdrop-blur-xl',
-        'shadow-xl hover:shadow-2xl hover:shadow-blue-500/25 dark:hover:shadow-blue-400/25 hover:-translate-y-1',
+        'shadow-xl hover:shadow-2xl hover:shadow-blue-500/25 dark:hover:shadow-blue-400/25 hover:-translate-y-1.5',
         'p-2 sm:p-3',
-        'w-full max-w-sm mx-auto',
+        'w-full max-w-lg mx-auto',
         'hover:cursor-pointer',
       ]"
     >
@@ -35,24 +35,24 @@
           <img
             :src="currentImageUrl"
             :alt="project.name || 'Project image'"
-            class="w-full h-full object-cover transition-all duration-500 ease-in-out group-hover:scale-105 rounded-lg"
+            class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 rounded-lg transform-gpu"
             @error="handleImageError"
           />
 
           <!-- Animated overlay on hover -->
           <div
-            class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out"
           ></div>
 
           <!-- Edit and Delete Icons (only show if showEditButton and isProjectAuthor) -->
           <div
             v-if="showEditButton && isProjectAuthor"
-            class="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20"
+            class="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out z-20"
           >
             <!-- Edit Icon -->
             <button
               @click.prevent.stop="$emit('edit', project.id)"
-              class="p-2 bg-blue-900 hover:bg-blue-700 text-white rounded-lg shadow-lg transition-all duration-200 hover:scale-105"
+              class="p-2 bg-blue-900 hover:bg-blue-700 text-white rounded-lg shadow-lg transition-all duration-300 ease-out hover:scale-105 transform-gpu"
               title="Edit project"
             >
               <UIcon name="i-heroicons-pencil-square" class="w-5 h-5" />
@@ -61,7 +61,7 @@
             <!-- Delete Icon -->
             <button
               @click.prevent.stop="$emit('delete', project.id)"
-              class="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-lg transition-all duration-200 hover:scale-105"
+              class="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-lg transition-all duration-300 ease-out hover:scale-105 transform-gpu"
               title="Delete project"
             >
               <UIcon name="i-heroicons-trash" class="w-5 h-5" />
@@ -78,7 +78,7 @@
               :key="idx"
               @click.stop.prevent="handleDotClick(idx)"
               :class="[
-                'w-2 h-2 rounded-full transition-all duration-300',
+                'w-2 h-2 rounded-full transition-all duration-500 ease-out',
                 idx === currentImageIndex
                   ? 'bg-white w-6'
                   : 'bg-white/40 hover:bg-white/70',
@@ -106,7 +106,7 @@
                 v-if="showLikeButton"
                 @click.prevent.stop="toggleLikeHandler"
                 :class="[
-                  'flex items-center justify-center transition-all duration-300 cursor-pointer w-10 h-10 rounded-full',
+                  'flex items-center justify-center transition-all duration-500 ease-out cursor-pointer w-10 h-10 rounded-full transform-gpu',
                   isLiked
                     ? 'bg-red-50 dark:bg-red-900/20 shadow-inner shadow-red-500/10'
                     : 'bg-white/80 dark:bg-slate-800/70 hover:bg-slate-100 dark:hover:bg-slate-700',
@@ -119,7 +119,7 @@
                     isLiked ? 'i-heroicons-heart-solid' : 'i-heroicons-heart'
                   "
                   :class="[
-                    'w-5 h-5 transition-all duration-300',
+                    'w-5 h-5 transition-all duration-500 ease-out transform-gpu',
                     isLiked
                       ? 'text-red-600 dark:text-red-400 scale-110'
                       : 'text-gray-500 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-400 hover:scale-110',
@@ -216,7 +216,7 @@
               preset="viewDetails"
               size="sm"
               :to="`${baseRoute}/${project.id}`"
-              class="!rounded-full !px-4 !py-2 !font-semibold !shadow-lg hover:!shadow-xl hover:-translate-y-0.5 !transition-all !duration-200"
+              class="!rounded-full !px-4 !py-2 !font-semibold !shadow-lg hover:!shadow-xl hover:-translate-y-0.5 !transition-all !duration-500 !ease-out transform-gpu"
             />
           </div>
         </div>

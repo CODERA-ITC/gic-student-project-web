@@ -5,29 +5,19 @@
       <UContainer>
         <div class="space-y-6">
           <div class="text-center space-y-4 max-w-2xl mx-auto">
-            <h1
-              class="text-4xl lg:text-6xl font-semibold tracking-tight leading-tight text-blue-900"
-            >
+            <h1 class="text-4xl lg:text-6xl font-semibold tracking-tight leading-tight text-blue-900">
               Search Results
             </h1>
             <p class="text-xl text-blue-900/80">
               <span v-if="searchQuery">Results for "{{ searchQuery }}"</span>
-              <span v-else-if="categoryFilter"
-                >Projects in {{ categoryFilter }}</span
-              >
+              <span v-else-if="categoryFilter">Projects in {{ categoryFilter }}</span>
               <span v-else>Browse projects</span>
             </p>
           </div>
 
           <!-- Action Buttons -->
-          <div
-            class="flex flex-col sm:flex-row gap-3 justify-center items-center flex-wrap"
-          >
-            <ButtonsPresetButton
-              v-if="searchQuery || categoryFilter"
-              preset="clearFilters"
-              @click="clearSearch"
-            >
+          <div class="flex flex-col sm:flex-row gap-3 justify-center items-center flex-wrap">
+            <ButtonsPresetButton v-if="searchQuery || categoryFilter" preset="clearFilters" @click="clearSearch">
               <template #default>Clear & View All Projects</template>
             </ButtonsPresetButton>
           </div>
@@ -39,9 +29,7 @@
     <UContainer class="py-16 bg-blue-900/70">
       <div class="space-y-6">
         <!-- Results Count & Active Filters -->
-        <div
-          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-        >
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <p class="text-white">
             Found
             <span class="text-white font-semibold">{{
@@ -51,33 +39,20 @@
           </p>
 
           <!-- Active Filters -->
-          <div
-            v-if="searchQuery || categoryFilter"
-            class="flex gap-2 items-center flex-wrap"
-          >
+          <div v-if="searchQuery || categoryFilter" class="flex gap-2 items-center flex-wrap">
             <UBadge v-if="searchQuery" color="primary" variant="soft" size="md">
               Search: {{ searchQuery }}
             </UBadge>
-            <UBadge
-              v-if="categoryFilter"
-              color="primary"
-              variant="soft"
-              size="md"
-            >
+            <UBadge v-if="categoryFilter" color="primary" variant="soft" size="md">
               Category: {{ categoryFilter }}
             </UBadge>
           </div>
         </div>
 
         <!-- No Results -->
-        <div
-          v-if="searchResults.length === 0"
-          class="text-center py-16 bg-slate-800/50 backdrop-blur border border-slate-700 rounded-xl"
-        >
-          <UIcon
-            name="i-heroicons-magnifying-glass-20-solid"
-            class="w-16 h-16 text-gray-400 mx-auto mb-4"
-          />
+        <div v-if="searchResults.length === 0"
+          class="text-center py-16 bg-slate-800/50 backdrop-blur border border-slate-700 rounded-xl">
+          <UIcon name="i-heroicons-magnifying-glass-20-solid" class="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h3 class="text-xl font-semibold text-white mb-2">
             No Projects Found
           </h3>
@@ -91,13 +66,8 @@
 
         <!-- Projects Cards -->
         <div v-else class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <ProjectCard
-            v-for="project in searchResults"
-            :key="project.id"
-            :project="project"
-            :liked-projects="likedProjects"
-            @toggle-like="toggleLike"
-          />
+          <ProjectCard v-for="project in searchResults" :key="project.id" :project="project"
+            :liked-projects="likedProjects" @toggle-like="toggleLike" />
         </div>
       </div>
     </UContainer>
@@ -196,7 +166,7 @@ useHead({
     ? `Search: ${searchQuery.value} - Projects`
     : categoryFilter.value
       ? `${categoryFilter.value} Projects`
-      : "Search Projects - GIC Student Portal",
+      : "Search Projects - GIC Showcase",
   meta: [
     {
       name: "description",

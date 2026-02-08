@@ -3,15 +3,11 @@
     <ScrollToTop />
 
     <!-- Header Section -->
-    <div
-      class="hero-nodes py-20 border-b border-blue-800/30 dark:border-slate-700"
-    >
+    <div class="hero-nodes py-20 border-b border-blue-800/30 dark:border-slate-700">
       <UContainer>
         <div class="space-y-6">
           <div class="text-center space-y-4 max-w-2xl mx-auto">
-            <h1
-              class="text-4xl lg:text-6xl font-semibold tracking-tight leading-tight text-blue-900 dark:text-white"
-            >
+            <h1 class="text-4xl lg:text-6xl font-semibold tracking-tight leading-tight text-blue-900 dark:text-white">
               Explore All Projects
             </h1>
             <p class="text-xl text-blue-900/80 dark:text-gray-300">
@@ -21,20 +17,10 @@
           </div>
 
           <!-- Action Buttons -->
-          <div
-            class="flex flex-col sm:flex-row gap-3 justify-center items-center flex-wrap"
-          >
-            <ButtonsPresetButton
-              preset="createProject"
-              @click="handleCreateProject"
-              size="md"
-            />
+          <div class="flex flex-col sm:flex-row gap-3 justify-center items-center flex-wrap">
+            <ButtonsPresetButton preset="createProject" @click="handleCreateProject" size="md" />
 
-            <ButtonsPresetButton
-              preset="meetStudent"
-              to="/students"
-              size="md"
-            />
+            <ButtonsPresetButton preset="meetStudent" to="/students" size="md" />
           </div>
         </div>
       </UContainer>
@@ -43,129 +29,69 @@
     <!-- Filters and Projects -->
     <!-- Sticky Top Bar -->
     <div
-      class="sticky top-0 z-[200] bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-sm border-b border-gray-200 dark:border-slate-700"
-    >
+      class="sticky top-0 z-[200] bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-sm border-b border-gray-200 dark:border-slate-700">
       <UContainer>
         <div class="flex items-center justify-between w-full gap-4 py-3">
           <!-- Categories Pills -->
           <div class="flex-1">
             <div class="flex items-center justify-center gap-2 flex-wrap">
               <!-- Loading state -->
-              <div
-                v-if="isLoadingData && categories.length === 0"
-                class="flex gap-2"
-              >
-                <div
-                  class="h-10 w-20 bg-gray-200 dark:bg-slate-700 rounded-lg animate-pulse"
-                ></div>
-                <div
-                  class="h-10 w-24 bg-gray-200 dark:bg-slate-700 rounded-lg animate-pulse"
-                ></div>
-                <div
-                  class="h-10 w-28 bg-gray-200 dark:bg-slate-700 rounded-lg animate-pulse"
-                ></div>
+              <div v-if="isLoadingData && categories.length === 0" class="flex gap-2">
+                <div class="h-10 w-20 bg-gray-200 dark:bg-slate-700 rounded-lg animate-pulse"></div>
+                <div class="h-10 w-24 bg-gray-200 dark:bg-slate-700 rounded-lg animate-pulse"></div>
+                <div class="h-10 w-28 bg-gray-200 dark:bg-slate-700 rounded-lg animate-pulse"></div>
               </div>
 
               <!-- Show actual categories when loaded -->
-              <div
-                v-else-if="isCategoriesLoaded"
-                class="hidden md:flex flex-wrap gap-2 justify-center"
-              >
-                <ButtonsPresetButton
-                  v-for="cat in categoryOptions"
-                  :key="cat.value"
-                  :label="cat.label"
-                  :color="
-                    selectedCategory?.value === cat.value
-                      ? 'primary'
-                      : 'secondary'
-                  "
-                  :variant="
-                    selectedCategory?.value === cat.value ? 'solid' : 'ghost'
-                  "
-                  size="md"
-                  @click="selectedCategory = cat"
-                />
+              <div v-else-if="isCategoriesLoaded" class="hidden md:flex flex-wrap gap-2 justify-center">
+                <ButtonsPresetButton v-for="cat in categoryOptions" :key="cat.value" :label="cat.label" :color="selectedCategory?.value === cat.value
+                  ? 'primary'
+                  : 'secondary'
+                  " :variant="selectedCategory?.value === cat.value ? 'solid' : 'ghost'
+                    " size="md" @click="selectedCategory = cat" />
               </div>
 
               <!-- Mobile Category Select -->
               <div v-if="isCategoriesLoaded" class="relative md:hidden w-full">
-                <USelectMenu
-                  v-model="selectedCategory"
-                  size="xl"
-                  :items="categoryOptions"
-                  placeholder="Select category"
-                  class="w-full rounded-xl"
-                />
+                <USelectMenu v-model="selectedCategory" size="xl" :items="categoryOptions" placeholder="Select category"
+                  class="w-full rounded-xl" />
               </div>
             </div>
           </div>
 
           <!-- Filters Button -->
-          <ButtonsPresetButton
-            label="Filters"
-            icon="i-heroicons-funnel"
-            :color="showFilters ? 'primary' : 'secondary'"
-            :variant="showFilters ? 'solid' : 'outline'"
-            size="md"
-            @click="toggleFilters"
-          />
+          <ButtonsPresetButton label="Filters" icon="i-heroicons-funnel" :color="showFilters ? 'primary' : 'secondary'"
+            :variant="showFilters ? 'solid' : 'outline'" size="md" @click="toggleFilters" />
         </div>
 
-        <Transition
-          enter-active-class="transition-all duration-500 ease-out"
-          enter-from-class="opacity-0 -translate-y-3"
-          enter-to-class="opacity-100 translate-y-0"
-          leave-active-class="transition-all duration-200 ease-in"
-          leave-from-class="opacity-100 translate-y-0"
-          leave-to-class="opacity-0 -translate-y-3"
-        >
-          <div
-            v-if="showFilters"
-            class="rounded-2xl p-6 border border-blue-200 dark:border-slate-700 bg-blue-50/30 dark:bg-slate-800/50 backdrop-blur-sm space-y-4 shadow-lg"
-          >
+        <Transition enter-active-class="transition-all duration-500 ease-out"
+          enter-from-class="opacity-0 -translate-y-3" enter-to-class="opacity-100 translate-y-0"
+          leave-active-class="transition-all duration-200 ease-in" leave-from-class="opacity-100 translate-y-0"
+          leave-to-class="opacity-0 -translate-y-3">
+          <div v-if="showFilters"
+            class="rounded-2xl p-6 border border-blue-200 dark:border-slate-700 bg-blue-50/30 dark:bg-slate-800/50 backdrop-blur-sm space-y-4 shadow-lg">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
               <!-- Category Search with Autocomplete -->
               <div class="relative">
-                <p
-                  class="text-lg font-semibold mb-2 text-blue-900 dark:text-white"
-                >
+                <p class="text-lg font-semibold mb-2 text-blue-900 dark:text-white">
                   Categories
                 </p>
                 <div class="relative">
-                  <UInput
-                    v-model="categorySearchInput"
-                    placeholder="Type to search categories (e.g., AI, Web, Mobile)"
-                    icon="i-heroicons-magnifying-glass"
-                    class="w-full rounded-xl"
-                    size="xl"
-                    :loading="isSearching"
-                    @focus="showCategorySuggestions = true"
-                    @keydown.escape="showCategorySuggestions = false"
-                  />
+                  <UInput v-model="categorySearchInput" placeholder="Type to search categories (e.g., AI, Web, Mobile)"
+                    icon="i-heroicons-magnifying-glass" class="w-full rounded-xl" size="xl" :loading="isSearching"
+                    @focus="showCategorySuggestions = true" @keydown.escape="showCategorySuggestions = false" />
 
                   <!-- Category Suggestions Dropdown -->
-                  <div
-                    v-if="
-                      showCategorySuggestions && categorySuggestions.length > 0
-                    "
-                    class="absolute top-full left-0 right-0 z-50 mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg max-h-48 overflow-y-auto"
-                  >
-                    <div
-                      v-for="suggestion in categorySuggestions"
-                      :key="suggestion.id"
+                  <div v-if="
+                    showCategorySuggestions && categorySuggestions.length > 0
+                  "
+                    class="absolute top-full left-0 right-0 z-50 mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                    <div v-for="suggestion in categorySuggestions" :key="suggestion.id"
                       @click="selectCategorySuggestion(suggestion)"
-                      class="px-4 py-2 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer border-b border-gray-100 dark:border-slate-700 last:border-b-0 transition-colors"
-                    >
+                      class="px-4 py-2 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer border-b border-gray-100 dark:border-slate-700 last:border-b-0 transition-colors">
                       <div class="flex items-center justify-between">
-                        <span
-                          class="font-medium text-blue-900 dark:text-white"
-                          >{{ suggestion.label }}</span
-                        >
-                        <span
-                          class="text-xs text-gray-500 dark:text-gray-400"
-                          >{{ suggestion.suffix }}</span
-                        >
+                        <span class="font-medium text-blue-900 dark:text-white">{{ suggestion.label }}</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">{{ suggestion.suffix }}</span>
                       </div>
                     </div>
                   </div>
@@ -174,36 +100,21 @@
 
               <!-- Course Dropdown -->
               <div>
-                <p
-                  class="text-lg font-semibold mb-2 text-blue-900 dark:text-white"
-                >
+                <p class="text-lg font-semibold mb-2 text-blue-900 dark:text-white">
                   Course
                 </p>
-                <USelectMenu
-                  v-model="selectedCourse"
-                  size="xl"
-                  :items="courseOptions"
-                  searchable
-                  searchable-placeholder="Type to search courses"
-                  placeholder="Select a course"
-                  class="w-full rounded-xl"
-                />
+                <USelectMenu v-model="selectedCourse" size="xl" :items="courseOptions" searchable
+                  searchable-placeholder="Type to search courses" placeholder="Select a course"
+                  class="w-full rounded-xl" />
               </div>
 
               <!-- Gen Dropdown -->
               <div>
-                <p
-                  class="text-lg font-semibold mb-2 text-blue-900 dark:text-white"
-                >
+                <p class="text-lg font-semibold mb-2 text-blue-900 dark:text-white">
                   Generation
                 </p>
-                <USelectMenu
-                  v-model="selectedGen"
-                  size="xl"
-                  :items="genOptions"
-                  placeholder="Select generation"
-                  class="w-full rounded-xl"
-                />
+                <USelectMenu v-model="selectedGen" size="xl" :items="genOptions" placeholder="Select generation"
+                  class="w-full rounded-xl" />
               </div>
             </div>
           </div>
@@ -212,21 +123,14 @@
     </div>
 
     <Transition enter-active-class="transition-all ease-out duration-700">
-      <UContainer
-        class="py-9 bg-gradient-to-b via-gray-50 to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
-      >
+      <UContainer class="py-9">
         <!-- Error State -->
         <div v-if="dataFetchError" class="text-center py-20">
           <div
-            class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-8 max-w-md mx-auto"
-          >
-            <UIcon
-              name="i-heroicons-exclamation-triangle"
-              class="w-16 h-16 text-red-600 dark:text-red-400 mx-auto mb-4"
-            />
-            <h3
-              class="text-xl font-semibold text-red-900 dark:text-red-200 mb-2"
-            >
+            class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-8 max-w-md mx-auto">
+            <UIcon name="i-heroicons-exclamation-triangle"
+              class="w-16 h-16 text-red-600 dark:text-red-400 mx-auto mb-4" />
+            <h3 class="text-xl font-semibold text-red-900 dark:text-red-200 mb-2">
               Failed to Load Projects
             </h3>
             <p class="text-red-700 dark:text-red-300 mb-4">
@@ -240,7 +144,7 @@
           </div>
         </div>
 
-        <div v-else class="grid lg:grid-cols-4 gap-8">
+        <div v-else class="grid lg:grid-cols-4 gap-8 ">
           <!-- Projects Grid -->
           <div class="sm:col-span-4">
             <div class="space-y-6">
@@ -256,7 +160,7 @@
                     </template>
                     <span class="font-semibold text-blue-900 dark:text-white">{{
                       projectStore.pagination.totalItems
-                    }}</span>
+                      }}</span>
                     projects
                     <template v-if="totalPages > 1">
                       (Page {{ currentPage }} of {{ totalPages }})
@@ -265,111 +169,51 @@
 
                   Active Filters
                   <div v-if="hasActiveFilters" class="flex items-center gap-2">
-                    <span class="text-md text-gray-500 dark:text-gray-400"
-                      >•</span
-                    >
+                    <span class="text-md text-gray-500 dark:text-gray-400">•</span>
                     <div class="flex flex-wrap gap-1">
-                      <UBadge
-                        v-if="selectedCategory"
-                        variant="soft"
-                        size="md"
-                        class="flex items-center gap-1 text-blue-900"
-                      >
+                      <UBadge v-if="selectedCategory" variant="soft" size="md"
+                        class="flex items-center gap-1 text-blue-900">
                         {{ selectedCategory.label }}
-                        <UButton
-                          @click="selectedCategory = null"
-                          color="primary"
-                          variant="ghost"
-                          size="xs"
-                          icon="i-heroicons-x-mark"
-                          :padded="false"
-                          class="ml-1"
-                        />
+                        <UButton @click="selectedCategory = null" color="primary" variant="ghost" size="xs"
+                          icon="i-heroicons-x-mark" :padded="false" class="ml-1" />
                       </UBadge>
-                      <UBadge
-                        v-if="categorySearch"
-                        color="primary"
-                        variant="soft"
-                        size="sm"
-                        class="flex items-center gap-1"
-                      >
+                      <UBadge v-if="categorySearch" color="primary" variant="soft" size="sm"
+                        class="flex items-center gap-1">
                         Search: "{{ categorySearch }}"
-                        <UButton
-                          @click="categorySearchInput = ''"
-                          color="primary"
-                          variant="ghost"
-                          size="xs"
-                          :padded="false"
-                          class="ml-1"
-                        />
+                        <UButton @click="categorySearchInput = ''" color="primary" variant="ghost" size="xs"
+                          :padded="false" class="ml-1" />
                       </UBadge>
-                      <UBadge
-                        v-if="selectedCourse && selectedCourse.value"
-                        color="primary"
-                        variant="soft"
-                        size="sm"
-                        class="flex items-center gap-1"
-                      >
+                      <UBadge v-if="selectedCourse && selectedCourse.value" color="primary" variant="soft" size="sm"
+                        class="flex items-center gap-1">
                         {{ selectedCourse.label }}
-                        <UButton
-                          @click="
-                            selectedCourse = courseOptions.find(
-                              (c) => c.value === '',
-                            )
-                          "
-                          color="primary"
-                          variant="ghost"
-                          size="xs"
-                          icon="i-heroicons-x-mark"
-                          :padded="false"
-                          class="ml-1"
-                        />
+                        <UButton @click="
+                          selectedCourse = courseOptions.find(
+                            (c) => c.value === '',
+                          )
+                          " color="primary" variant="ghost" size="xs" icon="i-heroicons-x-mark" :padded="false"
+                          class="ml-1" />
                       </UBadge>
-                      <UBadge
-                        v-if="selectedGen && selectedGen.value"
-                        color="primary"
-                        variant="soft"
-                        size="sm"
-                        class="flex items-center gap-1"
-                      >
+                      <UBadge v-if="selectedGen && selectedGen.value" color="primary" variant="soft" size="sm"
+                        class="flex items-center gap-1">
                         {{ selectedGen.label }}
-                        <UButton
-                          @click="
-                            selectedGen = genOptions.find((g) => g.value === '')
-                          "
-                          color="primary"
-                          variant="ghost"
-                          size="xs"
-                          icon="i-heroicons-x-mark"
-                          :padded="false"
-                          class="ml-1"
-                        />
+                        <UButton @click="
+                          selectedGen = genOptions.find((g) => g.value === '')
+                          " color="primary" variant="ghost" size="xs" icon="i-heroicons-x-mark" :padded="false"
+                          class="ml-1" />
                       </UBadge>
                     </div>
                   </div>
                 </div>
 
                 <!-- Clear All Filters Button -->
-                <ButtonsPresetButton
-                  v-if="hasActiveFilters"
-                  preset="clearFilters"
-                  @click="clearFilters"
-                />
+                <ButtonsPresetButton v-if="hasActiveFilters" preset="clearFilters" @click="clearFilters" />
               </div>
 
               <!-- Projects Cards -->
-              <div
-                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
-              >
+              <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
                 <!-- just keep as public -->
-                <ProjectCard
-                  v-for="project in paginatedProjects"
-                  :key="project.id"
-                  :project="project"
-                  :liked-projects="projectStore.likedProjects"
-                  :show-edit-button="false"
-                  @toggle-like="toggleLike"
-                />
+                <ProjectCard v-for="project in paginatedProjects" :key="project.id" :project="project"
+                  :liked-projects="projectStore.likedProjects" :show-edit-button="false" @toggle-like="toggleLike" />
               </div>
 
               <!-- <p>
@@ -378,42 +222,22 @@
               </p> -->
 
               <!-- Pagination -->
-              <div
-                v-if="totalPages > 1"
-                class="flex justify-center items-center gap-4 mt-8"
-              >
-                <ButtonsPresetButton
-                  label="Previous"
-                  icon="i-heroicons-arrow-left"
-                  color="secondary"
-                  variant="outline"
-                  size="md"
-                  :disabled="currentPage === 1"
-                  @click="currentPage = Math.max(1, currentPage - 1)"
-                />
+              <div v-if="totalPages > 1" class="flex justify-center items-center gap-4 mt-8">
+                <ButtonsPresetButton label="Previous" icon="i-heroicons-arrow-left" color="secondary" variant="outline"
+                  size="md" :disabled="currentPage === 1" @click="currentPage = Math.max(1, currentPage - 1)" />
 
                 <span
-                  class="px-4 py-2 text-sm font-medium text-blue-900 dark:text-white bg-blue-50 dark:bg-slate-800 rounded-lg"
-                >
+                  class="px-4 py-2 text-sm font-medium text-blue-900 dark:text-white bg-blue-50 dark:bg-slate-800 rounded-lg">
                   Page {{ currentPage }} of {{ totalPages }}
                 </span>
 
-                <ButtonsPresetButton
-                  label="Next"
-                  icon="i-heroicons-arrow-right"
-                  color="primary"
-                  variant="solid"
-                  size="md"
-                  :disabled="currentPage === totalPages"
-                  @click="currentPage = Math.min(totalPages, currentPage + 1)"
-                />
+                <ButtonsPresetButton label="Next" icon="i-heroicons-arrow-right" color="primary" variant="solid"
+                  size="md" :disabled="currentPage === totalPages"
+                  @click="currentPage = Math.min(totalPages, currentPage + 1)" />
               </div>
 
               <!-- Pagination Info -->
-              <div
-                v-if="projectStore.pagination.totalItems > 0"
-                class="text-center mt-6"
-              >
+              <div v-if="projectStore.pagination.totalItems > 0" class="text-center mt-6">
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                   Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to
                   {{
@@ -427,14 +251,8 @@
               </div>
 
               <!-- Empty State -->
-              <div
-                v-if="projectStore.pagination.totalItems === 0"
-                class="text-center py-20"
-              >
-                <UIcon
-                  name="i-heroicons-inbox"
-                  class="w-16 h-16 text-gray-600 dark:text-gray-400 mx-auto mb-4"
-                />
+              <div v-if="projectStore.pagination.totalItems === 0" class="text-center py-20">
+                <UIcon name="i-heroicons-inbox" class="w-16 h-16 text-gray-600 dark:text-gray-400 mx-auto mb-4" />
                 <p class="text-gray-400 dark:text-gray-500 text-lg">
                   No projects found matching your filters
                 </p>
@@ -822,7 +640,7 @@ const isProjectLiked = (projectId) => {
 };
 
 useHead({
-  title: "Projects - GIC Student Portal",
+  title: "Projects - GIC Showcase",
   meta: [
     {
       name: "description",

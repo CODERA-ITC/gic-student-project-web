@@ -1,13 +1,10 @@
 <template>
   <div
-    class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 pt-20 pb-12 px-4"
-  >
+    class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 pt-20 pb-12 px-4">
     <UContainer class="max-w-4xl">
       <!-- Header -->
       <div class="mb-12">
-        <h1
-          class="text-4xl md:text-5xl font-semibold text-gray-900 dark:text-white mb-4"
-        >
+        <h1 class="text-4xl md:text-5xl font-semibold text-gray-900 dark:text-white mb-4">
           Privacy Policy
         </h1>
         <p class="text-gray-600 dark:text-gray-400">
@@ -19,19 +16,13 @@
       <div class="space-y-8">
         <!-- Section 1 -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-information-circle"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-information-circle" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             1. Introduction
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
-            Welcome to GIC Student Portal ("we," "us," "our"). We respect your
+            Welcome to GIC Showcase ("we," "us," "our"). We respect your
             privacy and are committed to protecting your personal data. This
             Privacy Policy explains how we collect, use, disclose, and safeguard
             your information when you visit our website and use our services.
@@ -42,15 +33,9 @@
 
         <!-- Section 2 -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-shield-check"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-shield-check" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             2. Information We Collect
           </h2>
           <div class="space-y-4">
@@ -59,59 +44,39 @@
             </p>
             <ul class="space-y-3 text-gray-700 dark:text-gray-300">
               <li class="flex items-start">
-                <UIcon
-                  name="i-heroicons-check-circle"
-                  class="w-5 h-5 mr-3 text-blue-500 dark:text-blue-400 flex-shrink-0 mt-0.5"
-                />
-                <span
-                  ><strong>Personal Information:</strong> Name, email address,
+                <UIcon name="i-heroicons-check-circle"
+                  class="w-5 h-5 mr-3 text-blue-500 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+                <span><strong>Personal Information:</strong> Name, email address,
                   phone number, student ID, educational institution, and profile
-                  information</span
-                >
+                  information</span>
               </li>
               <li class="flex items-start">
-                <UIcon
-                  name="i-heroicons-check-circle"
-                  class="w-5 h-5 mr-3 text-blue-500 dark:text-blue-400 flex-shrink-0 mt-0.5"
-                />
-                <span
-                  ><strong>Project Information:</strong> Details about projects
+                <UIcon name="i-heroicons-check-circle"
+                  class="w-5 h-5 mr-3 text-blue-500 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+                <span><strong>Project Information:</strong> Details about projects
                   you upload, including descriptions, images, videos, and
-                  documentation</span
-                >
+                  documentation</span>
               </li>
               <li class="flex items-start">
-                <UIcon
-                  name="i-heroicons-check-circle"
-                  class="w-5 h-5 mr-3 text-blue-500 dark:text-blue-400 flex-shrink-0 mt-0.5"
-                />
-                <span
-                  ><strong>Usage Data:</strong> Information about how you
+                <UIcon name="i-heroicons-check-circle"
+                  class="w-5 h-5 mr-3 text-blue-500 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+                <span><strong>Usage Data:</strong> Information about how you
                   interact with our platform, including pages visited, features
-                  used, and time spent</span
-                >
+                  used, and time spent</span>
               </li>
               <li class="flex items-start">
-                <UIcon
-                  name="i-heroicons-check-circle"
-                  class="w-5 h-5 mr-3 text-blue-500 dark:text-blue-400 flex-shrink-0 mt-0.5"
-                />
-                <span
-                  ><strong>Device Information:</strong> Browser type, IP
+                <UIcon name="i-heroicons-check-circle"
+                  class="w-5 h-5 mr-3 text-blue-500 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+                <span><strong>Device Information:</strong> Browser type, IP
                   address, operating system, device identifiers, and referring
-                  URLs</span
-                >
+                  URLs</span>
               </li>
               <li class="flex items-start">
-                <UIcon
-                  name="i-heroicons-check-circle"
-                  class="w-5 h-5 mr-3 text-blue-500 dark:text-blue-400 flex-shrink-0 mt-0.5"
-                />
-                <span
-                  ><strong>Cookies and Similar Technologies:</strong> We use
+                <UIcon name="i-heroicons-check-circle"
+                  class="w-5 h-5 mr-3 text-blue-500 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+                <span><strong>Cookies and Similar Technologies:</strong> We use
                   cookies, web beacons, and similar technologies to enhance user
-                  experience and gather usage analytics</span
-                >
+                  experience and gather usage analytics</span>
               </li>
             </ul>
           </div>
@@ -119,15 +84,9 @@
 
         <!-- Section 3 -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-hand-raised"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-hand-raised" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             3. How We Use Your Information
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
@@ -163,15 +122,9 @@
 
         <!-- Section 4 -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-lock-closed"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-lock-closed" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             4. Data Security
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
@@ -199,15 +152,9 @@
 
         <!-- Section 5 -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-user-group"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-user-group" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             5. Sharing Your Information
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
@@ -246,15 +193,9 @@
 
         <!-- Section 6: Your Rights -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-user-circle"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-user-circle" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             6. Your Privacy Rights
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
@@ -294,15 +235,9 @@
 
         <!-- Section 7: Data Retention -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-clock"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-clock" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             7. Data Retention
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -316,15 +251,9 @@
 
         <!-- Section 8: Children's Privacy -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-shield-exclamation"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-shield-exclamation" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             8. Children's Privacy
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -339,15 +268,9 @@
 
         <!-- Section 9: Changes to Privacy Policy -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-arrow-path"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-arrow-path" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             9. Changes to This Privacy Policy
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -362,26 +285,18 @@
 
         <!-- Section 10: Contact Us -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-envelope"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-envelope" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             10. Contact Us
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
             If you have any questions, concerns, or requests regarding this
             Privacy Policy or our data practices, please contact us at:
           </p>
-          <div
-            class="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl p-4"
-          >
+          <div class="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl p-4">
             <p class="text-gray-900 dark:text-white font-medium">
-              GIC Student Portal Team
+              GIC Showcase Team
             </p>
             <p class="text-gray-700 dark:text-gray-400">
               Email: privacy@gicstudent.com
@@ -398,8 +313,7 @@
 
       <!-- CTA Section -->
       <div
-        class="mt-12 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-500/20 dark:to-purple-500/20 border border-blue-200 dark:border-blue-500/30 rounded-2xl p-8 text-center"
-      >
+        class="mt-12 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-500/20 dark:to-purple-500/20 border border-blue-200 dark:border-blue-500/30 rounded-2xl p-8 text-center">
         <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
           Questions About Our Privacy Policy?
         </h3>
@@ -407,12 +321,8 @@
           If you have any concerns or questions, our team is here to help. Don't
           hesitate to reach out.
         </p>
-        <UButton
-          color="primary"
-          size="lg"
-          icon="i-heroicons-envelope"
-          @click="navigateTo('mailto:privacy@gicstudent.com')"
-        >
+        <UButton color="primary" size="lg" icon="i-heroicons-envelope"
+          @click="navigateTo('mailto:privacy@gicstudent.com')">
           Contact Support
         </UButton>
       </div>
@@ -423,7 +333,7 @@
 <script setup>
 // Meta tags for SEO
 useHead({
-  title: "Privacy Policy | GIC Student Portal",
+  title: "Privacy Policy | GIC Showcase",
   meta: [
     {
       name: "description",

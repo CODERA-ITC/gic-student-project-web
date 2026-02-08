@@ -2,50 +2,32 @@
   <div class="min-h-screen bg-gray-50 dark:bg-slate-900">
     <!-- Header Section -->
     <div class="relative overflow-hidden py-16">
-      <div
-        class="absolute -top-24 -left-24 w-80 h-80 bg-blue-500/40 rounded-full blur-3xl"
-        aria-hidden="true"
-      ></div>
-      <div
-        class="absolute -bottom-32 right-0 w-96 h-96 bg-indigo-600/40 rounded-full blur-3xl"
-        aria-hidden="true"
-      ></div>
-      <div
-        class="absolute top-10 right-24 w-52 h-52 bg-cyan-400/30 rounded-full blur-3xl"
-        aria-hidden="true"
-      ></div>
+      <div class="absolute -top-24 -left-24 w-80 h-80 bg-blue-500/40 rounded-full blur-3xl" aria-hidden="true"></div>
+      <div class="absolute -bottom-32 right-0 w-96 h-96 bg-indigo-600/40 rounded-full blur-3xl" aria-hidden="true">
+      </div>
+      <div class="absolute top-10 right-24 w-52 h-52 bg-cyan-400/30 rounded-full blur-3xl" aria-hidden="true"></div>
 
       <UContainer>
-        <div
-          class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/25
+        <div class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/25
                  bg-gradient-to-br from-blue-900 via-indigo-900 to-blue-700 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950
-                 shadow-2xl px-8 py-10"
-        >
+                 shadow-2xl px-8 py-10">
           <div
             class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.12),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.08),transparent_30%)] pointer-events-none"
-            aria-hidden="true"
-          ></div>
+            aria-hidden="true"></div>
 
           <div class="relative space-y-3">
             <div class="flex flex-col gap-3 mb-2">
               <nav class="flex items-center flex-wrap gap-1 text-sm text-slate-600 dark:text-slate-300">
                 <template v-for="(crumb, idx) in breadcrumbs" :key="crumb.label">
-                  <NuxtLink
-                    :to="crumb.to || undefined"
-                    :class="[
-                      'transition-colors  ',
-                      crumb.to
-                        ? 'hover:text-blue-700 text-white dark:hover:text-blue-300'
-                        : 'text-slate-300 dark:text-white font-semibold',
-                    ]"
-                  >
+                  <NuxtLink :to="crumb.to || undefined" :class="[
+                    'transition-colors  ',
+                    crumb.to
+                      ? 'hover:text-blue-700 text-white dark:hover:text-blue-300'
+                      : 'text-slate-300 dark:text-white font-semibold',
+                  ]">
                     {{ crumb.label }}
                   </NuxtLink>
-                  <span
-                    v-if="idx < breadcrumbs.length - 1"
-                    class="text-slate-400 dark:text-slate-500"
-                    >/</span
-                  >
+                  <span v-if="idx < breadcrumbs.length - 1" class="text-slate-400 dark:text-slate-500">/</span>
                 </template>
               </nav>
               <div class="space-y-3">
@@ -65,13 +47,9 @@
     <!-- Main Content -->
     <UContainer class="py-12">
       <!-- Submissions List -->
-      <div
-        class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700"
-      >
+      <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700">
         <div class="p-6 border-b border-gray-200 dark:border-slate-700">
-          <div
-            class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
-          >
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
                 Submitted Projects
@@ -82,21 +60,13 @@
             </div>
             <div class="flex items-center gap-3 w-full sm:w-auto">
               <div class="relative flex-1 sm:flex-initial sm:w-64">
-                <UIcon
-                  name="i-heroicons-magnifying-glass"
-                  class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-slate-500 w-4 h-4"
-                />
-                <input
-                  v-model="searchQuery"
-                  type="text"
-                  placeholder="Search..."
+                <UIcon name="i-heroicons-magnifying-glass"
+                  class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-slate-500 w-4 h-4" />
+                <input v-model="searchQuery" type="text" placeholder="Search..."
                   class="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                  @input="handleSearch"
-                />
+                  @input="handleSearch" />
               </div>
-              <span
-                class="text-sm text-gray-500 dark:text-slate-400 whitespace-nowrap"
-              >
+              <span class="text-sm text-gray-500 dark:text-slate-400 whitespace-nowrap">
                 {{ filteredSubmissions.length }} total
               </span>
             </div>
@@ -109,70 +79,48 @@
             <thead class="bg-gray-50 dark:bg-slate-900">
               <tr>
                 <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
-                >
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Project
                 </th>
                 <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
-                >
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Category
                 </th>
                 <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
-                >
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Submitted
                 </th>
                 <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
-                >
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Status
                 </th>
                 <th
-                  class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
-                >
+                  class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-slate-700">
-              <tr
-                v-for="submission in paginatedSubmissions"
-                :key="submission.id"
-                class="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
-              >
+              <tr v-for="submission in paginatedSubmissions" :key="submission.id"
+                class="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
                 <td class="px-6 py-4">
                   <div class="flex items-center gap-3">
                     <!-- Preview Image -->
-                    <div
-                      class="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden bg-gray-200 dark:bg-slate-700"
-                    >
-                      <img
-                        v-if="submission.images && submission.images.length > 0"
-                        :src="
-                          submission.images[0].thumbnailUrl ||
-                          submission.images[0].originalUrl
-                        "
-                        :alt="submission.name"
-                        class="w-full h-full object-cover"
-                      />
-                      <div
-                        v-else
-                        class="w-full h-full flex items-center justify-center text-gray-400 dark:text-slate-500"
-                      >
+                    <div class="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden bg-gray-200 dark:bg-slate-700">
+                      <img v-if="submission.images && submission.images.length > 0" :src="submission.images[0].thumbnailUrl ||
+                        submission.images[0].originalUrl
+                        " :alt="submission.name" class="w-full h-full object-cover" />
+                      <div v-else
+                        class="w-full h-full flex items-center justify-center text-gray-400 dark:text-slate-500">
                         <UIcon name="i-heroicons-photo" class="w-8 h-8" />
                       </div>
                     </div>
                     <!-- Name and Description -->
                     <div class="flex-1 min-w-0">
-                      <p
-                        class="text-sm font-semibold text-gray-900 dark:text-white truncate"
-                      >
+                      <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">
                         {{ submission.name }}
                       </p>
-                      <p
-                        class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mt-1"
-                      >
+                      <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mt-1">
                         {{
                           submission.description || "No description available"
                         }}
@@ -189,37 +137,21 @@
                   {{ submission.updatedAt }}
                 </td>
                 <td class="px-6 py-4">
-                  <span
-                    :class="getStatusBadgeClass(submission.submissionStatus)"
-                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold"
-                  >
-                    <span
-                      class="w-1.5 h-1.5 rounded-full"
-                      :class="getStatusDotClass(submission.submissionStatus)"
-                    ></span>
+                  <span :class="getStatusBadgeClass(submission.submissionStatus)"
+                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold">
+                    <span class="w-1.5 h-1.5 rounded-full"
+                      :class="getStatusDotClass(submission.submissionStatus)"></span>
                     {{ submission.submissionStatus }}
                   </span>
                 </td>
                 <td class="px-6 py-4">
                   <div class="flex items-center justify-end gap-2">
-                    <UButton
-                      icon="i-heroicons-eye"
-                      size="xs"
-                      color="neutral"
-                      variant="ghost"
-                      label="View"
+                    <UButton icon="i-heroicons-eye" size="xs" color="neutral" variant="ghost" label="View"
                       @click="viewSubmission(submission.id)"
-                      class="text-gray-700 dark:text-gray-300 disabled:text-gray-400 dark:disabled:text-gray-600 disabled:opacity-60"
-                    />
-                    <UButton
-                      icon="i-heroicons-pencil"
-                      size="xs"
-                      color="neutral"
-                      variant="ghost"
-                      label="Edit"
+                      class="text-gray-700 dark:text-gray-300 disabled:text-gray-400 dark:disabled:text-gray-600 disabled:opacity-60" />
+                    <UButton icon="i-heroicons-pencil" size="xs" color="neutral" variant="ghost" label="Edit"
                       @click="editSubmission(submission.id)"
-                      class="text-gray-700 dark:text-gray-300 disabled:text-gray-400 dark:disabled:text-gray-600 disabled:opacity-60"
-                    />
+                      class="text-gray-700 dark:text-gray-300 disabled:text-gray-400 dark:disabled:text-gray-600 disabled:opacity-60" />
                     <!-- <UButton
                       v-if="
                         submission.submissionStatus ===
@@ -242,10 +174,7 @@
         </div>
 
         <!-- Pagination -->
-        <div
-          v-if="totalPages > 1"
-          class="px-6 py-4 border-t border-gray-200 dark:border-slate-700"
-        >
+        <div v-if="totalPages > 1" class="px-6 py-4 border-t border-gray-200 dark:border-slate-700">
           <div class="flex items-center justify-between">
             <div class="text-sm text-gray-500 dark:text-slate-400">
               Showing {{ startIndex + 1 }} to
@@ -253,48 +182,27 @@
               {{ filteredSubmissions.length }} projects
             </div>
             <div class="flex items-center gap-2">
-              <UButton
-                icon="i-heroicons-chevron-left"
-                size="xs"
-                variant="ghost"
-                :disabled="currentPage === 1"
-                @click="currentPage--"
-              />
+              <UButton icon="i-heroicons-chevron-left" size="xs" variant="ghost" :disabled="currentPage === 1"
+                @click="currentPage--" />
               <div class="flex items-center gap-1">
-                <button
-                  v-for="page in displayedPages"
-                  :key="page"
-                  :class="[
-                    'px-3 py-1 text-sm rounded-lg transition-colors',
-                    page === currentPage
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700',
-                  ]"
-                  @click="currentPage = page"
-                >
+                <button v-for="page in displayedPages" :key="page" :class="[
+                  'px-3 py-1 text-sm rounded-lg transition-colors',
+                  page === currentPage
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700',
+                ]" @click="currentPage = page">
                   {{ page }}
                 </button>
               </div>
-              <UButton
-                icon="i-heroicons-chevron-right"
-                size="xs"
-                variant="ghost"
-                :disabled="currentPage === totalPages"
-                @click="currentPage++"
-              />
+              <UButton icon="i-heroicons-chevron-right" size="xs" variant="ghost" :disabled="currentPage === totalPages"
+                @click="currentPage++" />
             </div>
           </div>
         </div>
 
         <!-- Empty State - No Search Results -->
-        <div
-          v-if="filteredSubmissions.length === 0 && searchQuery"
-          class="text-center py-12"
-        >
-          <UIcon
-            name="i-heroicons-magnifying-glass"
-            class="w-16 h-16 text-gray-400 dark:text-slate-600 mx-auto mb-4"
-          />
+        <div v-if="filteredSubmissions.length === 0 && searchQuery" class="text-center py-12">
+          <UIcon name="i-heroicons-magnifying-glass" class="w-16 h-16 text-gray-400 dark:text-slate-600 mx-auto mb-4" />
           <p class="text-gray-500 dark:text-slate-400 text-lg mb-2">
             No projects found
           </p>
@@ -305,10 +213,7 @@
 
         <!-- Empty State - No Submissions -->
         <div v-else-if="submissions.length === 0" class="text-center py-12">
-          <UIcon
-            name="i-heroicons-rocket-launch"
-            class="w-16 h-16 text-gray-400 dark:text-slate-600 mx-auto mb-4"
-          />
+          <UIcon name="i-heroicons-rocket-launch" class="w-16 h-16 text-gray-400 dark:text-slate-600 mx-auto mb-4" />
           <p class="text-gray-500 dark:text-slate-400 text-lg mb-2">
             No submissions yet
           </p>
@@ -316,11 +221,7 @@
             Submit your projects from "My Projects" page to track their review
             status here
           </p>
-          <ButtonsPresetButton
-            label="Go to My Projects"
-            to="/student/my-projects"
-            size="md"
-          />
+          <ButtonsPresetButton label="Go to My Projects" to="/student/my-projects" size="md" />
         </div>
       </div>
     </UContainer>
@@ -328,30 +229,19 @@
     <!-- Cancel Confirmation Modal -->
     <Teleport to="body">
       <Transition name="modal">
-        <div
-          v-if="showCancelModal"
-          class="fixed inset-0 z-50 flex items-center justify-center p-4"
-          @click.self="showCancelModal = false"
-        >
+        <div v-if="showCancelModal" class="fixed inset-0 z-50 flex items-center justify-center p-4"
+          @click.self="showCancelModal = false">
           <!-- Backdrop -->
-          <div
-            class="absolute inset-0 bg-gray-900/75 dark:bg-gray-900/90 backdrop-blur-sm"
-            @click="showCancelModal = false"
-          ></div>
+          <div class="absolute inset-0 bg-gray-900/75 dark:bg-gray-900/90 backdrop-blur-sm"
+            @click="showCancelModal = false"></div>
 
           <!-- Modal Container -->
           <div
-            class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-xl shadow-2xl transform transition-all"
-          >
+            class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-xl shadow-2xl transform transition-all">
             <div class="p-8">
               <div class="flex items-center gap-3 mb-4">
-                <div
-                  class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center"
-                >
-                  <UIcon
-                    name="i-heroicons-exclamation-triangle"
-                    class="w-6 h-6 text-red-600 dark:text-red-400"
-                  />
+                <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                  <UIcon name="i-heroicons-exclamation-triangle" class="w-6 h-6 text-red-600 dark:text-red-400" />
                 </div>
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                   Cancel Submission
@@ -363,19 +253,9 @@
                 be undone.
               </p>
               <div class="flex flex-col sm:flex-row gap-3 justify-end">
-                <ButtonsPresetButton
-                  preset="cancel"
-                  size="lg"
-                  @click="showCancelModal = false"
-                />
-                <UButton
-                  label="Cancel Submission"
-                  icon="i-heroicons-x-circle"
-                  color="error"
-                  size="lg"
-                  :loading="isCanceling"
-                  @click="handleCancelConfirm"
-                />
+                <ButtonsPresetButton preset="cancel" size="lg" @click="showCancelModal = false" />
+                <UButton label="Cancel Submission" icon="i-heroicons-x-circle" color="error" size="lg"
+                  :loading="isCanceling" @click="handleCancelConfirm" />
               </div>
             </div>
           </div>
@@ -631,7 +511,7 @@ onMounted(async () => {
 });
 
 useHead({
-  title: "Project Submissions - GIC Student Portal",
+  title: "Project Submissions - GIC Showcase",
   meta: [
     {
       name: "description",

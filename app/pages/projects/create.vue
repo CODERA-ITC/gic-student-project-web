@@ -2,21 +2,13 @@
   <div class="min-h-screen bg-gray-50 dark:bg-slate-900 py-12">
     <!-- Breadcrumbs -->
     <UContainer class="mb-6">
-      <nav
-        class="flex items-center flex-wrap gap-1 text-sm text-slate-600 dark:text-slate-300"
-      >
-        <NuxtLink
-          to="/"
-          class="hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1"
-        >
+      <nav class="flex items-center flex-wrap gap-1 text-sm text-slate-600 dark:text-slate-300">
+        <NuxtLink to="/" class="hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1">
           <UIcon name="i-heroicons-home" class="w-4 h-4" />
           <span class="hidden sm:inline">{{ t("home") }}</span>
         </NuxtLink>
         <span class="text-slate-400 dark:text-slate-500">/</span>
-        <NuxtLink
-          to="/projects"
-          class="hover:text-blue-700 dark:hover:text-blue-300"
-        >
+        <NuxtLink to="/projects" class="hover:text-blue-700 dark:hover:text-blue-300">
           {{ t("projects") }}
         </NuxtLink>
         <span class="text-slate-400 dark:text-slate-500">/</span>
@@ -43,9 +35,7 @@
         <!-- Header -->
         <div class="max-w-3xl mx-auto mb-12">
           <div class="flex items-center justify-between mb-2">
-            <h1
-              class="text-5xl font-black font-semibold text-gray-900 dark:text-white"
-            >
+            <h1 class="text-5xl font-black font-semibold text-gray-900 dark:text-white">
               {{
                 editMode
                   ? t("projectForm.editTitle")
@@ -53,25 +43,21 @@
               }}
             </h1>
             <div v-if="!editMode" class="flex items-center gap-2 text-sm">
-              <UIcon
-                :name="
-                  isSaving
-                    ? 'i-heroicons-arrow-path'
-                    : 'i-heroicons-check-circle'
-                "
-                :class="[
+              <UIcon :name="isSaving
+                ? 'i-heroicons-arrow-path'
+                : 'i-heroicons-check-circle'
+                " :class="[
                   'w-4 h-4',
                   isSaving ? 'text-blue-500 animate-spin' : 'text-green-500',
-                ]"
-              />
+                ]" />
               <span class="text-gray-600 dark:text-gray-400">
                 {{
                   isSaving
                     ? t("projectForm.saving")
                     : lastSaved
                       ? t("projectForm.saved", {
-                          time: formatTimeAgo(lastSaved),
-                        })
+                        time: formatTimeAgo(lastSaved),
+                      })
                       : t("projectForm.autoSave")
                 }}
               </span>
@@ -88,37 +74,27 @@
 
         <!-- Form Card -->
         <div
-          class="max-w-3xl mx-auto bg-white/80 dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-2xl p-8 space-y-8"
-        >
+          class="max-w-3xl mx-auto bg-white/80 dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-2xl p-8 space-y-8">
           <form @submit.prevent="submitForm" class="space-y-8">
             <!-- Step Indicator -->
             <div class="flex justify-between mb-12">
-              <div
-                v-for="(step, idx) in steps"
-                :key="step.id"
-                class="flex items-center flex-1"
-              >
-                <div
-                  :class="[
-                    'w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all',
-                    currentStep > idx
-                      ? 'bg-blue-900 text-white'
-                      : currentStep === idx
-                        ? 'bg-blue-900 text-white ring-2 ring-blue-800'
-                        : 'bg-gray-300 dark:bg-slate-700 text-gray-600 dark:text-gray-400',
-                  ]"
-                >
+              <div v-for="(step, idx) in steps" :key="step.id" class="flex items-center flex-1">
+                <div :class="[
+                  'w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all',
+                  currentStep > idx
+                    ? 'bg-blue-900 text-white'
+                    : currentStep === idx
+                      ? 'bg-blue-900 text-white ring-2 ring-blue-800'
+                      : 'bg-gray-300 dark:bg-slate-700 text-gray-600 dark:text-gray-400',
+                ]">
                   {{ idx + 1 }}
                 </div>
-                <div
-                  v-if="idx < steps.length - 1"
-                  :class="[
-                    'flex-1 h-1 mx-2 rounded-full transition-all',
-                    currentStep > idx
-                      ? 'bg-blue-900'
-                      : 'bg-gray-300 dark:bg-slate-700',
-                  ]"
-                ></div>
+                <div v-if="idx < steps.length - 1" :class="[
+                  'flex-1 h-1 mx-2 rounded-full transition-all',
+                  currentStep > idx
+                    ? 'bg-blue-900'
+                    : 'bg-gray-300 dark:bg-slate-700',
+                ]"></div>
               </div>
             </div>
 
@@ -130,19 +106,12 @@
 
               <!-- Project Title -->
               <div>
-                <label
-                  class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2"
-                >
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   {{ t("projectForm.projectTitle") }}
                 </label>
-                <input
-                  v-model="form.name"
-                  type="text"
-                  :placeholder="t('projectForm.projectTitlePlaceholder')"
+                <input v-model="form.name" type="text" :placeholder="t('projectForm.projectTitlePlaceholder')"
                   class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                  required
-                  maxlength="70"
-                />
+                  required maxlength="70" />
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   {{ t("projectForm.titleHint") }}
                 </p>
@@ -150,19 +119,12 @@
 
               <!-- Project Description -->
               <div>
-                <label
-                  class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2"
-                >
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   {{ t("projectForm.description") }}
                 </label>
-                <textarea
-                  v-model="form.description"
-                  :placeholder="t('projectForm.descriptionPlaceholder')"
-                  rows="5"
+                <textarea v-model="form.description" :placeholder="t('projectForm.descriptionPlaceholder')" rows="5"
                   class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-none"
-                  required
-                  maxlength="300"
-                ></textarea>
+                  required maxlength="300"></textarea>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   {{
                     t("projectForm.descriptionCount", {
@@ -174,9 +136,7 @@
 
               <!-- Project Thumbnails/Previews -->
               <div>
-                <label
-                  class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2"
-                >
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   {{ t("projectForm.thumbnailsLabel") }}
                 </label>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">
@@ -185,47 +145,30 @@
 
                 <div class="space-y-4">
                   <!-- Image Upload Area -->
-                  <div
-                    v-if="form.thumbnails.length < 5"
-                    @drop="handleThumbnailDrop"
-                    @dragover.prevent="handleDragOver"
-                    @dragenter.prevent="handleDragEnter"
-                    @dragleave="handleDragLeave"
-                    :class="[
+                  <div v-if="form.thumbnails.length < 5" @drop="handleThumbnailDrop" @dragover.prevent="handleDragOver"
+                    @dragenter.prevent="handleDragEnter" @dragleave="handleDragLeave" :class="[
                       'border-2 border-dashed rounded-xl p-6 text-center transition-all duration-200',
                       isDragging
                         ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 scale-105 shadow-lg ring-2 ring-blue-500 ring-opacity-50'
                         : 'border-gray-300 dark:border-slate-600 hover:border-blue-500 hover:bg-gray-100 dark:hover:bg-slate-700/30',
-                    ]"
-                  >
-                    <input
-                      ref="thumbnailInput"
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      @change="handleThumbnailSelect"
-                      class="hidden"
-                    />
+                    ]">
+                    <input ref="thumbnailInput" type="file" accept="image/*" multiple @change="handleThumbnailSelect"
+                      class="hidden" />
 
                     <div class="space-y-3">
-                      <UIcon
-                        name="i-heroicons-photo"
-                        :class="[
-                          'w-12 h-12 mx-auto transition-all duration-200',
-                          isDragging
-                            ? 'text-blue-500 dark:text-blue-400 scale-105 animate-bounce'
-                            : 'text-gray-400 dark:text-gray-400',
-                        ]"
-                      />
+                      <UIcon name="i-heroicons-photo" :class="[
+                        'w-12 h-12 mx-auto transition-all duration-200',
+                        isDragging
+                          ? 'text-blue-500 dark:text-blue-400 scale-105 animate-bounce'
+                          : 'text-gray-400 dark:text-gray-400',
+                      ]" />
                       <div>
-                        <p
-                          :class="[
-                            'font-medium mb-1 transition-colors duration-200',
-                            isDragging
-                              ? 'text-blue-600 dark:text-blue-400'
-                              : 'text-gray-900 dark:text-white',
-                          ]"
-                        >
+                        <p :class="[
+                          'font-medium mb-1 transition-colors duration-200',
+                          isDragging
+                            ? 'text-blue-600 dark:text-blue-400'
+                            : 'text-gray-900 dark:text-white',
+                        ]">
                           {{
                             isDragging
                               ? t("projectForm.dropActive")
@@ -236,15 +179,9 @@
                           {{ t("projectForm.fileHint") }}
                         </p>
                       </div>
-                      <ButtonsPresetButton
-                        :label="t('projectForm.addImages')"
-                        icon="i-heroicons-plus"
-                        color="primary"
-                        variant="solid"
-                        size="lg"
-                        :disabled="form.thumbnails.length >= 5"
-                        @click="$refs.thumbnailInput?.click()"
-                      />
+                      <ButtonsPresetButton :label="t('projectForm.addImages')" icon="i-heroicons-plus" color="primary"
+                        variant="solid" size="lg" :disabled="form.thumbnails.length >= 5"
+                        @click="$refs.thumbnailInput?.click()" />
                     </div>
                   </div>
 
@@ -253,40 +190,22 @@
                     <div class="flex items-center justify-between">
                       <p class="text-sm text-gray-700 dark:text-gray-300">
                         {{ form.thumbnails.length }}/5 images
-                        <span
-                          v-if="form.thumbnails.length < 2"
-                          class="text-red-400"
-                          >({{ 2 - form.thumbnails.length }} more needed)</span
-                        >
-                        <span v-else class="text-blue-600 dark:text-blue-400"
-                          >✓</span
-                        >
+                        <span v-if="form.thumbnails.length < 2" class="text-red-400">({{ 2 - form.thumbnails.length }}
+                          more needed)</span>
+                        <span v-else class="text-blue-600 dark:text-blue-400">✓</span>
                       </p>
                     </div>
 
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      <div
-                        v-for="(image, index) in form.thumbnails"
-                        :key="index"
-                        class="relative group"
-                      >
-                        <img
-                          :src="
-                            typeof image === 'string' ? image : image.preview
-                          "
-                          :alt="`Project thumbnail ${index + 1}`"
-                          class="w-full h-32 object-cover rounded-lg border border-gray-300 dark:border-slate-600"
-                        />
-                        <button
-                          type="button"
-                          @click="removeThumbnail(index)"
-                          class="absolute -top-2 -right-2 w-6 h-6 bg-red-600 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
+                      <div v-for="(image, index) in form.thumbnails" :key="index" class="relative group">
+                        <img :src="typeof image === 'string' ? image : image.preview
+                          " :alt="`Project thumbnail ${index + 1}`"
+                          class="w-full h-32 object-cover rounded-lg border border-gray-300 dark:border-slate-600" />
+                        <button type="button" @click="removeThumbnail(index)"
+                          class="absolute -top-2 -right-2 w-6 h-6 bg-red-600 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
                           <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
                         </button>
-                        <div
-                          class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded"
-                        >
+                        <div class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
                           {{ index + 1 }}
                         </div>
                       </div>
@@ -294,14 +213,9 @@
                   </div>
 
                   <!-- No images state -->
-                  <div
-                    v-else
-                    class="text-center py-4 bg-gray-100 dark:bg-slate-700/30 rounded-lg border border-gray-300 dark:border-slate-600"
-                  >
-                    <UIcon
-                      name="i-heroicons-exclamation-triangle"
-                      class="w-8 h-8 text-yellow-400 mx-auto mb-2"
-                    />
+                  <div v-else
+                    class="text-center py-4 bg-gray-100 dark:bg-slate-700/30 rounded-lg border border-gray-300 dark:border-slate-600">
+                    <UIcon name="i-heroicons-exclamation-triangle" class="w-8 h-8 text-yellow-400 mx-auto mb-2" />
                     <p class="text-yellow-600 dark:text-yellow-400 font-medium">
                       No images uploaded
                     </p>
@@ -316,22 +230,14 @@
               <div class="grid md:grid-cols-2 gap-6">
                 <!-- Category -->
                 <div>
-                  <label
-                    class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2"
-                  >
+                  <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                     Category *
                   </label>
-                  <select
-                    v-model="form.category"
+                  <select v-model="form.category"
                     class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    required
-                  >
+                    required>
                     <option disabled value="">Select a category</option>
-                    <option
-                      v-for="category in availableCategories"
-                      :key="category"
-                      :value="category"
-                    >
+                    <option v-for="category in availableCategories" :key="category" :value="category">
                       {{ category }}
                     </option>
                   </select>
@@ -339,25 +245,14 @@
 
                 <!-- Academic Year -->
                 <div>
-                  <label
-                    class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2"
-                  >
+                  <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                     Academic Year *
                   </label>
-                  <input
-                    v-model="form.academicYear"
-                    type="text"
-                    list="academic-year-options"
+                  <input v-model="form.academicYear" type="text" list="academic-year-options"
                     class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    placeholder="e.g., 2025-2026"
-                    required
-                  />
+                    placeholder="e.g., 2025-2026" required />
                   <datalist id="academic-year-options">
-                    <option
-                      v-for="year in academicYearOptions"
-                      :key="year"
-                      :value="year"
-                    />
+                    <option v-for="year in academicYearOptions" :key="year" :value="year" />
                   </datalist>
                 </div>
               </div>
@@ -371,58 +266,34 @@
 
               <!-- Technologies -->
               <div>
-                <label
-                  class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3"
-                >
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
                   Technologies Used *
                 </label>
                 <div class="space-y-3">
                   <div class="relative tech-suggestion-container">
                     <div class="flex gap-2">
-                      <input
-                        v-model="techInput"
-                        type="text"
-                        placeholder="e.g., React, Node.js, MongoDB..."
+                      <input v-model="techInput" type="text" placeholder="e.g., React, Node.js, MongoDB..."
                         class="flex-1 px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                        @keyup.enter="addTechnology"
-                        @focus="showTechSuggestions = true"
-                        @keydown.escape="showTechSuggestions = false"
-                      />
-                      <ButtonsPresetButton
-                        label="Add"
-                        icon="i-heroicons-plus"
-                        color="primary"
-                        variant="solid"
-                        size="lg"
-                        @click="addTechnology"
-                      />
+                        @keyup.enter="addTechnology" @focus="showTechSuggestions = true"
+                        @keydown.escape="showTechSuggestions = false" />
+                      <ButtonsPresetButton label="Add" icon="i-heroicons-plus" color="primary" variant="solid" size="lg"
+                        @click="addTechnology" />
                     </div>
 
                     <!-- Technology Suggestions Dropdown -->
-                    <div
-                      v-if="showTechSuggestions && techSuggestions.length > 0"
-                      class="absolute top-full left-0 right-0 z-50 mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg max-h-48 overflow-y-auto"
-                    >
-                      <div
-                        v-for="suggestion in techSuggestions"
-                        :key="suggestion"
+                    <div v-if="showTechSuggestions && techSuggestions.length > 0"
+                      class="absolute top-full left-0 right-0 z-50 mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                      <div v-for="suggestion in techSuggestions" :key="suggestion"
                         @click="selectTechSuggestion(suggestion)"
-                        class="px-4 py-2 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer border-b border-gray-100 dark:border-slate-700 last:border-b-0 transition-colors"
-                      >
-                        <span
-                          class="font-medium text-blue-900 dark:text-white"
-                          >{{ suggestion }}</span
-                        >
+                        class="px-4 py-2 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer border-b border-gray-100 dark:border-slate-700 last:border-b-0 transition-colors">
+                        <span class="font-medium text-blue-900 dark:text-white">{{ suggestion }}</span>
                       </div>
                     </div>
                   </div>
                   <div class="flex flex-wrap gap-2">
-                    <UBadge
-                      v-for="(tech, idx) in form.technologies"
-                      :key="idx"
+                    <UBadge v-for="(tech, idx) in form.technologies" :key="idx"
                       class="cursor-pointer hover:opacity-80 bg-blue-900 text-white"
-                      @click="form.technologies.splice(idx, 1)"
-                    >
+                      @click="form.technologies.splice(idx, 1)">
                       {{ tech }}
                       <UIcon name="i-heroicons-x-mark" class="w-4 h-4 ml-1" />
                     </UBadge>
@@ -432,58 +303,33 @@
 
               <!-- Tags -->
               <div>
-                <label
-                  class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3"
-                >
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
                   Tags
                 </label>
                 <div class="space-y-3">
                   <div class="relative tag-suggestion-container">
                     <div class="flex gap-2">
-                      <input
-                        v-model="tagInput"
-                        type="text"
-                        placeholder="e.g., AI, Machine Learning, Web Development..."
+                      <input v-model="tagInput" type="text" placeholder="e.g., AI, Machine Learning, Web Development..."
                         class="flex-1 px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                        @keyup.enter="addTag"
-                        @focus="showTagSuggestions = true"
-                        @keydown.escape="showTagSuggestions = false"
-                      />
-                      <ButtonsPresetButton
-                        label="Add"
-                        icon="i-heroicons-plus"
-                        color="primary"
-                        variant="solid"
-                        size="lg"
-                        @click="addTag"
-                      />
+                        @keyup.enter="addTag" @focus="showTagSuggestions = true"
+                        @keydown.escape="showTagSuggestions = false" />
+                      <ButtonsPresetButton label="Add" icon="i-heroicons-plus" color="primary" variant="solid" size="lg"
+                        @click="addTag" />
                     </div>
 
                     <!-- Tag Suggestions Dropdown -->
-                    <div
-                      v-if="showTagSuggestions && tagSuggestions.length > 0"
-                      class="absolute top-full left-0 right-0 z-50 mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg max-h-48 overflow-y-auto"
-                    >
-                      <div
-                        v-for="suggestion in tagSuggestions"
-                        :key="suggestion"
+                    <div v-if="showTagSuggestions && tagSuggestions.length > 0"
+                      class="absolute top-full left-0 right-0 z-50 mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                      <div v-for="suggestion in tagSuggestions" :key="suggestion"
                         @click="selectTagSuggestion(suggestion)"
-                        class="px-4 py-2 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer border-b border-gray-100 dark:border-slate-700 last:border-b-0 transition-colors"
-                      >
-                        <span
-                          class="font-medium text-blue-900 dark:text-white"
-                          >{{ suggestion }}</span
-                        >
+                        class="px-4 py-2 hover:bg-blue-50 dark:hover:bg-slate-700 cursor-pointer border-b border-gray-100 dark:border-slate-700 last:border-b-0 transition-colors">
+                        <span class="font-medium text-blue-900 dark:text-white">{{ suggestion }}</span>
                       </div>
                     </div>
                   </div>
                   <div class="flex flex-wrap gap-2">
-                    <UBadge
-                      v-for="(tag, idx) in form.tags"
-                      :key="idx"
-                      class="cursor-pointer hover:opacity-80 bg-blue-900 text-white"
-                      @click="form.tags.splice(idx, 1)"
-                    >
+                    <UBadge v-for="(tag, idx) in form.tags" :key="idx"
+                      class="cursor-pointer hover:opacity-80 bg-blue-900 text-white" @click="form.tags.splice(idx, 1)">
                       {{ tag }}
                       <UIcon name="i-heroicons-x-mark" class="w-4 h-4 ml-1" />
                     </UBadge>
@@ -493,32 +339,20 @@
 
               <!-- GitHub URL -->
               <div>
-                <label
-                  class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2"
-                >
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   GitHub Repository URL
                 </label>
-                <input
-                  v-model="form.githubUrl"
-                  type="url"
-                  placeholder="https://github.com/username/project"
-                  class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                />
+                <input v-model="form.githubUrl" type="url" placeholder="https://github.com/username/project"
+                  class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" />
               </div>
 
               <!-- Demo URL -->
               <div>
-                <label
-                  class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2"
-                >
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                   Live Demo URL
                 </label>
-                <input
-                  v-model="form.demoUrl"
-                  type="url"
-                  placeholder="https://your-project-demo.com"
-                  class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                />
+                <input v-model="form.demoUrl" type="url" placeholder="https://your-project-demo.com"
+                  class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" />
               </div>
             </div>
 
@@ -550,9 +384,7 @@
 
               <!-- Team Members -->
               <div>
-                <label
-                  class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3"
-                >
+                <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-3">
                   Team Members ({{ form.teamMembers.length }})
                 </label>
                 <div class="space-y-4">
@@ -564,63 +396,41 @@
                     <!-- Member Search -->
                     <div class="mb-3">
                       <div class="relative">
-                        <input
-                          v-model="memberSearchQuery"
-                          type="text"
-                          placeholder="Search members by name or role..."
+                        <input v-model="memberSearchQuery" type="text" placeholder="Search members by name or role..."
                           class="w-full px-3 py-2 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                          @keydown.escape="memberSearchQuery = ''"
-                        />
-                        <UIcon
-                          v-if="isSearchingMembers"
-                          name="i-heroicons-arrow-path"
-                          class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-500 animate-spin"
-                        />
+                          @keydown.escape="memberSearchQuery = ''" />
+                        <UIcon v-if="isSearchingMembers" name="i-heroicons-arrow-path"
+                          class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-500 animate-spin" />
                       </div>
                     </div>
-                    <div
-                      class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
-                    >
-                      <div
-                        v-for="suggestedMember in filteredSuggestedMembers"
-                        :key="suggestedMember.id"
-                        @click="toggleTeamMember(suggestedMember)"
-                        :class="[
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                      <div v-for="suggestedMember in filteredSuggestedMembers" :key="suggestedMember.id"
+                        @click="toggleTeamMember(suggestedMember)" :class="[
                           'p-3 rounded-lg border-2 cursor-pointer transition-all hover:scale-105',
                           isTeamMemberSelected(suggestedMember)
                             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                             : 'border-gray-200 dark:border-slate-600 hover:border-gray-300 dark:hover:border-slate-500',
-                        ]"
-                      >
+                        ]">
                         <div class="flex items-center gap-2">
-                          <img
-                            :src="suggestedMember.avatar"
+                          <img :src="suggestedMember.avatar"
                             :alt="`${suggestedMember.firstName} ${suggestedMember.lastName}`"
-                            class="w-8 h-8 rounded-full"
-                          />
+                            class="w-8 h-8 rounded-full" />
                           <div class="flex-1 min-w-0">
-                            <p
-                              class="text-sm font-medium text-gray-900 dark:text-white truncate"
-                            >
+                            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
                               {{ suggestedMember.firstName }}
                               {{ suggestedMember.lastName }}
                             </p>
-                            <p
-                              class="text-xs text-gray-500 dark:text-gray-400 truncate"
-                            >
+                            <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
                               {{ suggestedMember.role }}
                             </p>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <p
-                      v-if="
-                        filteredSuggestedMembers.length === 0 &&
-                        debouncedMemberSearchQuery
-                      "
-                      class="text-sm text-gray-500 dark:text-gray-400 text-center py-4"
-                    >
+                    <p v-if="
+                      filteredSuggestedMembers.length === 0 &&
+                      debouncedMemberSearchQuery
+                    " class="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
                       No members found matching "{{
                         debouncedMemberSearchQuery
                       }}"
@@ -629,35 +439,21 @@
 
                   <!-- Selected Team Members Display -->
                   <div v-if="form.teamMembers.length > 0" class="space-y-2">
-                    <p
-                      class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                    >
+                    <p class="text-sm font-medium text-gray-700 dark:text-gray-200">
                       Selected Team Members:
                     </p>
                     <div class="flex flex-wrap gap-2">
-                      <div
-                        v-for="(member, idx) in form.teamMembers"
-                        :key="idx"
-                        class="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg"
-                      >
-                        <img
-                          v-if="member.avatar"
-                          :src="member.avatar"
-                          :alt="member.name"
-                          class="w-6 h-6 rounded-full"
-                        />
-                        <span
-                          class="text-sm font-medium text-blue-900 dark:text-blue-100"
-                        >
+                      <div v-for="(member, idx) in form.teamMembers" :key="idx"
+                        class="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <img v-if="member.avatar" :src="member.avatar" :alt="member.name"
+                          class="w-6 h-6 rounded-full" />
+                        <span class="text-sm font-medium text-blue-900 dark:text-blue-100">
                           {{
                             typeof member === "string" ? member : member.name
                           }}
                         </span>
-                        <button
-                          type="button"
-                          @click="form.teamMembers.splice(idx, 1)"
-                          class="text-blue-400 hover:text-red-500 transition-colors"
-                        >
+                        <button type="button" @click="form.teamMembers.splice(idx, 1)"
+                          class="text-blue-400 hover:text-red-500 transition-colors">
                           <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
                         </button>
                       </div>
@@ -668,80 +464,54 @@
 
               <!-- Project Features -->
               <div>
-                <div
-                  class="flex flex-wrap items-center justify-between gap-2 mb-3"
-                >
-                  <label
-                    class="block text-sm font-semibold text-gray-700 dark:text-gray-200"
-                  >
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                  <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200">
                     Project Features / Milestones
                   </label>
-                  <span
-                    :class="[
-                      'text-xs font-medium',
-                      featureCountState.color === 'success'
-                        ? 'text-green-600 dark:text-green-400'
-                        : featureCountState.color === 'warning'
-                          ? 'text-amber-600 dark:text-amber-400'
-                          : 'text-red-600 dark:text-red-400',
-                    ]"
-                  >
+                  <span :class="[
+                    'text-xs font-medium',
+                    featureCountState.color === 'success'
+                      ? 'text-green-600 dark:text-green-400'
+                      : featureCountState.color === 'warning'
+                        ? 'text-amber-600 dark:text-amber-400'
+                        : 'text-red-600 dark:text-red-400',
+                  ]">
                     {{ featureCountState.message }}
                   </span>
                 </div>
                 <div class="space-y-4">
                   <!-- Icon Selection -->
                   <div>
-                    <label
-                      class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2"
-                    >
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
                       Select Icon
                     </label>
                     <!-- Icon Search -->
                     <div class="mb-3">
-                      <input
-                        v-model="iconSearchQuery"
-                        type="text"
-                        placeholder="Search icons..."
-                        class="w-full px-3 py-2 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                      />
+                      <input v-model="iconSearchQuery" type="text" placeholder="Search icons..."
+                        class="w-full px-3 py-2 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" />
                     </div>
                     <div class="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
-                      <button
-                        v-for="iconOption in filteredIcons"
-                        :key="iconOption.name"
-                        type="button"
-                        @click="featureInput.icon = iconOption.name"
-                        :class="[
+                      <button v-for="iconOption in filteredIcons" :key="iconOption.name" type="button"
+                        @click="featureInput.icon = iconOption.name" :class="[
                           'p-2 rounded-lg border-2 transition-all hover:scale-105',
                           featureInput.icon === iconOption.name
                             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
                             : 'border-gray-200 dark:border-slate-600 hover:border-gray-300',
-                        ]"
-                        :title="iconOption.label"
-                      >
-                        <UIcon
-                          :name="iconOption.name"
-                          class="w-5 h-5 text-gray-900 dark:text-white"
-                        />
+                        ]" :title="iconOption.label">
+                        <UIcon :name="iconOption.name" class="w-5 h-5 text-gray-900 dark:text-white" />
                       </button>
                     </div>
-                    <p
-                      v-if="filteredIcons.length === 0 && iconSearchQuery"
-                      class="text-sm text-gray-500 dark:text-gray-400 text-center py-2"
-                    >
+                    <p v-if="filteredIcons.length === 0 && iconSearchQuery"
+                      class="text-sm text-gray-500 dark:text-gray-400 text-center py-2">
                       No icons found matching "{{ iconSearchQuery }}"
                     </p>
                   </div>
 
                   <!-- Feature Details -->
                   <div class="grid grid-cols-1 md:grid-cols-1 gap-3">
-                    <input
-                      v-model="featureInput.name"
-                      type="text"
+                    <input v-model="featureInput.name" type="text"
                       placeholder="Feature title (e.g., User Authentication)"
-                      class="px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    />
+                      class="px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" />
                     <!-- <input
                                             type="date"
                       class="px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
@@ -749,91 +519,48 @@
                   </div>
 
                   <div class="flex gap-2">
-                    <textarea
-                      v-model="featureInput.description"
-                      placeholder="Feature description..."
-                      rows="2"
-                      class="flex-1 px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-none"
-                    ></textarea>
+                    <textarea v-model="featureInput.description" placeholder="Feature description..." rows="2"
+                      class="flex-1 px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-none"></textarea>
                   </div>
 
                   <div class="flex flex-col sm:flex-row gap-2">
-                    <ButtonsPresetButton
-                      :label="
-                        editingFeatureIndex >= 0
-                          ? 'Update Feature'
-                          : 'Add Feature'
-                      "
-                      :icon="
-                        editingFeatureIndex >= 0
-                          ? 'i-heroicons-check'
-                          : 'i-heroicons-plus'
-                      "
-                      color="primary"
-                      variant="solid"
-                      size="lg"
-                      :disabled="
-                        !featureInput.name ||
-                        !featureInput.description ||
-                        (form.feature.length >= MAX_FEATURES &&
-                          editingFeatureIndex < 0)
-                      "
-                      @click="addFeature"
-                    />
-                    <ButtonsPresetButton
-                      v-if="editingFeatureIndex >= 0"
-                      label="Cancel"
-                      icon="i-heroicons-x-mark"
-                      color="gray"
-                      variant="soft"
-                      size="lg"
-                      @click="cancelEditFeature"
-                    />
+                    <ButtonsPresetButton :label="editingFeatureIndex >= 0
+                      ? 'Update Feature'
+                      : 'Add Feature'
+                      " :icon="editingFeatureIndex >= 0
+                        ? 'i-heroicons-check'
+                        : 'i-heroicons-plus'
+                        " color="primary" variant="solid" size="lg" :disabled="!featureInput.name ||
+                          !featureInput.description ||
+                          (form.feature.length >= MAX_FEATURES &&
+                            editingFeatureIndex < 0)
+                          " @click="addFeature" />
+                    <ButtonsPresetButton v-if="editingFeatureIndex >= 0" label="Cancel" icon="i-heroicons-x-mark"
+                      color="gray" variant="soft" size="lg" @click="cancelEditFeature" />
                   </div>
 
                   <div class="space-y-2" v-if="form.feature.length > 0">
-                    <div
-                      v-for="(feature, idx) in form.feature"
-                      :key="idx"
-                      class="flex items-start justify-between px-4 py-3 bg-gray-100 dark:bg-slate-700/50 rounded-lg border border-gray-200 dark:border-slate-600"
-                    >
+                    <div v-for="(feature, idx) in form.feature" :key="idx"
+                      class="flex items-start justify-between px-4 py-3 bg-gray-100 dark:bg-slate-700/50 rounded-lg border border-gray-200 dark:border-slate-600">
                       <div class="flex-1">
                         <div class="flex items-center gap-2 mb-1">
-                          <UIcon
-                            :name="feature.icon"
-                            class="w-4 h-4 text-blue-400"
-                          />
-                          <span
-                            class="font-medium text-gray-900 dark:text-white"
-                            >{{ feature.name }}</span
-                          >
+                          <UIcon :name="feature.icon" class="w-4 h-4 text-blue-400" />
+                          <span class="font-medium text-gray-900 dark:text-white">{{ feature.name }}</span>
                         </div>
                         <p class="text-sm text-gray-600 dark:text-gray-300">
                           {{ feature.description }}
                         </p>
                       </div>
                       <div class="flex gap-1 ml-2">
-                        <button
-                          type="button"
-                          @click="editFeature(idx)"
+                        <button type="button" @click="editFeature(idx)"
                           class="text-gray-500 dark:text-gray-400 hover:text-blue-500 transition-colors"
-                          title="Edit feature"
-                        >
-                          <UIcon
-                            name="i-heroicons-pencil-square-20-solid"
-                            class="w-4 h-4"
-                          />
+                          title="Edit feature">
+                          <UIcon name="i-heroicons-pencil-square-20-solid" class="w-4 h-4" />
                         </button>
-                        <button
-                          type="button"
-                          @click="removeFeature(idx)"
+                        <button type="button" @click="removeFeature(idx)"
                           class="text-gray-500 dark:text-gray-400 hover:text-red-400 transition-colors"
-                          title="Remove feature"
-                        >
-                          <UIcon
-                            name="i-heroicons-trash-20-solid"
-                            class="w-4 h-4"
-                          />
+                          title="Remove feature">
+                          <UIcon name="i-heroicons-trash-20-solid" class="w-4 h-4" />
                         </button>
                       </div>
                     </div>
@@ -844,46 +571,30 @@
               <!-- Duration and Course -->
               <div class="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label
-                    class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2"
-                  >
+                  <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                     Project Duration *
                   </label>
-                  <select
-                    v-model="form.duration"
+                  <select v-model="form.duration"
                     class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    required
-                  >
+                    required>
                     <option value="">Select duration</option>
-                    <option
-                      v-for="duration in durationOptions"
-                      :key="duration"
-                      :value="duration"
-                    >
+                    <option v-for="duration in durationOptions" :key="duration" :value="duration">
                       {{ duration }}
                     </option>
                   </select>
                 </div>
 
                 <div>
-                  <label
-                    class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2"
-                  >
+                  <label class="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
                     Course / Subject *
                   </label>
 
-                  <select
-                    v-model="form.course"
-                    required
-                    class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                  >
+                  <select v-model="form.course" required
+                    class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
                     <option disabled value="">Select a course</option>
 
-                    <option
-                      v-for="course in availableCourses"
-                      :key="course.id || course.name || course"
-                      :value="course.id || course.name || course"
-                    >
+                    <option v-for="course in availableCourses" :key="course.id || course.name || course"
+                      :value="course.id || course.name || course">
                       {{ course.name }}
                     </option>
                   </select>
@@ -899,42 +610,26 @@
 
               <!-- Project Preview -->
               <div
-                class="bg-gray-100 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 rounded-xl p-6 space-y-4"
-              >
+                class="bg-gray-100 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 rounded-xl p-6 space-y-4">
                 <div class="flex items-start justify-between">
                   <div class="space-y-2">
-                    <div
-                      v-if="form.thumbnails.length > 0"
-                      class="flex gap-2 mb-3"
-                    >
-                      <div
-                        v-for="(thumbnail, index) in form.thumbnails.slice(
-                          0,
-                          3,
-                        )"
-                        :key="index"
-                        class="w-12 h-12 rounded-lg overflow-hidden border border-gray-300 dark:border-slate-600"
-                      >
-                        <img
-                          :src="
-                            typeof thumbnail === 'string'
-                              ? thumbnail
-                              : thumbnail.preview
-                          "
-                          :alt="`Thumbnail ${index + 1}`"
-                          class="w-full h-full object-cover"
-                        />
+                    <div v-if="form.thumbnails.length > 0" class="flex gap-2 mb-3">
+                      <div v-for="(thumbnail, index) in form.thumbnails.slice(
+                        0,
+                        3,
+                      )" :key="index"
+                        class="w-12 h-12 rounded-lg overflow-hidden border border-gray-300 dark:border-slate-600">
+                        <img :src="typeof thumbnail === 'string'
+                          ? thumbnail
+                          : thumbnail.preview
+                          " :alt="`Thumbnail ${index + 1}`" class="w-full h-full object-cover" />
                       </div>
-                      <div
-                        v-if="form.thumbnails.length > 3"
-                        class="w-12 h-12 rounded-lg bg-gray-300 dark:bg-slate-600 flex items-center justify-center text-xs text-gray-600 dark:text-gray-400"
-                      >
+                      <div v-if="form.thumbnails.length > 3"
+                        class="w-12 h-12 rounded-lg bg-gray-300 dark:bg-slate-600 flex items-center justify-center text-xs text-gray-600 dark:text-gray-400">
                         +{{ form.thumbnails.length - 3 }}
                       </div>
                     </div>
-                    <h3
-                      class="text-2xl font-semibold text-gray-900 dark:text-white"
-                    >
+                    <h3 class="text-2xl font-semibold text-gray-900 dark:text-white">
                       {{ form.name }}
                     </h3>
                     <p class="text-gray-600 dark:text-gray-400">
@@ -947,21 +642,13 @@
                   {{ form.description }}
                 </p>
 
-                <div
-                  class="space-y-3 border-t border-gray-200 dark:border-slate-600 pt-4"
-                >
+                <div class="space-y-3 border-t border-gray-200 dark:border-slate-600 pt-4">
                   <div v-if="form.technologies.length > 0">
                     <p class="text-xs text-gray-500 dark:text-gray-500">
                       Technologies
                     </p>
                     <div class="flex flex-wrap gap-2 mt-1">
-                      <UBadge
-                        v-for="tech in form.technologies"
-                        :key="tech"
-                        color="primary"
-                        variant="soft"
-                        size="sm"
-                      >
+                      <UBadge v-for="tech in form.technologies" :key="tech" color="primary" variant="soft" size="sm">
                         {{ tech }}
                       </UBadge>
                     </div>
@@ -970,13 +657,7 @@
                   <div v-if="form.technologies.length > 0">
                     <p class="text-xs text-gray-500 dark:text-gray-500">Tags</p>
                     <div class="flex flex-wrap gap-2 mt-1">
-                      <UBadge
-                        v-for="tag in form.tags"
-                        :key="tag"
-                        color="primary"
-                        variant="soft"
-                        size="sm"
-                      >
+                      <UBadge v-for="tag in form.tags" :key="tag" color="primary" variant="soft" size="sm">
                         {{ tag }}
                       </UBadge>
                     </div>
@@ -987,31 +668,18 @@
                       Team Members
                     </p>
                     <div class="flex flex-wrap gap-2 mt-1">
-                      <div
-                        v-for="member in form.teamMembers"
-                        :key="typeof member === 'string' ? member : member.name"
-                        class="flex items-center gap-2 px-3 py-1 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg"
-                      >
-                        <img
-                          v-if="typeof member === 'object' && member.avatar"
-                          :src="member.avatar"
-                          :alt="member.name"
-                          class="w-5 h-5 rounded-full"
-                        />
-                        <UIcon
-                          v-else
-                          name="i-heroicons-user-circle"
-                          class="w-5 h-5 text-blue-500"
-                        />
+                      <div v-for="member in form.teamMembers" :key="typeof member === 'string' ? member : member.name"
+                        class="flex items-center gap-2 px-3 py-1 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <img v-if="typeof member === 'object' && member.avatar" :src="member.avatar" :alt="member.name"
+                          class="w-5 h-5 rounded-full" />
+                        <UIcon v-else name="i-heroicons-user-circle" class="w-5 h-5 text-blue-500" />
                         <span class="text-sm text-blue-700 dark:text-blue-300">
                           {{
                             typeof member === "string" ? member : member.name
                           }}
                         </span>
-                        <span
-                          v-if="typeof member === 'object' && member.role"
-                          class="text-xs text-blue-500 dark:text-blue-400"
-                        >
+                        <span v-if="typeof member === 'object' && member.role"
+                          class="text-xs text-blue-500 dark:text-blue-400">
                           ({{ member.role }})
                         </span>
                       </div>
@@ -1032,30 +700,16 @@
                       Project Features
                     </p>
                     <div class="space-y-2 mt-2">
-                      <div
-                        v-for="(feature, index) in form.feature.slice(0, 3)"
-                        :key="index"
-                        class="flex items-center gap-2 p-2 bg-gray-50 dark:bg-slate-600/30 rounded-lg"
-                      >
-                        <UIcon
-                          :name="feature.icon"
-                          class="w-4 h-4 text-blue-500"
-                        />
-                        <span
-                          class="text-sm font-medium text-gray-900 dark:text-white"
-                        >
+                      <div v-for="(feature, index) in form.feature.slice(0, 3)" :key="index"
+                        class="flex items-center gap-2 p-2 bg-gray-50 dark:bg-slate-600/30 rounded-lg">
+                        <UIcon :name="feature.icon" class="w-4 h-4 text-blue-500" />
+                        <span class="text-sm font-medium text-gray-900 dark:text-white">
                           {{ feature.name }}
                         </span>
-                        <UBadge
-                          variant="soft"
-                          size="xs"
-                        >
+                        <UBadge variant="soft" size="xs">
                         </UBadge>
                       </div>
-                      <p
-                        v-if="form.feature.length > 3"
-                        class="text-xs text-gray-400 text-center"
-                      >
+                      <p v-if="form.feature.length > 3" class="text-xs text-gray-400 text-center">
                         +{{ form.feature.length - 3 }} more features
                       </p>
                     </div>
@@ -1065,11 +719,8 @@
 
               <!-- Terms Agreement -->
               <label class="flex items-start gap-3 cursor-pointer">
-                <input
-                  v-model="agreedToTerms"
-                  type="checkbox"
-                  class="w-4 h-4 mt-1 text-blue-600 rounded border-gray-300 dark:border-slate-600"
-                />
+                <input v-model="agreedToTerms" type="checkbox"
+                  class="w-4 h-4 mt-1 text-blue-600 rounded border-gray-300 dark:border-slate-600" />
                 <span class="text-sm text-gray-700 dark:text-gray-300">
                   {{
                     editMode
@@ -1081,42 +732,19 @@
             </div>
 
             <!-- Navigation Buttons -->
-            <div
-              class="flex justify-between pt-8 border-t border-gray-200 dark:border-slate-700"
-            >
-              <ButtonsPresetButton
-                v-if="currentStep > 0"
-                preset="back"
-                @click="prevStep"
-              />
+            <div class="flex justify-between pt-8 border-t border-gray-200 dark:border-slate-700">
+              <ButtonsPresetButton v-if="currentStep > 0" preset="back" @click="prevStep" />
 
               <div class="ml-auto flex gap-3">
-                <ButtonsPresetButton
-                  v-if="editMode && currentStep < steps.length - 1"
-                  :label="t('projectForm.finishUpdate')"
-                  icon="i-heroicons-forward"
-                  color="gray"
-                  variant="ghost"
-                  @click="skipToReview"
-                />
-                <ButtonsPresetButton
-                  v-if="currentStep < steps.length - 1"
-                  :label="t('projectForm.next')"
-                  :icon="`i-heroicons-arrow-right`"
-                  color="primary"
-                  variant="solid"
-                  size="md"
-                  :disabled="!canProceedToNextStep"
-                  @click="nextStep"
-                />
+                <ButtonsPresetButton v-if="editMode && currentStep < steps.length - 1"
+                  :label="t('projectForm.finishUpdate')" icon="i-heroicons-forward" color="gray" variant="ghost"
+                  @click="skipToReview" />
+                <ButtonsPresetButton v-if="currentStep < steps.length - 1" :label="t('projectForm.next')"
+                  :icon="`i-heroicons-arrow-right`" color="primary" variant="solid" size="md"
+                  :disabled="!canProceedToNextStep" @click="nextStep" />
 
-                <ButtonsPresetButton
-                  v-if="currentStep === steps.length - 1"
-                  :preset="editMode ? 'confirm' : 'submit'"
-                  :disabled="!canProceedToNextStep || isSubmitting"
-                  :loading="isSubmitting"
-                  @click="submitForm"
-                >
+                <ButtonsPresetButton v-if="currentStep === steps.length - 1" :preset="editMode ? 'confirm' : 'submit'"
+                  :disabled="!canProceedToNextStep || isSubmitting" :loading="isSubmitting" @click="submitForm">
                   {{
                     isSubmitting
                       ? editMode
@@ -1135,15 +763,9 @@
       <!-- End of authenticated content wrapper -->
 
       <!-- Loading/Auth Check State -->
-      <div
-        v-if="showAuthModal"
-        class="min-h-screen flex items-center justify-center"
-      >
+      <div v-if="showAuthModal" class="min-h-screen flex items-center justify-center">
         <div class="text-center">
-          <UIcon
-            name="i-heroicons-lock-closed"
-            class="w-16 h-16 text-blue-500 mx-auto mb-4"
-          />
+          <UIcon name="i-heroicons-lock-closed" class="w-16 h-16 text-blue-500 mx-auto mb-4" />
           <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
             Authentication Required
           </h2>
@@ -1161,37 +783,23 @@
 
     <!-- Draft Restoration Modal -->
     <Teleport to="body">
-      <Transition
-        enter-active-class="transition duration-200 ease-out"
-        enter-from-class="opacity-0"
-        enter-to-class="opacity-100"
-        leave-active-class="transition duration-150 ease-in"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
-      >
-        <div
-          v-if="showDraftModal"
+      <Transition enter-active-class="transition duration-200 ease-out" enter-from-class="opacity-0"
+        enter-to-class="opacity-100" leave-active-class="transition duration-150 ease-in" leave-from-class="opacity-100"
+        leave-to-class="opacity-0">
+        <div v-if="showDraftModal"
           class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-          @click.self="dismissDraft"
-        >
+          @click.self="dismissDraft">
           <div
             class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 dark:border-slate-700 transform transition-all"
-            @click.stop
-          >
+            @click.stop>
             <div class="p-6">
               <div class="flex items-center gap-3 mb-4">
                 <div
-                  class="flex-shrink-0 w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center"
-                >
-                  <UIcon
-                    name="i-heroicons-document-text"
-                    class="w-6 h-6 text-amber-600 dark:text-amber-400"
-                  />
+                  class="flex-shrink-0 w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                  <UIcon name="i-heroicons-document-text" class="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div class="flex-1">
-                  <h3
-                    class="text-lg font-semibold text-gray-900 dark:text-white"
-                  >
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                     Draft Found
                   </h3>
                   <p class="text-sm text-gray-500 dark:text-gray-400">
@@ -1202,10 +810,8 @@
                     }}
                   </p>
                 </div>
-                <button
-                  @click="dismissDraft"
-                  class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
-                >
+                <button @click="dismissDraft"
+                  class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
                   <UIcon name="i-heroicons-x-mark" class="w-5 h-5" />
                 </button>
               </div>
@@ -1216,22 +822,10 @@
               </p>
 
               <div class="flex gap-3">
-                <ButtonsPresetButton
-                  label="Dismiss"
-                  icon="i-heroicons-x-mark"
-                  color="gray"
-                  variant="soft"
-                  class="flex-1"
-                  @click="dismissDraft"
-                />
-                <ButtonsPresetButton
-                  label="Restore Draft"
-                  icon="i-heroicons-arrow-path"
-                  color="primary"
-                  variant="solid"
-                  class="flex-1"
-                  @click="restoreDraft"
-                />
+                <ButtonsPresetButton label="Dismiss" icon="i-heroicons-x-mark" color="gray" variant="soft"
+                  class="flex-1" @click="dismissDraft" />
+                <ButtonsPresetButton label="Restore Draft" icon="i-heroicons-arrow-path" color="primary" variant="solid"
+                  class="flex-1" @click="restoreDraft" />
               </div>
             </div>
           </div>
@@ -1373,14 +967,14 @@ const loadProjectForEditing = async (projectId) => {
       const courseValue =
         typeof project.course === "object"
           ? project.course.name ||
-            project.course.id ||
-            project.course.code ||
-            ""
+          project.course.id ||
+          project.course.code ||
+          ""
           : project.course ||
-            project.courseName ||
-            project.courseId ||
-            project.courseCode ||
-            "";
+          project.courseName ||
+          project.courseId ||
+          project.courseCode ||
+          "";
 
       const durationValue =
         project.duration ||
@@ -1479,17 +1073,15 @@ const featureCountState = computed(() => {
   if (count < MIN_FEATURES) {
     return {
       color: "warning",
-      message: `${count}/${MIN_FEATURES} added · need ${
-        MIN_FEATURES - count
-      } more`,
+      message: `${count}/${MIN_FEATURES} added · need ${MIN_FEATURES - count
+        } more`,
     };
   }
   if (count > MAX_FEATURES) {
     return {
       color: "error",
-      message: `${count}/${MAX_FEATURES} · remove ${
-        count - MAX_FEATURES
-      } to continue`,
+      message: `${count}/${MAX_FEATURES} · remove ${count - MAX_FEATURES
+        } to continue`,
     };
   }
   return {
@@ -2114,8 +1706,7 @@ const submitForm = async () => {
         `https://${form.name.toLowerCase().replace(/\s+/g, "-")}.demo.com`,
       githubUrl:
         form.githubUrl ||
-        `https://github.com/${
-          authStore.user?.username || "user"
+        `https://github.com/${authStore.user?.username || "user"
         }/${form.name.toLowerCase().replace(/\s+/g, "-")}`,
       images: form.thumbnails.map((t) => (typeof t === "string" ? t : t.file)),
       tags: form.tags,
@@ -2175,9 +1766,8 @@ const submitForm = async () => {
     // Show success message with toast
     toast.add({
       title: "Success!",
-      description: `Project ${
-        editMode.value ? "updated" : "created"
-      } successfully. Redirecting...`,
+      description: `Project ${editMode.value ? "updated" : "created"
+        } successfully. Redirecting...`,
       color: "success",
       timeout: 2000,
     });
@@ -2258,7 +1848,7 @@ const skipToReview = () => {
 };
 
 useHead({
-  title: "Create Project - GIC Student Portal",
+  title: "Create Project - GIC Showcase",
   meta: [
     {
       name: "description",
@@ -2274,6 +1864,7 @@ useHead({
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

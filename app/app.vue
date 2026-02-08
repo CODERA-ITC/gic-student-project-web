@@ -6,7 +6,7 @@
 
 <script setup>
 useHead({
-  title: "GIC Student Portal - Showcase Your Innovation",
+  title: "GIC Showcase - Showcase Your Innovation",
   meta: [
     {
       name: "description",

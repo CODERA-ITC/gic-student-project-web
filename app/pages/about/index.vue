@@ -1,14 +1,10 @@
 <template>
   <div class="min-h-screen bg-white dark:bg-slate-900">
     <!-- Hero Section -->
-    <div
-      class="hero-nodes py-20 border-b border-blue-800/30 dark:border-slate-700"
-    >
+    <div class="hero-nodes py-20 border-b border-blue-800/30 dark:border-slate-700">
       <UContainer>
         <div class="text-center space-y-4 max-w-3xl mx-auto">
-          <h1
-            class="text-4xl lg:text-6xl font-semibold tracking-tight leading-tight text-blue-900 dark:text-white"
-          >
+          <h1 class="text-4xl lg:text-6xl font-semibold tracking-tight leading-tight text-blue-900 dark:text-white">
             {{ t("aboutPage.heroTitle") }}
           </h1>
           <p class="text-xl text-blue-900/80 dark:text-gray-300">
@@ -27,12 +23,10 @@
             <h2 class="text-4xl font-semibold text-gray-900 dark:text-white">
               {{ t("aboutPage.missionTitle") }}
             </h2>
-            <div
-              class="h-1 w-20 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full"
-            ></div>
+            <div class="h-1 w-20 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full"></div>
           </div>
           <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
-            The GIC Student Portal is designed to showcase the incredible work
+            The GIC Showcase is designed to showcase the incredible work
             of students in the Global Innovation Challenge program. We believe
             in celebrating creativity, fostering collaboration, and connecting
             talented students with opportunities.
@@ -43,27 +37,14 @@
             professionals.
           </p>
           <div class="flex flex-col sm:flex-row gap-4 pt-4">
-            <ButtonsPresetButton
-              preset="exploreProjects"
-              to="/projects"
-              size="md"
-            />
-            <ButtonsPresetButton
-              preset="meetStudent"
-              to="/students"
-              size="md"
-            />
+            <ButtonsPresetButton preset="exploreProjects" to="/projects" size="md" />
+            <ButtonsPresetButton preset="meetStudent" to="/students" size="md" />
           </div>
         </div>
 
         <div
-          class="flex items-center justify-center bg-white dark:bg-slate-800 rounded-2xl p-8 border border-gray-200 dark:border-slate-700"
-        >
-          <img
-            src="/images/gic-logo-small.png"
-            alt="GIC Logo"
-            class="w-full max-w-md object-contain"
-          />
+          class="flex items-center justify-center bg-white dark:bg-slate-800 rounded-2xl p-8 border border-gray-200 dark:border-slate-700">
+          <img src="/images/gic-logo-small.png" alt="GIC Logo" class="w-full max-w-md object-contain" />
         </div>
       </div>
 
@@ -73,28 +54,20 @@
           <h2 class="text-4xl font-semibold text-gray-900 dark:text-white">
             {{ t("aboutPage.valuesTitle") }}
           </h2>
-          <div
-            class="h-1 w-20 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full mx-auto"
-          ></div>
+          <div class="h-1 w-20 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full mx-auto"></div>
           <p class="text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
             {{ t("aboutPage.valuesSubtitle") }}
           </p>
         </div>
 
         <div class="grid md:grid-cols-3 gap-8">
-          <div
-            v-for="value in coreValues"
-            :key="value.title"
-            class="bg-white dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-8 hover:border-blue-500/50 hover:shadow-lg transition-all duration-300 group"
-          >
+          <div v-for="value in coreValues" :key="value.title"
+            class="bg-white dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-8 hover:border-blue-500/50 hover:shadow-lg transition-all duration-300 group">
             <div
-              class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
-            >
+              class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
               <UIcon :name="value.icon" class="w-8 h-8 text-white" />
             </div>
-            <h3
-              class="text-xl font-semibold text-gray-900 dark:text-white mb-3"
-            >
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">
               {{ value.title }}
             </h3>
             <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -110,32 +83,24 @@
           <h2 class="text-4xl font-semibold text-gray-900 dark:text-white">
             {{ t("aboutPage.featuresTitle") }}
           </h2>
-          <div
-            class="h-1 w-20 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full mx-auto"
-          ></div>
+          <div class="h-1 w-20 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full mx-auto"></div>
           <p class="text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
             {{ t("aboutPage.featuresSubtitle") }}
           </p>
         </div>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div
-            v-for="feature in features"
-            :key="feature.title"
-            class="flex gap-4 p-6 bg-white dark:bg-slate-800/30 border border-gray-200 dark:border-slate-700 rounded-xl hover:border-blue-500/50 hover:shadow-md transition-all duration-300"
-          >
+          <div v-for="feature in features" :key="feature.title"
+            class="flex gap-4 p-6 bg-white dark:bg-slate-800/30 border border-gray-200 dark:border-slate-700 rounded-xl hover:border-blue-500/50 hover:shadow-md transition-all duration-300">
             <div
-              class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center flex-shrink-0"
-            >
+              class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center flex-shrink-0">
               <UIcon :name="feature.icon" class="w-6 h-6 text-white" />
             </div>
             <div>
               <h3 class="font-semibold text-gray-900 dark:text-white mb-1">
                 {{ feature.title }}
               </h3>
-              <p
-                class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed"
-              >
+              <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
                 {{ feature.description }}
               </p>
             </div>
@@ -144,9 +109,8 @@
       </div>
 
       <!-- Statistics -->
-      <div
-        class="bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border border-gray-200 dark:border-slate-700 rounded-2xl p-12"
-      >
+      <!-- <div
+        class="bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border border-gray-200 dark:border-slate-700 rounded-2xl p-12">
         <div class="text-center mb-8">
           <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-2">
             {{ t("aboutPage.impactTitle") }}
@@ -157,9 +121,7 @@
         </div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div v-for="stat in statistics" :key="stat.label" class="text-center">
-            <p
-              class="text-4xl lg:text-5xl font-semibold text-blue-600 dark:text-blue-400 mb-2"
-            >
+            <p class="text-4xl lg:text-5xl font-semibold text-blue-600 dark:text-blue-400 mb-2">
               {{ stat.value }}
             </p>
             <p class="text-gray-700 dark:text-gray-300 font-medium">
@@ -167,10 +129,10 @@
             </p>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <!-- Team Section -->
-      <div class="space-y-12">
+      <!-- <div class="space-y-12">
         <div class="text-center space-y-3">
           <h2 class="text-4xl font-semibold text-gray-900 dark:text-white">
             {{ t("aboutPage.teamTitle") }}
@@ -205,41 +167,30 @@
             </p>
           </div>
         </div>
-      </div>
+      </div> -->
     </UContainer>
 
     <!-- CTA Section -->
-    <div
-      class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-100 dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700"
-    >
+    <!-- <div
+      class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-100 dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700">
       <UContainer>
-        <div
-          class="text-center text-gray-900 dark:text-white space-y-8 max-w-2xl mx-auto"
-        >
+        <div class="text-center text-gray-900 dark:text-white space-y-8 max-w-2xl mx-auto">
           <h2 class="text-4xl lg:text-5xl font-semibold">
             {{ t("aboutPage.ctaTitle") }}
           </h2>
-          <p
-            class="text-xl text-gray-700 dark:text-white dark:opacity-90 leading-relaxed"
-          >
+          <p class="text-xl text-gray-700 dark:text-white dark:opacity-90 leading-relaxed">
             {{ t("aboutPage.ctaSubtitle") }}
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <ButtonsPresetButton
-              preset="createProject"
-              to="/projects/create"
-              size="lg"
-            />
-            <ButtonsPresetButton
-              preset="exploreProjects"
-              to="/projects"
-              size="lg"
-            />
+            <ButtonsPresetButton preset="createProject" to="/projects/create" size="lg" />
+            <ButtonsPresetButton preset="exploreProjects" to="/projects" size="lg" />
           </div>
         </div>
       </UContainer>
       <ScrollToTop />
-    </div>
+    </div> -->
+    <CTASection />
+
   </div>
 </template>
 
@@ -340,7 +291,7 @@ const statistics = [
 ];
 
 useHead(() => ({
-  title: `${t("aboutPage.heroTitle")} - GIC Student Portal`,
+  title: `${t("aboutPage.heroTitle")} - GIC Showcase`,
   meta: [
     {
       name: "description",

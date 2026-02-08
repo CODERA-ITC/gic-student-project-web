@@ -20,17 +20,12 @@
       <div class="space-y-12">
         <!-- Semester Selector -->
         <div class="flex gap-3 overflow-x-auto pb-4 -mx-6 px-6 lg:mx-0 lg:px-0">
-          <button
-            v-for="sem in semesters"
-            :key="sem"
-            @click="selectedSemester = sem"
-            :class="[
-              'px-6 py-3 rounded-xl font-semibold whitespace-nowrap transition-all duration-300',
-              selectedSemester === sem
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/50'
-                : 'bg-slate-800 text-gray-300 hover:bg-slate-700 border border-slate-700',
-            ]"
-          >
+          <button v-for="sem in semesters" :key="sem" @click="selectedSemester = sem" :class="[
+            'px-6 py-3 rounded-xl font-semibold whitespace-nowrap transition-all duration-300',
+            selectedSemester === sem
+              ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/50'
+              : 'bg-slate-800 text-gray-300 hover:bg-slate-700 border border-slate-700',
+          ]">
             {{ sem }}
             <span class="ml-2 text-sm opacity-70">
               ({{ projectsBySemester(sem).length }})
@@ -41,11 +36,7 @@
         <!-- Current Semester Projects -->
         <div class="space-y-8">
           <!-- By Category -->
-          <div
-            v-for="category in categoriesInSemester"
-            :key="category"
-            class="space-y-4"
-          >
+          <div v-for="category in categoriesInSemester" :key="category" class="space-y-4">
             <div class="flex items-center gap-3 pb-4 border-b border-slate-700">
               <div class="w-1 h-6 bg-blue-500 rounded"></div>
               <h2 class="text-2xl font-semibold text-white">{{ category }}</h2>
@@ -56,22 +47,15 @@
 
             <!-- Projects Grid -->
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <NuxtLink
-                v-for="project in projectsByCategory(category)"
-                :key="project.id"
-                :to="`/projects/${project.id}`"
-                class="group cursor-pointer"
-              >
+              <NuxtLink v-for="project in projectsByCategory(category)" :key="project.id"
+                :to="`/projects/${project.id}`" class="group cursor-pointer">
                 <div
-                  class="relative h-full rounded-xl overflow-hidden transition-all duration-300 border border-slate-700 group-hover:border-blue-500/70 bg-slate-800/50 backdrop-blur group-hover:bg-slate-800/80 shadow-lg group-hover:shadow-2xl group-hover:shadow-blue-500/20"
-                >
+                  class="relative h-full rounded-xl overflow-hidden transition-all duration-300 border border-slate-700 group-hover:border-blue-500/70 bg-slate-800/50 backdrop-blur group-hover:bg-slate-800/80 shadow-lg group-hover:shadow-2xl group-hover:shadow-blue-500/20">
                   <!-- Emoji Header -->
-                  <div
-                    :class="[
-                      project.gradient,
-                      'h-28 flex items-center justify-center text-5xl transform group-hover:scale-110 transition-transform duration-300',
-                    ]"
-                  >
+                  <div :class="[
+                    project.gradient,
+                    'h-28 flex items-center justify-center text-5xl transform group-hover:scale-110 transition-transform duration-300',
+                  ]">
                     {{ project.emoji }}
                   </div>
 
@@ -79,8 +63,7 @@
                   <div class="p-6 space-y-4">
                     <div>
                       <h3
-                        class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors line-clamp-2"
-                      >
+                        class="text-lg font-semibold text-white group-hover:text-blue-300 transition-colors line-clamp-2">
                         {{ project.title }}
                       </h3>
                       <p class="text-gray-400 text-sm line-clamp-2 mt-2">
@@ -104,20 +87,14 @@
                     </div>
 
                     <!-- Stats Footer -->
-                    <div
-                      class="flex items-center justify-between pt-4 border-t border-slate-700 text-xs text-gray-400"
-                    >
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-700 text-xs text-gray-400">
                       <div class="flex gap-3">
                         <span>👁️ {{ project.views }}</span>
-                        <span
-                          class="cursor-pointer hover:text-pink-400 transition-colors"
-                        >
+                        <span class="cursor-pointer hover:text-pink-400 transition-colors">
                           ❤️ {{ project.likes }}
                         </span>
                       </div>
-                      <span class="text-yellow-400"
-                        >★ {{ project.rating }}</span
-                      >
+                      <span class="text-yellow-400">★ {{ project.rating }}</span>
                     </div>
                   </div>
                 </div>
@@ -126,14 +103,8 @@
           </div>
 
           <!-- Empty State -->
-          <div
-            v-if="projectsBySemester(selectedSemester).length === 0"
-            class="text-center py-20"
-          >
-            <UIcon
-              name="i-heroicons-inbox"
-              class="w-16 h-16 text-gray-600 mx-auto mb-4"
-            />
+          <div v-if="projectsBySemester(selectedSemester).length === 0" class="text-center py-20">
+            <UIcon name="i-heroicons-inbox" class="w-16 h-16 text-gray-600 mx-auto mb-4" />
             <p class="text-gray-400 text-lg">
               No projects found for {{ selectedSemester }}
             </p>
@@ -146,11 +117,8 @@
     <div class="py-12 bg-slate-800/50 border-t border-slate-700 mt-12">
       <UContainer>
         <div class="grid md:grid-cols-4 gap-6">
-          <div
-            v-for="stat in statistics"
-            :key="stat.label"
-            class="bg-slate-900/50 backdrop-blur border border-slate-700 rounded-xl p-6 text-center"
-          >
+          <div v-for="stat in statistics" :key="stat.label"
+            class="bg-slate-900/50 backdrop-blur border border-slate-700 rounded-xl p-6 text-center">
             <p class="text-3xl font-semibold text-blue-400">{{ stat.value }}</p>
             <p class="text-gray-400 text-sm mt-2">{{ stat.label }}</p>
           </div>
@@ -303,14 +271,14 @@ const statistics = computed(() => {
       label: "Avg Rating",
       value: (
         projects.reduce((sum, p) => sum + parseFloat(p.rating), 0) /
-          projects.length || 0
+        projects.length || 0
       ).toFixed(1),
     },
   ];
 });
 
 useHead({
-  title: "Projects by Semester - GIC Student Portal",
+  title: "Projects by Semester - GIC Showcase",
   meta: [
     {
       name: "description",

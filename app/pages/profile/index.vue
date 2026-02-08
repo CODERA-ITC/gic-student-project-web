@@ -3,35 +3,25 @@
     <!-- Header Section -->
     <div class="py-14">
       <UContainer>
-        <div
-          class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/15
-                 bg-white/90 dark:bg-slate-900/90 shadow-2xl px-8 py-10"
-        >
+        <div class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/15
+                 bg-white/90 dark:bg-slate-900/90 shadow-2xl px-8 py-10">
           <div
             class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.08),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(79,70,229,0.08),transparent_30%)] pointer-events-none"
-            aria-hidden="true"
-          ></div>
+            aria-hidden="true"></div>
 
           <div class="relative space-y-3">
             <div class="flex flex-col gap-3 mb-2">
               <nav class="flex items-center flex-wrap gap-1 text-sm text-slate-600 dark:text-slate-300">
                 <template v-for="(crumb, idx) in breadcrumbs" :key="crumb.label">
-                  <NuxtLink
-                    :to="crumb.to || undefined"
-                    :class="[
-                      'transition-colors',
-                      crumb.to
-                        ? 'hover:text-blue-600 dark:hover:text-blue-300'
-                        : 'text-slate-900 dark:text-white font-semibold',
-                    ]"
-                  >
+                  <NuxtLink :to="crumb.to || undefined" :class="[
+                    'transition-colors',
+                    crumb.to
+                      ? 'hover:text-blue-600 dark:hover:text-blue-300'
+                      : 'text-slate-900 dark:text-white font-semibold',
+                  ]">
                     {{ crumb.label }}
                   </NuxtLink>
-                  <span
-                    v-if="idx < breadcrumbs.length - 1"
-                    class="text-slate-400 dark:text-slate-500"
-                    >/</span
-                  >
+                  <span v-if="idx < breadcrumbs.length - 1" class="text-slate-400 dark:text-slate-500">/</span>
                 </template>
               </nav>
               <h1 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
@@ -52,19 +42,13 @@
         <!-- Sidebar Navigation -->
         <div class="lg:col-span-1">
           <div
-            class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-4 space-y-1 sticky top-20"
-          >
-            <button
-              v-for="tab in tabs"
-              :key="tab.id"
-              @click="activeTab = tab.id"
-              :class="[
-                activeTab === tab.id
-                  ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
-                  : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700',
-                'w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left',
-              ]"
-            >
+            class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-4 space-y-1 sticky top-20">
+            <button v-for="tab in tabs" :key="tab.id" @click="activeTab = tab.id" :class="[
+              activeTab === tab.id
+                ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                : 'text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700',
+              'w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left',
+            ]">
               <UIcon :name="tab.icon" class="w-5 h-5" />
               <span class="font-medium">{{ tab.label }}</span>
             </button>
@@ -73,54 +57,30 @@
 
         <!-- Content Area -->
         <div class="lg:col-span-2">
-          <div
-            class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700"
-          >
+          <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700">
             <!-- Profile Information -->
-            <ProfileInformation
-              v-if="activeTab === 'profile'"
-              :initial-data="authStore.user"
-              @save="handleProfileSave"
-            />
+            <ProfileInformation v-if="activeTab === 'profile'" :initial-data="authStore.user"
+              @save="handleProfileSave" />
 
             <!-- Public Profile Preview -->
             <template v-if="authStore.isStudent">
-              <ProfilePublicProfilePreview
-                v-if="activeTab === 'public'"
-                :user="authStore.user"
-                :bio="StudentProfile.bio"
-                :skills="StudentProfile.skills"
-                :social-links="StudentProfile.socialLinks"
-                :program="StudentProfile.program"
-                :year="StudentProfile.year"
-                :phone="StudentProfile.phone"
-                :student-id="StudentProfile.studentId"
-                :project-count="StudentProfile.projectCount"
-                :achievements="StudentProfile.achievements"
-              />
+              <ProfilePublicProfilePreview v-if="activeTab === 'public'" :user="authStore.user"
+                :bio="StudentProfile.bio" :skills="StudentProfile.skills" :social-links="StudentProfile.socialLinks"
+                :program="StudentProfile.program" :year="StudentProfile.year" :phone="StudentProfile.phone"
+                :student-id="StudentProfile.studentId" :project-count="StudentProfile.projectCount"
+                :achievements="StudentProfile.achievements" />
             </template>
 
             <!-- Account Settings -->
-            <ProfileAccountSettings
-              v-if="activeTab === 'account'"
-              @update-password="handlePasswordUpdate"
-              @toggle-2fa="handleToggle2FA"
-              @revoke-session="handleRevokeSession"
-            />
+            <ProfileAccountSettings v-if="activeTab === 'account'" @update-password="handlePasswordUpdate"
+              @toggle-2fa="handleToggle2FA" @revoke-session="handleRevokeSession" />
 
             <!-- Notifications -->
-            <ProfileNotificationSettings
-              v-if="activeTab === 'notifications'"
-              @save="handleNotificationsSave"
-            />
+            <ProfileNotificationSettings v-if="activeTab === 'notifications'" @save="handleNotificationsSave" />
 
             <!-- Privacy -->
-            <ProfilePrivacySettings
-              v-if="activeTab === 'privacy'"
-              @save="handlePrivacySave"
-              @data-request="handleDataRequest"
-              @delete-account="handleDeleteAccount"
-            />
+            <ProfilePrivacySettings v-if="activeTab === 'privacy'" @save="handlePrivacySave"
+              @data-request="handleDataRequest" @delete-account="handleDeleteAccount" />
           </div>
         </div>
       </div>
@@ -497,7 +457,7 @@ const handleDeleteAccount = () => {
 };
 
 useHead({
-  title: "Profile Settings - GIC Student Portal",
+  title: "Profile Settings - GIC Showcase",
   meta: [
     {
       name: "description",

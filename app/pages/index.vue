@@ -1,18 +1,21 @@
 <template>
-  <div>
+  <div class="bg-white">
     <HeroSection />
 
     <!-- highlighted or featured -->
-    <FeaturedProjectsSection />
+    <HighlightedProjects />
 
     <!-- popular project -->
-    <PopularProjectsSection />
+    <!-- <PopularProjectsSection /> -->
 
     <CTASection />
 
     <ScrollToTop />
   </div>
 </template>
+
+
+
 
 <script setup>
 const { t } = useI18n();

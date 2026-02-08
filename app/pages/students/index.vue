@@ -2,15 +2,11 @@
   <div class="min-h-screen bg-white dark:bg-slate-900">
     <ScrollToTop />
 
-    <div
-      class="hero-nodes py-20 border-b border-blue-800/30 dark:border-slate-700"
-    >
+    <div class="hero-nodes py-20 border-b border-blue-800/30 dark:border-slate-700">
       <UContainer>
         <div class="space-y-6">
           <div class="text-center space-y-4 max-w-2xl mx-auto">
-            <h1
-              class="text-4xl lg:text-6xl font-semibold tracking-tight leading-tight text-blue-900 dark:text-white"
-            >
+            <h1 class="text-4xl lg:text-6xl font-semibold tracking-tight leading-tight text-blue-900 dark:text-white">
               Meet Our Students
             </h1>
             <p class="text-xl text-blue-900/80 dark:text-gray-300">
@@ -19,57 +15,36 @@
             </p>
           </div>
 
-          <div
-            class="flex flex-col sm:flex-row gap-3 justify-center items-center flex-wrap"
-          >
-            <ButtonsPresetButton
-              preset="exploreProjects"
-              to="/projects"
-              size="md"
-            />
+          <div class="flex flex-col sm:flex-row gap-3 justify-center items-center flex-wrap">
+            <ButtonsPresetButton preset="exploreProjects" to="/projects" size="md" />
           </div>
         </div>
       </UContainer>
     </div>
 
     <div
-      class="sticky top-0 z-[140] bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-sm border-b border-gray-200 dark:border-slate-700"
-    >
+      class="sticky top-0 z-[140] bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-sm border-b border-gray-200 dark:border-slate-700">
       <UContainer>
         <div class="flex items-center justify-between w-full gap-2 py-2">
           <div class="flex-1 flex justify-center">
             <div class="w-full max-w-xs">
-              <USelectMenu
-                v-model="selectedGeneration"
-                size="xl"
-                :items="generationOptions"
-                class="w-full rounded-xl"
-              />
+              <USelectMenu v-model="selectedGeneration" size="xl" :items="generationOptions"
+                class="w-full rounded-xl" />
             </div>
           </div>
 
           <div class="flex-1">
             <div class="flex items-center justify-center gap-1 flex-wrap">
-              <div class="hidden md:flex items-center gap-2 justify-start flex-nowrap overflow-x-auto whitespace-nowrap pb-1">
-                <ButtonsPresetButton
-                  v-for="skill in topSkills"
-                  :key="skill"
-                  :label="skill"
+              <div
+                class="hidden md:flex items-center gap-2 justify-start flex-nowrap overflow-x-auto whitespace-nowrap pb-1">
+                <ButtonsPresetButton v-for="skill in topSkills" :key="skill" :label="skill"
                   :color="selectedSkill === skill ? 'primary' : 'secondary'"
-                  :variant="selectedSkill === skill ? 'solid' : 'ghost'"
-                  size="md"
-                  @click="selectedSkill = skill"
-                />
+                  :variant="selectedSkill === skill ? 'solid' : 'ghost'" size="md" @click="selectedSkill = skill" />
               </div>
 
               <div class="relative md:hidden w-full">
-                <USelectMenu
-                  v-model="selectedSkillObj"
-                  size="xl"
-                  :items="skillOptions"
-                  placeholder="All skills"
-                  class="w-full rounded-xl"
-                />
+                <USelectMenu v-model="selectedSkillObj" size="xl" :items="skillOptions" placeholder="All skills"
+                  class="w-full rounded-xl" />
               </div>
             </div>
           </div>
@@ -79,8 +54,7 @@
 
     <Transition enter-active-class="transition-all ease-out duration-700">
       <UContainer
-        class="py-9 bg-gradient-to-b via-gray-50 to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
-      >
+        class="py-9 bg-gradient-to-b via-gray-50 to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
         <div class="space-y-6">
           <div class="flex items-center justify-between flex-wrap gap-4">
             <div class="flex items-center gap-4">
@@ -98,64 +72,28 @@
               </p>
             </div>
 
-            <ButtonsPresetButton
-              v-if="hasActiveFilters"
-              preset="clearFilters"
-              @click="clearFilters"
-            />
+            <ButtonsPresetButton v-if="hasActiveFilters" preset="clearFilters" @click="clearFilters" />
           </div>
 
-          <div
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
-          >
-            <StudentPortfolio
-              v-for="student in paginatedStudents"
-              :key="student.id"
-              :name="student.name"
-              :program="student.program"
-              :year="String(student.year || '')"
-              :avatar="student.avatar"
-              :bio="student.bio"
-              :skills="student.skills"
-              :project-count="student.projectCount || 0"
-              :gpa="student.gpa"
-              :achievements="student.achievements?.length || 0"
-              :graduation-year="student.graduationYear"
-              :gen="student.gen"
-              :social="student.social"
-              @view-profile="() => navigateTo(`/students/${student.id}`)"
-            />
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            <StudentPortfolio v-for="student in paginatedStudents" :key="student.id" :name="student.name"
+              :program="student.program" :year="String(student.year || '')" :avatar="student.avatar" :bio="student.bio"
+              :skills="student.skills" :project-count="student.projectCount || 0" :gpa="student.gpa"
+              :achievements="student.achievements?.length || 0" :graduation-year="student.graduationYear"
+              :gen="student.gen" :social="student.social" @view-profile="() => navigateTo(`/students/${student.id}`)" />
           </div>
 
-          <div
-            v-if="totalPages > 1"
-            class="flex justify-center items-center gap-4 mt-8"
-          >
-            <ButtonsPresetButton
-              label="Previous"
-              icon="i-heroicons-arrow-left"
-              color="secondary"
-              variant="outline"
-              size="md"
-              :disabled="currentPage === 1"
-              @click="goToPage(Math.max(1, currentPage - 1))"
-            />
+          <div v-if="totalPages > 1" class="flex justify-center items-center gap-4 mt-8">
+            <ButtonsPresetButton label="Previous" icon="i-heroicons-arrow-left" color="secondary" variant="outline"
+              size="md" :disabled="currentPage === 1" @click="goToPage(Math.max(1, currentPage - 1))" />
 
             <span
-              class="px-4 py-2 text-sm font-medium text-blue-900 dark:text-white bg-blue-50 dark:bg-slate-800 rounded-lg"
-            >
+              class="px-4 py-2 text-sm font-medium text-blue-900 dark:text-white bg-blue-50 dark:bg-slate-800 rounded-lg">
               Page {{ currentPage }} of {{ totalPages }}
             </span>
 
-            <ButtonsPresetButton
-              label="Next"
-              icon="i-heroicons-arrow-right"
-              color="primary"
-              variant="solid"
-              size="md"
-              :disabled="currentPage === totalPages"
-              @click="goToPage(Math.min(totalPages, currentPage + 1))"
-            />
+            <ButtonsPresetButton label="Next" icon="i-heroicons-arrow-right" color="primary" variant="solid" size="md"
+              :disabled="currentPage === totalPages" @click="goToPage(Math.min(totalPages, currentPage + 1))" />
           </div>
 
           <div v-if="filteredTotal > 0" class="text-center mt-6">
@@ -172,10 +110,7 @@
           </div>
 
           <div v-if="filteredTotal === 0" class="text-center py-20">
-            <UIcon
-              name="i-heroicons-users"
-              class="w-16 h-16 text-gray-600 dark:text-gray-400 mx-auto mb-4"
-            />
+            <UIcon name="i-heroicons-users" class="w-16 h-16 text-gray-600 dark:text-gray-400 mx-auto mb-4" />
             <p class="text-gray-400 dark:text-gray-500 text-lg">
               No students found matching your filters
             </p>
@@ -238,8 +173,8 @@ const routeGeneration = computed(() => {
 });
 const selectedGeneration = ref(
   generationOptions.value.find((x) => x.value === routeGeneration.value)
-    || generationOptions.value.find((x) => x.value === defaultGeneration.value)
-    || generationOptions.value[0],
+  || generationOptions.value.find((x) => x.value === defaultGeneration.value)
+  || generationOptions.value[0],
 );
 
 const mappedStudents = computed(() => studentStore.publicMappedStudents);
@@ -344,7 +279,7 @@ onMounted(async () => {
 });
 
 useHead({
-  title: "Students - GIC Student Portal",
+  title: "Students - GIC Showcase",
   meta: [
     {
       name: "description",

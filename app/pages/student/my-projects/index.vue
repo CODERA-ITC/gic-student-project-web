@@ -3,61 +3,35 @@
     <!-- Header Section -->
     <div class="relative overflow-hidden py-16">
       <!-- Ambient blobs -->
-      <div
-        class="absolute -top-24 -left-24 w-80 h-80 bg-blue-500/40 rounded-full blur-3xl"
-        aria-hidden="true"
-      ></div>
-      <div
-        class="absolute -bottom-32 right-0 w-96 h-96 bg-indigo-600/40 rounded-full blur-3xl"
-        aria-hidden="true"
-      ></div>
-      <div
-        class="absolute top-10 right-24 w-52 h-52 bg-cyan-400/30 rounded-full blur-3xl"
-        aria-hidden="true"
-      ></div>
+      <div class="absolute -top-24 -left-24 w-80 h-80 bg-blue-500/40 rounded-full blur-3xl" aria-hidden="true"></div>
+      <div class="absolute -bottom-32 right-0 w-96 h-96 bg-indigo-600/40 rounded-full blur-3xl" aria-hidden="true">
+      </div>
+      <div class="absolute top-10 right-24 w-52 h-52 bg-cyan-400/30 rounded-full blur-3xl" aria-hidden="true"></div>
 
       <UContainer>
         <div
-          class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/20 bg-gradient-to-br from-blue-900 via-indigo-900 to-blue-700 text-white shadow-2xl"
-        >
+          class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/20 bg-gradient-to-br from-blue-900 via-indigo-900 to-blue-700 text-white shadow-2xl">
           <div
             class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.08),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.06),transparent_30%)]"
-            aria-hidden="true"
-          ></div>
+            aria-hidden="true"></div>
 
-          <div
-            class="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-8 sm:p-10"
-          >
+          <div class="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-8 sm:p-10">
             <div class="flex flex-col items-start gap-4 mb-2 w-full">
-              <nav
-                class="flex items-center flex-wrap gap-1 text-sm text-slate-600 dark:text-slate-300"
-              >
-                <template
-                  v-for="(crumb, idx) in breadcrumbs"
-                  :key="crumb.label"
-                >
-                  <NuxtLink
-                    :to="crumb.to || undefined"
-                    :class="[
-                      'transition-colors  ',
-                      crumb.to
-                        ? 'hover:text-blue-700 text-white dark:hover:text-blue-300'
-                        : 'text-slate-300 dark:text-white font-semibold',
-                    ]"
-                  >
+              <nav class="flex items-center flex-wrap gap-1 text-sm text-slate-600 dark:text-slate-300">
+                <template v-for="(crumb, idx) in breadcrumbs" :key="crumb.label">
+                  <NuxtLink :to="crumb.to || undefined" :class="[
+                    'transition-colors  ',
+                    crumb.to
+                      ? 'hover:text-blue-700 text-white dark:hover:text-blue-300'
+                      : 'text-slate-300 dark:text-white font-semibold',
+                  ]">
                     {{ crumb.label }}
                   </NuxtLink>
-                  <span
-                    v-if="idx < breadcrumbs.length - 1"
-                    class="text-slate-400 dark:text-slate-500"
-                    >/</span
-                  >
+                  <span v-if="idx < breadcrumbs.length - 1" class="text-slate-400 dark:text-slate-500">/</span>
                 </template>
               </nav>
               <div class="space-y-3">
-                <h1
-                  class="text-3xl sm:text-4xl lg:text-5xl font-semiboldl text-white leading-tight"
-                >
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semiboldl text-white leading-tight">
                   My Projects
                 </h1>
                 <p class="text-slate-300 dark:text-slate-300">
@@ -67,13 +41,8 @@
             </div>
 
             <div class="flex gap-3">
-              <ButtonsPresetButton
-                preset="createProject"
-                to="/projects/create"
-                color="neutral"
-                variant="solid"
-                class="!bg-white !text-blue-700 hover:!bg-blue-50 dark:!bg-slate-800 dark:!text-blue-200 dark:hover:!bg-slate-700 shadow-lg"
-              />
+              <ButtonsPresetButton preset="createProject" to="/projects/create" color="neutral" variant="solid"
+                class="!bg-white !text-blue-700 hover:!bg-blue-50 dark:!bg-slate-800 dark:!text-blue-200 dark:hover:!bg-slate-700 shadow-lg" />
             </div>
           </div>
         </div>
@@ -83,64 +52,36 @@
     <!-- Main Content -->
     <UContainer class="py-12">
       <!-- Tabs -->
-      <div
-        class="flex gap-4 mb-8 border-b border-gray-200 dark:border-slate-700"
-      >
-        <button
-          v-for="tab in tabs"
-          :key="tab.value"
-          @click="activeTab = tab.value"
-          :class="[
-            'px-6 py-3 font-semibold transition-all duration-200 border-b-2',
-            activeTab === tab.value
-              ? 'text-blue-500 dark:text-blue-400 border-blue-500 dark:border-blue-400'
-              : 'text-gray-600 dark:text-gray-400 border-transparent hover:text-gray-800 dark:hover:text-gray-300',
-          ]"
-        >
+      <div class="flex gap-4 mb-8 border-b border-gray-200 dark:border-slate-700">
+        <button v-for="tab in tabs" :key="tab.value" @click="activeTab = tab.value" :class="[
+          'px-6 py-3 font-semibold transition-all duration-200 border-b-2',
+          activeTab === tab.value
+            ? 'text-blue-500 dark:text-blue-400 border-blue-500 dark:border-blue-400'
+            : 'text-gray-600 dark:text-gray-400 border-transparent hover:text-gray-800 dark:hover:text-gray-300',
+        ]">
           {{ tab.label }}
-          <span
-            v-if="tab.count !== undefined"
-            class="ml-2 px-2 py-0.5 bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-full text-sm"
-          >
+          <span v-if="tab.count !== undefined"
+            class="ml-2 px-2 py-0.5 bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-300 rounded-full text-sm">
             {{ tab.count }}
           </span>
         </button>
       </div>
 
       <!-- Search and Filters -->
-      <div
-        class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-6 mb-8"
-      >
-        <div
-          class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
-        >
+      <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-6 mb-8">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div class="flex items-center gap-3 w-full sm:w-auto">
             <div class="relative flex-1 sm:flex-initial sm:w-80">
-              <UIcon
-                name="i-heroicons-magnifying-glass"
-                class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-slate-500 w-4 h-4"
-              />
-              <input
-                v-model="searchQuery"
-                type="text"
-                placeholder="Search projects..."
+              <UIcon name="i-heroicons-magnifying-glass"
+                class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-slate-500 w-4 h-4" />
+              <input v-model="searchQuery" type="text" placeholder="Search projects..."
                 class="w-full pl-9 pr-9 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                @keyup.enter.prevent="applyImmediateSearch"
-                @keyup.esc="clearSearch"
-              />
-              <div
-                v-if="isSearching"
-                class="absolute right-3 top-1/2 -translate-y-1/2"
-              >
-                <UIcon
-                  name="i-heroicons-arrow-path"
-                  class="w-4 h-4 animate-spin text-blue-500"
-                />
+                @keyup.enter.prevent="applyImmediateSearch" @keyup.esc="clearSearch" />
+              <div v-if="isSearching" class="absolute right-3 top-1/2 -translate-y-1/2">
+                <UIcon name="i-heroicons-arrow-path" class="w-4 h-4 animate-spin text-blue-500" />
               </div>
             </div>
-            <span
-              class="text-sm text-gray-500 dark:text-slate-400 whitespace-nowrap"
-            >
+            <span class="text-sm text-gray-500 dark:text-slate-400 whitespace-nowrap">
               {{ totalProjects }} total
             </span>
           </div>
@@ -151,39 +92,25 @@
               placeholder="All Tags"
               class="flex-1 sm:w-40"
             /> -->
-            <USelect
-              v-model="selectedCategory"
-              :items="categoryOptions"
-              placeholder="All Categories"
-              class="flex-1 sm:w-40"
-            />
+            <USelect v-model="selectedCategory" :items="categoryOptions" placeholder="All Categories"
+              class="flex-1 sm:w-40" />
 
             <!-- View Mode Toggle -->
-            <div
-              class="flex gap-1 bg-gray-100 dark:bg-slate-700 rounded-lg p-1"
-            >
-              <button
-                @click="viewMode = 'grid'"
-                :class="[
-                  'p-2 rounded transition-all duration-200',
-                  viewMode === 'grid'
-                    ? 'bg-blue-900 text-white shadow-md'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-600',
-                ]"
-                title="Grid View"
-              >
+            <div class="flex gap-1 bg-gray-100 dark:bg-slate-700 rounded-lg p-1">
+              <button @click="viewMode = 'grid'" :class="[
+                'p-2 rounded transition-all duration-200',
+                viewMode === 'grid'
+                  ? 'bg-blue-900 text-white shadow-md'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-600',
+              ]" title="Grid View">
                 <UIcon name="i-heroicons-squares-2x2" class="w-4 h-4" />
               </button>
-              <button
-                @click="viewMode = 'list'"
-                :class="[
-                  'p-2 rounded transition-all duration-200',
-                  viewMode === 'list'
-                    ? 'bg-blue-900 text-white shadow-md'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-600',
-                ]"
-                title="List View"
-              >
+              <button @click="viewMode = 'list'" :class="[
+                'p-2 rounded transition-all duration-200',
+                viewMode === 'list'
+                  ? 'bg-blue-900 text-white shadow-md'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-600',
+              ]" title="List View">
                 <UIcon name="i-heroicons-list-bullet" class="w-4 h-4" />
               </button>
             </div>
@@ -192,35 +119,19 @@
       </div>
 
       <!-- Empty State -->
-      <EmptyState
-        v-if="filteredProjects.length === 0"
-        title="No projects found"
-        description="Create your first project to get started"
-        icon="i-heroicons-folder-plus"
-        actionText="Create Project"
-        actionTo="/projects/create"
-      />
+      <EmptyState v-if="filteredProjects.length === 0" title="No projects found"
+        description="Create your first project to get started" icon="i-heroicons-folder-plus"
+        actionText="Create Project" actionTo="/projects/create" />
 
       <!-- Projects Section -->
-      <div
-        v-else
-        class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700"
-      >
+      <div v-else class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700">
         <!-- Grid View -->
         <div v-if="viewMode === 'grid'" class="p-6">
-          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <ProjectCard
-              v-for="project in paginatedProjects"
-              :key="project.id"
-              :project="project"
-              base-route="/student/my-projects"
-              :show-like-button="true"
-              :show-edit-button="isOwnerOf(project)"
-              :liked-projects="likedProjects"
-              @toggle-like="handleToggleLike"
-              @edit="handleEdit"
-              @delete="handleDelete"
-            />
+          <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <ProjectCard v-for="project in paginatedProjects" :key="project.id" :project="project"
+              base-route="/student/my-projects" :show-like-button="true" :show-edit-button="isOwnerOf(project)"
+              :liked-projects="likedProjects" @toggle-like="handleToggleLike" @edit="handleEdit"
+              @delete="handleDelete" />
           </div>
         </div>
 
@@ -230,64 +141,43 @@
             <thead class="bg-gray-50 dark:bg-slate-900">
               <tr>
                 <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
-                >
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Project
                 </th>
                 <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
-                >
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Category
                 </th>
                 <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
-                >
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Status
                 </th>
                 <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
-                >
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Created
                 </th>
                 <th
-                  class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider"
-                >
+                  class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-slate-700">
-              <tr
-                v-for="project in paginatedProjects"
-                :key="project.id"
-                class="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
-              >
+              <tr v-for="project in paginatedProjects" :key="project.id"
+                class="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
                 <td class="px-6 py-4">
                   <div class="flex items-center gap-3">
-                    <img
-                      v-if="project.images && project.images[0]"
-                      :src="project.images[0].thumbnailUrl"
-                      :alt="project.title"
-                      class="w-12 h-12 rounded-lg object-cover"
-                    />
-                    <div
-                      v-else
-                      class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center"
-                    >
-                      <UIcon
-                        name="i-heroicons-cube"
-                        class="w-6 h-6 text-white"
-                      />
+                    <img v-if="project.images && project.images[0]" :src="project.images[0].thumbnailUrl"
+                      :alt="project.title" class="w-12 h-12 rounded-lg object-cover" />
+                    <div v-else
+                      class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                      <UIcon name="i-heroicons-cube" class="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <p
-                        class="text-sm font-semibold text-gray-900 dark:text-white"
-                      >
+                      <p class="text-sm font-semibold text-gray-900 dark:text-white">
                         {{ project.name }}
                       </p>
-                      <p
-                        class="text-xs text-gray-500 dark:text-gray-400 line-clamp-1"
-                      >
+                      <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">
                         {{ project.description }}
                       </p>
                     </div>
@@ -295,24 +185,21 @@
                 </td>
                 <td class="px-6 py-4">
                   <span
-                    class="inline-flex text-center items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
-                  >
+                    class="inline-flex text-center items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
                     {{ project.category }}
                   </span>
                 </td>
                 <td class="px-6 py-4">
-                  <span
-                    :class="[
-                      'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
-                      getStatus(project) === SubmissionStatus.ACCEPTED
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                        : getStatus(project) === SubmissionStatus.PENDING
-                          ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300'
-                          : getStatus(project) === SubmissionStatus.DRAFT
-                            ? 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
-                            : 'bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300',
-                    ]"
-                  >
+                  <span :class="[
+                    'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+                    getStatus(project) === SubmissionStatus.ACCEPTED
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                      : getStatus(project) === SubmissionStatus.PENDING
+                        ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300'
+                        : getStatus(project) === SubmissionStatus.DRAFT
+                          ? 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
+                          : 'bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300',
+                  ]">
                     {{ getStatusLabel(getStatus(project)) }}
                   </span>
                 </td>
@@ -321,31 +208,13 @@
                 </td>
                 <td class="px-6 py-4">
                   <div class="flex items-center justify-end gap-2">
-                    <UButton
-                      icon="i-heroicons-eye"
-                      size="xs"
-                      color="neutral"
-                      variant="ghost"
-                      label="View"
-                      @click="navigateTo(`/student/my-projects/${project.id}`)"
-                    />
+                    <UButton icon="i-heroicons-eye" size="xs" color="neutral" variant="ghost" label="View"
+                      @click="navigateTo(`/student/my-projects/${project.id}`)" />
                     <template v-if="isOwnerOf(project)">
-                      <UButton
-                        icon="i-heroicons-pencil"
-                        size="xs"
-                        color="neutral"
-                        variant="ghost"
-                        label="Edit"
-                        @click="handleEdit(project.id)"
-                      />
-                      <UButton
-                        icon="i-heroicons-trash"
-                        size="xs"
-                        color="error"
-                        variant="ghost"
-                        label="Delete"
-                        @click="handleDelete(project.id)"
-                      />
+                      <UButton icon="i-heroicons-pencil" size="xs" color="neutral" variant="ghost" label="Edit"
+                        @click="handleEdit(project.id)" />
+                      <UButton icon="i-heroicons-trash" size="xs" color="error" variant="ghost" label="Delete"
+                        @click="handleDelete(project.id)" />
                     </template>
                   </div>
                 </td>
@@ -355,10 +224,7 @@
         </div>
 
         <!-- Pagination -->
-        <div
-          v-if="totalPages > 1"
-          class="px-6 pb-6 border-t border-gray-200 dark:border-slate-700 pt-6"
-        >
+        <div v-if="totalPages > 1" class="px-6 pb-6 border-t border-gray-200 dark:border-slate-700 pt-6">
           <div class="flex items-center justify-between">
             <div class="text-sm text-gray-500 dark:text-slate-400">
               Showing {{ startIndex + 1 }} to
@@ -366,35 +232,20 @@
               {{ totalProjects }} projects
             </div>
             <div class="flex items-center gap-2">
-              <UButton
-                icon="i-heroicons-chevron-left"
-                size="xs"
-                variant="ghost"
-                :disabled="currentPage === 1"
-                @click="currentPage--"
-              />
+              <UButton icon="i-heroicons-chevron-left" size="xs" variant="ghost" :disabled="currentPage === 1"
+                @click="currentPage--" />
               <div class="flex items-center gap-1">
-                <button
-                  v-for="page in displayedPages"
-                  :key="page"
-                  :class="[
-                    'px-3 py-1 text-sm rounded-lg transition-colors',
-                    page === currentPage
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700',
-                  ]"
-                  @click="currentPage = page"
-                >
+                <button v-for="page in displayedPages" :key="page" :class="[
+                  'px-3 py-1 text-sm rounded-lg transition-colors',
+                  page === currentPage
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700',
+                ]" @click="currentPage = page">
                   {{ page }}
                 </button>
               </div>
-              <UButton
-                icon="i-heroicons-chevron-right"
-                size="xs"
-                variant="ghost"
-                :disabled="currentPage === totalPages"
-                @click="currentPage++"
-              />
+              <UButton icon="i-heroicons-chevron-right" size="xs" variant="ghost" :disabled="currentPage === totalPages"
+                @click="currentPage++" />
             </div>
           </div>
         </div>
@@ -402,12 +253,8 @@
     </UContainer>
 
     <!-- Delete Confirmation Modal -->
-    <DeleteConfirmationModal
-      v-model="showDeleteConfirm"
-      :project-title="getProjectTitle(projectToDelete)"
-      :is-deleting="isDeleting"
-      @confirm="confirmDelete"
-    />
+    <DeleteConfirmationModal v-model="showDeleteConfirm" :project-title="getProjectTitle(projectToDelete)"
+      :is-deleting="isDeleting" @confirm="confirmDelete" />
   </div>
 </template>
 
@@ -947,7 +794,7 @@ const shareProject = (project) => {
 
 // Meta
 useHead({
-  title: "My Projects - Student Portal",
+  title: "My Projects - GIC Showcase",
   meta: [
     {
       name: "description",

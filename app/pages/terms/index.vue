@@ -1,13 +1,10 @@
 <template>
   <div
-    class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 pt-20 pb-12 px-4"
-  >
+    class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 pt-20 pb-12 px-4">
     <UContainer class="max-w-4xl">
       <!-- Header -->
       <div class="mb-12">
-        <h1
-          class="text-4xl md:text-5xl font-semibold text-gray-900 dark:text-white mb-4"
-        >
+        <h1 class="text-4xl md:text-5xl font-semibold text-gray-900 dark:text-white mb-4">
           Terms of Service
         </h1>
         <p class="text-gray-600 dark:text-gray-400">
@@ -19,21 +16,15 @@
       <div class="space-y-8">
         <!-- Section 1 -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-document-text"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-document-text" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             1. Agreement to Terms
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-            Welcome to GIC Student Portal ("we," "us," "our"). These Terms of
+            Welcome to GIC Showcase ("we," "us," "our"). These Terms of
             Service ("Terms") constitute a legally binding agreement between you
-            ("you," "your," or "User") and GIC Student Portal concerning your
+            ("you," "your," or "User") and GIC Showcase concerning your
             access to and use of our website and services.
           </p>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -47,15 +38,9 @@
 
         <!-- Section 2 -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-user-circle"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-user-circle" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             2. User Accounts and Responsibilities
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
@@ -77,15 +62,9 @@
 
         <!-- Section 3: Acceptable Use -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-check-circle"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-check-circle" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             3. Acceptable Use Policy
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
@@ -108,15 +87,9 @@
 
         <!-- Section 4: Intellectual Property -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-document-check"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-document-check" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             4. Intellectual Property Rights
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
@@ -140,15 +113,9 @@
 
         <!-- Section 5: Content Moderation -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-eye"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-eye" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             5. Content Moderation and Removal
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
@@ -165,15 +132,9 @@
 
         <!-- Section 6: Service Availability -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-server"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-server" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             6. Service Availability
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -186,15 +147,9 @@
 
         <!-- Section 7: Third-Party Links -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-link"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-link" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             7. Third-Party Links and Services
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -207,15 +162,9 @@
 
         <!-- Section 8: Disclaimers -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-exclamation-triangle"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-exclamation-triangle" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             8. Disclaimers
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
@@ -234,19 +183,13 @@
 
         <!-- Section 9: Limitation of Liability -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-shield-exclamation"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-shield-exclamation" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             9. Limitation of Liability
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
-            TO THE MAXIMUM EXTENT PERMITTED BY LAW, GIC STUDENT PORTAL SHALL NOT
+            TO THE MAXIMUM EXTENT PERMITTED BY LAW, GIC Showcase SHALL NOT
             BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR
             PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO LOSS OF PROFITS,
             DATA, OR USE, ARISING FROM:
@@ -262,15 +205,9 @@
 
         <!-- Section 10: Indemnification -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-shield-check"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-shield-check" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             10. Indemnification
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -284,15 +221,9 @@
 
         <!-- Section 11: Termination -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-x-circle"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-x-circle" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             11. Termination
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -305,15 +236,9 @@
 
         <!-- Section 12: Modifications -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-pencil-square"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-pencil-square" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             12. Changes to Terms
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -326,20 +251,14 @@
 
         <!-- Section 13: Governing Law -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-scale"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-scale" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             13. Governing Law and Disputes
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
             These Terms shall be governed by and construed in accordance with
-            the laws of the jurisdiction in which GIC Student Portal operates,
+            the laws of the jurisdiction in which GIC Showcase operates,
             without regard to conflict of law principles.
           </p>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -352,26 +271,18 @@
 
         <!-- Section 14: Contact Information -->
         <section
-          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none"
-        >
-          <h2
-            class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-          >
-            <UIcon
-              name="i-heroicons-envelope"
-              class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-            />
+          class="bg-white dark:bg-white/10 backdrop-blur-xl border border-gray-200 dark:border-white/20 rounded-2xl p-8 shadow-sm dark:shadow-none">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+            <UIcon name="i-heroicons-envelope" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
             14. Contact Information
           </h2>
           <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
             If you have any questions about these Terms of Service, please
             contact us at:
           </p>
-          <div
-            class="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl p-4"
-          >
+          <div class="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl p-4">
             <p class="text-gray-900 dark:text-white font-medium">
-              GIC Student Portal
+              GIC Showcase
             </p>
             <p class="text-gray-700 dark:text-gray-400">
               Email: legal@gicstudent.com
@@ -388,15 +299,9 @@
 
       <!-- Acceptance -->
       <div
-        class="mt-12 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-500/20 dark:to-purple-500/20 border border-blue-200 dark:border-blue-500/30 rounded-2xl p-8"
-      >
-        <h3
-          class="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center"
-        >
-          <UIcon
-            name="i-heroicons-hand-thumb-up"
-            class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400"
-          />
+        class="mt-12 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-500/20 dark:to-purple-500/20 border border-blue-200 dark:border-blue-500/30 rounded-2xl p-8">
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+          <UIcon name="i-heroicons-hand-thumb-up" class="w-6 h-6 mr-3 text-blue-500 dark:text-blue-400" />
           Acceptance of Terms
         </h3>
         <p class="text-gray-700 dark:text-gray-300 mb-6">
@@ -404,12 +309,7 @@
           by these Terms of Service. If you do not agree with any part of these
           terms, please discontinue use of our services immediately.
         </p>
-        <UButton
-          color="primary"
-          size="lg"
-          icon="i-heroicons-home"
-          @click="navigateTo('/')"
-        >
+        <UButton color="primary" size="lg" icon="i-heroicons-home" @click="navigateTo('/')">
           Return to Home
         </UButton>
       </div>
@@ -420,12 +320,12 @@
 <script setup>
 // Meta tags for SEO
 useHead({
-  title: "Terms of Service | GIC Student Portal",
+  title: "Terms of Service | GIC Showcase",
   meta: [
     {
       name: "description",
       content:
-        "Read our terms of service and conditions for using GIC Student Portal",
+        "Read our terms of service and conditions for using GIC Showcase",
     },
   ],
 });
