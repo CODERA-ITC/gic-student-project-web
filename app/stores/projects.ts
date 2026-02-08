@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useAuthStore } from "~/stores/auth";
+import { useProjectMetaStore } from "~/stores/project-meta";
 import { getAvatarUrl } from "~/utils/avatar";
 import { projectService } from "~/services/ProjectService";
 import type {
@@ -10,7 +11,6 @@ import type {
 
 import { projectsData } from "~/constants/projects";
 import { transformProjects, transformProject } from "~/utils/projectTransformer";
-import { string } from "zod";
 
 // Types
 
@@ -18,16 +18,9 @@ export const useProjectStore = defineStore("projects", {
   state: (): ProjectState => ({
     projects: [],
     userProjects: [],
-    availableCategories: [],
-    availableTags: [],
-    categoryObjects: [],
-    tagObjects: [],
-    availableCourses: [],
-    courseObjects: [],
     likedProjects: new Set(),
     likedProjectList: [],
     loading: false,
-    nextProjectId: 1000, // Start user-created projects from 1000 to avoid conflicts
     pagination: {
       currentPage: 1,
       itemsPerPage: 9,
@@ -48,6 +41,45 @@ export const useProjectStore = defineStore("projects", {
   }),
 
   getters: {
+    categoryObjects: () => {
+      const projectMetaStore = useProjectMetaStore();
+      return projectMetaStore.getItems("categories");
+    },
+
+    tagObjects: () => {
+      const projectMetaStore = useProjectMetaStore();
+      return projectMetaStore.getItems("tags");
+    },
+
+    courseObjects: (): Course[] => {
+      const projectMetaStore = useProjectMetaStore();
+      return projectMetaStore.getItems("courses") as Course[];
+    },
+
+    availableCategories(): string[] {
+      return Array.from(
+        new Set(
+          this.categoryObjects
+            .map((category) => category.name)
+            .filter((name): name is string => Boolean(name)),
+        ),
+      );
+    },
+
+    availableTags(): string[] {
+      return Array.from(
+        new Set(
+          this.tagObjects
+            .map((tag) => tag.name)
+            .filter((name): name is string => Boolean(name)),
+        ),
+      );
+    },
+
+    availableCourses(): Course[] {
+      return this.courseObjects;
+    },
+
     getProjectStatus() {
       return (features?: FeatureItem[]): "Completed" | "In Progress" => {
         if (!features || features.length === 0) {
@@ -184,90 +216,15 @@ export const useProjectStore = defineStore("projects", {
       return calculateProjectStatus(features);
     },
 
-    // Simulate fetch project state
-    // In real application, this would involve API calls
-    // 1. fetch Category data from server
-
-    // async fetchFeaturedProjects(): Promise<Partial<Project[]>> {
-    //   this.loading = true;
-    //   try {
-    //     // If projects array is already populated, just return featured ones
-    //     if (this.projects.length > 0) {
-    //       return this.projects.filter((project) => project.featured);
-    //     }
-
-    //     // Otherwise, fetch all projects first
-    //     await this.fetchProjects();
-
-    //     // Return featured projects
-    //     return this.projects.filter((project) => project.featured);
-    //   } catch (error) {
-    //     console.error(
-    //       "Error fetching featured projects, using fallback static data:",
-    //       error,
-    //     );
-    //     // Fallback: fetch from static data and filter featured
-    //     this.projects = projectsData;
-    //     return projectsData.filter((project) => project.featured);
-    //   } finally {
-    //     this.loading = false;
-    //   }
-    // },f
-
     async fetchCategories(): Promise<string[]> {
       this.loading = true;
       try {
-        // simulate network delay
-        // await new Promise((resolve) => setTimeout(resolve, 100));
-        // // return current categories (in a real app this would come from an API)
-
-        const categoriesMock = [
-          "All",
-          "Artificial Intelligence",
-          "Mobile Development",
-          "Web Development",
-          "Web",
-          "Productivity",
-          "Health Tech",
-          "Data Science",
-        ];
-        const categories = await $fetch("/api/categories", {
-          method: "GET",
-        }).catch(() => categoriesMock);
-
-        console.log("Fetch categories response:", categories);
-
-        console.log("Fetched categories:", categories);
-
-        // Store full category objects for ID lookup, but also keep string names for compatibility
-        this.categoryObjects = categories; // Store full objects
-
-        // convert the array of object json to array of string for UI display
-        let categoriesString: string[] = Array.from(
-          new Set(
-            categories.map((cat: any) =>
-              typeof cat === "string" ? cat : cat.name,
-            ),
-          ),
-        );
-
-        return (this.availableCategories = categoriesString);
+        const projectMetaStore = useProjectMetaStore();
+        await projectMetaStore.fetchCategories();
+        return this.availableCategories;
       } catch (error) {
-        console.error("Error fetching categories, using fallback data:", error);
-        // Fallback to mock categories on API failure
-        const categoriesMock = [
-          "All",
-          "Artificial Intelligence",
-          "Mobile Development",
-          "Web Development",
-          "Web",
-          "Productivity",
-          "Health Tech",
-          "Data Science",
-        ];
-        this.categoryObjects = categoriesMock;
-        this.availableCategories = categoriesMock;
-        return categoriesMock;
+        console.error("Error fetching categories:", error);
+        return [];
       } finally {
         this.loading = false;
       }
@@ -275,20 +232,16 @@ export const useProjectStore = defineStore("projects", {
 
     async fetchTags(): Promise<string[]> {
       this.loading = true;
-
-      const response = await $fetch("/api/tags");
-
-      // Ensure tags is an array - handle different response structures
-
-      let tags = (await response).data || [];
-
-      // Store full tag objects for ID lookup
-
-      this.tagObjects = tags;
-      let tagsString: string[] = tags.map((tag: any) => tag.name);
-      this.loading = false;
-
-      return (this.availableTags = tagsString);
+      try {
+        const projectMetaStore = useProjectMetaStore();
+        await projectMetaStore.fetchTags();
+        return this.availableTags;
+      } catch (error) {
+        console.error("Error fetching tags:", error);
+        return [];
+      } finally {
+        this.loading = false;
+      }
     },
 
     // 2. fetch Projects data from server
@@ -1285,16 +1238,17 @@ export const useProjectStore = defineStore("projects", {
 
     // this will fetch all course details from backend
     async fetchCourses(): Promise<Course[]> {
-      let response = await $fetch("/api/courses");
-
-      this.courseObjects = (await response).data;
-
-      console.log("Fetched courses:", this.courseObjects);
-
-      // Keep full course objects in availableCourses for use in dropdowns
-      this.availableCourses = this.courseObjects;
-
-      return this.courseObjects;
+      this.loading = true;
+      try {
+        const projectMetaStore = useProjectMetaStore();
+        await projectMetaStore.fetchCourses();
+        return this.availableCourses;
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+        return [];
+      } finally {
+        this.loading = false;
+      }
     },
 
     // async fetchSubmissionProjects(): Promise<Project[]> {

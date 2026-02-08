@@ -4,7 +4,6 @@
  * Separates API logic from state management (store)
  */
 
-import type { Project } from "~/utils/Interfaces";
 import { authService } from "./AuthService";
 
 export interface CreateProjectDTO {

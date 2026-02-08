@@ -85,7 +85,7 @@
                 kpi.label
               }}</span>
             </div>
-            <UBadge color="neutral" variant="soft" size="xs">Live</UBadge>
+            <!-- <UBadge color="neutral" variant="soft" size="xs">Live</UBadge> -->
           </div>
           <p class="text-3xl font-semibold text-gray-900 dark:text-white">
             <span v-if="!loading">{{ kpi.value }}</span>
@@ -686,8 +686,8 @@ const kpis = computed(() => [
     value: counts.value.totalStudents,
     caption: "Registered students",
     icon: "i-heroicons-academic-cap",
-    iconBg: "bg-emerald-50 dark:bg-emerald-900/30",
-    iconColor: "text-emerald-600 dark:text-emerald-300",
+    iconBg: "bg-blue-50 dark:bg-blue-900/30",
+    iconColor: "text-blue-600 dark:text-blue-300",
   },
   {
     label: "Teachers",

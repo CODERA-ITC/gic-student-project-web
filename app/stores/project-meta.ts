@@ -9,32 +9,28 @@ export interface ProjectMetaItem {
   code?: string;
   description?: string;
   createdAt?: string;
+  updatedAt?: string;
+  deletedAt?: string | null;
 }
 
 type ResourceMap<T> = Record<ProjectMetaResource, T>;
+type FetchItemParams = {
+  page?: number;
+  limit?: number;
+  search?: string;
+};
+
+export interface ProjectMetaPagination {
+  page: number;
+  limit: number;
+  total: number;
+  lastPage: number;
+}
 
 const resourceEndpoints: ResourceMap<string> = {
   categories: "/api/categories",
   courses: "/api/courses",
   tags: "/api/tags",
-};
-
-const mockData: ResourceMap<ProjectMetaItem[]> = {
-  categories: [
-    { id: "cat-ai", name: "Artificial Intelligence" },
-    { id: "cat-web", name: "Web Development" },
-    { id: "cat-mobile", name: "Mobile Development" },
-  ],
-  courses: [
-    { id: "course-proj-dev", name: "Project Development", code: "PD101" },
-    { id: "course-hci", name: "Human Computer Interaction", code: "HCI201" },
-    { id: "course-ds", name: "Data Structures", code: "DS102" },
-  ],
-  tags: [
-    { id: "tag-vue", name: "Vue" },
-    { id: "tag-nuxt", name: "Nuxt" },
-    { id: "tag-ai", name: "AI" },
-  ],
 };
 
 const normalizeRows = (payload: any): ProjectMetaItem[] => {
@@ -57,9 +53,32 @@ const normalizeRows = (payload: any): ProjectMetaItem[] => {
         code: raw?.code || "",
         description: raw?.description || "",
         createdAt: raw?.createdAt || raw?.created_at || "",
+        updatedAt: raw?.updatedAt || raw?.updated_at || "",
+        deletedAt: raw?.deletedAt ?? raw?.deleted_at ?? null,
       };
     })
     .filter(Boolean) as ProjectMetaItem[];
+};
+
+const normalizePagination = (
+  payload: any,
+  rows: ProjectMetaItem[],
+): ProjectMetaPagination => {
+  if (payload && typeof payload === "object" && Array.isArray(payload?.data)) {
+    return {
+      page: Number(payload.page) || 1,
+      limit: Number(payload.limit) || rows.length || 10,
+      total: Number(payload.total) || rows.length,
+      lastPage: Number(payload.lastPage) || 1,
+    };
+  }
+
+  return {
+    page: 1,
+    limit: rows.length || 10,
+    total: rows.length,
+    lastPage: 1,
+  };
 };
 
 export const useProjectMetaStore = defineStore("project-meta", {
@@ -74,6 +93,11 @@ export const useProjectMetaStore = defineStore("project-meta", {
       courses: false,
       tags: false,
     } as ResourceMap<boolean>,
+    paginationByResource: {
+      categories: null,
+      courses: null,
+      tags: null,
+    } as ResourceMap<ProjectMetaPagination | null>,
   }),
 
   getters: {
@@ -81,28 +105,59 @@ export const useProjectMetaStore = defineStore("project-meta", {
       state.itemsByResource[resource] || [],
     isLoading: (state) => (resource: ProjectMetaResource) =>
       !!state.loadingByResource[resource],
+    getPagination: (state) => (resource: ProjectMetaResource) =>
+      state.paginationByResource[resource],
   },
 
   actions: {
-    async fetchItems(resource: ProjectMetaResource): Promise<ProjectMetaItem[]> {
+    async fetchItems(
+      resource: ProjectMetaResource,
+      params: FetchItemParams = {},
+    ): Promise<ProjectMetaItem[]> {
       this.loadingByResource[resource] = true;
       try {
         const headers = await authService.getAuthHeaders();
-        const resp = await $fetch(resourceEndpoints[resource], {
+        const query = new URLSearchParams();
+        if (params.page) query.append("page", params.page.toString());
+        if (params.limit) query.append("limit", params.limit.toString());
+        if (params.search) query.append("search", params.search);
+
+        const endpoint = resourceEndpoints[resource];
+        const url = query.toString() ? `${endpoint}?${query.toString()}` : endpoint;
+
+        const resp = await $fetch(url, {
           method: "GET",
           headers,
         });
         const normalized = normalizeRows(resp);
         this.itemsByResource[resource] = normalized;
+        this.paginationByResource[resource] = normalizePagination(resp, normalized);
         return normalized;
       } catch (error) {
         console.error(`project-meta: fetch ${resource} failed`, error);
-        const fallback = mockData[resource];
-        this.itemsByResource[resource] = fallback;
-        return fallback;
+        this.itemsByResource[resource] = [];
+        this.paginationByResource[resource] = {
+          page: 1,
+          limit: 10,
+          total: 0,
+          lastPage: 1,
+        };
+        return [];
       } finally {
         this.loadingByResource[resource] = false;
       }
+    },
+
+    fetchCategories(params: FetchItemParams = {}) {
+      return this.fetchItems("categories", params);
+    },
+
+    fetchCourses(params: FetchItemParams = {}) {
+      return this.fetchItems("courses", params);
+    },
+
+    fetchTags(params: FetchItemParams = {}) {
+      return this.fetchItems("tags", params);
     },
 
     async createItem(
@@ -117,7 +172,10 @@ export const useProjectMetaStore = defineStore("project-meta", {
         headers,
         body: payload,
       });
-      await this.fetchItems(resource);
+      await this.fetchItems(resource, {
+        page: this.paginationByResource[resource]?.page || 1,
+        limit: this.paginationByResource[resource]?.limit || 10,
+      });
     },
 
     async updateItem(
@@ -142,7 +200,10 @@ export const useProjectMetaStore = defineStore("project-meta", {
           body: payload,
         });
       }
-      await this.fetchItems(resource);
+      await this.fetchItems(resource, {
+        page: this.paginationByResource[resource]?.page || 1,
+        limit: this.paginationByResource[resource]?.limit || 10,
+      });
     },
 
     async deleteItem(resource: ProjectMetaResource, id: string) {

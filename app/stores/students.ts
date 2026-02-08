@@ -586,7 +586,7 @@ export const useStudentStore = defineStore("students", {
       this.loading = true;
       try {
         const response = (await $fetch(
-          "https://gic-project.darororo.dev/people/users",
+          "/api/users",
           {
             method: "GET",
             query: { page, limit, ascending, generation },

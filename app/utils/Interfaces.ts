@@ -86,16 +86,9 @@ export interface PaginationState {
 export interface ProjectState {
   projects: Project[];
   userProjects: Project[];
-  availableCategories: string[];
-  availableTags: string[];
-  categoryObjects: any[]; // Store full category objects for ID lookup
-  availableCourses: Course[]; // Store full course objects
-  courseObjects: Course[];
-  tagObjects: any[]; // Store full tag objects for ID lookup
   likedProjects: Set<string | number>;
   loading: boolean;
   pagination: PaginationState;
-  nextProjectId: number; // Track next project ID independently
   filters: ProjectFilters;
   highlightedProjects: Project[];
   submissionProjects: Project[];
