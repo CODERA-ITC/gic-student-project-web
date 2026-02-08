@@ -11,39 +11,21 @@
 
     <!-- Avatar Upload -->
     <div class="flex items-center gap-6">
-      <div
-        v-if="formData.avatar"
-        class="w-24 h-24 rounded-full overflow-hidden border-4 border-gray-200 dark:border-slate-700"
-      >
-        <img
-          :src="formData.avatar"
-          :alt="formData.name"
-          class="w-full h-full object-cover"
-        />
+      <div v-if="formData.avatar"
+        class="w-24 h-24 rounded-full overflow-hidden border-4 border-gray-200 dark:border-slate-700">
+        <img :src="formData.avatar" :alt="formData.name" class="w-full h-full object-cover" />
       </div>
-      <div
-        v-else
-        class="w-24 h-24 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center border-4 border-gray-200 dark:border-slate-700"
-      >
+      <div v-else
+        class="w-24 h-24 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center border-4 border-gray-200 dark:border-slate-700">
         <span class="text-2xl font-semibold text-white">{{
           getInitials(formData.name)
-        }}</span>
+          }}</span>
       </div>
       <div>
-        <input
-          ref="fileInput"
-          type="file"
-          accept="image/jpeg,image/png,image/gif"
-          class="hidden"
-          @change="handleFileChange"
-        />
-        <ButtonsPresetButton
-          preset="secondary"
-          label="Change Avatar"
-          icon="i-heroicons-camera"
-          size="sm"
-          @click="triggerFileInput"
-        />
+        <input ref="fileInput" type="file" accept="image/jpeg,image/png,image/gif" class="hidden"
+          @change="handleFileChange" />
+        <ButtonsPresetButton preset="secondary" label="Change Avatar" icon="i-heroicons-camera" size="sm"
+          @click="triggerFileInput" />
         <p class="text-xs text-gray-500 dark:text-slate-400 mt-2">
           JPG, PNG or GIF. Max size 2MB.
         </p>
@@ -53,31 +35,17 @@
     <!-- Form Fields -->
     <div class="space-y-4">
       <div>
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-        >
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           Full Name
         </label>
-        <UInput
-          v-model="formData.name"
-          placeholder="Enter your full name"
-          size="lg"
-        />
+        <UInput v-model="formData.name" placeholder="Enter your full name" size="sm" />
       </div>
 
       <div>
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-        >
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           Email Address
         </label>
-        <UInput
-          v-model="formData.email"
-          type="email"
-          placeholder="your.email@example.com"
-          size="lg"
-          disabled
-        />
+        <UInput v-model="formData.email" type="email" placeholder="your.email@example.com" size="sm" disabled />
         <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">
           Email cannot be changed. Contact admin for assistance.
         </p>
@@ -93,86 +61,55 @@
         <UInput
           v-model="formData.studentId"
           placeholder="Enter student ID"
-          size="lg"
+          size="sm"
         />
       </div> -->
 
       <!-- Teacher-specific fields -->
       <div v-if="userRole === 'TEACHER'">
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-        >
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           Teacher ID
         </label>
-        <UInput
-          v-model="formData.teacherId"
-          placeholder="Enter teacher ID"
-          size="lg"
-          :disabled="true"
-        />
+        <UInput v-model="formData.teacherId" placeholder="Enter teacher ID" size="sm" :disabled="true" />
       </div>
 
       <div>
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-        >
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           {{ userRole === "TEACHER" ? "Department" : "Program" }}
         </label>
-        <UInput
-          v-model="formData.program"
-          :placeholder="
-            userRole === 'TEACHER'
-              ? 'e.g., Computer Science Department'
-              : 'e.g., Computer Science'
-          "
-          size="lg"
-        />
+        <UInput v-model="formData.program" :placeholder="userRole === 'TEACHER'
+            ? 'e.g., Computer Science Department'
+            : 'e.g., Computer Science'
+          " size="sm" />
       </div>
 
       <!-- Student Year Level -->
       <div v-if="userRole === 'STUDENT'">
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-        >
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           Year Level
         </label>
-        <USelectMenu v-model="formData.year" :items="yearOptions" size="lg" />
+        <USelectMenu v-model="formData.year" :items="yearOptions" size="sm" />
       </div>
 
       <!-- Teacher Position -->
       <div v-if="userRole === 'TEACHER'">
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-        >
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           Position
         </label>
-        <USelectMenu
-          v-model="formData.position"
-          :items="positionOptions"
-          size="lg"
-        />
+        <USelectMenu v-model="formData.position" :items="positionOptions" size="sm" />
       </div>
 
       <!-- Teacher Years of Experience -->
       <div v-if="userRole === 'TEACHER'">
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-        >
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           Years of Experience
         </label>
-        <UInput
-          v-model="formData.yearsOfExperience"
-          type="number"
-          placeholder="e.g., 5"
-          size="lg"
-        />
+        <UInput v-model="formData.yearsOfExperience" type="number" placeholder="e.g., 5" size="sm" />
       </div>
 
       <!-- Teacher Courses -->
       <div v-if="userRole === 'TEACHER'">
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-        >
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           Courses You Teach
         </label>
         <p class="text-xs text-gray-500 dark:text-slate-400 mb-2">
@@ -180,35 +117,19 @@
           course.
         </p>
         <div class="flex gap-2 mb-3">
-          <UInput
-            v-model="newCourse"
-            placeholder="e.g., Web Development, Database Systems..."
-            size="lg"
-            class="flex-1"
-            @keyup.enter="addCourse"
-          />
-          <ButtonsPresetButton
-            preset="secondary"
-            label="Add"
-            icon="i-heroicons-plus"
-            size="sm"
-            @click="addCourse"
-            :disabled="!newCourse.trim()"
-          />
+          <UInput v-model="newCourse" placeholder="e.g., Web Development, Database Systems..." size="sm" class="flex-1"
+            @keyup.enter="addCourse" />
+          <ButtonsPresetButton preset="secondary" label="Add" icon="i-heroicons-plus" size="sm" @click="addCourse"
+            :disabled="!newCourse.trim()" />
         </div>
         <div v-if="formData.courses.length > 0" class="flex gap-2 flex-wrap">
-          <div
-            v-for="(course, index) in formData.courses"
-            :key="index"
-            class="px-3 py-1.5 rounded-full bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium border border-purple-200 dark:border-purple-700 flex items-center gap-2"
-          >
+          <div v-for="(course, index) in formData.courses" :key="index"
+            class="px-3 py-1.5 rounded-full bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium border border-purple-200 dark:border-purple-700 flex items-center gap-2">
             {{
-             course.name
+              course.name
             }}
-            <button
-              @click="removeCourse(index)"
-              class="hover:bg-purple-200 dark:hover:bg-purple-800 rounded-full p-0.5 transition-colors"
-            >
+            <button @click="removeCourse(index)"
+              class="hover:bg-purple-200 dark:hover:bg-purple-800 rounded-full p-0.5 transition-colors">
               <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
             </button>
           </div>
@@ -220,62 +141,35 @@
 
       <!-- Bio/About (both roles) -->
       <div>
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-        >
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           Bio
         </label>
-        <UTextarea
-          v-model="formData.bio"
-          :placeholder="
-            userRole === 'TEACHER'
-              ? 'Tell students about your expertise and teaching philosophy...'
-              : 'Tell others about yourself...'
-          "
-          :rows="5"
-          :cols="100"
-          size="xl"
-        />
+        <UTextarea v-model="formData.bio" :placeholder="userRole === 'TEACHER'
+            ? 'Tell students about your expertise and teaching philosophy...'
+            : 'Tell others about yourself...'
+          " :rows="5" :cols="100" size="xl" />
       </div>
 
       <!-- Skills & Expertise -->
       <div>
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-        >
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           Skills & Expertise
         </label>
         <p class="text-xs text-gray-500 dark:text-slate-400 mb-2">
           Add skills one by one. Press Enter or click Add to include each skill.
         </p>
         <div class="flex gap-2 mb-3">
-          <UInput
-            v-model="newSkill"
-            placeholder="e.g., JavaScript, Python, React..."
-            size="lg"
-            class="flex-1"
-            @keyup.enter="addSkill"
-          />
-          <ButtonsPresetButton
-            preset="secondary"
-            label="Add"
-            icon="i-heroicons-plus"
-            size="sm"
-            @click="addSkill"
-            :disabled="!newSkill.trim()"
-          />
+          <UInput v-model="newSkill" placeholder="e.g., JavaScript, Python, React..." size="sm" class="flex-1"
+            @keyup.enter="addSkill" />
+          <ButtonsPresetButton preset="secondary" label="Add" icon="i-heroicons-plus" size="sm" @click="addSkill"
+            :disabled="!newSkill.trim()" />
         </div>
         <div v-if="formData.skills.length > 0" class="flex gap-2 flex-wrap">
-          <div
-            v-for="(skill, index) in formData.skills"
-            :key="index"
-            class="px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium border border-blue-200 dark:border-blue-700 flex items-center gap-2"
-          >
+          <div v-for="(skill, index) in formData.skills" :key="index"
+            class="px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium border border-blue-200 dark:border-blue-700 flex items-center gap-2">
             {{ skill }}
-            <button
-              @click="removeSkill(index)"
-              class="hover:bg-blue-200 dark:hover:bg-blue-800 rounded-full p-0.5 transition-colors"
-            >
+            <button @click="removeSkill(index)"
+              class="hover:bg-blue-200 dark:hover:bg-blue-800 rounded-full p-0.5 transition-colors">
               <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
             </button>
           </div>
@@ -287,9 +181,7 @@
 
       <!-- Social Links -->
       <div>
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-        >
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           Social Links
         </label>
         <p class="text-xs text-gray-500 dark:text-slate-400 mb-3">
@@ -297,52 +189,24 @@
         </p>
         <div class="space-y-3">
           <div class="flex items-center gap-2">
-            <UIcon
-              name="i-simple-icons-github"
-              class="w-5 h-5 text-gray-700 dark:text-gray-300"
-            />
-            <UInput
-              v-model="formData.socialLinks.github"
-              placeholder="https://github.com/username"
-              size="lg"
-              class="flex-1"
-            />
+            <UIcon name="i-simple-icons-github" class="w-5 h-5 text-gray-700 dark:text-gray-300" />
+            <UInput v-model="formData.socialLinks.github" placeholder="https://github.com/username" size="sm"
+              class="flex-1" />
           </div>
           <div class="flex items-center gap-2">
-            <UIcon
-              name="i-simple-icons-linkedin"
-              class="w-5 h-5 text-blue-600 dark:text-blue-400"
-            />
-            <UInput
-              v-model="formData.socialLinks.linkedin"
-              placeholder="https://linkedin.com/in/username"
-              size="lg"
-              class="flex-1"
-            />
+            <UIcon name="i-simple-icons-linkedin" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <UInput v-model="formData.socialLinks.linkedin" placeholder="https://linkedin.com/in/username" size="sm"
+              class="flex-1" />
           </div>
           <div class="flex items-center gap-2">
-            <UIcon
-              name="i-simple-icons-twitter"
-              class="w-5 h-5 text-sky-500 dark:text-sky-400"
-            />
-            <UInput
-              v-model="formData.socialLinks.twitter"
-              placeholder="https://twitter.com/username"
-              size="lg"
-              class="flex-1"
-            />
+            <UIcon name="i-simple-icons-twitter" class="w-5 h-5 text-sky-500 dark:text-sky-400" />
+            <UInput v-model="formData.socialLinks.twitter" placeholder="https://twitter.com/username" size="sm"
+              class="flex-1" />
           </div>
           <div class="flex items-center gap-2">
-            <UIcon
-              name="i-heroicons-globe-alt"
-              class="w-5 h-5 text-purple-600 dark:text-purple-400"
-            />
-            <UInput
-              v-model="formData.socialLinks.portfolio"
-              placeholder="https://yourportfolio.com"
-              size="lg"
-              class="flex-1"
-            />
+            <UIcon name="i-heroicons-globe-alt" class="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            <UInput v-model="formData.socialLinks.portfolio" placeholder="https://yourportfolio.com" size="sm"
+              class="flex-1" />
           </div>
         </div>
       </div>
@@ -350,56 +214,30 @@
       <!-- Phone & GPA (Student) -->
       <div v-if="userRole === 'STUDENT'" class="grid grid-cols-3 gap-4">
         <div>
-          <label
-            class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-          >
+          <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
             Phone Number
           </label>
-          <UInput
-            v-model="formData.phone"
-            placeholder="+855 12 345 678"
-            size="lg"
-          />
+          <UInput v-model="formData.phone" placeholder="+855 12 345 678" size="sm" />
         </div>
         <div>
-          <label
-            class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-          >
+          <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
             Student ID
           </label>
-          <UInput
-            v-model="formData.studentId"
-            type="text"
-            :disabled="true"
-            placeholder="123456"
-            size="lg"
-          />
+          <UInput v-model="formData.studentId" type="text" :disabled="true" placeholder="123456" size="sm" />
         </div>
 
         <div>
-          <label
-            class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-          >
+          <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
             Gen
           </label>
-          <UInput
-            v-model="formData.gen"
-            type="text"
-            :disabled="true"
-            placeholder="25"
-            size="lg"
-            class="font-semibold"
-          />
+          <UInput v-model="formData.gen" type="text" :disabled="true" placeholder="25" size="sm"
+            class="font-semibold" />
         </div>
       </div>
     </div>
 
     <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4">
-      <ButtonsPresetButton
-        preset="save"
-        label="Save Changes"
-        @click="handleSave"
-      />
+      <ButtonsPresetButton preset="save" label="Save Changes" @click="handleSave" />
     </div>
   </div>
 </template>

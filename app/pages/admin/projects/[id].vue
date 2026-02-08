@@ -1,39 +1,20 @@
 <template>
-  <div
-    class="min-h-screen bg-gray-50 dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
-  >
+  <div class="min-h-screen bg-gray-50 dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
     <!-- Project Details -->
     <UContainer class="py-12">
-      <div
-        v-if="isLoading"
-        class="flex items-center justify-center min-h-[400px]"
-      >
+      <div v-if="isLoading" class="flex items-center justify-center min-h-[400px]">
         <div class="text-center">
-          <UIcon
-            name="i-heroicons-arrow-path"
-            class="w-8 h-8 text-blue-400 animate-spin mx-auto mb-4"
-          />
+          <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 text-blue-400 animate-spin mx-auto mb-4" />
           <p class="text-gray-300 dark:text-gray-300">Loading project...</p>
         </div>
       </div>
 
-      <ProjectDetails
-        v-else-if="project"
-        :project="project"
-        :is-liked="isLiked"
-        :user-role="authStore.userRole"
-        :is-owner="isOwner"
-        :show-submission-status="true"
-        :show-similar-projects="false"
-        :breadcrumb-base="{
+      <ProjectDetails v-else-if="project" :project="project" :is-liked="isLiked" :user-role="authStore.userRole"
+        :is-owner="isOwner" :show-submission-status="true" :show-similar-projects="false" :breadcrumb-base="{
           label: 'Submissions',
           path: '/teacher/submissions',
           icon: 'i-heroicons-inbox-stack',
-        }"
-        @like="toggleLike"
-        @share="shareProject"
-        @hide="toggleVisibility"
-      >
+        }" @like="toggleLike" @share="shareProject" @hide="toggleVisibility">
         <template #submit-button></template>
         <template #action-buttons></template>
       </ProjectDetails>
@@ -42,30 +23,19 @@
     <!-- Submit Modal -->
     <Teleport to="body">
       <Transition name="modal">
-        <div
-          v-if="showSubmitModal"
-          class="fixed inset-0 z-50 flex items-center justify-center p-4"
-          @click.self="showSubmitModal = false"
-        >
+        <div v-if="showSubmitModal" class="fixed inset-0 z-50 flex items-center justify-center p-4"
+          @click.self="showSubmitModal = false">
           <!-- Backdrop -->
-          <div
-            class="absolute inset-0 bg-gray-900/75 dark:bg-gray-900/90 backdrop-blur-sm"
-            @click="showSubmitModal = false"
-          ></div>
+          <div class="absolute inset-0 bg-gray-900/75 dark:bg-gray-900/90 backdrop-blur-sm"
+            @click="showSubmitModal = false"></div>
 
           <!-- Modal Container -->
           <div
-            class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-xl shadow-2xl transform transition-all"
-          >
+            class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-xl shadow-2xl transform transition-all">
             <div class="p-8">
               <div class="flex items-center gap-3 mb-4">
-                <div
-                  class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center"
-                >
-                  <UIcon
-                    name="i-heroicons-paper-airplane"
-                    class="w-6 h-6 text-blue-600 dark:text-blue-400"
-                  />
+                <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                  <UIcon name="i-heroicons-paper-airplane" class="w-6 h-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                   Submit to Teacher
@@ -78,18 +48,9 @@
                 complete.
               </p>
               <div class="flex flex-col sm:flex-row gap-3 justify-end">
-                <ButtonsPresetButton
-                  preset="cancel"
-                  size="lg"
-                  @click="showSubmitModal = false"
-                />
-                <ButtonsPresetButton
-                  preset="submit"
-                  label="Submit Project"
-                  size="lg"
-                  :loading="isSubmitting"
-                  @click="confirmSubmit"
-                />
+                <ButtonsPresetButton preset="cancel" size="sm" @click="showSubmitModal = false" />
+                <ButtonsPresetButton preset="submit" label="Submit Project" size="sm" :loading="isSubmitting"
+                  @click="confirmSubmit" />
               </div>
             </div>
           </div>
@@ -98,12 +59,8 @@
     </Teleport>
 
     <!-- Delete Confirmation Modal -->
-    <DeleteConfirmationModal
-      v-model="showDeleteModal"
-      :project-title="project?.title || 'this project'"
-      :is-deleting="isDeleting"
-      @confirm="confirmDelete"
-    />
+    <DeleteConfirmationModal v-model="showDeleteModal" :project-title="project?.title || 'this project'"
+      :is-deleting="isDeleting" @confirm="confirmDelete" />
 
     <!-- Authentication Modal -->
     <AuthModal v-model="showAuthModal" />
@@ -440,6 +397,7 @@ useHead({
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -451,6 +409,7 @@ useHead({
     opacity: 0;
     transform: translateX(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -458,11 +417,13 @@ useHead({
 }
 
 @keyframes fadeInUpDelayed {
+
   0%,
   20% {
     opacity: 0;
     transform: translateY(20px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -502,12 +463,10 @@ useHead({
   top: 0;
   bottom: 0;
   width: 2px;
-  background: linear-gradient(
-    to bottom,
-    rgb(147, 51, 234),
-    rgb(59, 130, 246),
-    rgb(34, 197, 94)
-  );
+  background: linear-gradient(to bottom,
+      rgb(147, 51, 234),
+      rgb(59, 130, 246),
+      rgb(34, 197, 94));
   border-radius: 2px;
   animation: lineGrow 2s ease-in-out;
 }
@@ -516,6 +475,7 @@ useHead({
   from {
     height: 0;
   }
+
   to {
     height: 100%;
   }

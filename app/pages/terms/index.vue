@@ -309,15 +309,17 @@
           by these Terms of Service. If you do not agree with any part of these
           terms, please discontinue use of our services immediately.
         </p>
-        <UButton color="primary" size="lg" icon="i-heroicons-home" @click="navigateTo('/')">
-          Return to Home
-        </UButton>
+        <PresetButton  preset="ReturntoHome" size="sm"  @click="navigateTo('/')">
+          
+        </PresetButton>
       </div>
     </UContainer>
   </div>
 </template>
 
 <script setup>
+import PresetButton from '../../components/buttons/PresetButton.vue';
+
 // Meta tags for SEO
 useHead({
   title: "Terms of Service | GIC Showcase",

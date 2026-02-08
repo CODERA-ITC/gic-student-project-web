@@ -182,8 +182,8 @@
             {{ t("aboutPage.ctaSubtitle") }}
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <ButtonsPresetButton preset="createProject" to="/projects/create" size="lg" />
-            <ButtonsPresetButton preset="exploreProjects" to="/projects" size="lg" />
+            <ButtonsPresetButton preset="createProject" to="/projects/create" size="sm" />
+            <ButtonsPresetButton preset="exploreProjects" to="/projects" size="sm" />
           </div>
         </div>
       </UContainer>

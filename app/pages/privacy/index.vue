@@ -311,21 +311,7 @@
         </section>
       </div>
 
-      <!-- CTA Section -->
-      <div
-        class="mt-12 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-500/20 dark:to-purple-500/20 border border-blue-200 dark:border-blue-500/30 rounded-2xl p-8 text-center">
-        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-          Questions About Our Privacy Policy?
-        </h3>
-        <p class="text-gray-700 dark:text-gray-300 mb-6">
-          If you have any concerns or questions, our team is here to help. Don't
-          hesitate to reach out.
-        </p>
-        <UButton color="primary" size="lg" icon="i-heroicons-envelope"
-          @click="navigateTo('mailto:privacy@gicstudent.com')">
-          Contact Support
-        </UButton>
-      </div>
+
     </UContainer>
   </div>
 </template>

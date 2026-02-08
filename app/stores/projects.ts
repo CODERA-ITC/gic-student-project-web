@@ -489,12 +489,12 @@ export const useProjectStore = defineStore("projects", {
       let projects: Project[] = [];
       let selectProject: Project[] = []; // only 3 projects will be selected
 
-      // const highlightedProjects = await projectService.getHighlightedProjects();
+      const highlightedProjects = await projectService.getHighlightedProjects();
 
       // tranform api response
 
-      // projects = transformProjects(highlightedProjects);
-      projects = this.projects;
+      projects = transformProjects(highlightedProjects);
+      // projects = this.projects;
       let total = projects.length;
       let numToSelect = Math.min(10, total); // select up to 10 projects
       selectProject = projects.slice(0, numToSelect);

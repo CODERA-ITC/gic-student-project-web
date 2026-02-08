@@ -180,7 +180,7 @@
                         </p>
                       </div>
                       <ButtonsPresetButton :label="t('projectForm.addImages')" icon="i-heroicons-plus" color="primary"
-                        variant="solid" size="lg" :disabled="form.thumbnails.length >= 5"
+                        variant="solid" size="sm" :disabled="form.thumbnails.length >= 5"
                         @click="$refs.thumbnailInput?.click()" />
                     </div>
                   </div>
@@ -276,7 +276,7 @@
                         class="flex-1 px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                         @keyup.enter="addTechnology" @focus="showTechSuggestions = true"
                         @keydown.escape="showTechSuggestions = false" />
-                      <ButtonsPresetButton label="Add" icon="i-heroicons-plus" color="primary" variant="solid" size="lg"
+                      <ButtonsPresetButton label="Add" icon="i-heroicons-plus" color="primary" variant="solid" size="sm"
                         @click="addTechnology" />
                     </div>
 
@@ -313,7 +313,7 @@
                         class="flex-1 px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                         @keyup.enter="addTag" @focus="showTagSuggestions = true"
                         @keydown.escape="showTagSuggestions = false" />
-                      <ButtonsPresetButton label="Add" icon="i-heroicons-plus" color="primary" variant="solid" size="lg"
+                      <ButtonsPresetButton label="Add" icon="i-heroicons-plus" color="primary" variant="solid" size="sm"
                         @click="addTag" />
                     </div>
 
@@ -530,13 +530,13 @@
                       " :icon="editingFeatureIndex >= 0
                         ? 'i-heroicons-check'
                         : 'i-heroicons-plus'
-                        " color="primary" variant="solid" size="lg" :disabled="!featureInput.name ||
+                        " color="primary" variant="solid" size="sm" :disabled="!featureInput.name ||
                           !featureInput.description ||
                           (form.feature.length >= MAX_FEATURES &&
                             editingFeatureIndex < 0)
                           " @click="addFeature" />
                     <ButtonsPresetButton v-if="editingFeatureIndex >= 0" label="Cancel" icon="i-heroicons-x-mark"
-                      color="gray" variant="soft" size="lg" @click="cancelEditFeature" />
+                      color="gray" variant="soft" size="sm" @click="cancelEditFeature" />
                   </div>
 
                   <div class="space-y-2" v-if="form.feature.length > 0">

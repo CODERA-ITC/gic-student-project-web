@@ -1,18 +1,13 @@
 <template>
-  <section
-    class="relative overflow-hidden lg:pb-40 px-4 sm:px-6 lg:px-8 bg-white dark:bg-neutral-900"
-  >
+  <section class="relative overflow-hidden lg:pb-40 px-4 sm:px-6 lg:px-8 bg-white dark:bg-neutral-900">
     <!-- Animated background elements -->
     <div class="absolute inset-0 -z-10 overflow-hidden">
       <div
-        class="absolute -top-40 -right-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob"
-      />
+        class="absolute -top-40 -right-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob" />
       <div
-        class="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob animation-delay-2000"
-      />
+        class="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob animation-delay-2000" />
       <div
-        class="absolute top-1/2 left-1/2 w-80 h-80 bg-blue-700 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob animation-delay-4000"
-      />
+        class="absolute top-1/2 left-1/2 w-80 h-80 bg-blue-700 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob animation-delay-4000" />
     </div>
 
     <UContainer class="relative z-10">
@@ -20,39 +15,27 @@
         <!-- Content -->
         <div class="space-y-8 pt-8">
           <div class="space-y-4">
-            <h1
-              class="text-5xl lg:text-6xl font-semibold text-gray-900 dark:text-white leading-tight"
-            >
+            <h1 class="text-5xl lg:text-6xl font-semibold text-gray-900 dark:text-white leading-tight">
               {{ t("hero.title") }}
             </h1>
-            <p
-              class="text-xl text-gray-700 dark:text-gray-300 leading-relaxed max-w-lg typewriter"
-            >
+            <p class="text-xl text-gray-700 dark:text-gray-300 leading-relaxed max-w-lg typewriter">
               {{ subtitle }}
             </p>
           </div>
 
           <!-- CTA Buttons -->
           <div class="flex flex-col sm:flex-row gap-4 pt-4">
-            <ButtonsPresetButton
-              preset="exploreHighlightedProjects"
-              @click="scrollToProjects"
-              class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium transition-colors"
-            >
+            <ButtonsPresetButton preset="exploreHighlightedProjects" @click="scrollToProjects" size="md"
+              class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium transition-colors">
               <UIcon name="i-heroicons-arrow-right" class="w-5 h-5" />
             </ButtonsPresetButton>
             <ButtonsPresetButton preset="learnMore" to="/about" size="md" />
           </div>
 
           <!-- Stats Preview -->
-          <div
-            ref="containerRef"
-            class="grid grid-cols-3 gap-4 pt-8 border-t border-gray-300 dark:border-neutral-700"
-          >
+          <div ref="containerRef" class="grid grid-cols-3 gap-4 pt-8 border-t border-gray-300 dark:border-neutral-700">
             <div>
-              <div
-                class="text-3xl font-semibold text-slate-700 dark:text-blue-400"
-              >
+              <div class="text-3xl font-semibold text-slate-700 dark:text-blue-400">
                 {{ projects }}+
               </div>
               <p class="text-sm text-gray-600 dark:text-gray-400">
@@ -60,9 +43,7 @@
               </p>
             </div>
             <div>
-              <div
-                class="text-3xl font-semibold text-slate-700 dark:text-blue-400"
-              >
+              <div class="text-3xl font-semibold text-slate-700 dark:text-blue-400">
                 {{ students }}+
               </div>
               <p class="text-sm text-gray-600 dark:text-gray-400">
@@ -70,9 +51,7 @@
               </p>
             </div>
             <div>
-              <div
-                class="text-3xl font-semibold text-slate-700 dark:text-blue-400"
-              >
+              <div class="text-3xl font-semibold text-slate-700 dark:text-blue-400">
                 {{ gens }}
               </div>
               <p class="text-sm text-gray-600 dark:text-gray-400">
@@ -181,6 +160,7 @@ onMounted(async () => {
 <style scoped>
 /* Animations */
 @keyframes blob {
+
   0%,
   100% {
     transform: translate(0, 0) scale(1);
@@ -223,8 +203,7 @@ onMounted(async () => {
 /* Grid pattern background */
 .bg-grid-pattern {
   background-image:
-    linear-gradient(
-      0deg,
+    linear-gradient(0deg,
       transparent 24%,
       rgba(255, 255, 255, 0.05) 25%,
       rgba(255, 255, 255, 0.05) 26%,
@@ -233,10 +212,8 @@ onMounted(async () => {
       rgba(255, 255, 255, 0.05) 75%,
       rgba(255, 255, 255, 0.05) 76%,
       transparent 77%,
-      transparent
-    ),
-    linear-gradient(
-      90deg,
+      transparent),
+    linear-gradient(90deg,
       transparent 24%,
       rgba(255, 255, 255, 0.05) 25%,
       rgba(255, 255, 255, 0.05) 26%,
@@ -245,8 +222,7 @@ onMounted(async () => {
       rgba(255, 255, 255, 0.05) 75%,
       rgba(255, 255, 255, 0.05) 76%,
       transparent 77%,
-      transparent
-    );
+      transparent);
   background-size: 50px 50px;
 }
 
@@ -267,8 +243,7 @@ onMounted(async () => {
 
 .typewriter::before {
   background: white;
-  animation: typing v-bind("typeWriterSpeed") steps(v-bind("typeWriterChars"))
-    forwards;
+  animation: typing v-bind("typeWriterSpeed") steps(v-bind("typeWriterChars")) forwards;
 }
 
 .dark .typewriter::before {

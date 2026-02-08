@@ -253,8 +253,8 @@
                 be undone.
               </p>
               <div class="flex flex-col sm:flex-row gap-3 justify-end">
-                <ButtonsPresetButton preset="cancel" size="lg" @click="showCancelModal = false" />
-                <UButton label="Cancel Submission" icon="i-heroicons-x-circle" color="error" size="lg"
+                <ButtonsPresetButton preset="cancel" size="sm" @click="showCancelModal = false" />
+                <UButton label="Cancel Submission" icon="i-heroicons-x-circle" color="error" size="sm"
                   :loading="isCanceling" @click="handleCancelConfirm" />
               </div>
             </div>

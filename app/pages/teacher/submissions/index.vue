@@ -1,14 +1,9 @@
 <template>
   <div class="min-h-screen bg-white dark:bg-slate-900">
     <!-- Loading State -->
-    <div
-      v-if="authStore.isLoading"
-      class="min-h-screen flex items-center justify-center"
-    >
+    <div v-if="authStore.isLoading" class="min-h-screen flex items-center justify-center">
       <div class="text-center space-y-4">
-        <div
-          class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"
-        ></div>
+        <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
         <p class="text-gray-600 dark:text-slate-300">Loading projects...</p>
       </div>
     </div>
@@ -18,28 +13,20 @@
       <!-- Header Section (clean card style) -->
       <div class="py-14">
         <UContainer>
-          <div
-            class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/15
-                   bg-white/90 dark:bg-slate-900/90 shadow-2xl px-8 py-10"
-          >
+          <div class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/15
+                   bg-white/90 dark:bg-slate-900/90 shadow-2xl px-8 py-10">
             <div
               class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.08),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(79,70,229,0.08),transparent_30%)] pointer-events-none"
-              aria-hidden="true"
-            ></div>
+              aria-hidden="true"></div>
 
             <div class="relative space-y-3">
               <nav class="flex items-center flex-wrap gap-1 text-sm text-slate-600 dark:text-slate-300">
-                <NuxtLink
-                  to="/"
-                  class="hover:text-blue-600 dark:hover:text-blue-300 transition-colors"
-                >
+                <NuxtLink to="/" class="hover:text-blue-600 dark:hover:text-blue-300 transition-colors">
                   {{ t("home") }}
                 </NuxtLink>
                 <span class="text-slate-400 dark:text-slate-500">/</span>
-                <NuxtLink
-                  to="/teacher/dashboard"
-                  class="hover:text-blue-600 dark:hover:text-blue-300 transition-colors"
-                >
+                <NuxtLink to="/teacher/dashboard"
+                  class="hover:text-blue-600 dark:hover:text-blue-300 transition-colors">
                   {{ t("nav.teacherDashboard") }}
                 </NuxtLink>
                 <span class="text-slate-400 dark:text-slate-500">/</span>
@@ -65,79 +52,42 @@
           <div class="w-full">
             <!-- Projects Table -->
             <div
-              class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg overflow-hidden"
-            >
+              class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg overflow-hidden">
               <!-- Filters and Search -->
               <div
-                class="bg-white dark:bg-slate-800/50 backdrop-blur-sm border-b border-gray-200 dark:border-slate-700 p-6"
-              >
+                class="bg-white dark:bg-slate-800/50 backdrop-blur-sm border-b border-gray-200 dark:border-slate-700 p-6">
                 <!-- Section Header -->
                 <div class="mb-6">
-                  <h3
-                    class="text-gray-900 dark:text-white text-xl font-semibold mb-2"
-                  >
+                  <h3 class="text-gray-900 dark:text-white text-xl font-semibold mb-2">
                     Student Projects
                   </h3>
                   <p class="text-xs text-gray-600 dark:text-slate-400">
                     Search, filter, and manage all student project submissions
                   </p>
                 </div>
-                <div
-                  class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4"
-                >
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 gap-4">
                   <div class="relative flex-1">
-                    <UIcon
-                      name="i-heroicons-magnifying-glass"
-                      class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-500"
-                    />
-                    <input
-                      v-model="searchQuery"
-                      type="text"
-                      placeholder="Search projects..."
-                      class="w-full pl-10 pr-3 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-md text-black dark:text-white text-sm placeholder-gray-500 dark:placeholder-slate-500 focus:outline-none"
-                    />
+                    <UIcon name="i-heroicons-magnifying-glass"
+                      class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-500" />
+                    <input v-model="searchQuery" type="text" placeholder="Search projects..."
+                      class="w-full pl-10 pr-3 py-2 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-md text-black dark:text-white text-sm placeholder-gray-500 dark:placeholder-slate-500 focus:outline-none" />
                   </div>
                   <div class="flex gap-2">
-                    <ButtonsPresetButton
-                      preset="primary"
-                      label="All Projects"
-                      icon="i-heroicons-list-bullet"
-                      size="sm"
-                      @click="setActiveFilter('all')"
-                      :class="{ 'bg-blue-800': activeFilter === 'all' }"
-                    />
-                    <ButtonsPresetButton
-                      preset="primary"
-                      label="Accepted"
-                      icon="i-heroicons-check-circle"
-                      size="sm"
-                      @click="setActiveFilter('completed')"
-                      :class="{ 'bg-blue-800': activeFilter === 'completed' }"
-                    />
-                    <ButtonsPresetButton
-                      preset="primary"
-                      label="Pending"
-                      icon="i-heroicons-exclamation-circle"
-                      size="sm"
-                      @click="setActiveFilter('pending')"
-                      :class="{ 'bg-blue-800': activeFilter === 'pending' }"
-                    />
-                    <ButtonsPresetButton
-                      preset="primary"
-                      label="Rejected"
-                      icon="i-heroicons-x-circle"
-                      size="sm"
-                      @click="setActiveFilter('rejected')"
-                      :class="{ 'bg-blue-800': activeFilter === 'rejected' }"
-                    />
+                    <ButtonsPresetButton preset="primary" label="All Projects" icon="i-heroicons-list-bullet" size="sm"
+                      @click="setActiveFilter('all')" :class="{ 'bg-blue-800': activeFilter === 'all' }" />
+                    <ButtonsPresetButton preset="primary" label="Accepted" icon="i-heroicons-check-circle" size="sm"
+                      @click="setActiveFilter('completed')" :class="{ 'bg-blue-800': activeFilter === 'completed' }" />
+                    <ButtonsPresetButton preset="primary" label="Pending" icon="i-heroicons-exclamation-circle"
+                      size="sm" @click="setActiveFilter('pending')"
+                      :class="{ 'bg-blue-800': activeFilter === 'pending' }" />
+                    <ButtonsPresetButton preset="primary" label="Rejected" icon="i-heroicons-x-circle" size="sm"
+                      @click="setActiveFilter('rejected')" :class="{ 'bg-blue-800': activeFilter === 'rejected' }" />
                   </div>
                 </div>
 
                 <div class="flex gap-4 flex-wrap">
-                  <select
-                    v-model="selectedCategory"
-                    class="w-full sm:w-auto px-3 py-1.5 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-md text-black dark:text-white text-sm min-w-40 focus:outline-none"
-                  >
+                  <select v-model="selectedCategory"
+                    class="w-full sm:w-auto px-3 py-1.5 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-md text-black dark:text-white text-sm min-w-40 focus:outline-none">
                     <option value="">All Categories</option>
                     <option value="web-development">Web Development</option>
                     <option value="mobile-app">Mobile App</option>
@@ -147,10 +97,8 @@
                     <option value="other">Other</option>
                   </select>
 
-                  <select
-                    v-model="selectedGeneration"
-                    class="w-full sm:w-auto px-3 py-1.5 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-md text-black dark:text-white text-sm min-w-40 focus:outline-none"
-                  >
+                  <select v-model="selectedGeneration"
+                    class="w-full sm:w-auto px-3 py-1.5 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-md text-black dark:text-white text-sm min-w-40 focus:outline-none">
                     <option value="">All Years</option>
                     <option value="gen-2024">2024-2025</option>
                     <option value="gen-2025">2025-2026</option>
@@ -162,69 +110,49 @@
                 <thead>
                   <tr>
                     <th
-                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
-                    >
+                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700">
                       Student
                     </th>
                     <th
-                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
-                    >
+                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700">
                       Project Name
                     </th>
                     <th
-                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700 hidden md:table-cell"
-                    >
+                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700 hidden md:table-cell">
                       Category
                     </th>
                     <th
-                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700 hidden md:table-cell"
-                    >
+                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700 hidden md:table-cell">
                       Year
                     </th>
                     <th
-                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700"
-                    >
+                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700">
                       Status
                     </th>
                     <th
-                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700 hidden md:table-cell"
-                    >
+                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-left p-3 border-b border-gray-200 dark:border-slate-700 hidden md:table-cell">
                       Submitted
                     </th>
                     <th
-                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-center p-3 border-b border-gray-200 dark:border-slate-700"
-                    >
+                      class="bg-gray-100 dark:bg-slate-900 text-black dark:text-slate-100 font-semibold text-xs text-center p-3 border-b border-gray-200 dark:border-slate-700">
                       Actions
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr
-                    v-for="project in paginatedProjects"
-                    :key="project.id"
-                    class="border-b border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-900 last:border-b-0"
-                  >
+                  <tr v-for="project in paginatedProjects" :key="project.id"
+                    class="border-b border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-900 last:border-b-0">
                     <td class="p-3 text-slate-100 align-top text-xs">
                       <div class="flex items-center gap-3">
-                        <div
-                          v-if="project.author.avatar"
-                          class="w-8 h-8 rounded-full overflow-hidden shrink-0"
-                        >
-                          <img
-                            :src="
-                              getAvatarUrl(
-                                project.author.avatar,
-                                project.author.name,
-                              )
-                            "
-                            :alt="project.author.name"
-                            class="w-full h-full object-cover"
-                          />
+                        <div v-if="project.author.avatar" class="w-8 h-8 rounded-full overflow-hidden shrink-0">
+                          <img :src="getAvatarUrl(
+                            project.author.avatar,
+                            project.author.name,
+                          )
+                            " :alt="project.author.name" class="w-full h-full object-cover" />
                         </div>
-                        <div
-                          v-else
-                          class="w-8 h-8 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center shrink-0"
-                        >
+                        <div v-else
+                          class="w-8 h-8 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center shrink-0">
                           <span class="text-xs font-semibold text-white">{{
                             project.author.name
                               .split(" ")
@@ -234,84 +162,51 @@
                           }}</span>
                         </div>
                         <div>
-                          <div
-                            class="font-semibold text-black dark:text-white text-xs"
-                          >
+                          <div class="font-semibold text-black dark:text-white text-xs">
                             {{ project.author.name }}
                           </div>
-                          <div
-                            class="text-xs text-gray-600 dark:text-slate-400"
-                          >
+                          <div class="text-xs text-gray-600 dark:text-slate-400">
                             {{ project.author.program }}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td class="p-3 text-slate-100 align-top text-xs">
-                      <div
-                        class="font-semibold text-black dark:text-white text-xs mb-1"
-                      >
+                      <div class="font-semibold text-black dark:text-white text-xs mb-1">
                         {{ project.name }}
                       </div>
                       <div
-                        class="text-xs text-gray-600 dark:text-slate-400 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap"
-                      >
+                        class="text-xs text-gray-600 dark:text-slate-400 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
                         {{ project.description }}
                       </div>
                     </td>
-                    <td
-                      class="p-3 text-slate-100 align-top text-xs hidden md:table-cell"
-                    >
+                    <td class="p-3 text-slate-100 align-top text-xs hidden md:table-cell">
                       <span
-                        class="bg-gray-200 dark:bg-slate-700 text-black dark:text-slate-100 px-2 py-1 rounded text-xs font-medium inline-block"
-                        >{{ project.category }}</span
-                      >
+                        class="bg-gray-200 dark:bg-slate-700 text-black dark:text-slate-100 px-2 py-1 rounded text-xs font-medium inline-block">{{
+                        project.category }}</span>
                     </td>
-                    <td
-                      class="p-3 text-black dark:text-slate-100 align-top text-xs hidden md:table-cell"
-                    >
+                    <td class="p-3 text-black dark:text-slate-100 align-top text-xs hidden md:table-cell">
                       {{ project.academicYear }}
                     </td>
                     <td class="p-3 text-slate-100 align-top text-xs">
-                      <span
-                        :class="getStatusBadgeClass(project.submissionStatus)"
-                        class="px-2 py-1 rounded text-xs font-semibold inline-block"
-                      >
+                      <span :class="getStatusBadgeClass(project.submissionStatus)"
+                        class="px-2 py-1 rounded text-xs font-semibold inline-block">
                         {{ project.submissionStatus }}
                       </span>
                     </td>
-                    <td
-                      class="p-3 text-black dark:text-slate-100 align-top text-xs hidden md:table-cell"
-                    >
+                    <td class="p-3 text-black dark:text-slate-100 align-top text-xs hidden md:table-cell">
                       {{ project.createdAt }}
                     </td>
                     <td class="p-3 text-slate-100 align-top text-xs">
                       <div class="flex gap-2 flex-wrap">
-                        <ButtonsPresetButton
-                          preset="primary"
-                          label="View"
-                          icon="i-heroicons-eye"
-                          size="xs"
-                          @click="viewProject(project)"
-                        />
-                        <ButtonsPresetButton
-                          v-if="project.submissionStatus === 'pending'"
-                          label="Accept"
-                          icon="i-heroicons-check-circle"
-                          color="success"
-                          size="xs"
-                          @click="openAcceptModal(project)"
-                          :loading="acceptingId === project.id"
-                        />
-                        <ButtonsPresetButton
-                          v-if="project.submissionStatus === 'pending'"
-                          label="Reject"
-                          icon="i-heroicons-x-circle"
-                          color="danger"
-                          size="xs"
-                          @click="openRejectModal(project)"
-                          :loading="rejectingId === project.id"
-                        />
+                        <ButtonsPresetButton preset="primary" label="View" icon="i-heroicons-eye" size="xs"
+                          @click="viewProject(project)" />
+                        <ButtonsPresetButton v-if="project.submissionStatus === 'pending'" label="Accept"
+                          icon="i-heroicons-check-circle" color="success" size="xs" @click="openAcceptModal(project)"
+                          :loading="acceptingId === project.id" />
+                        <ButtonsPresetButton v-if="project.submissionStatus === 'pending'" label="Reject"
+                          icon="i-heroicons-x-circle" color="danger" size="xs" @click="openRejectModal(project)"
+                          :loading="rejectingId === project.id" />
                       </div>
                     </td>
                   </tr>
@@ -319,17 +214,9 @@
               </table>
 
               <!-- Empty State -->
-              <div
-                v-if="totalFilteredProjects === 0"
-                class="text-center py-8 px-4"
-              >
-                <UIcon
-                  name="i-heroicons-inbox-stack"
-                  class="w-12 h-12 text-slate-500 mx-auto mb-4"
-                />
-                <h3
-                  class="text-black dark:text-white text-lg font-semibold mb-2"
-                >
+              <div v-if="totalFilteredProjects === 0" class="text-center py-8 px-4">
+                <UIcon name="i-heroicons-inbox-stack" class="w-12 h-12 text-slate-500 mx-auto mb-4" />
+                <h3 class="text-black dark:text-white text-lg font-semibold mb-2">
                   No projects found
                 </h3>
                 <p class="text-slate-400 text-xs">
@@ -338,10 +225,8 @@
               </div>
 
               <!-- Pagination -->
-              <div
-                v-if="totalPages > 1"
-                class="flex flex-col gap-4 items-center pt-6 pb-4 px-4 border-t border-gray-200 dark:border-slate-700"
-              >
+              <div v-if="totalPages > 1"
+                class="flex flex-col gap-4 items-center pt-6 pb-4 px-4 border-t border-gray-200 dark:border-slate-700">
                 <div class="text-gray-600 dark:text-slate-400 text-xs">
                   Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to
                   {{
@@ -350,39 +235,19 @@
                   of {{ totalFilteredProjects }} projects
                 </div>
                 <div class="flex items-center gap-2">
-                  <ButtonsPresetButton
-                    preset="primary"
-                    label="Previous"
-                    icon="i-heroicons-arrow-left"
-                    size="sm"
-                    @click="prevPage"
-                    :disabled="currentPage === 1"
-                  />
+                  <ButtonsPresetButton preset="primary" label="Previous" icon="i-heroicons-arrow-left" size="sm"
+                    @click="prevPage" :disabled="currentPage === 1" />
 
                   <div class="flex gap-1 mx-2">
-                    <ButtonsPresetButton
-                      v-for="page in visiblePages"
-                      :key="page"
-                      preset="secondary"
-                      :label="page.toString()"
-                      size="sm"
-                      class="rounded-md"
-                      @click="goToPage(page)"
-                      :class="{
+                    <ButtonsPresetButton v-for="page in visiblePages" :key="page" preset="secondary"
+                      :label="page.toString()" size="sm" class="rounded-md" @click="goToPage(page)" :class="{
                         'bg-blue-500 text-white border-blue-500':
                           page === currentPage,
-                      }"
-                    />
+                      }" />
                   </div>
 
-                  <ButtonsPresetButton
-                    preset="primary"
-                    label="Next"
-                    icon="i-heroicons-chevron-right"
-                    size="sm"
-                    @click="nextPage"
-                    :disabled="currentPage === totalPages"
-                  />
+                  <ButtonsPresetButton preset="primary" label="Next" icon="i-heroicons-chevron-right" size="sm"
+                    @click="nextPage" :disabled="currentPage === totalPages" />
                 </div>
               </div>
             </div>
@@ -394,30 +259,19 @@
     <!-- Accept Modal -->
     <Teleport to="body">
       <Transition name="modal">
-        <div
-          v-if="showAcceptModal"
-          class="fixed inset-0 z-50 flex items-center justify-center p-4"
-          @click.self="showAcceptModal = false"
-        >
+        <div v-if="showAcceptModal" class="fixed inset-0 z-50 flex items-center justify-center p-4"
+          @click.self="showAcceptModal = false">
           <!-- Backdrop -->
-          <div
-            class="absolute inset-0 bg-gray-900/75 dark:bg-gray-900/90 backdrop-blur-sm"
-            @click="showAcceptModal = false"
-          ></div>
+          <div class="absolute inset-0 bg-gray-900/75 dark:bg-gray-900/90 backdrop-blur-sm"
+            @click="showAcceptModal = false"></div>
 
           <!-- Modal Container -->
           <div
-            class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-xl shadow-2xl transform transition-all"
-          >
+            class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-xl shadow-2xl transform transition-all">
             <div class="p-8">
               <div class="flex items-center gap-3 mb-4">
-                <div
-                  class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center"
-                >
-                  <UIcon
-                    name="i-heroicons-check-circle"
-                    class="w-6 h-6 text-green-600 dark:text-green-400"
-                  />
+                <div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                  <UIcon name="i-heroicons-check-circle" class="w-6 h-6 text-green-600 dark:text-green-400" />
                 </div>
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                   Accept Project
@@ -426,10 +280,7 @@
               <p class="text-gray-600 dark:text-gray-300 mb-2">
                 Are you sure you want to accept this project?
               </p>
-              <div
-                v-if="selectedProject"
-                class="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-4 mb-6"
-              >
+              <div v-if="selectedProject" class="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-4 mb-6">
                 <p class="font-semibold text-gray-900 dark:text-white mb-1">
                   {{ selectedProject.name }}
                 </p>
@@ -438,19 +289,9 @@
                 </p>
               </div>
               <div class="flex flex-col sm:flex-row gap-3 justify-end">
-                <ButtonsPresetButton
-                  preset="cancel"
-                  size="lg"
-                  @click="showAcceptModal = false"
-                />
-                <ButtonsPresetButton
-                  label="Accept Project"
-                  icon="i-heroicons-check-circle"
-                  color="success"
-                  size="lg"
-                  :loading="acceptingId === selectedProject?.id"
-                  @click="confirmAccept"
-                />
+                <ButtonsPresetButton preset="cancel" size="sm" @click="showAcceptModal = false" />
+                <ButtonsPresetButton label="Accept Project" icon="i-heroicons-check-circle" color="success" size="sm"
+                  :loading="acceptingId === selectedProject?.id" @click="confirmAccept" />
               </div>
             </div>
           </div>
@@ -461,30 +302,19 @@
     <!-- Reject Modal -->
     <Teleport to="body">
       <Transition name="modal">
-        <div
-          v-if="showRejectModal"
-          class="fixed inset-0 z-50 flex items-center justify-center p-4"
-          @click.self="showRejectModal = false"
-        >
+        <div v-if="showRejectModal" class="fixed inset-0 z-50 flex items-center justify-center p-4"
+          @click.self="showRejectModal = false">
           <!-- Backdrop -->
-          <div
-            class="absolute inset-0 bg-gray-900/75 dark:bg-gray-900/90 backdrop-blur-sm"
-            @click="showRejectModal = false"
-          ></div>
+          <div class="absolute inset-0 bg-gray-900/75 dark:bg-gray-900/90 backdrop-blur-sm"
+            @click="showRejectModal = false"></div>
 
           <!-- Modal Container -->
           <div
-            class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-xl shadow-2xl transform transition-all"
-          >
+            class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-xl shadow-2xl transform transition-all">
             <div class="p-8">
               <div class="flex items-center gap-3 mb-4">
-                <div
-                  class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center"
-                >
-                  <UIcon
-                    name="i-heroicons-x-circle"
-                    class="w-6 h-6 text-red-600 dark:text-red-400"
-                  />
+                <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                  <UIcon name="i-heroicons-x-circle" class="w-6 h-6 text-red-600 dark:text-red-400" />
                 </div>
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                   Reject Project
@@ -494,10 +324,7 @@
                 Are you sure you want to reject this project? The student will
                 be notified of the rejection.
               </p>
-              <div
-                v-if="selectedProject"
-                class="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-4 mb-6"
-              >
+              <div v-if="selectedProject" class="bg-gray-50 dark:bg-slate-700/50 rounded-lg p-4 mb-6">
                 <p class="font-semibold text-gray-900 dark:text-white mb-1">
                   {{ selectedProject.name }}
                 </p>
@@ -506,19 +333,9 @@
                 </p>
               </div>
               <div class="flex flex-col sm:flex-row gap-3 justify-end">
-                <ButtonsPresetButton
-                  preset="cancel"
-                  size="lg"
-                  @click="showRejectModal = false"
-                />
-                <ButtonsPresetButton
-                  label="Reject Project"
-                  icon="i-heroicons-x-circle"
-                  color="danger"
-                  size="lg"
-                  :loading="rejectingId === selectedProject?.id"
-                  @click="confirmReject"
-                />
+                <ButtonsPresetButton preset="cancel" size="sm" @click="showRejectModal = false" />
+                <ButtonsPresetButton label="Reject Project" icon="i-heroicons-x-circle" color="danger" size="sm"
+                  :loading="rejectingId === selectedProject?.id" @click="confirmReject" />
               </div>
             </div>
           </div>
@@ -559,7 +376,7 @@ onMounted(async () => {
     console.log("Fetching all submissions for teacher...");
     // submissions.value = await projectsStore.fetchAllSubmissions(); // Removed, use store
 
-    if(projectsStore.submissionProjects.length === 0) {
+    if (projectsStore.submissionProjects.length === 0) {
       await projectsStore.fetchAllSubmissions(); // Ensure store has data
     }
     console.log(`✅ Loaded ${projectsStore.submissionProjects.length} submissions`);
@@ -625,7 +442,7 @@ const filteredProjects = computed(() => {
       project.submissionStatus !== "rejected"
     ) {
       return false;
-    }``
+    } ``
 
     // Filter by search query
     if (searchQuery.value) {

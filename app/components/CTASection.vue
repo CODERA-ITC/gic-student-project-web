@@ -12,14 +12,14 @@
         <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
           <ButtonsPresetButton
             preset="exploreProjects"
-            size="lg"
+            size="sm"
             to="/projects"
             class="!bg-white !text-blue-900 !border-white hover:!bg-blue-50 !shadow-xl"
           />
 
           <ButtonsPresetButton
             preset="submitProject"
-            size="lg"
+            size="sm"
             class="!border-white !text-white hover:!bg-white/10 dark:!border-slate-300 dark:!text-slate-100"
             @click="handleSubmitProject"
           />

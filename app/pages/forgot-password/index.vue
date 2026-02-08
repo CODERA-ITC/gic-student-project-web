@@ -3,17 +3,13 @@
     <AuthHero />
 
     <!-- Right Side - Forgot Password Form -->
-    <div
-      class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-neutral-900"
-    >
+    <div class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-neutral-900">
       <div class="w-full max-w-md">
         <!-- Step 1: Enter Email -->
         <div v-if="step === 1">
           <!-- Header -->
           <div class="mb-8">
-            <h1
-              class="text-3xl font-semibold text-slate-900 dark:text-white mb-2"
-            >
+            <h1 class="text-3xl font-semibold text-slate-900 dark:text-white mb-2">
               Reset Your Password
             </h1>
             <p class="text-slate-600 dark:text-neutral-400">
@@ -24,38 +20,20 @@
           <form @submit.prevent="handleEmailSubmit" class="space-y-4">
             <!-- Email Input -->
             <div>
-              <label
-                class="block text-sm font-medium text-slate-900 dark:text-white mb-2"
-              >
+              <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                 Email address
               </label>
-              <input
-                v-model="email"
-                type="email"
-                placeholder="your.email@example.com"
-                required
-                :disabled="isLoading"
-                class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              />
+              <input v-model="email" type="email" placeholder="your.email@example.com" required :disabled="isLoading"
+                class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed" />
             </div>
 
             <!-- Continue Button -->
-            <ButtonsPresetButton
-              preset="submit"
-              label="CONTINUE"
-              icon=""
-              :loading="isLoading"
-              :disabled="isLoading"
-              size="lg"
-              class="w-full"
-              type="submit"
-            />
+            <ButtonsPresetButton preset="submit" label="CONTINUE" icon="" :loading="isLoading" :disabled="isLoading"
+              size="sm" class="w-full" type="submit" />
 
             <!-- Error Message -->
-            <div
-              v-if="error"
-              class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400"
-            >
+            <div v-if="error"
+              class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400">
               {{ error }}
             </div>
           </form>
@@ -65,9 +43,7 @@
         <div v-else-if="step === 2">
           <!-- Header -->
           <div class="mb-8">
-            <h1
-              class="text-3xl font-semibold text-slate-900 dark:text-white mb-2"
-            >
+            <h1 class="text-3xl font-semibold text-slate-900 dark:text-white mb-2">
               Security Verification
             </h1>
             <p class="text-slate-600 dark:text-neutral-400">
@@ -77,65 +53,35 @@
 
           <!-- Loading State -->
           <div v-if="loadingQuestions" class="flex justify-center py-8">
-            <div
-              class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-900 dark:border-blue-400"
-            ></div>
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-900 dark:border-blue-400"></div>
           </div>
 
-          <form
-            v-else
-            @submit.prevent="handleSecurityQuestionsSubmit"
-            class="space-y-6"
-          >
+          <form v-else @submit.prevent="handleSecurityQuestionsSubmit" class="space-y-6">
             <!-- Dynamic Questions -->
-            <div
-              v-for="(question, index) in securityQuestions"
-              :key="question.id"
-            >
-              <label
-                class="block text-sm font-medium text-slate-900 dark:text-white mb-2"
-              >
+            <div v-for="(question, index) in securityQuestions" :key="question.id">
+              <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                 {{ index + 1 }}. {{ question.questions }}
                 <span class="text-red-500">*</span>
               </label>
-              <input
-                v-model="securityAnswers[question.id]"
-                type="text"
-                required
-                :disabled="isLoading"
+              <input v-model="securityAnswers[question.id]" type="text" required :disabled="isLoading"
                 placeholder="Enter your answer"
-                class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              />
+                class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed" />
             </div>
 
             <!-- Error Message -->
-            <div
-              v-if="error"
-              class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400"
-            >
+            <div v-if="error"
+              class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400">
               {{ error }}
             </div>
 
             <!-- Continue Button (changed from Verify) -->
-            <ButtonsPresetButton
-              preset="submit"
-              label="CONTINUE"
-              icon=""
-              :loading="isLoading"
-              :disabled="isLoading"
-              size="lg"
-              class="w-full"
-              type="submit"
-            />
+            <ButtonsPresetButton preset="submit" label="CONTINUE" icon="" :loading="isLoading" :disabled="isLoading"
+              size="sm" class="w-full" type="submit" />
 
             <!-- Back Link -->
             <div class="text-center">
-              <button
-                type="button"
-                @click="goBackToEmail"
-                :disabled="isLoading"
-                class="text-sm text-blue-900 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors inline-flex items-center gap-2 disabled:opacity-50"
-              >
+              <button type="button" @click="goBackToEmail" :disabled="isLoading"
+                class="text-sm text-blue-900 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors inline-flex items-center gap-2 disabled:opacity-50">
                 <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" />
                 Back to Email
               </button>
@@ -147,9 +93,7 @@
         <div v-else-if="step === 3">
           <!-- Header -->
           <div class="mb-8">
-            <h1
-              class="text-3xl font-semibold text-slate-900 dark:text-white mb-2"
-            >
+            <h1 class="text-3xl font-semibold text-slate-900 dark:text-white mb-2">
               Set New Password
             </h1>
             <p class="text-slate-600 dark:text-neutral-400">
@@ -160,19 +104,11 @@
           <form @submit.prevent="handlePasswordReset" class="space-y-4">
             <!-- New Password Input -->
             <div>
-              <label
-                class="block text-sm font-medium text-slate-900 dark:text-white mb-2"
-              >
+              <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                 New password
               </label>
-              <input
-                v-model="newPassword"
-                type="password"
-                placeholder="••••••••"
-                required
-                :disabled="isLoading"
-                class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              />
+              <input v-model="newPassword" type="password" placeholder="••••••••" required :disabled="isLoading"
+                class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed" />
               <p class="text-xs text-slate-500 dark:text-neutral-500 mt-1">
                 Must be at least 8 characters long
               </p>
@@ -180,46 +116,26 @@
 
             <!-- Confirm Password Input -->
             <div>
-              <label
-                class="block text-sm font-medium text-slate-900 dark:text-white mb-2"
-              >
+              <label class="block text-sm font-medium text-slate-900 dark:text-white mb-2">
                 Confirm password
               </label>
-              <input
-                v-model="confirmPassword"
-                type="password"
-                placeholder="••••••••"
-                required
-                :disabled="isLoading"
-                class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              />
+              <input v-model="confirmPassword" type="password" placeholder="••••••••" required :disabled="isLoading"
+                class="w-full px-4 py-3 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-blue-900 transition-all disabled:opacity-50 disabled:cursor-not-allowed" />
             </div>
 
             <!-- Reset Button -->
-            <ButtonsPresetButton
-              preset="submit"
-              label="RESET PASSWORD"
-              icon=""
-              :loading="isLoading"
-              :disabled="isLoading"
-              size="lg"
-              class="w-full"
-              type="submit"
-            />
+            <ButtonsPresetButton preset="submit" label="RESET PASSWORD" icon="" :loading="isLoading"
+              :disabled="isLoading" size="sm" class="w-full" type="submit" />
 
             <!-- Success Message -->
-            <div
-              v-if="success"
-              class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 text-sm text-green-700 dark:text-green-400"
-            >
+            <div v-if="success"
+              class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 text-sm text-green-700 dark:text-green-400">
               {{ success }}
             </div>
 
             <!-- Error Message -->
-            <div
-              v-if="error"
-              class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400"
-            >
+            <div v-if="error"
+              class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400">
               {{ error }}
             </div>
           </form>
@@ -227,10 +143,8 @@
 
         <!-- Back to Login Link -->
         <div class="text-center mt-6" v-if="step === 1">
-          <NuxtLink
-            to="/login"
-            class="text-sm text-blue-900 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors inline-flex items-center gap-2"
-          >
+          <NuxtLink to="/login"
+            class="text-sm text-blue-900 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors inline-flex items-center gap-2">
             <UIcon name="i-heroicons-arrow-left" class="w-4 h-4" />
             Back to Sign In
           </NuxtLink>
@@ -239,8 +153,7 @@
         <!-- Additional Help -->
         <div class="mt-8 p-4 bg-slate-50 dark:bg-neutral-800 rounded-lg">
           <p class="text-sm text-slate-600 dark:text-neutral-400">
-            <strong class="text-slate-900 dark:text-white">Need help?</strong
-            ><br />
+            <strong class="text-slate-900 dark:text-white">Need help?</strong><br />
             If you can't remember your security questions, please contact
             support for assistance.
           </p>

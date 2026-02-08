@@ -3,6 +3,8 @@
  * Provides consistent button styling patterns across the application
  */
 
+import { icons } from "lucide-vue-next";
+
 
 
 
@@ -243,6 +245,12 @@ export const BUTTON_PRESETS = {
     size: "lg",
   },
 
+  ReturntoHome: {
+    label: "Return to Home",
+    icon:"i-heroicons-home"
+
+
+  },
   // Secondary Action Buttons
   meetStudent: {
     label: "Meet Our Student",

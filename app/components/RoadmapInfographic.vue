@@ -328,11 +328,11 @@ const IconCircle = (props: {
     // Outer glow for ongoing status
     props.status === "ongoing"
       ? h("div", {
-          class: [
-            "absolute rounded-full bg-blue-400 dark:bg-blue-500 opacity-30 animate-ping",
-            "-inset-4",
-          ],
-        })
+        class: [
+          "absolute rounded-full bg-blue-400 dark:bg-blue-500 opacity-30 animate-ping",
+          "-inset-4",
+        ],
+      })
       : null,
     h(
       "div",
@@ -354,23 +354,14 @@ const IconCircle = (props: {
 
 <template>
   <div
-    class="w-full py-10 md:py-16 px-4 overflow-x-hidden min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
-  >
+    class="w-full py-10 md:py-16 px-4 overflow-x-hidden min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
     <!-- Desktop Layout -->
-    <div
-      ref="desktopContainer"
-      class="hidden lg:block relative max-w-6xl mx-auto mt-20 mb-20 pt-10"
-    >
+    <div ref="desktopContainer" class="hidden lg:block relative max-w-6xl mx-auto mt-20 mb-20 pt-10">
       <!-- Special layout for single milestone -->
-      <div
-        v-if="sliceDesktopMilestones.length === 1"
-        class="flex flex-col items-center justify-center min-h-[400px]"
-      >
-        <div
-          class="milestone-item flex flex-col items-center gap-4 opacity-0 transition-all duration-700"
-        >
+      <div v-if="sliceDesktopMilestones.length === 1" class="flex flex-col items-center justify-center min-h-[400px]">
+        <div class="milestone-item flex flex-col items-center gap-4 opacity-0 transition-all duration-700">
           <div
-          class="milestone-card rounded-xl p-6 border-2 max-w-[300px] text-center transition-all duration-500 ease-in-out cursor-pointer shadow-lg backdrop-blur-sm hover:shadow-2xl hover:scale-105 group"
+            class="milestone-card rounded-xl p-6 border-2 max-w-[300px] text-center transition-all duration-500 ease-in-out cursor-pointer shadow-lg backdrop-blur-sm hover:shadow-2xl hover:scale-105 group"
             :class="[
               milestoneShadowColors[0],
               sliceDesktopMilestones[0].status === 'pending'
@@ -380,20 +371,14 @@ const IconCircle = (props: {
                 ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-900'
                 : '',
               getCardBgClasses(0),
-            ]"
-            :style="{
+            ]" :style="{
               borderColor: bulletData[0]?.fill || '#3b82f6',
-            }"
-          >
+            }">
             <!-- Progress indicator for ongoing -->
-            <div
-              v-if="sliceDesktopMilestones[0].status === 'ongoing'"
-              class="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full animate-ping"
-            />
-            <div
-              v-if="sliceDesktopMilestones[0].status === 'ongoing'"
-              class="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full"
-            />
+            <div v-if="sliceDesktopMilestones[0].status === 'ongoing'"
+              class="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full animate-ping" />
+            <div v-if="sliceDesktopMilestones[0].status === 'ongoing'"
+              class="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full" />
 
             <div class="flex items-center justify-center gap-2 mb-3">
               <!-- <span
@@ -403,106 +388,57 @@ const IconCircle = (props: {
               </span> -->
               <StatusBadge :status="sliceDesktopMilestones[0].status" />
             </div>
-            <h3
-              class="font-semibold text-base mb-2"
-              :class="milestoneTextColors[0]"
-            >
+            <h3 class="font-semibold text-base mb-2" :class="milestoneTextColors[0]">
               {{ getMilestoneTitle(sliceDesktopMilestones[0]) }}
             </h3>
-            <p
-              class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed"
-            >
+            <p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">
               {{ sliceDesktopMilestones[0].description }}
             </p>
           </div>
 
-          <IconCircle
-            :icon="sliceDesktopMilestones[0].icon"
-            :index="0"
-            :status="sliceDesktopMilestones[0].status"
-            size="lg"
-          />
+          <IconCircle :icon="sliceDesktopMilestones[0].icon" :index="0" :status="sliceDesktopMilestones[0].status"
+            size="sm" />
         </div>
       </div>
 
       <!-- Road SVG for multiple milestones -->
       <div v-else class="relative h-64 flex items-center my-56">
-        <svg
-          viewBox="0 0 1200 240"
-          class="w-full h-full"
-          preserveAspectRatio="none"
-        >
+        <svg viewBox="0 0 1200 240" class="w-full h-full" preserveAspectRatio="none">
           <!-- Gray outline -->
           <path
             d="M0,120 C80,120 100,30 180,30 C260,30 280,210 360,210 C440,210 460,25 540,25 C620,25 640,215 720,215 C800,215 820,30 900,30 C980,30 1000,120 1200,120"
-            fill="none"
-            stroke="#cbd5e1"
-            class="dark:stroke-gray-600"
-            stroke-width="50"
-            stroke-linecap="round"
-          />
+            fill="none" stroke="#cbd5e1" class="dark:stroke-gray-600" stroke-width="50" stroke-linecap="round" />
           <!-- Dark road -->
           <path
             d="M0,120 C80,120 100,30 180,30 C260,30 280,210 360,210 C440,210 460,25 540,25 C620,25 640,215 720,215 C800,215 820,30 900,30 C980,30 1000,120 1200,120"
-            fill="none"
-            stroke="#475569"
-            class="dark:stroke-gray-700"
-            stroke-width="40"
-            stroke-linecap="round"
-          />
+            fill="none" stroke="#475569" class="dark:stroke-gray-700" stroke-width="40" stroke-linecap="round" />
           <!-- Yellow center line -->
           <path
             d="M0,120 C80,120 100,30 180,30 C260,30 280,210 360,210 C440,210 460,25 540,25 C620,25 640,215 720,215 C800,215 820,30 900,30 C980,30 1000,120 1200,120"
-            fill="none"
-            stroke="#fbbf24"
-            class="dark:stroke-yellow-500"
-            stroke-width="3"
-            stroke-dasharray="20,15"
-            stroke-linecap="round"
-          />
+            fill="none" stroke="#fbbf24" class="dark:stroke-yellow-500" stroke-width="3" stroke-dasharray="20,15"
+            stroke-linecap="round" />
 
           <!-- Dynamic Road dots and connector lines -->
           <template v-for="(bullet, index) in bulletData" :key="index">
             <!-- Bullet dot -->
-            <circle
-              :cx="bullet.x"
-              :cy="bullet.y"
-              r="7"
-              :fill="bullet.fill"
-              :class="`dark:fill-${bullet.darkFill}`"
-            />
+            <circle :cx="bullet.x" :cy="bullet.y" r="7" :fill="bullet.fill" :class="`dark:fill-${bullet.darkFill}`" />
 
             <!-- Dashed connector line -->
-            <line
-              :x1="bullet.x"
-              :y1="bullet.y"
-              :x2="bullet.x"
-              :y2="bullet.isTop ? -50 : 290"
-              :stroke="bullet.fill"
-              stroke-width="2"
-              stroke-dasharray="5,5"
-              :class="`dark:stroke-${bullet.darkFill}`"
-              opacity="0.7"
-            />
+            <line :x1="bullet.x" :y1="bullet.y" :x2="bullet.x" :y2="bullet.isTop ? -50 : 290" :stroke="bullet.fill"
+              stroke-width="2" stroke-dasharray="5,5" :class="`dark:stroke-${bullet.darkFill}`" opacity="0.7" />
           </template>
         </svg>
 
         <!-- Milestone items -->
-        <div
-          v-for="(milestone, index) in sliceDesktopMilestones"
-          :key="getMilestoneKey(milestone, index)"
-          class="milestone-item absolute flex flex-col items-center gap-4 opacity-0 transition-all duration-700"
-          :class="
-            bulletData[index]?.isTop
+        <div v-for="(milestone, index) in sliceDesktopMilestones" :key="getMilestoneKey(milestone, index)"
+          class="milestone-item absolute flex flex-col items-center gap-4 opacity-0 transition-all duration-700" :class="bulletData[index]?.isTop
               ? 'bottom-full mb-[20px]'
               : 'top-full mt-[20px]'
-          "
-          :style="{
+            " :style="{
             left: bulletData[index]?.position || '0',
             marginLeft: '-100px',
             transitionDelay: `${index * 100}ms`,
-          }"
-        >
+          }">
           <template v-if="bulletData[index]?.isTop">
             <!-- Card first for top -->
             <div
@@ -516,20 +452,14 @@ const IconCircle = (props: {
                   ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-900'
                   : '',
                 getCardBgClasses(index),
-              ]"
-              :style="{
+              ]" :style="{
                 borderColor: bulletData[index]?.fill || '#3b82f6',
-              }"
-            >
+              }">
               <!-- Progress indicator for ongoing -->
-              <div
-                v-if="milestone.status === 'ongoing'"
-                class="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full animate-ping"
-              />
-              <div
-                v-if="milestone.status === 'ongoing'"
-                class="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full"
-              />
+              <div v-if="milestone.status === 'ongoing'"
+                class="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full animate-ping" />
+              <div v-if="milestone.status === 'ongoing'"
+                class="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full" />
 
               <div class="flex items-center justify-center gap-2 mb-3">
                 <!-- <span
@@ -539,35 +469,23 @@ const IconCircle = (props: {
                 </span> -->
                 <StatusBadge :status="milestone.status" />
               </div>
-              <h3
-                class="font-semibold text-base mb-2 group-hover:scale-105 transition-transform duration-300"
-                :class="milestoneTextColors[index]"
-              >
+              <h3 class="font-semibold text-base mb-2 group-hover:scale-105 transition-transform duration-300"
+                :class="milestoneTextColors[index]">
                 {{ getMilestoneTitle(milestone) }}
               </h3>
-              <p
-                class="text-slate-600 dark:text-slate-400 text-xs leading-relaxed"
-              >
+              <p class="text-slate-600 dark:text-slate-400 text-xs leading-relaxed">
                 {{ milestone.description }}
               </p>
             </div>
             <!-- Icon -->
-            <IconCircle
-              :icon="milestone.icon"
-              :index="index"
-              :status="milestone.status"
-            />
+            <IconCircle :icon="milestone.icon" :index="index" :status="milestone.status" />
             <!-- Connector -->
           </template>
           <template v-else>
             <!-- Connector -->
 
             <!-- Icon -->
-            <IconCircle
-              :icon="milestone.icon"
-              :index="index"
-              :status="milestone.status"
-            />
+            <IconCircle :icon="milestone.icon" :index="index" :status="milestone.status" />
             <!-- Card -->
             <div
               class="rounded-xl p-4 border-2 max-w-[200px] text-center transition-all duration-500 ease-in-out cursor-pointer shadow-lg backdrop-blur-sm hover:shadow-2xl hover:scale-105 group"
@@ -580,11 +498,9 @@ const IconCircle = (props: {
                   ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-900'
                   : '',
                 getCardBgClasses(index),
-              ]"
-              :style="{
+              ]" :style="{
                 borderColor: bulletData[index]?.fill || '#3b82f6',
-              }"
-            >
+              }">
               <div class="flex items-center justify-center gap-2 mb-2">
                 <!-- <span
                   class="text-xs text-blue-700 dark:text-blue-300 font-medium"
@@ -593,15 +509,10 @@ const IconCircle = (props: {
                 </span> -->
                 <StatusBadge :status="milestone.status" />
               </div>
-              <h3
-                class="font-semibold text-sm mb-1"
-                :class="milestoneTextColors[index]"
-              >
+              <h3 class="font-semibold text-sm mb-1" :class="milestoneTextColors[index]">
                 {{ getMilestoneTitle(milestone) }}
               </h3>
-              <p
-                class="text-slate-700 dark:text-slate-300 text-xs leading-relaxed"
-              >
+              <p class="text-slate-700 dark:text-slate-300 text-xs leading-relaxed">
                 {{ milestone.description }}
               </p>
             </div>
@@ -611,54 +522,30 @@ const IconCircle = (props: {
     </div>
 
     <!-- Mobile/Tablet Layout -->
-    <div
-      ref="mobileContainer"
-      class="lg:hidden relative max-w-md mx-auto px-4 mt-10 min-h-[1200px]"
-    >
+    <div ref="mobileContainer" class="lg:hidden relative max-w-md mx-auto px-4 mt-10 min-h-[1200px]">
       <!-- Vertical road SVG -->
-      <svg
-        viewBox="0 0 300 1300"
-        class="absolute left-1/2 -translate-x-1/2 h-full w-[300px] top-0 z-0"
-        preserveAspectRatio="xMidYMin slice"
-      >
+      <svg viewBox="0 0 300 1300" class="absolute left-1/2 -translate-x-1/2 h-full w-[300px] top-0 z-0"
+        preserveAspectRatio="xMidYMin slice">
         <!-- Gray outline -->
         <path
           d="M150,0 C150,50 170,80 210,130 C250,180 250,220 210,270 C170,320 150,360 190,420 C230,480 250,520 210,580 C170,640 150,680 190,740 C230,800 250,840 210,900 C170,960 150,1000 150,1100 C150,1200 150,1250 150,1300"
-          fill="none"
-          stroke="#cbd5e1"
-          class="dark:stroke-gray-600"
-          stroke-width="45"
-          stroke-linecap="round"
-        />
+          fill="none" stroke="#cbd5e1" class="dark:stroke-gray-600" stroke-width="45" stroke-linecap="round" />
         <!-- Dark road -->
         <path
           d="M150,0 C150,50 170,80 210,130 C250,180 250,220 210,270 C170,320 150,360 190,420 C230,480 250,520 210,580 C170,640 150,680 190,740 C230,800 250,840 210,900 C170,960 150,1000 150,1100 C150,1200 150,1250 150,1300"
-          fill="none"
-          stroke="#475569"
-          class="dark:stroke-gray-700"
-          stroke-width="35"
-          stroke-linecap="round"
-        />
+          fill="none" stroke="#475569" class="dark:stroke-gray-700" stroke-width="35" stroke-linecap="round" />
         <!-- Yellow center line -->
         <path
           d="M150,0 C150,50 170,80 210,130 C250,180 250,220 210,270 C170,320 150,360 190,420 C230,480 250,520 210,580 C170,640 150,680 190,740 C230,800 250,840 210,900 C170,960 150,1000 150,1100 C150,1200 150,1250 150,1300"
-          fill="none"
-          stroke="#fbbf24"
-          class="dark:stroke-yellow-500"
-          stroke-width="2.5"
-          stroke-dasharray="12,10"
-          stroke-linecap="round"
-        />
+          fill="none" stroke="#fbbf24" class="dark:stroke-yellow-500" stroke-width="2.5" stroke-dasharray="12,10"
+          stroke-linecap="round" />
       </svg>
 
       <!-- Milestones -->
       <div class="relative z-20 space-y-6 py-8">
-        <div
-          v-for="(milestone, index) in props.milestones"
-          :key="getMilestoneKey(milestone, index)"
+        <div v-for="(milestone, index) in props.milestones" :key="getMilestoneKey(milestone, index)"
           class="milestone-item flex items-center gap-3 opacity-0"
-          :class="index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'"
-        >
+          :class="index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'">
           <!-- Content Card -->
           <div
             class="flex-1 rounded-xl p-3 sm:p-4 border transition-all duration-300 cursor-pointer shadow-sm backdrop-blur-sm"
@@ -667,15 +554,10 @@ const IconCircle = (props: {
               index % 2 === 0 ? 'text-right' : 'text-left',
               milestone.status === 'pending' ? 'opacity-60' : '',
               getCardBgClasses(index),
-            ]"
-            :style="{
+            ]" :style="{
               borderColor: bulletData[index]?.fill || '#3b82f6',
-            }"
-          >
-            <div
-              class="flex items-center gap-2 mb-2"
-              :class="index % 2 === 0 ? 'justify-end' : 'justify-start'"
-            >
+            }">
+            <div class="flex items-center gap-2 mb-2" :class="index % 2 === 0 ? 'justify-end' : 'justify-start'">
               <!-- <span
                 class="text-[10px] sm:text-xs text-blue-700 dark:text-blue-300 font-medium"
               >
@@ -683,27 +565,17 @@ const IconCircle = (props: {
               </span> -->
               <StatusBadge :status="milestone.status" />
             </div>
-            <h3
-              class="font-semibold text-sm sm:text-base mb-1"
-              :class="milestoneTextColors[index]"
-            >
+            <h3 class="font-semibold text-sm sm:text-base mb-1" :class="milestoneTextColors[index]">
               {{ getMilestoneTitle(milestone) }}
             </h3>
-            <p
-              class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed"
-            >
+            <p class="text-slate-700 dark:text-slate-300 text-xs sm:text-sm leading-relaxed">
               {{ milestone.description }}
             </p>
           </div>
 
           <!-- Icon with dotted border -->
           <div class="flex-shrink-0 relative z-30">
-            <IconCircle
-              :icon="milestone.icon"
-              :index="index"
-              size="sm"
-              :status="milestone.status"
-            />
+            <IconCircle :icon="milestone.icon" :index="index" size="sm" :status="milestone.status" />
           </div>
 
           <!-- Spacer -->
@@ -720,6 +592,7 @@ const IconCircle = (props: {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -731,6 +604,7 @@ const IconCircle = (props: {
     opacity: 0;
     transform: translateY(20px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -738,10 +612,12 @@ const IconCircle = (props: {
 }
 
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-10px);
   }
@@ -752,6 +628,7 @@ const IconCircle = (props: {
     opacity: 0;
     transform: translateX(-50px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -763,6 +640,7 @@ const IconCircle = (props: {
     opacity: 0;
     transform: translateX(50px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -770,10 +648,12 @@ const IconCircle = (props: {
 }
 
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-10px);
   }

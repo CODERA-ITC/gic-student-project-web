@@ -18,86 +18,51 @@
       <!-- Security Questions -->
       <div v-if="!loadingQuestions" class="space-y-4">
         <div v-for="(question, index) in securityQuestions" :key="question.id">
-          <label
-            class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-          >
+          <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
             {{ index + 1 }}. {{ question.questions }}
             <span class="text-red-500">*</span>
           </label>
-          <UInput
-            v-model="securityAnswers[question.id]"
-            type="text"
-            placeholder="Enter your answer"
-            size="lg"
-            required
-          />
+          <UInput v-model="securityAnswers[question.id]" type="text" placeholder="Enter your answer" size="sm"
+            required />
         </div>
       </div>
       <div v-else class="flex justify-center py-4">
-        <div
-          class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-900 dark:border-blue-400"
-        ></div>
+        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-900 dark:border-blue-400"></div>
       </div>
 
       <div>
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-        >
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           4. New Password
           <span class="text-red-500">*</span>
         </label>
-        <UInput
-          v-model="passwordData.new"
-          type="password"
-          placeholder="Enter new password"
-          size="lg"
-          required
-        />
+        <UInput v-model="passwordData.new" type="password" placeholder="Enter new password" size="sm" required />
         <p class="text-xs text-slate-500 dark:text-neutral-500 mt-1">
           Must be at least 8 characters long
         </p>
       </div>
       <div>
-        <label
-          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
-        >
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
           5. Confirm New Password
           <span class="text-red-500">*</span>
         </label>
-        <UInput
-          v-model="passwordData.confirm"
-          type="password"
-          placeholder="Confirm new password"
-          size="lg"
-          required
-        />
+        <UInput v-model="passwordData.confirm" type="password" placeholder="Confirm new password" size="sm" required />
       </div>
 
       <!-- Error Message -->
-      <div
-        v-if="passwordError"
-        class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400"
-      >
+      <div v-if="passwordError"
+        class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-700 dark:text-red-400">
         {{ passwordError }}
       </div>
 
       <!-- Success Message -->
-      <div
-        v-if="passwordSuccess"
-        class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 text-sm text-green-700 dark:text-green-400"
-      >
+      <div v-if="passwordSuccess"
+        class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 text-sm text-green-700 dark:text-green-400">
         {{ passwordSuccess }}
       </div>
 
       <div class="pt-2">
-        <ButtonsPresetButton
-          preset="submit"
-          label="Update Password"
-          icon=""
-          :loading="isUpdating"
-          :disabled="isUpdating"
-          @click="handleUpdatePassword"
-        />
+        <ButtonsPresetButton preset="submit" label="Update Password" icon="" :loading="isUpdating"
+          :disabled="isUpdating" @click="handleUpdatePassword" />
       </div>
     </div>
   </div>

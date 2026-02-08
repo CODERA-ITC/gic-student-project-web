@@ -4,114 +4,75 @@
       <!-- Main Content -->
       <div class="lg:col-span-2 space-y-8">
         <!-- Project Header - Image Carousel -->
-        <div
-          class="rounded-2xl h-120 relative overflow-hidden bg-gray-200 dark:bg-slate-800 carousel"
-        >
+        <div class="rounded-2xl h-120 relative overflow-hidden bg-gray-200 dark:bg-slate-800 carousel">
           <div class="relative w-full h-full">
             <!-- Image Transition -->
             <TransitionGroup name="carousel-fade" mode="out-in">
               <!-- Current Image -->
-              <img
-                v-if="project.images && project.images[currentImageIndex]"
-                :key="currentImageIndex"
+              <img v-if="project.images && project.images[currentImageIndex]" :key="currentImageIndex"
                 :src="project.images[currentImageIndex].originalUrl.toString()"
                 :alt="`${project.name} - Image ${currentImageIndex + 1}`"
-                class="absolute inset-0 w-full h-full object-cover"
-              />
+                class="absolute inset-0 w-full h-full object-cover" />
 
               <!-- Fallback if no images -->
-              <div
-                v-else
-                key="fallback"
-                class="absolute inset-0 w-full h-full flex items-center justify-center text-8xl bg-gray-100 dark:bg-slate-700"
-              >
+              <div v-else key="fallback"
+                class="absolute inset-0 w-full h-full flex items-center justify-center text-8xl bg-gray-100 dark:bg-slate-700">
                 {{ project.name || "📁" }}
               </div>
             </TransitionGroup>
 
             <p>
               <!-- Navigation Buttons -->
-              <button
-                v-if="project.images && project.images.length > 1"
-                @click="
-                  previousImage();
-                  resetAutoplay();
-                "
-                class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-all backdrop-blur-sm z-10"
-              >
-                <UIcon
-                  name="i-heroicons-chevron-left"
-                  class="w-6 h-6 text-white"
-                />
+              <button v-if="project.images && project.images.length > 1" @click="
+                previousImage();
+              resetAutoplay();
+              "
+                class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-all backdrop-blur-sm z-10">
+                <UIcon name="i-heroicons-chevron-left" class="w-6 h-6 text-white" />
               </button>
 
-              <button
-                v-if="project.images && project.images.length > 1"
-                @click="
-                  nextImage();
-                  resetAutoplay();
-                "
-                class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-all backdrop-blur-sm z-10"
-              >
-                <UIcon
-                  name="i-heroicons-chevron-right"
-                  class="w-6 h-6 text-white"
-                />
+              <button v-if="project.images && project.images.length > 1" @click="
+                nextImage();
+              resetAutoplay();
+              "
+                class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-all backdrop-blur-sm z-10">
+                <UIcon name="i-heroicons-chevron-right" class="w-6 h-6 text-white" />
               </button>
 
               <!-- Image Indicators -->
             </p>
 
-            <div
-              v-if="project.images && project.images.length > 1"
-              class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10"
-            >
-              <button
-                v-for="(img, idx) in project.images || []"
-                :key="idx"
-                @click="
-                  currentImageIndex = Number(idx);
-                  resetAutoplay();
-                "
-                :class="[
+            <div v-if="project.images && project.images.length > 1"
+              class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+              <button v-for="(img, idx) in project.images || []" :key="idx" @click="
+                currentImageIndex = Number(idx);
+              resetAutoplay();
+              " :class="[
                   'w-2 h-2 rounded-full transition-all',
                   currentImageIndex === idx
                     ? 'bg-white w-6'
                     : 'bg-white/50 hover:bg-white/75',
-                ]"
-              ></button>
+                ]"></button>
             </div>
           </div>
 
-          <div
-            class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none"
-          ></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none"></div>
         </div>
 
         <!-- Project Title and Badges -->
         <div class="space-y-4">
           <div class="flex gap-3 flex-wrap">
-            <UBadge
-              class="bg-blue-900 hover:bg-blue-800 text-white"
-              variant="solid"
-              size="md"
-            >
+            <UBadge class="bg-blue-900 hover:bg-blue-800 text-white" variant="solid" size="md">
               {{ project.category }}
             </UBadge>
             <UBadge color="info" variant="solid" size="md">
               {{ project.academicYear }}
             </UBadge>
-            <UBadge
-              :color="currentStatus === 'Completed' ? 'success' : 'warning'"
-              variant="solid"
-              size="md"
-            >
+            <UBadge :color="currentStatus === 'Completed' ? 'success' : 'warning'" variant="solid" size="md">
               {{ currentStatus }}
             </UBadge>
           </div>
-          <h1
-            class="text-4xl lg:text-5xl font-semibold font-black text-gray-900 dark:text-white"
-          >
+          <h1 class="text-4xl lg:text-5xl font-semibold font-black text-gray-900 dark:text-white">
             {{ project.name }}
           </h1>
           <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
@@ -120,19 +81,13 @@
         </div>
 
         <!-- Course / Subject -->
-        <div
-          ref="courseRef"
-          class="bg-white/50 dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-6 transform transition-all duration-700 opacity-0 translate-y-8"
-        >
+        <div ref="courseRef"
+          class="bg-white/50 dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-6 transform transition-all duration-700 opacity-0 translate-y-8">
           <div class="flex items-start gap-4">
-            <UIcon
-              name="i-heroicons-academic-cap"
-              class="w-6 h-6 text-blue-500 dark:text-blue-400 mt-1 flex-shrink-0"
-            />
+            <UIcon name="i-heroicons-academic-cap"
+              class="w-6 h-6 text-blue-500 dark:text-blue-400 mt-1 flex-shrink-0" />
             <div>
-              <h3
-                class="text-lg font-semibold text-gray-900 dark:text-white mb-2"
-              >
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                 Course / Subject
               </h3>
               <p class="text-gray-600 dark:text-gray-300">
@@ -143,19 +98,12 @@
         </div>
 
         <!-- Duration -->
-        <div
-          ref="durationRef"
-          class="bg-white/50 dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-6 transform transition-all duration-700 opacity-0 translate-y-8"
-        >
+        <div ref="durationRef"
+          class="bg-white/50 dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-6 transform transition-all duration-700 opacity-0 translate-y-8">
           <div class="flex items-start gap-4">
-            <UIcon
-              name="i-heroicons-clock"
-              class="w-6 h-6 text-green-500 dark:text-green-400 mt-1 flex-shrink-0"
-            />
+            <UIcon name="i-heroicons-clock" class="w-6 h-6 text-green-500 dark:text-green-400 mt-1 flex-shrink-0" />
             <div>
-              <h3
-                class="text-lg font-semibold text-gray-900 dark:text-white mb-2"
-              >
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                 Project Duration
               </h3>
               <p class="text-gray-600 dark:text-gray-300">
@@ -172,42 +120,31 @@
         <div class="sticky top-28 space-y-6">
           <!-- Statistics Card -->
           <div
-            class="bg-white/80 dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-6 space-y-4"
-          >
+            class="bg-white/80 dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-6 space-y-4">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
               Statistics
             </h3>
 
             <!-- Views -->
-            <div
-              class="flex items-center justify-between p-3 bg-gray-100 dark:bg-slate-700/50 rounded-lg"
-            >
+            <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-slate-700/50 rounded-lg">
               <div class="flex items-center gap-2">
-                <UIcon
-                  name="i-heroicons-eye"
-                  class="w-5 h-5 text-blue-500 dark:text-blue-400"
-                />
+                <UIcon name="i-heroicons-eye" class="w-5 h-5 text-blue-500 dark:text-blue-400" />
                 <span class="text-gray-600 dark:text-gray-300">Views</span>
               </div>
               <span class="text-gray-900 dark:text-white font-semibold">{{
                 project.views
-              }}</span>
+                }}</span>
             </div>
 
             <!-- Likes -->
-            <div
-              class="flex items-center justify-between p-3 bg-gray-100 dark:bg-slate-700/50 rounded-lg"
-            >
+            <div class="flex items-center justify-between p-3 bg-gray-100 dark:bg-slate-700/50 rounded-lg">
               <div class="flex items-center gap-2">
-                <UIcon
-                  name="i-heroicons-heart"
-                  class="w-5 h-5 text-red-500 dark:text-red-400"
-                />
+                <UIcon name="i-heroicons-heart" class="w-5 h-5 text-red-500 dark:text-red-400" />
                 <span class="text-gray-600 dark:text-gray-300">Likes</span>
               </div>
               <span class="text-gray-900 dark:text-white font-semibold">{{
                 project.likes
-              }}</span>
+                }}</span>
             </div>
           </div>
 
@@ -220,23 +157,14 @@
             <slot name="action-buttons"></slot>
 
             <!-- Hide/Show Project Button (Teacher only when project is not public) -->
-            <UButton
-              v-if="userRole === (Role.teacher || Role.admin) && !isPublic"
-              @click="$emit('hide')"
-              :color="project.visibility === 'private' ? 'success' : 'warning'"
-              variant="solid"
-              class="w-full justify-center"
-              size="lg"
-            >
+            <UButton v-if="userRole === (Role.teacher || Role.admin) && !isPublic" @click="$emit('hide')"
+              :color="project.visibility === 'private' ? 'success' : 'warning'" variant="solid"
+              class="w-full justify-center" size="sm">
               <template #leading>
-                <UIcon
-                  :name="
-                    project.visibility === 'private'
-                      ? 'i-heroicons-eye'
-                      : 'i-heroicons-eye-slash'
-                  "
-                  class="w-5 h-5"
-                />
+                <UIcon :name="project.visibility === 'private'
+                    ? 'i-heroicons-eye'
+                    : 'i-heroicons-eye-slash'
+                  " class="w-5 h-5" />
               </template>
               {{
                 project.visibility === "private"
@@ -246,33 +174,22 @@
             </UButton>
 
             <!-- Like Button (All users) -->
-            <UButton
-              @click="$emit('like')"
-              :class="[
-                'w-full justify-center transition-all duration-300',
-                isLiked
-                  ? 'bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white shadow-lg shadow-pink-500/20'
-                  : 'bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-slate-600',
-              ]"
-              size="lg"
-            >
+            <UButton @click="$emit('like')" :class="[
+              'w-full justify-center transition-all duration-300',
+              isLiked
+                ? 'bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white shadow-lg shadow-pink-500/20'
+                : 'bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-slate-600',
+            ]" size="sm">
               <template #leading>
-                <UIcon
-                  :name="
-                    isLiked ? 'i-heroicons-heart-solid' : 'i-heroicons-heart'
-                  "
-                  class="w-5 h-5"
-                />
+                <UIcon :name="isLiked ? 'i-heroicons-heart-solid' : 'i-heroicons-heart'
+                  " class="w-5 h-5" />
               </template>
               {{ isLiked ? "Liked" : "Like Project" }}
             </UButton>
 
             <!-- Share Button (All users) -->
-            <UButton
-              @click="$emit('share')"
-              class="w-full justify-center bg-blue-900 hover:bg-blue-800 text-white"
-              size="lg"
-            >
+            <UButton @click="$emit('share')" class="w-full justify-center bg-blue-900 hover:bg-blue-800 text-white"
+              size="sm">
               <template #leading>
                 <UIcon name="i-heroicons-share" class="w-5 h-5" />
               </template>
@@ -281,22 +198,15 @@
           </div>
 
           <!-- Lead Developer -->
-          <div
-            v-if="project.author"
-            class="bg-white/80 dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-6 space-y-4"
-          >
+          <div v-if="project.author"
+            class="bg-white/80 dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-6 space-y-4">
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
               Lead Developer
             </h3>
             <div class="flex items-center gap-4">
-              <img
-                :src="
-                  project.author?.avatar ||
-                  'https://img.icons8.com/nolan/1200/user-default.jpg'
-                "
-                :alt="project.author.name"
-                class="w-14 h-14 rounded-full object-cover"
-              />
+              <img :src="project.author?.avatar ||
+                'https://img.icons8.com/nolan/1200/user-default.jpg'
+                " :alt="project.author.name" class="w-14 h-14 rounded-full object-cover" />
               <div>
                 <p class="text-gray-900 dark:text-white font-semibold">
                   {{ project.author.name }}
@@ -316,52 +226,31 @@
     <div>
       <!-- Project Timeline - Animated inline -->
       <UContainer
-        class="min-h-screen bg-background py-12 bg-white bg-white/50 dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-6 space-y-6 transform transition-all"
-      >
-        <h3
-          class="text-3xl font-semibold mb-6 text-gray-900 dark:text-gray-200"
-        >
+        class="min-h-screen bg-background py-12 bg-white bg-white/50 dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-6 space-y-6 transform transition-all">
+        <h3 class="text-3xl font-semibold mb-6 text-gray-900 dark:text-gray-200">
           Project Development Roadmap
         </h3>
         <RoadmapInfographic :milestones="roadmap" />
       </UContainer>
       <!-- Team Members -->
     </div>
-    <div
-      ref="teamRef"
-      class="bg-white/50 dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-6 space-y-6 transform transition-all duration-700 opacity-0 translate-y-8"
-    >
+    <div ref="teamRef"
+      class="bg-white/50 dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-6 space-y-6 transform transition-all duration-700 opacity-0 translate-y-8">
       <div class="flex items-start gap-4">
-        <UIcon
-          name="i-heroicons-users"
-          class="w-6 h-6 text-cyan-500 dark:text-cyan-400 mt-1 flex-shrink-0"
-        />
+        <UIcon name="i-heroicons-users" class="w-6 h-6 text-cyan-500 dark:text-cyan-400 mt-1 flex-shrink-0" />
         <div class="flex-1">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Project Team
           </h3>
-          <div
-            v-if="filteredMembers.length > 0"
-            class="grid sm:grid-cols-2 gap-4"
-          >
-            <div
-              v-for="(member, idx) in filteredMembers"
-              :key="idx"
-              class="flex items-center gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-700/50 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors"
-            >
-              <img
-                v-if="member.image"
-                :src="member.image"
-                :alt="member.name"
-                class="w-10 h-10 rounded-full object-cover flex-shrink-0"
-                @error="
+          <div v-if="filteredMembers.length > 0" class="grid sm:grid-cols-2 gap-4">
+            <div v-for="(member, idx) in filteredMembers" :key="idx"
+              class="flex items-center gap-3 p-3 rounded-lg bg-gray-100 dark:bg-slate-700/50 hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors">
+              <img v-if="member.image" :src="member.image" :alt="member.name"
+                class="w-10 h-10 rounded-full object-cover flex-shrink-0" @error="
                   (e) => ((e.target as HTMLElement).style.display = 'none')
-                "
-              />
-              <div
-                v-if="!member.image"
-                class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0"
-              >
+                " />
+              <div v-if="!member.image"
+                class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
                 <span class="text-white text-sm font-semibold">
                   {{ getInitials(member.name) }}
                 </span>
@@ -379,25 +268,18 @@
     </div>
 
     <!-- Skills Used -->
-    <div
-      ref="skillsRef"
-      class="bg-white/50 dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-6 transform transition-all duration-700 opacity-0 translate-y-8"
-    >
+    <div ref="skillsRef"
+      class="bg-white/50 dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-6 transform transition-all duration-700 opacity-0 translate-y-8">
       <div class="flex items-start gap-4">
-        <UIcon
-          name="i-heroicons-wrench-screwdriver"
-          class="w-6 h-6 text-yellow-500 dark:text-yellow-400 mt-1 flex-shrink-0"
-        />
+        <UIcon name="i-heroicons-wrench-screwdriver"
+          class="w-6 h-6 text-yellow-500 dark:text-yellow-400 mt-1 flex-shrink-0" />
         <div class="flex-1">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Skills & Technologies
           </h3>
           <div class="flex gap-2 flex-wrap">
-            <span
-              v-for="skill in project.technologies || []"
-              :key="skill"
-              class="px-3 py-2 rounded-full bg-blue-100 dark:bg-blue-600/30 text-blue-700 dark:text-blue-200 text-sm font-medium border border-blue-200 dark:border-blue-500/50 hover:bg-blue-200 dark:hover:bg-blue-600/40 transition-colors"
-            >
+            <span v-for="skill in project.technologies || []" :key="skill"
+              class="px-3 py-2 rounded-full bg-blue-100 dark:bg-blue-600/30 text-blue-700 dark:text-blue-200 text-sm font-medium border border-blue-200 dark:border-blue-500/50 hover:bg-blue-200 dark:hover:bg-blue-600/40 transition-colors">
               {{ skill }}
             </span>
           </div>
@@ -731,7 +613,7 @@ onUnmounted(() => {
     clearInterval(autoPlayInterval.value);
   }
   // Cleanup scroll listener
-  window.removeEventListener("scroll", () => {});
+  window.removeEventListener("scroll", () => { });
   // Kill all ScrollTrigger instances
   ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
   // Reset scroll behavior
@@ -745,6 +627,7 @@ onUnmounted(() => {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -756,6 +639,7 @@ onUnmounted(() => {
     opacity: 0;
     transform: translateX(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -763,11 +647,13 @@ onUnmounted(() => {
 }
 
 @keyframes fadeInUpDelayed {
+
   0%,
   20% {
     opacity: 0;
     transform: translateY(20px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -807,12 +693,10 @@ onUnmounted(() => {
   top: 0;
   bottom: 0;
   width: 2px;
-  background: linear-gradient(
-    to bottom,
-    rgb(147, 51, 234),
-    rgb(59, 130, 246),
-    rgb(34, 197, 94)
-  );
+  background: linear-gradient(to bottom,
+      rgb(147, 51, 234),
+      rgb(59, 130, 246),
+      rgb(34, 197, 94));
   border-radius: 2px;
   animation: lineGrow 2s ease-in-out;
 }
@@ -821,6 +705,7 @@ onUnmounted(() => {
   from {
     height: 0;
   }
+
   to {
     height: 100%;
   }
