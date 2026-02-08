@@ -34,6 +34,7 @@ export interface UpdateProjectDTO {
   demoUrl?: string;
   repoUrl?: string;
   visibility?: "public" | "private";
+  highlighted?: boolean;
 }
 
 export interface ProjectFilters {

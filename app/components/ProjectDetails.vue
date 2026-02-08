@@ -42,7 +42,9 @@
           <!-- Category & Status Row -->
           <div class="flex items-center justify-between flex-wrap gap-2">
             <div class="flex gap-2 flex-wrap">
-              <UBadge class="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200 shadow-sm px-3 py-1 text-sm" variant="soft" size="md">
+              <UBadge
+                class="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200 shadow-sm px-3 py-1 text-sm"
+                variant="soft" size="md">
                 <UIcon name="i-heroicons-folder" class="w-4 h-4 mr-1" />
                 {{ project.category }}
               </UBadge>
@@ -180,7 +182,7 @@
               {{ t("projectDetails.gallery") }}
               <span v-if="project.images" class="text-[10px] sm:text-xs font-normal text-gray-500">({{
                 project.images.length
-                }})</span>
+              }})</span>
             </h3>
             <button v-if="project.images && project.images.length > 0" @click="openLightbox"
               class="text-xs sm:text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
@@ -236,11 +238,11 @@
               currentImageIndex = idx;
             resetAutoplay();
             " :class="[
-                'flex-shrink-0 w-12 h-9 sm:w-16 sm:h-12 rounded-md sm:rounded-lg overflow-hidden border-2 transition-all',
-                currentImageIndex === idx
-                  ? 'border-blue-500 ring-2 ring-blue-500/30'
-                  : 'border-transparent hover:border-gray-300 dark:hover:border-gray-600 opacity-70 hover:opacity-100',
-              ]">
+              'flex-shrink-0 w-12 h-9 sm:w-16 sm:h-12 rounded-md sm:rounded-lg overflow-hidden border-2 transition-all',
+              currentImageIndex === idx
+                ? 'border-blue-500 ring-2 ring-blue-500/30'
+                : 'border-transparent hover:border-gray-300 dark:hover:border-gray-600 opacity-70 hover:opacity-100',
+            ]">
               <img :src="getImageSrc(img)" :alt="`Thumbnail ${idx + 1}`" class="w-full h-full object-cover" />
             </button>
           </div>
@@ -356,27 +358,27 @@
               </div>
 
               <!-- Hide/Show Project Button (Teacher only when project is not public) -->
-              <ButtonsPresetButton v-if="userRole === (Role.teacher || Role.admin) && !isPublic" @click="$emit('hide')"
-                :color="project.visibility === 'private' ? 'success' : 'warning'
-                  " :icon="project.visibility === 'private'
+              <ButtonsPresetButton v-if="isTeacherOrAdmin && !isPublic" @click="$emit('hide')" :color="project.visibility === 'private' ? 'success' : 'warning'
+                " :icon="project.visibility === 'private'
                     ? 'i-heroicons-eye'
                     : 'i-heroicons-eye-slash'
-                  " :label="project.visibility === 'private'
+                    " :label="project.visibility === 'private'
                     ? t('projectDetails.showProject')
                     : t('projectDetails.hideProject')
-                  " variant="outline" class="w-full justify-center rounded-3xl [&_.icon]:w-5 [&_.icon]:h-5" size="sm" />
+                    " variant="outline" class="w-full justify-center rounded-3xl [&_.icon]:w-5 [&_.icon]:h-5"
+                size="sm" />
 
               <!-- Like Button -->
               <ButtonsPresetButton @click="$emit('like')"
                 :icon="isLiked ? 'i-heroicons-heart-solid' : 'i-heroicons-heart'" :label="isLiked
-                    ? t('projectDetails.liked')
-                    : t('projectDetails.likeThisProject')
+                  ? t('projectDetails.liked')
+                  : t('projectDetails.likeThisProject')
                   " :class="[
-                  'w-full justify-center rounded-3xl font-medium [&_.icon]:w-5 [&_.icon]:h-5',
-                  isLiked
-                    ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 border border-red-200 dark:border-red-800'
-                    : 'bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-600 border border-gray-200 dark:border-slate-600',
-                ]" color="secondary" variant="ghost" size="sm" />
+                    'w-full justify-center rounded-3xl font-medium [&_.icon]:w-5 [&_.icon]:h-5',
+                    isLiked
+                      ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 border border-red-200 dark:border-red-800'
+                      : 'bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-600 border border-gray-200 dark:border-slate-600',
+                  ]" color="secondary" variant="ghost" size="sm" />
 
               <!-- Share Button -->
               <ButtonsPresetButton @click="sharePopupOpen = true" :label="t('projectDetails.shareProject')"
@@ -433,6 +435,7 @@
         </div>
       </div>
     </div>
+
 
     <!-- Lightbox Modal -->
     <Teleport to="body">
@@ -643,8 +646,8 @@
                     : 'bg-blue-600 hover:bg-blue-700 text-white',
                 ]">
                   <UIcon :name="linkCopied
-                      ? 'i-heroicons-check'
-                      : 'i-heroicons-clipboard-document'
+                    ? 'i-heroicons-check'
+                    : 'i-heroicons-clipboard-document'
                     " class="w-4 h-4" />
                   {{ linkCopied ? "Copied!" : "Copy" }}
                 </button>
@@ -683,6 +686,30 @@
         </div>
       </div>
     </div>
+
+    <!-- Accepted Review Action Card -->
+    <div v-if="canManageHighlight"
+      class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-4 sm:p-6 shadow-sm">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="space-y-1">
+          <p class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
+            {{ project.highlighted ? "Project Highlighted" : "Mark as Highlighted Project" }}
+          </p>
+          <p class="text-sm text-gray-600 dark:text-gray-300">
+            {{
+              project.highlighted
+                ? "This accepted project is featured on the highlighted section."
+                : "This accepted project can now be featured in the highlighted projects section."
+            }}
+          </p>
+        </div>
+        <ButtonsPresetButton v-if="!project.highlighted" label="Mark as Highlighted" icon="i-heroicons-star-solid"
+          :loading="togglingHighlight" color="primary" variant="solid" size="sm"
+          class="w-full sm:w-auto justify-center rounded-3xl [&_.icon]:w-5 [&_.icon]:h-5"
+          @click="markProjectAsHighlighted" />
+      </div>
+    </div>
+
 
     <!-- Similar Projects Section -->
     <div v-if="showSimilarProjects && similarProjects.length > 0" class="space-y-4 sm:space-y-6">
@@ -817,16 +844,27 @@ const videoPopupOpen = ref(false);
 const sharePopupOpen = ref(false);
 const accepting = ref(false);
 const rejecting = ref(false);
+const togglingHighlight = ref(false);
 
 const isTeacherOrAdmin = computed(
   () => props.userRole === Role.teacher || props.userRole === Role.admin,
 );
+const submissionStatus = computed(() =>
+  (props.project?.submissionStatus || "").toLowerCase(),
+);
 const canReview = computed(() => {
-  const status = (props.project?.submissionStatus || "").toLowerCase();
   return (
-    isTeacherOrAdmin.value && status !== "accepted" && status !== "rejected"
+    isTeacherOrAdmin.value &&
+    submissionStatus.value !== "accepted" &&
+    submissionStatus.value !== "rejected"
   );
 });
+const canManageHighlight = computed(
+  () =>
+    isTeacherOrAdmin.value &&
+    props.showSubmissionStatus &&
+    submissionStatus.value === "accepted",
+);
 
 const getImageSrc = (img: any): string => {
   if (!img) return "";
@@ -1050,6 +1088,32 @@ const handleReject = async () => {
     });
   } finally {
     rejecting.value = false;
+  }
+};
+
+const markProjectAsHighlighted = async () => {
+  if (!props.project?.id || !canManageHighlight.value) return;
+
+  try {
+    togglingHighlight.value = true;
+    const updatedProject = await projectStore.markProjectAsHighlighted(
+      props.project.id,
+    );
+    props.project.highlighted = !!updatedProject.highlighted;
+    toast.add({
+      title: "Project Highlighted",
+      description: "This project is now featured in highlighted projects.",
+      color: "success",
+    });
+  } catch (error) {
+    console.error("Failed to update project highlight:", error);
+    toast.add({
+      title: "Update Failed",
+      description: "Could not update highlighted status. Please try again.",
+      color: "error",
+    });
+  } finally {
+    togglingHighlight.value = false;
   }
 };
 

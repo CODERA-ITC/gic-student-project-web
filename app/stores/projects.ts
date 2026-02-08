@@ -1084,7 +1084,7 @@ export const useProjectStore = defineStore("projects", {
       try {
         const response = await projectService.update(
           stringProjectId,
-          updates as any,
+          updates as UpdateProjectDTO,
         );
         apiProject = transformProject(response);
       } catch (error) {
@@ -1188,8 +1188,33 @@ export const useProjectStore = defineStore("projects", {
         );
       }
 
+      // Keep highlighted list in sync after update.
+      if (updatedProject.highlighted) {
+        const alreadyHighlighted = this.highlightedProjects.some(
+          (p) => p.id === updatedProject.id,
+        );
+        if (!alreadyHighlighted) {
+          this.highlightedProjects = [
+            ...this.highlightedProjects,
+            updatedProject,
+          ];
+        } else {
+          this.highlightedProjects = this.highlightedProjects.map((p) =>
+            p.id === updatedProject.id ? updatedProject : p,
+          );
+        }
+      } else {
+        this.highlightedProjects = this.highlightedProjects.filter(
+          (p) => p.id !== updatedProject.id,
+        );
+      }
+
       console.log("Project updated successfully:", updatedProject.id);
       return updatedProject;
+    },
+
+    async markProjectAsHighlighted(projectId: string | number): Promise<Project> {
+      return await this.updateProject(projectId, { highlighted: true });
     },
 
     // Delete project
