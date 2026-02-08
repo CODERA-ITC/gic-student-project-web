@@ -3,7 +3,8 @@
     v-if="to"
     :to="to"
     :class="[
-      getButtonClasses(color, variant, size, fullWidth),
+      getButtonClasses(color, variant, size, fullWidth, textSize),
+      'group',
       {
         'opacity-50 cursor-not-allowed': disabled || loading,
         relative: loading,
@@ -24,7 +25,7 @@
     <UIcon
       v-else-if="icon"
       :name="icon"
-      :class="[iconSize, trailingIcon ? 'order-last' : '']"
+      :class="[iconSize, iconMotionClass, trailingIcon ? 'order-last' : '']"
     />
 
     <!-- Label -->
@@ -36,7 +37,8 @@
     :type="type"
     :disabled="disabled || loading"
     :class="[
-      getButtonClasses(color, variant, size, fullWidth),
+      getButtonClasses(color, variant, size, fullWidth, textSize),
+      'group',
       {
         'opacity-50 cursor-not-allowed': disabled || loading,
         relative: loading,
@@ -56,7 +58,7 @@
     <UIcon
       v-else-if="icon"
       :name="icon"
-      :class="[iconSize, trailingIcon ? 'order-last' : '']"
+      :class="[iconSize, iconMotionClass, trailingIcon ? 'order-last' : '']"
     />
 
     <!-- Label -->
@@ -76,6 +78,7 @@ interface Props {
   color?: ButtonColor;
   variant?: ButtonVariant;
   size?: ButtonSize;
+  textSize?: ButtonSize;
   icon?: string;
   to?: string;
   type?: "button" | "submit" | "reset";
@@ -114,6 +117,13 @@ const iconSize = computed(() => {
   };
   // Ensure consistent rendering on server and client
   return sizes[props.size];
+});
+
+const iconMotionClass = computed(() => {
+  if (!props.icon || props.loading) return "";
+  return props.trailingIcon
+    ? "transition-transform duration-300 ease-out group-hover:-translate-x-0.5 motion-reduce:transition-none"
+    : "transition-transform duration-300 ease-out group-hover:translate-x-0.5 motion-reduce:transition-none";
 });
 
 const handleClick = (event: MouseEvent) => {

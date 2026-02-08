@@ -161,11 +161,22 @@ export const BUTTON_COLORS = {
  * Enhanced for mobile touch targets (minimum 44x44px for accessibility)
  */
 export const BUTTON_SIZES = {
-  xs: "px-2 py-1 text-xs min-h-[32px]",
-  sm: "px-3 py-2 text-sm min-h-[36px]",
-  md: "px-4 py-2.5 text-base min-h-[44px]",
-  lg: "px-6 py-3 text-lg min-h-[48px]",
-  xl: "px-8 py-4 text-xl min-h-[56px]",
+  xs: "px-3.5 py-2 text-xs min-h-[36px]",
+  sm: "px-5 py-3 text-sm min-h-[44px]",
+  md: "px-6 py-3.5 text-base min-h-[50px]",
+  lg: "px-8 py-4 text-lg min-h-[56px]",
+  xl: "px-10 py-5 text-xl min-h-[64px]",
+};
+
+/**
+ * Text size overrides for cases where visual size and font size should differ.
+ */
+export const BUTTON_TEXT_SIZES: Record<ButtonSize, string> = {
+  xs: "text-xs",
+  sm: "text-sm",
+  md: "text-base",
+  lg: "text-lg",
+  xl: "text-xl",
 };
 
 /**
@@ -173,7 +184,7 @@ export const BUTTON_SIZES = {
  * Enhanced for mobile accessibility with proper touch targets
  */
 export const BUTTON_BASE =
-  "inline-flex items-center font-medium justify-center gap-2 rounded-xl transition-all duration-300 focus:outline-none touch-manipulation select-none active:scale-95";
+  "inline-flex items-center font-medium justify-center gap-3 !rounded-3xl transition-all duration-300 focus:outline-none touch-manipulation select-none active:scale-95";
 
 /**
  * Get button classes based on configuration
@@ -182,14 +193,16 @@ export function getButtonClasses(
   color: ButtonColor,
   variant: ButtonVariant = "solid",
   size: ButtonSize = "sm", //default size of buttons
-  fullWidth: boolean = false
+  fullWidth: boolean = false,
+  textSize?: ButtonSize
 ): string {
   const colorClasses =
     BUTTON_COLORS[color]?.[variant] || BUTTON_COLORS.primary.solid;
   const sizeClasses = BUTTON_SIZES[size];
   const widthClasses = fullWidth ? "w-full" : "";
+  const textSizeClasses = textSize ? BUTTON_TEXT_SIZES[textSize] : "";
 
-  return `${BUTTON_BASE} ${colorClasses} ${sizeClasses} ${widthClasses}`;
+  return `${BUTTON_BASE} ${colorClasses} ${sizeClasses} ${textSizeClasses} ${widthClasses}`;
 }
 
 /**
