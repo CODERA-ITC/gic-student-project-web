@@ -86,8 +86,12 @@ export interface AuthResult {
   needsSecurityQuestions: boolean;
 }
 
-class AuthService {
+export class AuthService {
   private baseUrl = "/api/users";
+
+  protected getbaseUrl() {
+    return this.baseUrl;
+  }
 
   getAccessToken(): string | null {
     return safeLocalStorage.getItem("access_token");

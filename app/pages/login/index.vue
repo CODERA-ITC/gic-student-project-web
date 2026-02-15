@@ -80,17 +80,17 @@
         </form>
 
         <!-- Divider -->
-        <div class="relative my-6">
+        <!-- <div class="relative my-6">
           <div class="absolute inset-0 flex items-center">
             <div class="w-full border-t border-slate-200 dark:border-neutral-700"></div>
           </div>
           <div class="relative flex justify-center text-sm">
             <span class="px-4 bg-white dark:bg-neutral-900 text-slate-500 dark:text-neutral-400">or</span>
           </div>
-        </div>
+        </div> -->
 
         <!-- Social Login -->
-        <div class="grid grid-cols-2 gap-3">
+        <!-- <div class="grid grid-cols-2 gap-3">
           <button type="button" disabled
             class="h-12 py-3 px-4 bg-white dark:bg-neutral-800 border border-slate-300 dark:border-neutral-700 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 group opacity-50 cursor-not-allowed">
             <div class="w-8 h-8 flex items-center justify-center flex-shrink-0">
@@ -111,7 +111,7 @@
               GITHUB
             </span>
           </button>
-        </div>
+        </div> -->
 
         <!-- Sign Up Link -->
         <div class="text-center mt-6">

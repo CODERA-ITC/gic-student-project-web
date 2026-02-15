@@ -5,7 +5,10 @@ import {
   studentPrograms,
   studentYears,
 } from "~/constants/students";
-import { authService } from "~/services/AuthService";
+import {
+  studentService,
+  type APIStudent,
+} from "~/services/StudentService";
 
 // Types
 export interface StudentSocial {
@@ -26,43 +29,12 @@ export interface Student {
   projects: number[];
   achievements: string[];
   social: StudentSocial;
-  joinedDate: string;
+  joinedYear: string;
   graduationYear: number;
   gen: number;
 }
 
-// API Student Interface
-export interface APIStudent {
-  id: string;
-  firstName: string;
-  lastName?: string;
-  email: string;
-  phone?: string;
-  year?: number;
-  generation?: number;
-  avatar?: string;
-  bio?: string;
-  skill?: string[] | null;
-  department?: {
-    id: string;
-    name: string;
-    code: string;
-  };
-  courses?: any[];
-  role?: string;
-  socialLinks?: Array<{
-    url: string;
-    name: string;
-  }> | null;
-}
-
-export interface PaginatedResponse {
-  data: APIStudent[];
-  page: number;
-  limit: number;
-  total: number;
-  lastPage: number;
-}
+export type { APIStudent, PaginatedResponse } from "~/services/StudentService";
 
 export interface StudentFilters {
   program: string;
@@ -216,13 +188,12 @@ export const useStudentStore = defineStore("students", {
         const firstName = (student.firstName || "").toString();
         const lastName = (student.lastName || "").toString();
         const fullName =
-          (firstName + " " + lastName).trim() ||
-          student.email ||
-          "Student";
+          (firstName + " " + lastName).trim() || student.email || "Student";
         return {
           id: student.id,
           name: fullName,
-          program: student.department?.name || "GIC",
+          program: "GIC",
+
           year: student.year || "",
           avatar: student.avatar || "",
           bio: student.bio || "",
@@ -234,7 +205,9 @@ export const useStudentStore = defineStore("students", {
           gen:
             typeof student.generation === "number"
               ? student.generation
-              : Number(student.generation || this.publicSelectedGeneration || 25),
+              : Number(
+                  student.generation || this.publicSelectedGeneration || 25,
+                ),
           social: {},
         };
       });
@@ -377,16 +350,9 @@ export const useStudentStore = defineStore("students", {
           params.search = this.searchQuery.trim();
         }
 
-        const response = await $fetch<PaginatedResponse>(`/api/users`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          params,
-        });
+        const response = await studentService.fetchStudents(params, token);
 
-        // Set students directly from response (already filtered by API)
-        if (response.data && Array.isArray(response.data)) {
+        if (Array.isArray(response.data)) {
           this.apiStudents = response.data;
           this.total = response.total;
           this.lastPage = response.lastPage;
@@ -419,19 +385,7 @@ export const useStudentStore = defineStore("students", {
 
     async createStudent(studentData: any, token: string) {
       try {
-        const response = await $fetch("/api/users", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: {
-            ...studentData,
-            role: "STUDENT",
-          },
-        });
-
-        return response;
+        return await studentService.createStudent(studentData, token);
       } catch (error: any) {
         console.error("Error creating student:", error);
         throw new Error(error.data?.message || "Failed to create student");
@@ -440,22 +394,21 @@ export const useStudentStore = defineStore("students", {
 
     async updateStudent(studentId: string, studentData: any, token: string) {
       try {
-        await $fetch(`/api/users/${studentId}`, {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: {
-            ...studentData,
-            role: "STUDENT",
-          },
-        });
+        const updated = await studentService.updateStudent(
+          studentId,
+          studentData,
+          token,
+        );
 
         // Refresh local state
         const idx = this.apiStudents.findIndex((s) => s.id === studentId);
         if (idx !== -1) {
-          this.apiStudents[idx] = { ...this.apiStudents[idx], ...studentData };
+          this.apiStudents[idx] =
+            updated ||
+            studentService.mapStudent(
+              { ...this.apiStudents[idx], ...studentData },
+              { id: studentId },
+            );
         }
       } catch (error: any) {
         console.error("Error updating student:", error);
@@ -465,12 +418,7 @@ export const useStudentStore = defineStore("students", {
 
     async deleteStudent(studentId: string, token: string) {
       try {
-        await $fetch(`/api/users/${studentId}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        await studentService.deleteStudent(studentId, token);
 
         // Remove from local state
         this.apiStudents = this.apiStudents.filter(
@@ -493,76 +441,20 @@ export const useStudentStore = defineStore("students", {
 
     async uploadStudentsCSV(file: File) {
       try {
-        const formData = new FormData();
-
-        const headers = await authService.getAuthHeaders();
-        formData.append("file", file);
-
-        // this api is use to upload csv file to server
-        const response = await $fetch("/api/real-student/upload", {
-          method: "POST",
-          headers,
-          body: formData,
-        });
-
-        return response;
+        return await studentService.uploadStudentsCSV(file);
       } catch (error: any) {
         console.error("Error uploading CSV:", error);
         throw new Error(error.data?.message || "Failed to upload CSV file");
       }
     },
 
-    async fetchPublicStudentById(studentId: string): Promise<APIStudent | null> {
+    async fetchPublicStudentById(
+      studentId: string,
+    ): Promise<APIStudent | null> {
       this.loading = true;
       try {
-        let response: any = null;
-
-        // Prefer public people endpoint
-        try {
-          response = await $fetch(
-            `/api/users/${studentId}`,
-            { method: "GET" },
-          );
-        } catch {
-          // Fallback to local API users endpoint
-          response = await $fetch(`/api/users/${studentId}`, { method: "GET" });
-        }
-
-        const raw = response?.data || response;
-        if (!raw) return null;
-
-        const mapped: APIStudent = {
-          id: String(raw.id || raw._id || studentId),
-          firstName: raw.firstName || raw.firstname || raw.name || "Student",
-          lastName: raw.lastName || raw.lastname || "",
-          email: raw.email || "",
-          phone: raw.phone || "",
-          year:
-            typeof raw.year === "number"
-              ? raw.year
-              : Number(raw.year || 0) || undefined,
-          generation:
-            typeof raw.generation === "number"
-              ? raw.generation
-              : Number(raw.generation || 0) || undefined,
-          avatar: raw.avatar || "",
-          bio: raw.bio || "",
-          skill: Array.isArray(raw.skill)
-            ? raw.skill
-            : Array.isArray(raw.skills)
-              ? raw.skills
-              : [],
-          department: raw.department
-            ? {
-                id: String(raw.department.id || ""),
-                name: raw.department.name || "",
-                code: raw.department.code || "",
-              }
-            : undefined,
-          courses: Array.isArray(raw.courses) ? raw.courses : [],
-          role: raw.role || "STUDENT",
-          socialLinks: Array.isArray(raw.socialLinks) ? raw.socialLinks : [],
-        };
+        const mapped = await studentService.fetchPublicStudentById(studentId);
+        if (!mapped) return null;
 
         const idx = this.apiStudents.findIndex((s) => s.id === mapped.id);
         if (idx >= 0) this.apiStudents[idx] = mapped;
@@ -585,64 +477,20 @@ export const useStudentStore = defineStore("students", {
     ) {
       this.loading = true;
       try {
-        const response = (await $fetch(
-          "/api/users",
-          {
-            method: "GET",
-            query: { page, limit, ascending, generation },
-          },
-        )) as PaginatedResponse | { data?: any[] };
+        const response = await studentService.fetchPublicStudentsByGeneration(
+          generation,
+          page,
+          limit,
+          ascending,
+        );
 
-        const list = Array.isArray((response as any)?.data)
-          ? (response as any).data
-          : [];
-
-        this.apiStudents = list.map((u: any) => ({
-          id: String(u.id || u._id || ""),
-          firstName: u.firstName || u.firstname || u.name || "Student",
-          lastName: u.lastName || u.lastname || "",
-          email: u.email || "",
-          phone: u.phone || "",
-          year: typeof u.year === "number" ? u.year : Number(u.year || 0) || undefined,
-          generation:
-            typeof u.generation === "number"
-              ? u.generation
-              : Number(u.generation || generation),
-          avatar: u.avatar || "",
-          bio: u.bio || "",
-          skill: Array.isArray(u.skill)
-            ? u.skill
-            : Array.isArray(u.skills)
-              ? u.skills
-              : [],
-          department: u.department
-            ? {
-                id: String(u.department.id || ""),
-                name: u.department.name || "",
-                code: u.department.code || "",
-              }
-            : undefined,
-          courses: Array.isArray(u.courses) ? u.courses : [],
-          role: u.role || "STUDENT",
-        }));
+        this.apiStudents = response.data;
 
         this.publicSelectedGeneration = generation;
-        this.currentPage =
-          typeof (response as any)?.page === "number"
-            ? (response as any).page
-            : page;
-        this.limit =
-          typeof (response as any)?.limit === "number"
-            ? (response as any).limit
-            : limit;
-        this.total =
-          typeof (response as any)?.total === "number"
-            ? (response as any).total
-            : this.apiStudents.length;
-        this.lastPage =
-          typeof (response as any)?.lastPage === "number"
-            ? (response as any).lastPage
-            : 1;
+        this.currentPage = response.page;
+        this.limit = response.limit;
+        this.total = response.total;
+        this.lastPage = response.lastPage;
       } catch (error) {
         console.error("Error loading public students by generation:", error);
         this.apiStudents = [];
