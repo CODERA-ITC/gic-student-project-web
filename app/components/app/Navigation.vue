@@ -167,6 +167,12 @@
                 <UIcon name="i-heroicons-user-group" />
                 User Management
               </NuxtLink>
+              <NuxtLink to="/admin/internal-students"
+                class="flex items-center gap-2 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors text-neutral-700 dark:text-neutral-200"
+                @click="mobileMenuOpen = false">
+                <UIcon name="i-heroicons-identification" />
+                Internal Student
+              </NuxtLink>
               <NuxtLink to="/admin/categories"
                 class="flex items-center gap-2 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors text-neutral-700 dark:text-neutral-200"
                 @click="mobileMenuOpen = false">
@@ -215,7 +221,6 @@
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import { useAuthStore } from "~/stores/auth";
-import { useUiStore } from "~/stores/ui";
 
 const { t, setLocale } = useI18n();
 
@@ -255,7 +260,6 @@ onUnmounted(() => {
 
 const route = useRoute();
 const authStore = useAuthStore();
-const uiStore = useUiStore();
 
 // Computed
 const isAuthenticated = computed(() => authStore.isAuthenticated);
@@ -286,12 +290,8 @@ const isActiveRoute = (path) => {
 };
 
 const handleSearch = (query) => {
-  if (query.trim()) {
-    const searchPath =
-      searchContext.value === "students" ? "/students" : "/projects";
-    navigateTo(`${searchPath}?search=${encodeURIComponent(query)}`);
-    mobileMenuOpen.value = false;
-  }
+  if (!query.trim()) return;
+  mobileMenuOpen.value = false;
 };
 
 const clearSearch = () => {

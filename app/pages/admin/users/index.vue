@@ -82,14 +82,11 @@
           <div class="flex flex-wrap gap-2">
             <ButtonsPresetButton label="Create User" size="sm" color="primary" variant="solid" icon="i-heroicons-plus"
               class="!bg-blue-900 !text-white hover:!bg-blue-800" @click="openCreateUser" />
-            <input ref="fileInput" type="file" accept=".csv" class="hidden" @change="handleFileSelect" />
-            <ButtonsPresetButton label="Import CSV" color="primary" variant="outline" size="sm"
-              icon="i-heroicons-arrow-up-tray" class="!text-blue-900 !border-blue-900 hover:!bg-blue-50"
-              :loading="uploading" :disabled="uploading" @click="triggerFileInput" />
             <ButtonsPresetButton label="Export" size="sm" variant="outline" icon="i-heroicons-arrow-down-tray"
               @click="exportUsers" />
             <ButtonsPresetButton label="Refresh" size="sm" color="primary" variant="outline"
-              icon="i-heroicons-arrow-path" class="!text-blue-900 !border-blue-900 hover:!bg-blue-50"
+              icon="i-heroicons-arrow-path"
+              class="!text-blue-900 !border-blue-900 hover:!bg-blue-50 dark:!text-blue-300 dark:!border-blue-700 dark:hover:!bg-blue-900/20"
               :loading="loadingUsers" @click="applyFilters" />
           </div>
         </div>
@@ -351,7 +348,8 @@
 
               <div class="flex flex-wrap gap-2">
                 <ButtonsPresetButton label="Auto Generate (8)" type="button" color="primary" variant="outline"
-                  icon="i-heroicons-sparkles" class="!text-blue-900 !border-blue-900 hover:!bg-blue-50"
+                  icon="i-heroicons-sparkles"
+                  class="!text-blue-900 !border-blue-900 hover:!bg-blue-50 dark:!text-blue-300 dark:!border-blue-700 dark:hover:!bg-blue-900/20"
                   @click="generatePassword" />
                 <ButtonsPresetButton label="Copy" type="button" variant="outline" icon="i-heroicons-clipboard-document"
                   :disabled="!resetPasswordValue" @click="copyGeneratedPassword" />
@@ -402,8 +400,6 @@ const showCreateModal = ref(false);
 const formMode = ref<"create" | "edit">("create");
 const formUser = ref<any | null>(null);
 const creating = ref(false);
-const uploading = ref(false);
-const fileInput = ref<HTMLInputElement | null>(null);
 const showDeleteModal = ref(false);
 const deleting = ref(false);
 const userToDelete = ref<any | null>(null);
@@ -695,32 +691,6 @@ const openCreateUser = () => {
   };
   formMode.value = "create";
   showCreateModal.value = true;
-};
-
-const triggerFileInput = () => {
-  fileInput.value?.click();
-};
-
-const handleFileSelect = async (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  const file = target.files?.[0];
-  if (!file) return;
-  if (!file.name.endsWith(".csv")) {
-    toast.add({ title: "Please choose a CSV file", color: "warning" });
-    return;
-  }
-  uploading.value = true;
-  try {
-    await adminStore.uploadUsersCSV(file);
-    toast.add({ title: "Import complete", color: "success" });
-    await fetchUsers();
-  } catch (error) {
-    console.error("CSV upload failed", error);
-    toast.add({ title: "Import failed", color: "error" });
-  } finally {
-    uploading.value = false;
-    if (fileInput.value) fileInput.value.value = "";
-  }
 };
 
 const createUser = async () => {

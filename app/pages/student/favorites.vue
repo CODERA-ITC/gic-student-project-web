@@ -62,7 +62,7 @@
               <UIcon name="i-heroicons-magnifying-glass"
                 class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 w-4 h-4" />
               <input v-model="searchQuery" type="text" placeholder="Search favorites..."
-                class="w-full pl-9 pr-3 py-2 min-h-[44px] bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-3xl text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" />
+                class="w-full pl-9 pr-3 py-2 min-h-[44px] bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-700 rounded-lg text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" />
             </div>
             <div v-if="favoriteProjects.length > 0" class="flex items-center gap-2 justify-end">
               <ButtonsPresetButton label="Clear All" icon="i-heroicons-trash" color="danger" variant="outline" size="sm"

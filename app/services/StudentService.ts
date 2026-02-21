@@ -7,6 +7,14 @@ export interface APIStudent {
   lastName?: string;
   email: string;
   phone?: string;
+  studentId?: string;
+  nameEn?: string;
+  nameKh?: string;
+  gender?: string;
+  dob?: string;
+  phoneNumber?: number | string;
+  group?: string;
+  isMock?: boolean;
   year?: number;
   generation?: number;
   gen?: string | number;
@@ -47,6 +55,94 @@ export interface StudentListParams {
   ascending?: boolean;
 }
 
+const INTERNAL_STUDENT_MOCKS: APIStudent[] = [
+  {
+    id: "rs-mock-1",
+    studentId: "e2021001",
+    firstName: "Sok",
+    lastName: "Dara",
+    nameEn: "Sok Dara",
+    nameKh: "Sok Dara KH",
+    gender: "Male",
+    dob: "14/03/2003",
+    phone: "12345678",
+    phoneNumber: 12345678,
+    group: "A",
+    email: "sok.dara@gic.local",
+    joinedYear: "2021",
+    role: "STUDENT",
+    isMock: true,
+  },
+  {
+    id: "rs-mock-2",
+    studentId: "e2021002",
+    firstName: "Chan",
+    lastName: "Rithy",
+    nameEn: "Chan Rithy",
+    nameKh: "Chan Rithy KH",
+    gender: "Male",
+    dob: "22/07/2002",
+    phone: "12345679",
+    phoneNumber: 12345679,
+    group: "B",
+    email: "chan.rithy@gic.local",
+    joinedYear: "2021",
+    role: "STUDENT",
+    isMock: true,
+  },
+  {
+    id: "rs-mock-3",
+    studentId: "e2021003",
+    firstName: "Malis",
+    lastName: "Kim",
+    nameEn: "Malis Kim",
+    nameKh: "Malis Kim KH",
+    gender: "Female",
+    dob: "03/11/2003",
+    phone: "12345680",
+    phoneNumber: 12345680,
+    group: "A",
+    email: "malis.kim@gic.local",
+    joinedYear: "2021",
+    role: "STUDENT",
+    isMock: true,
+  },
+  {
+    id: "rs-mock-4",
+    studentId: "e2021004",
+    firstName: "Vanna",
+    lastName: "Heng",
+    nameEn: "Vanna Heng",
+    nameKh: "Vanna Heng KH",
+    gender: "Male",
+    dob: "18/01/2002",
+    phone: "12345681",
+    phoneNumber: 12345681,
+    group: "C",
+    email: "vanna.heng@gic.local",
+    joinedYear: "2021",
+    role: "STUDENT",
+    isMock: true,
+  },
+  {
+    id: "rs-mock-5",
+    studentId: "e2021005",
+    firstName: "Sreypov",
+    lastName: "Touch",
+    nameEn: "Sreypov Touch",
+    nameKh: "Sreypov Touch KH",
+    gender: "Female",
+    dob: "30/09/2003",
+    phone: "12345682",
+    phoneNumber: 12345682,
+    group: "B",
+    email: "sreypov.touch@gic.local",
+    joinedYear: "2021",
+    role: "STUDENT",
+    isMock: true,
+  },
+];
+
 function normalizeJoinedYear(raw: any): string {
   if (typeof raw?.joinedYear === "string") return raw.joinedYear;
 
@@ -73,8 +169,19 @@ function mapAPIStudent(
   raw: any,
   fallback?: { id?: string; generation?: string | number },
 ): APIStudent {
-  const firstName = raw?.firstName || raw?.firstname || raw?.name || "Student";
-  const lastName = raw?.lastName || raw?.lastname || "";
+  const nameEn = String(raw?.nameEn || "").trim();
+  const nameParts = nameEn ? nameEn.split(/\s+/) : [];
+  const firstName =
+    raw?.firstName ||
+    raw?.firstname ||
+    raw?.name ||
+    nameParts[0] ||
+    raw?.studentName ||
+    "Student";
+  const lastName =
+    raw?.lastName ||
+    raw?.lastname ||
+    (nameParts.length > 1 ? nameParts.slice(1).join(" ") : "");
   const generation =
     typeof raw?.generation === "number"
       ? raw.generation
@@ -85,7 +192,19 @@ function mapAPIStudent(
     firstName: String(firstName),
     lastName: String(lastName),
     email: String(raw?.email || ""),
-    phone: String(raw?.phone || ""),
+    phone: String(raw?.phone || raw?.phoneNumber || ""),
+    studentId: raw?.studentId ? String(raw.studentId) : undefined,
+    nameEn: raw?.nameEn ? String(raw.nameEn) : undefined,
+    nameKh: raw?.nameKh ? String(raw.nameKh) : undefined,
+    gender: raw?.gender ? String(raw.gender) : undefined,
+    dob: raw?.dob ? String(raw.dob) : undefined,
+    phoneNumber:
+      typeof raw?.phoneNumber === "number" ||
+      typeof raw?.phoneNumber === "string"
+        ? raw.phoneNumber
+        : undefined,
+    group: raw?.group ? String(raw.group) : undefined,
+    isMock: Boolean(raw?.isMock),
     year:
       typeof raw?.year === "number"
         ? raw.year
@@ -125,7 +244,6 @@ export class StudentService extends AuthService {
   private uploadUrl = "/api/real-student/upload";
   // get Base url from base class
 
-
   private async buildAuthHeaders(
     token?: string,
     extraHeaders: Record<string, string> = {},
@@ -157,6 +275,72 @@ export class StudentService extends AuthService {
       total: Number(response?.total || 0),
       lastPage: Number(response?.lastPage || 1),
     };
+  }
+
+  async fetchInternalStudents(
+    params: StudentListParams,
+    token?: string,
+  ): Promise<PaginatedResponse> {
+    // const response = await $fetch<any>("/api/users/real-student", {
+    //   method: "GET",
+    //   headers: await this.buildAuthHeaders(token),
+    //   params,
+    // });
+
+    // const list = Array.isArray(response?.data)
+    //   ? response.data
+    //   : Array.isArray(response?.users)
+    //     ? response.users
+    //     : Array.isArray(response)
+    //       ? response
+    //       : [];
+
+    // if (!list.length) {
+    const search = String(params.search || "")
+      .trim()
+      .toLowerCase();
+    const filtered = INTERNAL_STUDENT_MOCKS.filter((item) => {
+      if (!search) return true;
+      const haystack = [
+        item.studentId,
+        item.firstName,
+        item.lastName,
+        item.nameEn,
+        item.nameKh,
+        item.gender,
+        item.dob,
+        String(item.phoneNumber || item.phone || ""),
+          item.group,
+        item.email,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(search);
+    });
+
+    const page = Number(params.page || 1);
+    const limit = Number(params.limit || 10);
+    const start = (page - 1) * limit;
+    const paged = filtered.slice(start, start + limit);
+    const lastPage = Math.max(1, Math.ceil(filtered.length / limit));
+
+    return {
+      data: paged.map((student) => mapAPIStudent(student)),
+      page,
+      limit,
+      total: filtered.length,
+      lastPage,
+    };
+
+    // }
+    // return {
+    //   data: list.map((student: any) => mapAPIStudent(student)),
+    //   page: Number(response?.page || params.page || 1),
+    //   limit: Number(response?.limit || params.limit || list.length || 10),
+    //   total: Number(response?.total || list.length),
+    //   lastPage: Number(response?.lastPage || 1),
+    // };
   }
 
   async createStudent(studentData: any, token?: string): Promise<any> {

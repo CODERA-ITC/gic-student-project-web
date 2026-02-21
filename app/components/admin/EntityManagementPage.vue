@@ -143,7 +143,7 @@
                   <ButtonsPresetButton
                     label=""
                     icon="i-heroicons-pencil-square"
-                    size="xs"
+                    size="sm"
                     color="primary"
                     variant="ghost"
                     @click="openEdit(item)"
@@ -151,7 +151,7 @@
                   <ButtonsPresetButton
                     label=""
                     icon="i-heroicons-trash"
-                    size="xs"
+                    size="sm"
                     color="danger"
                     variant="ghost"
                     @click="openDelete(item)"
@@ -170,7 +170,7 @@
             <ButtonsPresetButton
               label=""
               icon="i-heroicons-chevron-left"
-              size="xs"
+              size="sm"
               color="secondary"
               variant="ghost"
               :disabled="page === 1"
@@ -179,7 +179,7 @@
             <ButtonsPresetButton
               label=""
               icon="i-heroicons-chevron-right"
-              size="xs"
+              size="sm"
               color="secondary"
               variant="ghost"
               :disabled="page * pageSize >= filteredItems.length"
@@ -201,7 +201,7 @@
           <div
             class="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-gray-200 dark:border-slate-700 overflow-hidden"
           >
-            <form class="p-5 space-y-4" @submit.prevent="saveItem">
+            <form class="p-6 space-y-5" @submit.prevent="saveItem">
               <div class="flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                   {{ formMode === "create" ? `Create ${singularLabel}` : `Update ${singularLabel}` }}
@@ -211,26 +211,40 @@
                   icon="i-heroicons-x-mark"
                   color="secondary"
                   variant="ghost"
-                  size="xs"
+                  size="sm"
                   type="button"
                   @click="showFormModal = false"
                 />
               </div>
 
-              <UFormGroup label="Name" required>
-                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="form.name" placeholder="Enter name" required />
-              </UFormGroup>
-              <UFormGroup v-if="supportsCode" label="Code">
-                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="form.code" placeholder="Enter code" />
-              </UFormGroup>
-              <UFormGroup label="Description">
-                <textarea
-                  v-model="form.description"
-                  rows="3"
-                  class="w-full px-3 py-2 rounded-3xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Optional description"
-                />
-              </UFormGroup>
+              <FormSectionCard title="Basic Information">
+                <UFormGroup label="Name" required>
+                  <UInput
+                    :ui="{ base: '!rounded-3xl !min-h-[44px]' }"
+                    v-model="form.name"
+                    placeholder="Enter name"
+                    required
+                  />
+                </UFormGroup>
+                <UFormGroup v-if="supportsCode" label="Code" class="pt-2">
+                  <UInput
+                    :ui="{ base: '!rounded-3xl !min-h-[44px]' }"
+                    v-model="form.code"
+                    placeholder="Enter code"
+                  />
+                </UFormGroup>
+              </FormSectionCard>
+
+              <FormSectionCard title="Description" subtitle="Optional details for better context">
+                <UFormGroup label="Description">
+                  <textarea
+                    v-model="form.description"
+                    rows="3"
+                    class="w-full px-3 py-2 rounded-3xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Optional description"
+                  />
+                </UFormGroup>
+              </FormSectionCard>
 
               <div class="flex justify-end gap-3 pt-2">
                 <ButtonsPresetButton
@@ -269,6 +283,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
 import DeleteConfirmationModal from "~/components/DeleteConfirmationModal.vue";
+import FormSectionCard from "~/components/admin/FormSectionCard.vue";
 import { useToast } from "#imports";
 import {
   useProjectMetaStore,

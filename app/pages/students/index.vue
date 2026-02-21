@@ -258,23 +258,43 @@ const selectedGeneration = ref(
 );
 
 const mappedStudents = computed(() => studentStore.publicMappedStudents);
+const routeSearch = computed(() => {
+  const raw = Array.isArray(route.query.search)
+    ? route.query.search[0]
+    : route.query.search;
+  return String(raw || "").trim().toLowerCase();
+});
 
 const filteredStudents = computed(() => {
-  if (!selectedSkill.value) {
-    return mappedStudents.value;
-  }
-
-  const selected = selectedSkill.value.toLowerCase();
   return mappedStudents.value.filter((student) => {
+    const selected = selectedSkill.value.toLowerCase();
     const skills = Array.isArray(student.skills) ? student.skills : [];
-    return skills.some((skill) =>
-      (skill || "").toString().toLowerCase().includes(selected),
+
+    const matchesSkill = !selected || skills.some((skill) =>
+      (skill || "").toString().toLowerCase().includes(selected)
+    );
+
+    if (!matchesSkill) return false;
+    if (!routeSearch.value) return true;
+
+    const name = (student.name || "").toLowerCase();
+    const program = (student.program || "").toLowerCase();
+    const bio = (student.bio || "").toLowerCase();
+    const search = routeSearch.value;
+
+    return (
+      name.includes(search) ||
+      program.includes(search) ||
+      bio.includes(search) ||
+      skills.some((skill) =>
+        (skill || "").toString().toLowerCase().includes(search)
+      )
     );
   });
 });
 
 const filteredTotal = computed(() => {
-  if (!selectedSkill.value) {
+  if (!selectedSkill.value && !routeSearch.value) {
     return studentStore.total;
   }
 
@@ -288,7 +308,8 @@ const isGenerationFiltered = computed(
 const hasActiveFilters = computed(() => {
   const genFiltered = isGenerationFiltered.value;
   const skillFiltered = !!selectedSkill.value;
-  return genFiltered || skillFiltered;
+  const searchFiltered = !!routeSearch.value;
+  return genFiltered || skillFiltered || searchFiltered;
 });
 
 const paginatedStudents = computed(() => filteredStudents.value);
@@ -300,6 +321,12 @@ const clearFilters = () => {
     generationOptions.value.find((x) => x.value === defaultGeneration.value) || generationOptions.value[0];
   selectedSkill.value = "";
   currentPage.value = 1;
+  router.replace({
+    query: {
+      ...route.query,
+      search: undefined,
+    },
+  });
 };
 
 const clearGenerationFilter = () => {

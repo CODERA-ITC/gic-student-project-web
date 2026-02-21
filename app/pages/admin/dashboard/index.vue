@@ -259,7 +259,7 @@ const kpis = computed(() => {
     {
       label: "Total Students",
       value: totalStudents.value,
-      caption: "Auto-refreshed from /api/users?role=STUDENT",
+      caption: "Live count of registered students",
       icon: "i-heroicons-academic-cap",
       iconBg: "",
       iconColor: "",
@@ -269,7 +269,7 @@ const kpis = computed(() => {
     {
       label: "Total Teachers",
       value: totalTeachers.value,
-      caption: "Auto-refreshed from /api/users?role=TEACHER",
+      caption: "Live count of registered teachers",
       icon: "i-heroicons-user-group",
       iconBg: "",
       iconColor: "",

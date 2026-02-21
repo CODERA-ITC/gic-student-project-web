@@ -13,27 +13,29 @@
       </div>
     </Transition>
 
-    <!-- Search Dropdown -->
-    <Transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 translate-y-2"
-      enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-150"
-      leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-2">
-      <div v-if="isOpen" class="fixed left-0 right-0 top-16 z-50 px-4 sm:px-6 lg:px-8">
+    <!-- Centered Search Popup -->
+    <Transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 scale-95"
+      enter-to-class="opacity-100 scale-100" leave-active-class="transition ease-in duration-150"
+      leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
+      <div v-if="isOpen" class="fixed inset-0 z-[100] flex items-start justify-center px-4 pt-20 sm:pt-24">
+        <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" @click="closeSearch"></div>
+
         <div
-          class="bg-white dark:bg-neutral-900 rounded-xl shadow-2xl border border-gray-200 dark:border-neutral-800 overflow-hidden">
+          class="relative mx-auto w-full max-w-2xl max-h-[80vh] bg-white dark:bg-neutral-900 rounded-3xl shadow-[0_24px_80px_rgba(0,0,0,0.35)] ring-1 ring-gray-200/80 dark:ring-neutral-700/80 border border-gray-200 dark:border-neutral-800 overflow-hidden">
           <!-- Search Input -->
-          <div
-            class="p-4 border-b border-gray-200 dark:border-neutral-800 w-full justify-center flex gap-1 items-center">
+          <div class="p-5 sm:p-6 border-b border-gray-200 dark:border-neutral-800 flex flex-col items-center">
             <UInput v-model="localQuery" :placeholder="placeholder" icon="i-heroicons-magnifying-glass-20-solid"
-              size="sm" color="neutral" autofocus @keyup.enter="handleSearch" @keyup.esc="closeSearch" />
-            <p class="text-xs text-gray-500 dark:text-neutral-400">
+              size="lg" color="neutral" class="w-full max-w-2xl"
+              :ui="{ base: '!rounded-3xl !min-h-[52px]' }" autofocus @keyup.enter="handleSearch" @keyup.esc="closeSearch" />
+            <p class="mt-2 text-xs text-gray-500 dark:text-neutral-400">
               Press
-              <kbd class="px-1 py-0.5 border rounded text-xs bg-gray-100 dark:bg-neutral-800">Esc</kbd>
+              <kbd class="px-1 py-0.5 border rounded-lg text-xs bg-gray-100 dark:bg-neutral-800">Esc</kbd>
               to close
             </p>
           </div>
 
           <!-- Search Results -->
-          <div v-if="searchResults.length > 0" class="max-h-96 overflow-y-auto">
+          <div v-if="searchResults.length > 0" class="max-h-[calc(80vh-120px)] overflow-y-auto">
             <div v-for="result in searchResults" :key="`${result.type}-${result.value}`"
               class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-neutral-800 cursor-pointer transition-colors border-b border-gray-100 dark:border-neutral-800 last:border-0"
               @click="selectResult(result)">
@@ -53,9 +55,6 @@
         </div>
       </div>
     </Transition>
-
-    <!-- Backdrop -->
-    <div v-if="isOpen" class="fixed inset-0 z-40" @click="closeSearch"></div>
   </div>
 </template>
 
@@ -74,12 +73,22 @@ const props = defineProps({
 
 const emit = defineEmits(["search", "clear"]);
 
+const SEARCH_DEBOUNCE_MS = 300;
+
 const localQuery = ref("");
 const debouncedQuery = ref("");
 const isOpen = ref(false);
 const searchResults = ref([]);
 const projectStore = useProjectStore();
 const studentStore = useStudentStore();
+const route = useRoute();
+let activeSearchRequest = 0;
+
+const activeContext = computed(() => {
+  if (route.path.startsWith("/students")) return "students";
+  if (route.path.startsWith("/projects")) return "projects";
+  return props.context;
+});
 
 // Debounce search input and fetch results
 let debounceTimer = null;
@@ -94,23 +103,32 @@ watch(localQuery, (newValue) => {
 
   debounceTimer = setTimeout(async () => {
     debouncedQuery.value = newValue;
+    const requestId = ++activeSearchRequest;
 
     // Fetch search results based on context
     try {
-      if (props.context === "students") {
-        searchResults.value = studentStore.searchStudentsWithResults(
+      if (activeContext.value === "students") {
+        const results = await studentStore.searchStudentsWithResults(
           debouncedQuery.value,
         );
+        if (requestId === activeSearchRequest) {
+          searchResults.value = results;
+        }
       } else {
-        searchResults.value = await projectStore.searchProjects(
+        const results = await projectStore.searchProjects(
           debouncedQuery.value,
         );
+        if (requestId === activeSearchRequest) {
+          searchResults.value = results;
+        }
       }
     } catch (error) {
       console.error("Error fetching search results:", error);
-      searchResults.value = [];
+      if (requestId === activeSearchRequest) {
+        searchResults.value = [];
+      }
     }
-  }, 300); // 300ms delay
+  }, SEARCH_DEBOUNCE_MS);
 });
 
 // Handle scroll to close search
@@ -132,13 +150,16 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+  if (debounceTimer) {
+    clearTimeout(debounceTimer);
+  }
   // Remove scroll listener
   window.removeEventListener("scroll", handleScroll);
 });
 
 // Dynamic placeholder based on context
 const placeholder = computed(() => {
-  return props.context === "students"
+  return activeContext.value === "students"
     ? "Search students, programs, skills..."
     : "Search projects...";
 });
@@ -151,6 +172,7 @@ const toggleSearch = () => {
 };
 
 const closeSearch = () => {
+  activeSearchRequest++;
   isOpen.value = false;
   localQuery.value = "";
   emit("clear");
@@ -159,28 +181,28 @@ const closeSearch = () => {
 const handleSearch = () => {
   if (localQuery.value.trim()) {
     emit("search", localQuery.value);
-    // Use context-aware search when pressing enter
-    const searchPath =
-      props.context === "students" ? "/students/search" : "/projects/search";
-    navigateTo(`${searchPath}?search=${encodeURIComponent(localQuery.value)}`);
+
+    if (activeContext.value === "students") {
+      navigateTo(`/students?search=${encodeURIComponent(localQuery.value)}`);
+    } else {
+      navigateTo(`/projects?search=${encodeURIComponent(localQuery.value)}`);
+    }
     closeSearch();
   }
 };
 
 const selectResult = (result) => {
-  if (props.context === "students") {
-    if (result.type === "category") {
-      navigateTo(
-        `/students/search?program=${encodeURIComponent(result.value)}`,
-      );
+  if (activeContext.value === "students") {
+    if (result.studentId) {
+      navigateTo(`/students/${result.studentId}`);
+    } else if (result.type === "category") {
+      navigateTo(`/students?search=${encodeURIComponent(result.value)}`);
     } else {
-      navigateTo(`/students/search?search=${encodeURIComponent(result.value)}`);
+      navigateTo(`/students?search=${encodeURIComponent(result.value)}`);
     }
   } else {
     if (result.type === "category") {
-      navigateTo(
-        `/projects/search?category=${encodeURIComponent(result.value)}`,
-      );
+      navigateTo(`/projects?search=${encodeURIComponent(result.value)}`);
     } else if (
       (result.type === "name" || result.type === "description") &&
       result.projectId

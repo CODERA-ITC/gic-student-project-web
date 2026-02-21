@@ -1,65 +1,36 @@
 <template>
-  <NuxtLink
-    v-if="to"
-    :to="to"
-    :class="[
-      getButtonClasses(color, variant, size, fullWidth, textSize),
-      'group',
-      {
-        'opacity-50 cursor-not-allowed': disabled || loading,
-        relative: loading,
-        'pointer-events-none': disabled || loading,
-      },
-    ]"
-    @click="handleClick"
-    v-bind="$attrs"
-  >
+  <NuxtLink v-if="to" :to="to" :class="[
+    getButtonClasses(color, variant, resolvedSize, fullWidth, textSize),
+    'group',
+    {
+      'opacity-50 cursor-not-allowed': disabled || loading,
+      relative: loading,
+      'pointer-events-none': disabled || loading,
+    },
+  ]" @click="handleClick" v-bind="$attrs">
     <!-- Loading spinner -->
-    <UIcon
-      v-if="loading"
-      name="i-heroicons-arrow-path"
-      class="w-5 h-5 animate-spin"
-    />
+    <UIcon v-if="loading" name="i-heroicons-arrow-path" class="w-5 h-5 animate-spin" />
 
     <!-- Icon -->
-    <UIcon
-      v-else-if="icon"
-      :name="icon"
-      :class="[iconSize, iconMotionClass, trailingIcon ? 'order-last' : '']"
-    />
+    <UIcon v-else-if="icon" :name="icon" :class="[iconSize, iconMotionClass, trailingIcon ? 'order-last' : '']" />
 
     <!-- Label -->
     <span v-if="displayLabel" class="truncate">{{ displayLabel }}</span>
   </NuxtLink>
 
-  <button
-    v-else
-    :type="type"
-    :disabled="disabled || loading"
-    :class="[
-      getButtonClasses(color, variant, size, fullWidth, textSize),
-      'group',
-      {
-        'opacity-50 cursor-not-allowed': disabled || loading,
-        relative: loading,
-      },
-    ]"
-    @click="handleClick"
-    v-bind="$attrs"
-  >
+  <button v-else :type="type" :disabled="disabled || loading" :class="[
+    getButtonClasses(color, variant, resolvedSize, fullWidth, textSize),
+    'group',
+    {
+      'opacity-50 cursor-not-allowed': disabled || loading,
+      relative: loading,
+    },
+  ]" @click="handleClick" v-bind="$attrs">
     <!-- Loading spinner -->
-    <UIcon
-      v-if="loading"
-      name="i-heroicons-arrow-path"
-      class="w-5 h-5 animate-spin"
-    />
+    <UIcon v-if="loading" name="i-heroicons-arrow-path" class="w-5 h-5 animate-spin" />
 
     <!-- Icon -->
-    <UIcon
-      v-else-if="icon"
-      :name="icon"
-      :class="[iconSize, iconMotionClass, trailingIcon ? 'order-last' : '']"
-    />
+    <UIcon v-else-if="icon" :name="icon" :class="[iconSize, iconMotionClass, trailingIcon ? 'order-last' : '']" />
 
     <!-- Label -->
     <span v-if="displayLabel" class="truncate">{{ displayLabel }}</span>
@@ -91,13 +62,16 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   color: "primary",
   variant: "solid",
-  size: "md",
+  size: "sm", // we update to use sm for the entire project
   type: "button",
   disabled: false,
   loading: false,
   trailingIcon: false,
   fullWidth: false,
 });
+
+// Project-wide button sizing policy: normalize all app buttons to sm.
+const resolvedSize = computed<ButtonSize>(() => "sm");
 
 const emit = defineEmits<{
   click: [event: MouseEvent];
@@ -116,7 +90,7 @@ const iconSize = computed(() => {
     xl: "w-7 h-7",
   };
   // Ensure consistent rendering on server and client
-  return sizes[props.size];
+  return sizes[resolvedSize.value];
 });
 
 const iconMotionClass = computed(() => {

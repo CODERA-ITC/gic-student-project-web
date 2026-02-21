@@ -312,10 +312,23 @@ import { useAuthStore } from "~/stores/auth";
 
 const projectStore = useProjectStore();
 const authStore = useAuthStore();
+const route = useRoute();
 const isLoadingData = ref(false);
 const isLoadingCategories = ref(false);
 const dataFetchError = ref<string | null>(null);
 const isInitialized = ref(false);
+
+const getRouteQueryValue = (value: unknown): string => {
+  if (Array.isArray(value)) return String(value[0] || "");
+  return typeof value === "string" ? value : "";
+};
+
+const syncSearchFromRoute = () => {
+  const search = getRouteQueryValue(route.query.search).trim();
+  if (projectStore.filters.search !== search) {
+    projectStore.setFilter("search", search);
+  }
+};
 
 // Initialize data before mount to ensure data is ready
 const initializeData = async () => {
@@ -368,7 +381,16 @@ const initializeData = async () => {
 // Initialize on mounted (client-side)
 onMounted(async () => {
   await initializeData();
+  syncSearchFromRoute();
 });
+
+watch(
+  () => route.query.search,
+  () => {
+    if (!isInitialized.value) return;
+    syncSearchFromRoute();
+  },
+);
 
 // Store computed properties
 const categories = computed(() => {

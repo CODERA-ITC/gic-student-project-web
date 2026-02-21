@@ -25,11 +25,8 @@
 
           <!-- CTA Buttons -->
           <div class="flex flex-col sm:flex-row gap-4 pt-4">
-            <ButtonsPresetButton preset="exploreHighlightedProjects" @click="scrollToProjects" size="md"
-              class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium transition-colors">
-              <UIcon name="i-heroicons-arrow-right" class="w-5 h-5" />
-            </ButtonsPresetButton>
-            <ButtonsPresetButton preset="learnMore" to="/about" size="md" />
+            <ButtonsPresetButton preset="exploreHighlightedProjects" @click="scrollToProjects" size="sm" />
+            <ButtonsPresetButton preset="learnMore" to="/about" size="sm" />
           </div>
 
           <!-- Stats Preview -->

@@ -1,14 +1,6 @@
 import { defineStore } from "pinia";
-import type { ComputedRef } from "vue";
-import {
-  studentsData,
-  studentPrograms,
-  studentYears,
-} from "~/constants/students";
-import {
-  studentService,
-  type APIStudent,
-} from "~/services/StudentService";
+
+import { studentService, type APIStudent } from "~/services/StudentService";
 
 // Types
 export interface StudentSocial {
@@ -45,7 +37,7 @@ export interface StudentFilters {
 
 export interface StudentStats {
   total: number;
-  byProgram: Record<string, Student[]>;
+  byProgram: Record<string, APIStudent[]>;
   graduating2025: number;
   graduating2026: number;
 }
@@ -67,9 +59,6 @@ export interface PublicStudentCard {
 }
 
 export interface StudentState {
-  students: Student[];
-  programs: string[];
-  years: string[];
   filters: StudentFilters;
   // API-based state
   apiStudents: APIStudent[];
@@ -87,9 +76,6 @@ export interface StudentState {
 
 export const useStudentStore = defineStore("students", {
   state: (): StudentState => ({
-    students: studentsData,
-    programs: studentPrograms,
-    years: studentYears,
     filters: {
       program: "All",
       year: "All",
@@ -111,20 +97,24 @@ export const useStudentStore = defineStore("students", {
   }),
 
   getters: {
-    filteredStudents(): Student[] {
-      let filtered = [...this.students];
+    filteredStudents(): APIStudent[] {
+      let filtered = [...this.apiStudents];
 
       // Apply program filter
       if (this.filters.program !== "All") {
         filtered = filtered.filter(
-          (student) => student.program === this.filters.program,
+          (student) =>
+            (student.department?.name || "").toLowerCase() ===
+            this.filters.program.toLowerCase(),
         );
       }
 
       // Apply year filter
       if (this.filters.year !== "All") {
         filtered = filtered.filter(
-          (student) => student.year === this.filters.year,
+          (student) =>
+            String(student.year || student.joinedYear || "") ===
+            this.filters.year,
         );
       }
 
@@ -133,10 +123,12 @@ export const useStudentStore = defineStore("students", {
         const searchTerm = this.filters.search.toLowerCase();
         filtered = filtered.filter(
           (student) =>
-            student.name.toLowerCase().includes(searchTerm) ||
-            student.program.toLowerCase().includes(searchTerm) ||
-            student.bio.toLowerCase().includes(searchTerm) ||
-            student.skills.some((skill) =>
+            `${student.firstName || ""} ${student.lastName || ""}`
+              .toLowerCase()
+              .includes(searchTerm) ||
+            (student.department?.name || "").toLowerCase().includes(searchTerm) ||
+            (student.bio || "").toLowerCase().includes(searchTerm) ||
+            (Array.isArray(student.skill) ? student.skill : []).some((skill) =>
               skill.toLowerCase().includes(searchTerm),
             ),
         );
@@ -145,40 +137,51 @@ export const useStudentStore = defineStore("students", {
       // Apply sorting
       switch (this.filters.sortBy) {
         case "name":
-          filtered.sort((a, b) => a.name.localeCompare(b.name));
+          filtered.sort((a, b) =>
+            `${a.firstName || ""} ${a.lastName || ""}`
+              .trim()
+              .localeCompare(`${b.firstName || ""} ${b.lastName || ""}`.trim()),
+          );
           break;
         case "program":
-          filtered.sort((a, b) => a.program.localeCompare(b.program));
+          filtered.sort((a, b) =>
+            (a.department?.name || "").localeCompare(b.department?.name || ""),
+          );
           break;
         case "year":
-          filtered.sort((a, b) => b.graduationYear - a.graduationYear);
+          filtered.sort((a, b) => Number(b.year || 0) - Number(a.year || 0));
           break;
         case "projects":
-          filtered.sort((a, b) => b.projects.length - a.projects.length);
+          filtered.sort(
+            (a, b) =>
+              (Array.isArray(b.projects) ? b.projects.length : 0) -
+              (Array.isArray(a.projects) ? a.projects.length : 0),
+          );
           break;
       }
 
       return filtered;
     },
 
-    studentsByProgram(): Record<string, Student[]> {
-      const programMap: Record<string, Student[]> = {};
-      this.students.forEach((student) => {
-        if (!programMap[student.program]) {
-          programMap[student.program] = [];
+    studentsByProgram(): Record<string, APIStudent[]> {
+      const programMap: Record<string, APIStudent[]> = {};
+      this.apiStudents.forEach((student) => {
+        const program = student.department?.name || "Unknown";
+        if (!programMap[program]) {
+          programMap[program] = [];
         }
-        programMap[student.program].push(student);
+        programMap[program].push(student);
       });
       return programMap;
     },
 
     studentStats(): StudentStats {
       return {
-        total: this.students.length,
+        total: this.apiStudents.length,
         byProgram: this.studentsByProgram,
-        graduating2025: this.students.filter((s) => s.graduationYear === 2025)
+        graduating2025: this.apiStudents.filter((s) => Number(s.year) === 2025)
           .length,
-        graduating2026: this.students.filter((s) => s.graduationYear === 2026)
+        graduating2026: this.apiStudents.filter((s) => Number(s.year) === 2026)
           .length,
       };
     },
@@ -232,30 +235,36 @@ export const useStudentStore = defineStore("students", {
       };
     },
 
-    getStudent(id: number | string): Student | undefined {
-      return this.students.find(
-        (student) => student.id === Number.parseInt(id.toString()),
+    getStudent(id: number | string): APIStudent | undefined {
+      return this.apiStudents.find(
+        (student) => String(student.id) === String(id),
       );
     },
 
-    getStudentsByProgram(program: string): Student[] {
-      return this.students.filter((student) => student.program === program);
+    getStudentsByProgram(program: string): APIStudent[] {
+      return this.apiStudents.filter(
+        (student) =>
+          (student.department?.name || "").toLowerCase() ===
+          program.toLowerCase(),
+      );
     },
 
-    searchStudents(query: string): Student[] {
+    searchStudents(query: string): APIStudent[] {
       const searchTerm = query.toLowerCase();
-      return this.students.filter(
+      return this.apiStudents.filter(
         (student) =>
-          student.name.toLowerCase().includes(searchTerm) ||
-          student.program.toLowerCase().includes(searchTerm) ||
-          student.skills.some((skill) =>
+          `${student.firstName || ""} ${student.lastName || ""}`
+            .toLowerCase()
+            .includes(searchTerm) ||
+          (student.department?.name || "").toLowerCase().includes(searchTerm) ||
+          (Array.isArray(student.skill) ? student.skill : []).some((skill) =>
             skill.toLowerCase().includes(searchTerm),
           ),
       );
     },
 
-    // Search with structured results for search dropdown
-    searchStudentsWithResults(query: string) {
+    // API-backed search with structured results for search dropdown
+    async searchStudentsWithResults(query: string) {
       if (!query.trim()) return [];
 
       const searchTerm = query.toLowerCase();
@@ -267,67 +276,83 @@ export const useStudentStore = defineStore("students", {
         subtitle: string;
         count?: number;
         category?: string;
+        studentId?: string;
       }> = [];
       const addedItems = new Set<string>();
 
-      // Search by program
-      this.programs.forEach((program) => {
-        if (program.toLowerCase().includes(searchTerm) && program !== "All") {
-          const key = `program-${program}`;
-          if (!addedItems.has(key)) {
-            addedItems.add(key);
+      try {
+        const response = await studentService.fetchStudents({
+          page: 1,
+          limit: 8,
+          role: "STUDENT",
+          search: query.trim(),
+        });
+
+        const apiStudents = Array.isArray(response?.data) ? response.data : [];
+        const departmentCounts = new Map<string, number>();
+
+        apiStudents.forEach((student) => {
+          const departmentName = (student.department?.name || "").trim();
+          if (departmentName) {
+            departmentCounts.set(
+              departmentName,
+              (departmentCounts.get(departmentName) || 0) + 1,
+            );
+          }
+        });
+
+        // Category-like suggestions from API data (department names)
+        departmentCounts.forEach((count, departmentName) => {
+          if (
+            departmentName.toLowerCase().includes(searchTerm) &&
+            !addedItems.has(`dept-${departmentName}`) &&
+            results.length < 10
+          ) {
+            addedItems.add(`dept-${departmentName}`);
             results.push({
               type: "category",
               icon: "i-heroicons-academic-cap-20-solid",
-              value: program,
-              label: program,
-              subtitle: "Program",
-              count: this.students.filter((s) => s.program === program).length,
+              value: departmentName,
+              label: departmentName,
+              subtitle: "Department",
+              count,
             });
           }
-        }
-      });
+        });
 
-      // Search by student name
-      this.students.forEach((student) => {
-        if (student.name.toLowerCase().includes(searchTerm)) {
-          const key = `name-${student.name}`;
-          if (!addedItems.has(key) && results.length < 10) {
+        apiStudents.forEach((student) => {
+          if (results.length >= 10) return;
+
+          const fullName =
+            `${student.firstName || ""} ${student.lastName || ""}`
+              .trim()
+              .replace(/\s+/g, " ");
+          const label = fullName || student.email || "Student";
+          const skills = Array.isArray(student.skill) ? student.skill : [];
+          const subtitle = skills.length
+            ? `Skills: ${skills.slice(0, 3).join(", ")}`
+            : student.department?.name || "Student";
+          const key = `student-${student.id || label}`;
+
+          if (!addedItems.has(key)) {
             addedItems.add(key);
             results.push({
               type: "title",
               icon: "i-heroicons-user-20-solid",
-              value: student.name,
-              label: student.name,
-              subtitle: "Student Name",
-              category: student.program,
+              value: label,
+              label,
+              subtitle,
+              category: student.department?.name || "",
+              studentId: String(student.id || ""),
             });
           }
-        }
-      });
+        });
 
-      // Search by skills
-      this.students.forEach((student) => {
-        const matchingSkills = student.skills.filter((skill) =>
-          skill.toLowerCase().includes(searchTerm),
-        );
-        if (matchingSkills.length > 0) {
-          const key = `skill-${student.name}`;
-          if (!addedItems.has(key) && results.length < 10) {
-            addedItems.add(key);
-            results.push({
-              type: "description",
-              icon: "i-heroicons-code-bracket-20-solid",
-              value: student.name,
-              label: student.name,
-              subtitle: `Skills: ${matchingSkills.join(", ")}`,
-              category: student.program,
-            });
-          }
-        }
-      });
-
-      return results.slice(0, 8);
+        return results.slice(0, 8);
+      } catch (error) {
+        console.error("Error searching students from backend:", error);
+        return [];
+      }
     },
 
     // API-based actions
@@ -360,6 +385,39 @@ export const useStudentStore = defineStore("students", {
         }
       } catch (error) {
         console.error("Error loading students:", error);
+        this.apiStudents = [];
+        this.total = 0;
+        this.lastPage = 1;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async loadInternalStudents(token: string) {
+      this.loading = true;
+      try {
+        const params: any = {
+          page: this.currentPage,
+          limit: this.limit,
+        };
+
+        if (this.searchQuery && this.searchQuery.trim()) {
+          params.search = this.searchQuery.trim();
+        }
+
+        const response = await studentService.fetchInternalStudents(
+          params,
+          token,
+        );
+
+        if (Array.isArray(response.data)) {
+          this.apiStudents = response.data;
+          this.total = response.total;
+          this.lastPage = response.lastPage;
+          this.currentPage = response.page;
+        }
+      } catch (error) {
+        console.error("Error loading internal students:", error);
         this.apiStudents = [];
         this.total = 0;
         this.lastPage = 1;
