@@ -2,15 +2,14 @@
 <template>
   <div
     @click="backToPrevious"
-    class="hidden lg:block lg:w-1/2 relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden hover:cursor-pointer"
+    class="w-full h-56 sm:h-72 lg:h-auto lg:basis-1/2 lg:max-w-[50%] flex-shrink-0 relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden hover:cursor-pointer"
   >
-    <div
-      class="absolute inset-0 bg-cover bg-center opacity-30"
-      style="
-        background-image: url(&quot;/images/ITCcampus.png&quot;);
-        background-size: 160%;
-      "
-    ></div>
+    <NuxtImg
+      src="/images/ITCcampus.png"
+      alt="ITC Campus"
+      class="absolute inset-0 w-full h-full object-cover opacity-30"
+      loading="eager"
+    />
 
     <!-- Overlay Content -->
     <div class="relative h-full flex flex-col justify-between p-12 text-white">

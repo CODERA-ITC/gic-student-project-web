@@ -4,27 +4,34 @@
  * Redirects to login if not authenticated
  */
 
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware(async (to) => {
   const authStore = useAuthStore();
+  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+  const redirectToLogin = async () => {
+    // Route through loading bridge to stabilize layout transition before login render.
+    await sleep(180);
+    return navigateTo({
+      path: "/loading",
+      query: {
+        next: "/login",
+        redirect: to.fullPath,
+      },
+    });
+  };
 
   // Skip authentication on server side - we can't access localStorage there
-  if (typeof window === "undefined") {
-    console.log("Auth middleware: Server side, skipping auth check");
+  if (import.meta.server) {
     return;
   }
 
   // Allow OAuth callback URLs with token to pass through
   // The page will handle the token and authenticate
   if (to.query.token) {
-    console.log("Auth middleware: Token found in URL, allowing through");
     return;
   }
 
   // Allow refresh_token URLs as well (for OAuth flow)
   if (to.query.refresh_token) {
-    console.log(
-      "Auth middleware: Refresh token found in URL, allowing through",
-    );
     return;
   }
 
@@ -34,47 +41,33 @@ export default defineNuxtRouteMiddleware((to, from) => {
   if (token) {
     // Check if token is expired
     if (authStore.isTokenExpired()) {
-      console.log("Auth middleware: Token expired, attempting refresh...");
-
       // Try to refresh the token
-      const refreshed = authStore.refreshAccessToken().catch(() => false);
+      const refreshed = await authStore.refreshAccessToken().catch(
+        () => false,
+      );
 
       if (!refreshed) {
-        console.log(
-          "Auth middleware: Token refresh failed, redirecting to login",
-        );
-        return navigateTo({
-          path: "/login",
-          query: { redirect: to.path },
-        });
+        return redirectToLogin();
       }
-
-      console.log(
-        "Auth middleware: Token refreshed successfully, allowing through",
-      );
       return;
     }
-
-    console.log(
-      "Auth middleware: Valid token exists in localStorage, allowing through",
-    );
     return;
   }
 
-  // If auth is still loading, allow through - the page will show loading state
+  // If auth is still loading, wait for restoration first to avoid unstable redirect/layout flashes
   if (authStore.isLoading) {
-    console.log("Auth middleware: Auth is loading, allowing through");
-    return;
+    const started = Date.now();
+    const maxWaitMs = 1500;
+    while (authStore.isLoading && Date.now() - started < maxWaitMs) {
+      await sleep(50);
+    }
+
+    if (authStore.isAuthenticated) return;
   }
 
   // Check if user is authenticated
   if (!authStore.isAuthenticated) {
-    // No authentication found, redirect to login
-    console.log("Auth middleware: No auth and no token, redirecting to login");
-    return navigateTo({
-      path: "/login",
-      query: { redirect: to.path },
-    });
+    return redirectToLogin();
   }
 
   // User is authenticated, allow access

@@ -1,9 +1,9 @@
 <template>
-  <div class="min-h-screen flex">
+  <div class="min-h-screen flex flex-col lg:flex-row">
     <AuthHero />
 
     <!-- Right Side - Login Form -->
-    <div class="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white dark:bg-neutral-900">
+    <div class="w-full lg:basis-1/2 lg:max-w-[50%] flex-shrink-0 flex items-center justify-center p-8 bg-white dark:bg-neutral-900">
       <div class="w-full max-w-md">
         <!-- Header -->
         <div class="mb-8">

@@ -14,7 +14,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
     } else if (authStore.isTeacher) {
       return navigateTo("/teacher/dashboard");
     } else if (authStore.isAdmin) {
-      return navigateTo("/dashboard");
+      return navigateTo("/admin/dashboard");
     }
 
     // Default redirect

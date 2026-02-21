@@ -1,8 +1,33 @@
 <template>
-  <div class="flex w-100 h-[100px] justify-center items-center">
+  <div class="min-h-screen flex items-center justify-center bg-white dark:bg-neutral-900">
     <div class="loader"></div>
   </div>
 </template>
+
+<script setup lang="ts">
+definePageMeta({
+  layout: "auth",
+});
+
+const route = useRoute();
+
+onMounted(() => {
+  const next = typeof route.query.next === "string" ? route.query.next : "/login";
+  const redirect = typeof route.query.redirect === "string" ? route.query.redirect : "";
+
+  setTimeout(() => {
+    if (next === "/login") {
+      navigateTo({
+        path: "/login",
+        query: redirect ? { redirect } : {},
+      });
+      return;
+    }
+
+    navigateTo(next);
+  }, 260);
+});
+</script>
 
 <style scoped>
 /* From Uiverse.io by bociKond */
