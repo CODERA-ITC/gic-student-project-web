@@ -1,20 +1,35 @@
-# GIC Student Project Web (Nuxt 4)
+# GIC Student Project Web
 
-Nuxt 4 + Pinia frontend for the GIC Student Project platform. It consumes the GIC API (default `http://localhost:3017`) for auth, projects, and media.
+Nuxt 4 frontend for the GIC Student Project platform.
 
-## Stack at a Glance
+It includes public project browsing plus role-based dashboards and management flows for `student`, `teacher`, and `admin`.
 
-- Nuxt 4 (SSR/SPA hybrid) with Vite
-- Pinia for state
-- @nuxt/ui for UI kit, @nuxt/image for assets
-- i18n (English & Khmer)
-- TypeScript, ESLint, PostCSS/Tailwind config present
+## Main Purpose
 
-## Prerequisites
+The main purpose of this project is to provide a single web platform where:
 
-- Node 18+ (LTS recommended)
-- npm (or pnpm/yarn/bun; commands shown with npm)
-- Optional: trust `localhost.crt` if keeping HTTPS dev server on
+- students can create, manage, and submit their academic projects
+- teachers can review submissions and manage student records
+- admins can manage projects, users, and project metadata (categories/tags/courses)
+- visitors can browse student projects and discover work from GIC students
+
+It serves as the frontend application for showcasing student work and supporting the full project review/management workflow.
+
+## Tech Stack
+
+- Nuxt 4
+- Vue 3
+- Pinia
+- `@nuxt/ui`
+- `@nuxt/image`
+- `@nuxtjs/i18n` (English / Khmer)
+- Tailwind CSS
+- TypeScript (typecheck script available)
+
+## Requirements
+
+- Node.js 18+ (LTS recommended)
+- npm (examples below use npm)
 
 ## Install
 
@@ -23,111 +38,160 @@ cd Frontend/gic-student-project-web
 npm install
 ```
 
-## Configure API base
+## Environment / API
 
-`runtimeConfig.public.apiBase` controls where `/api` points. Examples:
+The app uses `runtimeConfig.public.apiBase` in `nuxt.config.ts`.
+
+- Current default: `""` (empty)
+- This works when your frontend can call backend endpoints through the same origin/proxy (`/api/...`)
+
+If your backend runs on another host/port, set:
 
 ```bash
-# Typical local API
 NUXT_PUBLIC_API_BASE=http://localhost:3017 npm run dev
-
-# If you proxy /api to the backend (e.g., nginx), you can leave this empty
 ```
 
-Most calls use relative `/api/...`; set the var when the backend lives on a different host/port.
-
-## Run in development
+## Development
 
 ```bash
-npm run dev          # https://localhost:3000 (uses localhost.crt/key)
-npm run dev:debug    # with inspector
-npm run dev:force    # force restart dev server
+npm run dev
 ```
 
-Want HTTP instead? Remove or comment the `devServer.https` block in `nuxt.config.ts`.
+Default dev server uses HTTPS via local certs in `nuxt.config.ts`:
 
-## Build & preview
+- `localhost.key`
+- `localhost.crt`
+
+Other useful scripts:
+
+```bash
+npm run dev:watch
+npm run dev:debug
+npm run dev:force
+```
+
+## Build / Preview
 
 ```bash
 npm run build
-npm run preview      # serve the built site locally
+npm run preview
 ```
 
-## Quality checks
+Static generation (if needed):
 
 ```bash
-npm run lint         # ESLint
+npm run generate
+```
+
+## Quality / Maintenance
+
+```bash
+npm run lint
 npm run lint:fix
-npm run typecheck    # Nuxt TS checker (script available; TS strict currently off)
+npm run typecheck
+npm run clean
 ```
 
-## Directory landmarks
+## Project Structure (Key Areas)
 
-- `app/pages/` — route files (Nuxt file routing)
-- `app/components/` — shared UI (see SecurityQuestionsModal, SearchBar, RoadmapInfographic)
-- `app/services/AuthService.ts` — auth/JWT, profile, token refresh helpers
-- `app/services/ProjectService.ts` — project CRUD, likes/views, submissions, highlights
-- `app/stores/projects.ts` — Pinia store using ProjectService
-- `assets/css/main.css` — global styles; @nuxt/ui theme hooks
-- `i18n/locales/` — `en.json`, `kh.json`
-- `nuxt.config.ts` — HTTPS dev setup, modules, runtime config
+- `app/pages/` - Nuxt routes
+- `app/components/` - reusable UI/components
+- `app/stores/` - Pinia stores (auth, projects, students, admin, etc.)
+- `app/services/` - API service layer
+- `assets/css/main.css` - global styling
+- `i18n/locales/` - translation files (`en.json`, `kh.json`)
+- `nuxt.config.ts` - modules, dev HTTPS, runtime config
 
-## Typical usage patterns
+## Main Routes (Current)
 
-Auth (token-aware request):
+### Public
 
-```ts
-import { authService } from "~/services/AuthService";
-const headers = await authService.getAuthHeaders();
-const me = await $fetch("/api/users/me", { headers });
-```
+- `/`
+- `/projects`
+- `/projects/search`
+- `/projects/[id]`
+- `/students`
+- `/students/[id]`
+- `/about`
+- `/privacy`
+- `/terms`
+- `/login`
+- `/signup`
+- `/forgot-password`
 
-Projects (with filters):
+### Student
 
-```ts
-import { projectService } from "~/services/ProjectService";
-const projects = await projectService.fetchAll({
-  page: 1,
-  limit: 12,
-  search: "ai",
-});
-```
+- `/student/dashboard`
+- `/student/my-projects`
+- `/student/my-projects/[id]`
+- `/student/my-projects/[id]/edit`
+- `/student/submissions`
+- `/student/favorites`
 
-Create with media:
+### Teacher
 
-```ts
-await projectService.create({
-  name: "Capstone",
-  description: "Demo",
-  authorId: user.id,
-  departmentId: user.departmentId!,
-  images: [file1, file2],
-});
-```
+- `/teacher/dashboard`
+- `/teacher/submissions` (review submissions)
+- `/teacher/submissions/[id]`
+- `/teacher/favorites`
+- `/teacher/user-management`
 
-## Key application features (frontend)
+### Admin
 
-- User authentication with JWT + refresh
-- Role-based access (student, teacher/admin flows)
-- Project create/update/delete with media uploads
-- Project browsing, search, likes, views, submissions
-- Secure API calls via token headers
+- `/admin/dashboard`
+- `/admin/projects` (project management)
+- `/admin/projects/[id]`
+- `/admin/users`
+- `/admin/profile`
+- `/admin/categories`
+- `/admin/tags`
+- `/admin/courses`
+- `/admin/internal-students`
+
+### Shared Profile / Auth Callbacks
+
+- `/profile`
+- `/auth/callback`
+- `/users/google/callback`
+- `/users/github/callback`
+
+## Functional Highlights (Current)
+
+- JWT auth + role-based route guards (`student`, `teacher`, `admin`)
+- Project creation/editing with image uploads
+- Teacher review workflow (accept/reject submissions)
+- Teacher student management (create/edit/delete + reset password)
+- Admin project/user/category/tag/course management
+- Student project ownership flows (`My Projects`)
+- i18n support (English/Khmer)
+- Responsive dashboards and management pages (recent updates to teacher tabs)
+
+## Notes for Developers
+
+- Dev HTTPS is enabled by default in `nuxt.config.ts`
+- TypeScript strict mode is currently off in `nuxt.config.ts`
+- `runtimeConfig.public.apiBase` is intentionally empty by default (proxy/same-origin setup)
 
 ## Troubleshooting
 
-- 404/ECONNREFUSED → check `NUXT_PUBLIC_API_BASE` matches your backend URL.
-- HTTPS warning → trust `localhost.crt` or disable HTTPS in `nuxt.config.ts`.
-- 401 after idle → refresh token may be invalid; login again. AuthService auto-refreshes when possible.
+- `401` / auth issues:
+  - Re-login and verify backend is running
+  - Check token/refresh flow from `AuthService`
 
-## Handy scripts (package.json)
+- API requests failing / `ECONNREFUSED`:
+  - Set `NUXT_PUBLIC_API_BASE` to the correct backend URL
+  - Confirm backend is reachable
 
-- `dev`, `dev:debug`, `dev:force`
-- `build`, `preview`, `generate`
-- `lint`, `lint:fix`, `typecheck`, `clean`
+- HTTPS warning in local dev:
+  - Trust `localhost.crt` or disable HTTPS in `nuxt.config.ts` for local testing
 
-## Onboarding checklist
+## Quick Start Checklist
 
-- Install deps and set `NUXT_PUBLIC_API_BASE`
-- Run backend (separate repo folder) so `/api` resolves
-- `npm run dev` and open https://localhost:3000
-- Verify login/signup, project listing, and media upload flows
+1. Install dependencies: `npm install`
+2. Start backend API
+3. Set `NUXT_PUBLIC_API_BASE` if backend is not proxied on same origin
+4. Run frontend: `npm run dev`
+5. Open local app and test role-based flows:
+   - student dashboard / my projects
+   - teacher dashboard / review submissions / user management
+   - admin dashboard / project management
