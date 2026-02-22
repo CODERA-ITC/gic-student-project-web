@@ -31,7 +31,7 @@
                 </template>
               </nav>
               <div class="space-y-3">
-                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semiboldl text-white leading-tight">
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-white leading-tight">
                   My Projects
                 </h1>
                 <p class="text-slate-300 dark:text-slate-300">

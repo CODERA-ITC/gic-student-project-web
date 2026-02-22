@@ -14,7 +14,7 @@
       <div class="py-14">
         <UContainer>
           <div class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/15
-                   bg-white/90 dark:bg-slate-900/90 shadow-2xl px-8 py-10">
+                   bg-white/90 dark:bg-slate-900/90 shadow-2xl px-4 sm:px-8 py-8 sm:py-10">
             <div
               class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.08),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(79,70,229,0.08),transparent_30%)] pointer-events-none"
               aria-hidden="true"></div>
@@ -30,11 +30,11 @@
                   {{ t("nav.teacherDashboard") }}
                 </NuxtLink>
                 <span class="text-slate-400 dark:text-slate-500">/</span>
-                <span class="text-slate-900 dark:text-white font-semibold">
+                <span class="text-slate-900 dark:text-white font-medium">
                   {{ t("nav.reviewSubmissions") }}
                 </span>
               </nav>
-              <h1 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
+              <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-slate-900 dark:text-white">
                 {{ t("nav.reviewSubmissions") }}
               </h1>
               <p class="text-slate-700 dark:text-slate-300">
@@ -72,16 +72,16 @@
                     <input v-model="searchQuery" type="text" placeholder="Search projects..."
                       class="w-full pl-10 pr-4 min-h-[44px] bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-3xl text-black dark:text-white text-sm placeholder-gray-500 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30" />
                   </div>
-                  <div class="flex gap-2">
+                  <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 w-full lg:w-auto">
                     <ButtonsPresetButton preset="primary" label="All Projects" icon="i-heroicons-list-bullet" size="sm"
-                      @click="setActiveFilter('all')" :class="{ 'bg-blue-800': activeFilter === 'all' }" />
+                      class="w-full sm:w-auto" @click="setActiveFilter('all')" :class="{ 'bg-blue-800': activeFilter === 'all' }" />
                     <ButtonsPresetButton preset="primary" label="Accepted" icon="i-heroicons-check-circle" size="sm"
-                      @click="setActiveFilter('completed')" :class="{ 'bg-blue-800': activeFilter === 'completed' }" />
+                      class="w-full sm:w-auto" @click="setActiveFilter('completed')" :class="{ 'bg-blue-800': activeFilter === 'completed' }" />
                     <ButtonsPresetButton preset="primary" label="Pending" icon="i-heroicons-exclamation-circle"
-                      size="sm" @click="setActiveFilter('pending')"
+                      size="sm" class="w-full sm:w-auto" @click="setActiveFilter('pending')"
                       :class="{ 'bg-blue-800': activeFilter === 'pending' }" />
                     <ButtonsPresetButton preset="primary" label="Rejected" icon="i-heroicons-x-circle" size="sm"
-                      @click="setActiveFilter('rejected')" :class="{ 'bg-blue-800': activeFilter === 'rejected' }" />
+                      class="w-full sm:w-auto" @click="setActiveFilter('rejected')" :class="{ 'bg-blue-800': activeFilter === 'rejected' }" />
                   </div>
                 </div>
 
@@ -106,6 +106,79 @@
                   </select>
                 </div>
               </div>
+              <!-- Mobile Cards -->
+              <div class="md:hidden divide-y divide-gray-200 dark:divide-slate-700">
+                <div v-for="project in paginatedProjects" :key="`mobile-${project.id}`" class="p-4 space-y-4">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0">
+                      <div class="font-semibold text-black dark:text-white text-sm truncate">
+                        {{ project.name }}
+                      </div>
+                      <div class="text-xs text-gray-600 dark:text-slate-400 mt-1 line-clamp-2">
+                        {{ project.description }}
+                      </div>
+                    </div>
+                    <span :class="getStatusBadgeClass(project.submissionStatus)"
+                      class="px-2 py-1 rounded text-xs font-semibold inline-block shrink-0">
+                      {{ project.submissionStatus }}
+                    </span>
+                  </div>
+
+                  <div class="flex items-center gap-3">
+                    <div v-if="project.author.avatar" class="w-8 h-8 rounded-full overflow-hidden shrink-0">
+                      <img :src="getAvatarUrl(project.author.avatar, project.author.name)" :alt="project.author.name"
+                        class="w-full h-full object-cover" />
+                    </div>
+                    <div v-else
+                      class="w-8 h-8 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center shrink-0">
+                      <span class="text-xs font-semibold text-white">{{
+                        project.author.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                          .toUpperCase()
+                      }}</span>
+                    </div>
+                    <div class="min-w-0">
+                      <div class="font-medium text-black dark:text-white text-sm truncate">
+                        {{ project.author.name }}
+                      </div>
+                      <div class="text-xs text-gray-600 dark:text-slate-400 truncate">
+                        {{ project.author.program }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="rounded-lg bg-gray-50 dark:bg-slate-900/50 px-3 py-2">
+                      <div class="text-gray-500 dark:text-slate-400">Category</div>
+                      <div class="text-black dark:text-white font-medium mt-0.5 truncate">{{ project.category }}</div>
+                    </div>
+                    <div class="rounded-lg bg-gray-50 dark:bg-slate-900/50 px-3 py-2">
+                      <div class="text-gray-500 dark:text-slate-400">Year</div>
+                      <div class="text-black dark:text-white font-medium mt-0.5">{{ project.academicYear }}</div>
+                    </div>
+                    <div class="col-span-2 rounded-lg bg-gray-50 dark:bg-slate-900/50 px-3 py-2">
+                      <div class="text-gray-500 dark:text-slate-400">Submitted</div>
+                      <div class="text-black dark:text-white font-medium mt-0.5">{{ project.createdAt }}</div>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <ButtonsPresetButton preset="primary" label="View" icon="i-heroicons-eye" size="xs"
+                      class="w-full" @click="viewProject(project)" />
+                    <ButtonsPresetButton v-if="project.submissionStatus === 'pending'" label="Accept"
+                      icon="i-heroicons-check-circle" color="success" size="xs" class="w-full"
+                      @click="openAcceptModal(project)" :loading="acceptingId === project.id" />
+                    <ButtonsPresetButton v-if="project.submissionStatus === 'pending'" label="Reject"
+                      icon="i-heroicons-x-circle" color="danger" size="xs" class="w-full"
+                      @click="openRejectModal(project)" :loading="rejectingId === project.id" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Desktop Table -->
+              <div class="hidden md:block overflow-x-auto">
               <table class="w-full border-collapse">
                 <thead>
                   <tr>
@@ -212,6 +285,7 @@
                   </tr>
                 </tbody>
               </table>
+              </div>
 
               <!-- Empty State -->
               <div v-if="totalFilteredProjects === 0" class="text-center py-8 px-4">
@@ -234,17 +308,21 @@
                   }}
                   of {{ totalFilteredProjects }} projects
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center justify-center gap-2">
                   <ButtonsPresetButton preset="primary" label="Previous" icon="i-heroicons-arrow-left" size="sm"
                     @click="prevPage" :disabled="currentPage === 1" />
 
-                  <div class="flex gap-1 mx-2">
+                  <div class="hidden sm:flex gap-1 mx-2">
                     <ButtonsPresetButton v-for="page in visiblePages" :key="page" preset="secondary"
                       :label="page.toString()" size="sm" class="rounded-md" @click="goToPage(page)" :class="{
                         'bg-blue-500 text-white border-blue-500':
                           page === currentPage,
                       }" />
                   </div>
+
+                  <span class="sm:hidden text-xs text-gray-600 dark:text-slate-400">
+                    {{ currentPage }} / {{ totalPages }}
+                  </span>
 
                   <ButtonsPresetButton preset="primary" label="Next" icon="i-heroicons-chevron-right" size="sm"
                     @click="nextPage" :disabled="currentPage === totalPages" />

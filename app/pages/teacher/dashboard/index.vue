@@ -90,12 +90,12 @@
                   {{ t("home") }}
                 </NuxtLink>
                 <span class="text-slate-400 dark:text-slate-500">/</span>
-                <span class="text-slate-900 dark:text-white font-semibold">
+                <span class="text-slate-900 dark:text-white font-medium">
                   {{ t("nav.teacherDashboard") }}
                 </span>
               </nav>
               <h1
-                class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white"
+                class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-slate-900 dark:text-white"
               >
                 {{ GreetMessage }},
                 <span class="text-blue-600 dark:text-blue-300"
@@ -202,7 +202,7 @@
               </p>
             </div>
             <NuxtLink
-              to="/projects"
+              to="/teacher/submissions"
               class="flex items-center gap-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
             >
               <span>View All Projects</span>

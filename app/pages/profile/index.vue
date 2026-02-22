@@ -24,7 +24,7 @@
                   <span v-if="idx < breadcrumbs.length - 1" class="text-slate-400 dark:text-slate-500">/</span>
                 </template>
               </nav>
-              <h1 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
+              <h1 class="text-3xl sm:text-4xl font-semibold text-slate-900 dark:text-white">
                 Profile Settings
               </h1>
             </div>

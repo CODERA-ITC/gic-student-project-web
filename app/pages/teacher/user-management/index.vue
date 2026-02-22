@@ -4,7 +4,7 @@
     <div class="py-14">
       <UContainer>
         <div
-          class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/15 bg-white/90 dark:bg-slate-900/90 shadow-2xl px-8 py-10">
+          class="relative overflow-hidden rounded-3xl border border-white/10 ring-1 ring-blue-500/15 bg-white/90 dark:bg-slate-900/90 shadow-2xl px-4 sm:px-8 py-8 sm:py-10">
           <div
             class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.08),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(79,70,229,0.08),transparent_30%)] pointer-events-none"
             aria-hidden="true"></div>
@@ -19,13 +19,13 @@
                 {{ t("nav.teacherDashboard") }}
               </NuxtLink>
               <span class="text-slate-400 dark:text-slate-500">/</span>
-              <span class="text-slate-900 dark:text-white font-semibold">
+              <span class="text-slate-900 dark:text-white font-medium">
                 {{ t("nav.userManagement") }}
               </span>
             </nav>
-            <div class="flex items-center gap-3">
-              <UIcon name="i-heroicons-academic-cap-solid" class="w-10 h-10 text-blue-500 dark:text-blue-300" />
-              <h1 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
+            <div class="flex items-start sm:items-center gap-3">
+              <UIcon name="i-heroicons-academic-cap-solid" class="w-8 h-8 sm:w-10 sm:h-10 text-blue-500 dark:text-blue-300 shrink-0 mt-1 sm:mt-0" />
+              <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-slate-900 dark:text-white">
                 {{ t("nav.userManagement") }}
               </h1>
             </div>
@@ -41,8 +41,8 @@
     <UContainer class="py-12">
       <!-- Stats Card -->
       <div class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 p-6 mb-8">
-        <div class="flex items-center justify-between">
-          <div>
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div class="min-w-0">
             <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-1">
               {{ total }} {{ total === 1 ? "Student" : "Students" }}
             </h2>
@@ -50,16 +50,16 @@
               Total registered students in the system
             </p>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="grid grid-cols-1 sm:grid-cols-2 xl:flex xl:flex-wrap items-stretch xl:items-center gap-2 w-full lg:w-auto">
             <ButtonsPresetButton label="Create Student" icon="i-heroicons-plus" color="primary" variant="solid"
-              size="sm" @click="openCreateStudent" />
+              size="sm" class="w-full xl:w-auto" @click="openCreateStudent" />
             <input ref="fileInput" type="file" accept=".csv" class="hidden" @change="handleFileSelect" />
             <ButtonsPresetButton label="Import Students" icon="i-heroicons-arrow-up-tray" color="primary"
-              variant="outline" size="sm" @click="triggerFileInput" :disabled="uploading" :loading="uploading" />
+              variant="outline" size="sm" class="w-full xl:w-auto" @click="triggerFileInput" :disabled="uploading" :loading="uploading" />
             <ButtonsPresetButton label="Export List" icon="i-heroicons-arrow-down-tray" color="secondary"
-              variant="outline" size="sm" @click="exportStudents" />
+              variant="outline" size="sm" class="w-full xl:w-auto" @click="exportStudents" />
             <ButtonsPresetButton label="Refresh" icon="i-heroicons-arrow-path" color="primary" variant="outline"
-              size="sm" @click="loadStudents" :disabled="loading" />
+              size="sm" class="w-full xl:w-auto" @click="loadStudents" :disabled="loading" />
           </div>
         </div>
       </div>
@@ -75,11 +75,11 @@
                 class="w-full pl-10 pr-4 min-h-[44px] border border-gray-300 dark:border-slate-600 rounded-3xl bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent outline-none" />
             </div>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto">
             <span class="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">Filter by
               Generation:</span>
             <select v-model="selectedGeneration" @change="loadStudents"
-              class="px-4 min-h-[44px] border border-gray-300 dark:border-slate-600 rounded-3xl bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent outline-none">
+              class="w-full sm:w-auto px-4 min-h-[44px] border border-gray-300 dark:border-slate-600 rounded-3xl bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent outline-none">
               <option value="all">All Generations</option>
               <option v-for="gen in availableGenerations" :key="gen" :value="gen">
                 Generation {{ gen }}
@@ -114,10 +114,75 @@
         </p>
       </div>
 
-      <!-- Students Table -->
+      <!-- Students Table / Cards -->
       <div v-else
         class="bg-white dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700 overflow-hidden">
-        <div class="overflow-x-auto">
+        <!-- Mobile Cards -->
+        <div class="md:hidden divide-y divide-gray-200 dark:divide-slate-700">
+          <div v-for="student in students" :key="`mobile-${student.id}`" class="p-4 space-y-4">
+            <div class="flex items-center gap-3">
+              <img :src="student.avatar ||
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(student.firstName + ' ' + (student.lastName || ''))}&background=3b82f6&color=fff`
+                " :alt="student.firstName"
+                class="w-10 h-10 rounded-full object-cover ring-2 ring-gray-200 dark:ring-slate-600" />
+              <div class="min-w-0">
+                <div class="font-medium text-gray-900 dark:text-white truncate">
+                  {{ student.firstName }} {{ student.lastName || "" }}
+                </div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">
+                  ID: {{ student.id.substring(0, 8) }}...
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-2 text-sm">
+              <div class="flex items-start justify-between gap-3">
+                <span class="text-gray-500 dark:text-gray-400">Email</span>
+                <span class="text-gray-900 dark:text-white text-right break-all">{{ student.email }}</span>
+              </div>
+              <div class="flex items-center justify-between gap-3">
+                <span class="text-gray-500 dark:text-gray-400">Generation</span>
+                <span v-if="student.generation"
+                  class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300">
+                  Gen {{ student.generation }}
+                </span>
+                <span v-else class="text-gray-900 dark:text-white">N/A</span>
+              </div>
+              <div class="flex items-start justify-between gap-3">
+                <span class="text-gray-500 dark:text-gray-400">Phone</span>
+                <span class="text-gray-900 dark:text-white text-right break-words">{{ student.phone || "N/A" }}</span>
+              </div>
+              <div class="flex items-start justify-between gap-3">
+                <span class="text-gray-500 dark:text-gray-400">Department</span>
+                <span class="text-gray-900 dark:text-white text-right">{{ student.department?.code || "N/A" }}</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-1">
+              <button @click="viewStudent(student)"
+                class="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                title="View details">
+                <UIcon name="i-heroicons-eye" class="w-5 h-5" />
+                <span class="text-sm font-medium">View</span>
+              </button>
+              <button @click="openResetPasswordModal(student)"
+                class="inline-flex items-center gap-1.5 text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300 transition-colors"
+                title="Reset password">
+                <UIcon name="i-heroicons-key" class="w-5 h-5" />
+                <span class="text-sm font-medium">Reset</span>
+              </button>
+              <button @click="confirmDelete(student)"
+                class="inline-flex items-center gap-1.5 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors"
+                title="Delete">
+                <UIcon name="i-heroicons-trash" class="w-5 h-5" />
+                <span class="text-sm font-medium">Delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Desktop Table -->
+        <div class="hidden md:block overflow-x-auto">
           <table class="w-full">
             <thead class="bg-gray-50 dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700">
               <tr>
@@ -197,6 +262,11 @@
                       title="View details">
                       <UIcon name="i-heroicons-eye" class="w-5 h-5" />
                     </button>
+                    <button @click="openResetPasswordModal(student)"
+                      class="text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300 transition-colors"
+                      title="Reset password">
+                      <UIcon name="i-heroicons-key" class="w-5 h-5" />
+                    </button>
                     <button @click="confirmDelete(student)"
                       class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors"
                       title="Delete">
@@ -211,12 +281,12 @@
       </div>
 
       <!-- Pagination -->
-      <div v-if="total > 0 && lastPage > 1" class="mt-6 flex items-center justify-between">
+      <div v-if="total > 0 && lastPage > 1" class="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div class="text-sm text-gray-600 dark:text-gray-400">
           Showing {{ (currentPage - 1) * limit + 1 }} to
           {{ Math.min(currentPage * limit, total) }} of {{ total }} students
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2">
           <ButtonsPresetButton label="Previous" icon="i-heroicons-chevron-left" variant="outline" size="sm"
             :disabled="currentPage === 1" @click="changePage(currentPage - 1)" />
           <span class="text-sm text-gray-600 dark:text-gray-400">
@@ -305,6 +375,59 @@
       </Transition>
     </Teleport>
 
+    <!-- Reset Password Modal -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div v-if="showResetPasswordModal" class="fixed inset-0 z-50 flex items-center justify-center p-4"
+          @click.self="closeResetPasswordModal">
+          <div class="absolute inset-0 bg-gray-900/75 dark:bg-gray-900/90 backdrop-blur-sm"
+            @click="closeResetPasswordModal"></div>
+
+          <div class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-xl shadow-2xl">
+            <form class="p-6 space-y-4" @submit.prevent="submitResetPassword">
+              <div class="flex items-center justify-between gap-3">
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    Reset Password
+                  </h3>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">
+                    {{ resetPasswordTarget?.email || "Selected student" }}
+                  </p>
+                </div>
+                <ButtonsPresetButton label="" icon="i-heroicons-x-mark" variant="ghost" type="button"
+                  @click="closeResetPasswordModal" />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  New Password
+                </label>
+                <input v-model="resetPasswordValue" type="text" autocomplete="off" placeholder="Enter new password"
+                  class="w-full px-4 min-h-[44px] border border-gray-300 dark:border-slate-600 rounded-3xl bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-amber-500 focus:border-transparent outline-none"
+                  required />
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Minimum 8 characters.
+                </p>
+              </div>
+
+              <div class="flex flex-wrap gap-2">
+                <ButtonsPresetButton label="Auto Generate (8)" type="button" color="primary" variant="outline"
+                  icon="i-heroicons-sparkles" @click="generatePassword" />
+                <ButtonsPresetButton label="Copy" type="button" variant="outline" icon="i-heroicons-clipboard-document"
+                  :disabled="!resetPasswordValue" @click="copyGeneratedPassword" />
+              </div>
+
+              <div class="flex flex-col sm:flex-row justify-end gap-3 pt-2">
+                <ButtonsPresetButton label="Cancel" type="button" variant="ghost" @click="closeResetPasswordModal" />
+                <ButtonsPresetButton label="Reset Password" color="warning" type="submit" icon="i-heroicons-key"
+                  :loading="resettingPassword" :disabled="resettingPassword || resetPasswordValue.trim().length < 8" />
+              </div>
+            </form>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
     <UserFormModal v-model="showStudentModal" :loading="creating" :mode="userModalMode" :user="selectedStudentForModal"
       fixed-role="STUDENT" @submit="handleStudentSubmit" />
   </div>
@@ -340,6 +463,10 @@ const fileInput = ref<HTMLInputElement | null>(null);
 const uploading = ref(false);
 const deleteText = ref("");
 const creating = ref(false);
+const showResetPasswordModal = ref(false);
+const resettingPassword = ref(false);
+const resetPasswordTarget = ref<APIStudent | null>(null);
+const resetPasswordValue = ref("");
 
 // Computed properties from store
 const students = computed(() => studentStore.apiStudents);
@@ -405,6 +532,98 @@ const confirmDelete = (student: APIStudent) => {
   deleteText.value = "";
   showDeleteModal.value = true;
   console.log("showDeleteModal:", showDeleteModal.value);
+};
+
+const openResetPasswordModal = (student: APIStudent) => {
+  resetPasswordTarget.value = student;
+  resetPasswordValue.value = "";
+  showResetPasswordModal.value = true;
+  generatePassword();
+};
+
+const closeResetPasswordModal = () => {
+  showResetPasswordModal.value = false;
+  resetPasswordTarget.value = null;
+  resetPasswordValue.value = "";
+};
+
+const generatePassword = () => {
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  const numbers = "0123456789";
+  const symbols = "!@#$%^&*()-_=+[]{}?";
+  const all = letters + numbers + symbols;
+
+  const pick = (chars: string) => chars[Math.floor(Math.random() * chars.length)];
+
+  const passwordChars = [
+    pick(letters),
+    pick(numbers),
+    pick(symbols),
+    pick(all),
+    pick(all),
+    pick(all),
+    pick(all),
+    pick(all),
+  ];
+
+  for (let i = passwordChars.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [passwordChars[i], passwordChars[j]] = [passwordChars[j], passwordChars[i]];
+  }
+
+  resetPasswordValue.value = passwordChars.join("");
+};
+
+const copyGeneratedPassword = async () => {
+  if (!resetPasswordValue.value) return;
+  try {
+    await navigator.clipboard.writeText(resetPasswordValue.value);
+    toast.add({
+      title: "Password copied",
+      color: "success",
+    });
+  } catch (error) {
+    console.error("Failed to copy password", error);
+    toast.add({
+      title: "Copy failed",
+      color: "error",
+    });
+  }
+};
+
+const submitResetPassword = async () => {
+  if (!resetPasswordTarget.value?.id) return;
+  if (resetPasswordValue.value.trim().length < 8) {
+    toast.add({
+      title: "Password must be at least 8 characters",
+      color: "warning",
+    });
+    return;
+  }
+
+  resettingPassword.value = true;
+  try {
+    await studentStore.updateStudent(
+      resetPasswordTarget.value.id,
+      { password: resetPasswordValue.value.trim() },
+      authStore.token,
+    );
+
+    toast.add({
+      title: "Password reset successful",
+      color: "success",
+    });
+    closeResetPasswordModal();
+  } catch (error: any) {
+    console.error("Failed to reset password", error);
+    toast.add({
+      title: "Password reset failed",
+      description: error?.message || "Could not reset password",
+      color: "error",
+    });
+  } finally {
+    resettingPassword.value = false;
+  }
 };
 
 // Delete student

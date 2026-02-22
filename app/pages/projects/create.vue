@@ -22,7 +22,7 @@
 
     <UContainer>
       <!-- Show main content only when authenticated -->
-      <div v-if="!showAuthModal && authStore.isAuthenticated">
+      <div v-if="!showAuthModal && authStore.isAuthenticated">~
         <!-- Back Button -->
         <!-- <div class="mb-8">
           <ButtonsPresetButton
@@ -190,9 +190,7 @@
                     <div class="flex items-center justify-between">
                       <p class="text-sm text-gray-700 dark:text-gray-300">
                         {{ form.thumbnails.length }}/5 images
-                        <span v-if="form.thumbnails.length < 2" class="text-red-400">({{ 2 - form.thumbnails.length }}
-                          more needed)</span>
-                        <span v-else class="text-blue-600 dark:text-blue-400">✓</span>
+                        <span class="text-blue-600 dark:text-blue-400">✓ Optional</span>
                       </p>
                     </div>
 
@@ -220,7 +218,7 @@
                       No images uploaded
                     </p>
                     <p class="text-sm text-gray-600 dark:text-gray-400">
-                      Please upload at least 2 project images to continue
+                      You can continue without images and add them later
                     </p>
                   </div>
                 </div>
@@ -271,15 +269,12 @@
                 </label>
                 <div class="space-y-3">
                   <div class="relative tech-suggestion-container">
-                    <div class="flex gap-2">
+                    <div>
                       <input v-model="techInput" type="text" placeholder="e.g., React, Node.js, MongoDB..."
-                        class="flex-1 px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                        @keyup.enter="addTechnology" @focus="showTechSuggestions = true"
+                        class="w-full  px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                        @keydown.enter.prevent @focus="showTechSuggestions = true"
                         @keydown.escape="showTechSuggestions = false" />
-                      <ButtonsPresetButton label="Add" icon="i-heroicons-plus" color="primary" variant="solid" size="sm"
-                        @click="addTechnology" />
                     </div>
-
                     <!-- Technology Suggestions Dropdown -->
                     <div v-if="showTechSuggestions && techSuggestions.length > 0"
                       class="absolute top-full left-0 right-0 z-50 mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
@@ -308,15 +303,12 @@
                 </label>
                 <div class="space-y-3">
                   <div class="relative tag-suggestion-container">
-                    <div class="flex gap-2">
+                    <div>
                       <input v-model="tagInput" type="text" placeholder="e.g., AI, Machine Learning, Web Development..."
-                        class="flex-1 px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                        @keyup.enter="addTag" @focus="showTagSuggestions = true"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                        @keydown.enter.prevent @focus="showTagSuggestions = true"
                         @keydown.escape="showTagSuggestions = false" />
-                      <ButtonsPresetButton label="Add" icon="i-heroicons-plus" color="primary" variant="solid" size="sm"
-                        @click="addTag" />
                     </div>
-
                     <!-- Tag Suggestions Dropdown -->
                     <div v-if="showTagSuggestions && tagSuggestions.length > 0"
                       class="absolute top-full left-0 right-0 z-50 mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
@@ -1067,14 +1059,13 @@ const featureCountState = computed(() => {
   if (count === 0) {
     return {
       color: "warning",
-      message: `Add ${MIN_FEATURES} features`,
+      message: "No features added yet (optional)",
     };
   }
   if (count < MIN_FEATURES) {
     return {
       color: "warning",
-      message: `${count}/${MIN_FEATURES} added · need ${MIN_FEATURES - count
-        } more`,
+      message: `${count} feature(s) added`,
     };
   }
   if (count > MAX_FEATURES) {
@@ -1383,17 +1374,6 @@ const selectTechSuggestion = (suggestion) => {
   showTechSuggestions.value = false;
 };
 
-const addTechnology = () => {
-  if (
-    techInput.value.trim() &&
-    !form.technologies.includes(techInput.value.trim())
-  ) {
-    form.technologies.push(techInput.value.trim());
-    techInput.value = "";
-    showTechSuggestions.value = false;
-  }
-};
-
 // Watch form changes and auto-save with debounce
 let saveTimeout = null;
 watch(
@@ -1451,14 +1431,6 @@ const selectTagSuggestion = (suggestion) => {
   }
   tagInput.value = "";
   showTagSuggestions.value = false;
-};
-
-const addTag = () => {
-  if (tagInput.value.trim() && !form.tags.includes(tagInput.value.trim())) {
-    form.tags.push(tagInput.value.trim());
-    tagInput.value = "";
-    showTagSuggestions.value = false;
-  }
 };
 
 const toggleTeamMember = (member) => {
@@ -1651,10 +1623,10 @@ const submitForm = async () => {
     isSubmitting.value = true;
 
     const featureCount = form.feature.length;
-    if (featureCount < MIN_FEATURES || featureCount > MAX_FEATURES) {
+    if (featureCount > MAX_FEATURES) {
       toast.add({
-        title: "Add project features",
-        description: `Please include between ${MIN_FEATURES} and ${MAX_FEATURES} features before submitting. Currently ${featureCount}.`,
+        title: "Too many project features",
+        description: `Please include at most ${MAX_FEATURES} features before submitting. Currently ${featureCount}.`,
         color: "warning",
       });
       isSubmitting.value = false;
@@ -1810,7 +1782,6 @@ const canProceedToNextStep = computed(() => {
       return (
         form.name &&
         form.description &&
-        form.thumbnails.length >= 1 &&
         form.category &&
         form.academicYear
       );

@@ -28,7 +28,7 @@
             </nav>
             <div class="flex items-center gap-3">
               <UIcon name="i-heroicons-shield-check" class="w-10 h-10 text-blue-500 dark:text-blue-300" />
-              <h1 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
+              <h1 class="text-3xl sm:text-4xl font-semibold text-slate-900 dark:text-white">
                 Profile Settings
               </h1>
             </div>

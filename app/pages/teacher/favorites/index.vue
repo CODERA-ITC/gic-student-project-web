@@ -19,13 +19,13 @@
                 {{ t("nav.teacherDashboard") }}
               </NuxtLink>
               <span class="text-slate-400 dark:text-slate-500">/</span>
-              <span class="text-slate-900 dark:text-white font-semibold">
+              <span class="text-slate-900 dark:text-white font-medium">
                 {{ t("nav.favorites") }}
               </span>
             </nav>
             <div class="flex items-center gap-3">
               <UIcon name="i-heroicons-heart-solid" class="w-10 h-10 text-red-400" />
-              <h1 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white">
+              <h1 class="text-3xl sm:text-4xl lg:text-5xl font-semibold text-slate-900 dark:text-white">
                 {{ t("nav.favorites") }}
               </h1>
             </div>
