@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
 import { authService } from "~/services/AuthService";
+import { useAuthStore } from "~/stores/auth";
+import type { CourseTeacherItem } from "~/types/admin-course-management";
 
 interface CountsState {
   totalProjects: number;
@@ -12,12 +14,13 @@ interface AdminState {
   loadingCounts: boolean;
   loadingUsers: boolean;
   loadingProjects: boolean;
+  loadingTeachers: boolean;
   counts: CountsState;
   users: any[];
   usersTotal: number;
   projects: any[];
   students: any[];
-  teachers: any[];
+  teachers: CourseTeacherItem[];
 }
 
 const extractTotal = (resp: any, fallbackLength = 0) => {
@@ -34,6 +37,7 @@ export const useAdminStore = defineStore("admin", {
     loadingCounts: false,
     loadingUsers: false,
     loadingProjects: false,
+    loadingTeachers: false,
     counts: {
       totalProjects: 0,
       totalStudents: 0,
@@ -48,12 +52,86 @@ export const useAdminStore = defineStore("admin", {
   }),
 
   actions: {
+    normalizeTeacherForCourseAssignment(user: any): CourseTeacherItem {
+      return {
+        id: String(user?.id || ""),
+        name: user?.name,
+        firstName: user?.firstName,
+        lastName: user?.lastName,
+        email: user?.email,
+        avatar: user?.avatar,
+        role: (user?.role || "").toString().toUpperCase(),
+        courses: Array.isArray(user?.courses)
+          ? user.courses.map((course: any) => ({
+              id: String(course?.id || ""),
+              name: course?.name,
+              code: course?.code,
+              description: course?.description,
+            }))
+          : [],
+      };
+    },
+
+    async fetchTeachersForCourseAssignments() {
+      this.loadingTeachers = true;
+      try {
+        const authStore = useAuthStore();
+        const resp = await authStore.makeAuthRequest("/api/users", {
+          method: "GET",
+          query: {
+            role: "TEACHER",
+            page: "1",
+            limit: "500",
+          },
+        } as any);
+
+        const rows = Array.isArray((resp as any)?.data)
+          ? (resp as any).data
+          : Array.isArray(resp)
+            ? resp
+            : [];
+
+        this.teachers = rows
+          .map((user: any) => this.normalizeTeacherForCourseAssignment(user))
+          .filter((user) => user.role === "TEACHER");
+
+        return this.teachers;
+      } catch (error) {
+        console.error("AdminStore: failed to fetch teachers for courses", error);
+        this.teachers = [];
+        throw error;
+      } finally {
+        this.loadingTeachers = false;
+      }
+    },
+
+    async assignTeacherCourse(courseId: string, teacherId: string) {
+      const authStore = useAuthStore();
+      await authStore.makeAuthRequest("/api/courses/assign/teacher", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: { courseId, teacherId },
+      } as any);
+
+      await this.fetchTeachersForCourseAssignments();
+    },
+
+    async removeTeacherCourse(courseId: string, teacherId: string) {
+      const authStore = useAuthStore();
+      await authStore.makeAuthRequest("/api/courses/remove/teacher", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: { courseId, teacherId },
+      } as any);
+
+      await this.fetchTeachersForCourseAssignments();
+    },
+
     async fetchCounts() {
       this.loadingCounts = true;
       try {
         const headers = await authService.getAuthHeaders();
-
-        const [projectsResp, studentsResp, teachersResp] = await Promise.all([
+        const [projectsResult, usersResult] = await Promise.allSettled([
           $fetch("/api/projects", {
             method: "GET",
             headers,
@@ -62,39 +140,59 @@ export const useAdminStore = defineStore("admin", {
           $fetch("/api/users", {
             method: "GET",
             headers,
-            query: { page: "1", limit: "500", role: "STUDENT" },
-          }),
-          $fetch("/api/users", {
-            method: "GET",
-            headers,
-            query: { page: "1", limit: "500", role: "TEACHER" },
+            query: { page: "1", limit: "500" },
           }),
         ]);
 
-        this.projects = Array.isArray(projectsResp?.data)
-          ? projectsResp.data
-          : Array.isArray(projectsResp)
-            ? projectsResp
-            : [];
-        this.students = Array.isArray(studentsResp?.data)
-          ? studentsResp.data
-          : Array.isArray(studentsResp)
-            ? studentsResp
-            : [];
-        this.teachers = Array.isArray(teachersResp?.data)
-          ? teachersResp.data
-          : Array.isArray(teachersResp)
-            ? teachersResp
-            : [];
+        if (projectsResult.status === "fulfilled") {
+          const projectsResp: any = projectsResult.value;
+          this.projects = Array.isArray(projectsResp?.data)
+            ? projectsResp.data
+            : Array.isArray(projectsResp)
+              ? projectsResp
+              : [];
+          this.counts.totalProjects = extractTotal(projectsResp, this.projects.length);
+        } else {
+          console.error("AdminStore: failed to fetch project counts", projectsResult.reason);
+          this.projects = [];
+          this.counts.totalProjects = 0;
+        }
 
-        const projectsTotal = extractTotal(projectsResp, this.projects.length);
-        const studentsTotal = extractTotal(studentsResp, this.students.length);
-        const teachersTotal = extractTotal(teachersResp, this.teachers.length);
+        if (usersResult.status === "fulfilled") {
+          const usersResp: any = usersResult.value;
+          const allUsers = Array.isArray(usersResp?.data)
+            ? usersResp.data
+            : Array.isArray(usersResp)
+              ? usersResp
+              : [];
 
-        this.counts.totalProjects = projectsTotal;
-        this.counts.totalStudents = studentsTotal;
-        this.counts.totalTeachers = teachersTotal;
-        this.counts.totalUsers = studentsTotal + teachersTotal;
+          this.students = allUsers.filter(
+            (u: any) => String(u?.role || "").toUpperCase() === "STUDENT",
+          );
+
+          const teacherRows = allUsers.filter(
+            (u: any) => String(u?.role || "").toUpperCase() === "TEACHER",
+          );
+
+          // Keep the course-assignment teacher state shape consistent.
+          this.teachers = teacherRows.map((u: any) =>
+            this.normalizeTeacherForCourseAssignment(u),
+          );
+
+          const adminsTotal = allUsers.filter(
+            (u: any) => String(u?.role || "").toUpperCase() === "ADMIN",
+          ).length;
+
+          this.counts.totalStudents = this.students.length;
+          this.counts.totalTeachers = teacherRows.length;
+          this.counts.totalUsers = this.students.length + teacherRows.length + adminsTotal;
+        } else {
+          console.error("AdminStore: failed to fetch user counts", usersResult.reason);
+          this.students = [];
+          this.counts.totalStudents = 0;
+          this.counts.totalTeachers = 0;
+          this.counts.totalUsers = 0;
+        }
       } catch (error) {
         console.error("AdminStore: failed to fetch counts", error);
         this.counts = {

@@ -109,7 +109,7 @@
               <th class="px-4 py-3 text-left">User</th>
               <th class="px-4 py-3 text-left">Role</th>
               <th class="px-4 py-3 text-left">Department</th>
-              <th class="px-4 py-3 text-left">Joined</th>
+              <th class="px-4 py-3 text-left">Gen</th>
               <th class="px-4 py-3 text-right">Actions</th>
             </tr>
           </thead>
@@ -141,26 +141,25 @@
               </td>
               <td class="px-4 py-3">
                 <UBadge :color="user.role === 'TEACHER' ? 'secondary' : 'neutral'" variant="soft" :class="user.role === 'ADMIN'
-                    ? '!bg-blue-100 !text-blue-900 dark:!bg-blue-900/30 dark:!text-blue-300'
-                    : ''
+                  ? '!bg-blue-100 !text-blue-900 dark:!bg-blue-900/30 dark:!text-blue-300'
+                  : ''
                   ">
                   {{ user.role || "STUDENT" }}
                 </UBadge>
               </td>
               <td class="px-4 py-3 text-gray-700 dark:text-slate-300">
-                {{ user.department?.name || user.department || "—" }}
+                {{ user.department?.code || user.department || "—" }}
               </td>
               <td class="px-4 py-3 text-gray-700 dark:text-slate-300">
-                {{ formatDate(user.createdAt) }}
+                {{user.generation }}
               </td>
               <td class="px-4 py-3">
                 <div class="flex justify-end gap-2">
-                  <ButtonsPresetButton label="" icon="i-heroicons-eye" size="sm" variant="ghost"
-                    @click="viewUser(user)" />
                   <ButtonsPresetButton label="" icon="i-heroicons-pencil-square" size="sm" color="primary"
                     variant="ghost"
                     class="!text-blue-900 hover:!bg-blue-50 dark:!text-blue-300 dark:hover:!bg-blue-900/20"
-                    @click="editUser(user)" />
+                    title="Update user"
+                    @click="openEditUserModal(user)" />
                   <ButtonsPresetButton label="" icon="i-heroicons-key" size="sm" color="warning" variant="ghost"
                     title="Reset password" @click="openResetPasswordModal(user)" />
                   <ButtonsPresetButton label="" icon="i-heroicons-trash" size="sm" variant="ghost"
@@ -339,8 +338,8 @@
               </div>
 
               <UFormGroup label="New Password" required>
-                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="resetPasswordValue" type="text" autocomplete="off"
-                  placeholder="Enter new password" required />
+                <UInput :ui="{ base: '!rounded-3xl !min-h-[44px]' }" v-model="resetPasswordValue" type="text"
+                  autocomplete="off" placeholder="Enter new password" required />
                 <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">
                   Minimum 8 characters.
                 </p>
@@ -502,27 +501,6 @@ const formatDate = (date) => {
   return new Date(date).toLocaleDateString();
 };
 
-const editUser = async (user) => {
-  try {
-    const newRole = window
-      .prompt("Set role (STUDENT/TEACHER/ADMIN):", user.role)
-      ?.trim()
-      .toUpperCase();
-    if (!newRole) return;
-    if (!["STUDENT", "TEACHER", "ADMIN"].includes(newRole)) {
-      toast.add({ title: "Invalid role", color: "warning" });
-      return;
-    }
-
-    await adminStore.updateUserRole(user.id, newRole);
-    toast.add({ title: "Role updated", color: "success" });
-    await fetchUsers();
-  } catch (error) {
-    console.error("Failed to update user", error);
-    toast.add({ title: "Update failed", color: "error" });
-  }
-};
-
 const openResetPasswordModal = (user) => {
   resetPasswordTarget.value = user;
   resetPasswordValue.value = "";
@@ -605,7 +583,7 @@ const deleteUser = async (user) => {
   showDeleteModal.value = true;
 };
 
-const viewUser = async (user) => {
+const openEditUserModal = async (user) => {
   try {
     userModalLoading.value = true;
     selectedUser.value = null;
