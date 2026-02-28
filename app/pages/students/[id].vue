@@ -23,7 +23,7 @@
               {{ student?.name || "Student Profile" }}
             </span>
           </nav>
-          <ButtonsPresetButton preset="back" to="/students" size="sm" />
+          <!-- <ButtonsPresetButton preset="back" to="/students" size="sm" /> -->
         </div>
       </UContainer>
     </div>
@@ -205,7 +205,7 @@
                   </div>
                   <span class="text-gray-900 dark:text-white font-semibold">{{
                     student.projectCount
-                  }}</span>
+                    }}</span>
                 </div>
 
                 <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-700/50 rounded-lg">
@@ -215,7 +215,7 @@
                   </div>
                   <span class="text-gray-900 dark:text-white font-semibold">{{
                     student.contributions
-                  }}</span>
+                    }}</span>
                 </div>
               </div>
             </div>
@@ -277,9 +277,9 @@
         <p class="text-gray-600 dark:text-gray-400 mb-6">
           This student profile does not exist or is not publicly available.
         </p>
-        <div class="flex justify-center">
+        <!-- <div class="flex justify-center">
           <ButtonsPresetButton preset="back" to="/students" />
-        </div>
+        </div> -->
       </div>
     </UContainer>
   </div>
