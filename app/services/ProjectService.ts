@@ -5,6 +5,7 @@
  */
 
 import { authService } from "./AuthService";
+import { projectsData } from "~/constants/projects";
 
 export interface CreateProjectDTO {
   name: string;
@@ -146,16 +147,63 @@ export class ProjectService {
   }
 
   async getHighlightedProjects(): Promise<any> {
-    let projects: any;
-
     try {
-      const response = await $fetch(`${this.baseUrl}/highlights`);
-      return (projects = response);
+      return await $fetch(`${this.baseUrl}/highlights`);
     } catch (error) {
       console.error(
         "ProjectService: Failed to fetch highlighted projects",
         error,
       );
+
+      // Fallback to local static projects when API/cache fails.
+      return projectsData.slice(0, 6).map((project) => {
+        const [firstName = "", ...restName] = project.author.name.split(" ");
+        const lastName = restName.join(" ");
+
+        return {
+          id: project.id,
+          name: project.name,
+          description: project.description,
+          academicYear: project.academicYear,
+          author: {
+            id: project.author.id,
+            firstName,
+            lastName,
+            avatar: project.author.avatar,
+            program: project.author.program,
+            year: project.author.year,
+            email: project.author.email,
+          },
+          technologies: project.technologies,
+          category: project.category,
+          status: project.submissionStatus,
+          highlighted: project.highlighted,
+          likeCount: project.likes,
+          viewCount: project.views,
+          demoUrl: project.demoUrl,
+          githubUrl: project.githubUrl,
+          images: project.images,
+          createdAt: project.createdAt,
+          updatedAt: project.updatedAt,
+          tags: project.tags,
+          members: (project.members || []).map((member) => {
+            const [memberFirstName = "", ...memberRestName] =
+              member.name.split(" ");
+            const memberLastName = memberRestName.join(" ");
+            return {
+              id: member.id,
+              email: member.email,
+              firstName: memberFirstName,
+              lastName: memberLastName,
+              avatar: member.image,
+            };
+          }),
+          features: project.features || [],
+          duration: project.duration,
+          course: project.course,
+          visibility: project.visibility,
+        };
+      });
     }
   }
 

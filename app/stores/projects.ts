@@ -651,6 +651,16 @@ export const useProjectStore = defineStore("projects", {
         return transformedProject;
       } catch (error) {
         console.error("Error fetching project by ID:", error);
+        // Fallback to static data when API is down/unreachable
+        const fallbackProject =
+          this.projects.find((p) => p.id?.toString() === id.toString()) ||
+          projectsData.find((p) => p.id?.toString() === id.toString()) ||
+          null;
+
+        if (fallbackProject) {
+          return fallbackProject;
+        }
+
         return null;
       } finally {
         this.loading = false;
