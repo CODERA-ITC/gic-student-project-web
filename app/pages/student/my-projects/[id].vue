@@ -1,0 +1,672 @@
+<template>
+  <div class="min-h-screen bg-gray-50 dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <!-- Project Details -->
+    <UContainer class="py-12">
+      <div v-if="isLoading" class="flex items-center justify-center min-h-[400px]">
+        <div class="text-center">
+          <UIcon name="i-heroicons-arrow-path" class="w-8 h-8 text-blue-400 animate-spin mx-auto mb-4" />
+          <p class="text-gray-300 dark:text-gray-300">Loading project...</p>
+        </div>
+      </div>
+
+      <ProjectDetails v-else-if="project" :project="project" :is-liked="isLiked" :user-role="authStore.userRole"
+        :is-owner="isOwner" :show-submission-status="true" :show-similar-projects="false" :breadcrumb-base="{
+          label: 'My Projects',
+          path: '/student/my-projects',
+          icon: 'i-heroicons-folder',
+        }" @like="toggleLike" @share="shareProject" @hide="toggleVisibility">
+        <template #submit-button>
+          <!-- Status message for already submitted projects -->
+          <div v-if="getSubmissionStatusMessage" :class="[
+            'p-4 rounded-lg border flex items-start gap-3',
+            project.visibility === 'reviewing'
+              ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800'
+              : project.visibility === 'accepted'
+                ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
+                : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800',
+          ]">
+            <UIcon :name="project.visibility === 'reviewing'
+                ? 'i-heroicons-clock'
+                : project.visibility === 'accepted'
+                  ? 'i-heroicons-check-circle'
+                  : 'i-heroicons-x-circle'
+              " :class="[
+                'w-5 h-5 mt-0.5',
+                project.visibility === 'reviewing'
+                  ? 'text-yellow-600 dark:text-yellow-400'
+                  : project.visibility === 'accepted'
+                    ? 'text-green-600 dark:text-green-400'
+                    : 'text-red-600 dark:text-red-400',
+              ]" />
+            <div class="flex-1">
+              <p :class="[
+                'text-sm font-medium mb-1',
+                project.visibility === 'reviewing'
+                  ? 'text-yellow-900 dark:text-yellow-100'
+                  : project.visibility === 'accepted'
+                    ? 'text-green-900 dark:text-green-100'
+                    : 'text-red-900 dark:text-red-100',
+              ]">
+                {{
+                  project.visibility === "reviewing"
+                    ? "Under Review"
+                    : project.visibility === "accepted"
+                      ? "Accepted"
+                      : "Rejected"
+                }}
+              </p>
+              <p :class="[
+                'text-xs',
+                project.visibility === 'reviewing'
+                  ? 'text-yellow-700 dark:text-yellow-300'
+                  : project.visibility === 'accepted'
+                    ? 'text-green-700 dark:text-green-300'
+                    : 'text-red-700 dark:text-red-300',
+              ]">
+                {{ getSubmissionStatusMessage }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Submit button for draft/private projects -->
+          <UButton v-if="canSubmit && project.submissionStatus" @click="submitProject" :loading="isSubmitting"
+            class="w-full justify-center rounded-3xl bg-blue-900 hover:bg-blue-800 text-white" size="md">
+            <template #leading>
+              <UIcon name="i-heroicons-paper-airplane" class="w-5 h-5" />
+            </template>
+            Submit to Teacher
+          </UButton>
+        </template>
+        <template #action-buttons>
+          <div class="flex gap-2">
+            <UButton @click="editProject"
+              class="flex-1 justify-center rounded-3xl bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 border border-blue-200 dark:border-blue-800"
+              size="md">
+              <template #leading>
+                <UIcon name="i-heroicons-pencil-square" class="w-5 h-5" />
+              </template>
+              Edit
+            </UButton>
+            <UButton @click="showDeleteModal = true"
+              class="flex-1 justify-center rounded-3xl bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-600 border border-gray-200 dark:border-slate-600"
+              size="md">
+              <template #leading>
+                <UIcon name="i-heroicons-trash" class="w-5 h-5" />
+              </template>
+              Delete
+            </UButton>
+          </div>
+        </template>
+      </ProjectDetails>
+    </UContainer>
+
+    <!-- Submit Modal -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div v-if="showSubmitModal" class="fixed inset-0 z-50 flex items-center justify-center p-4"
+          @click.self="showSubmitModal = false">
+          <!-- Backdrop -->
+          <div class="absolute inset-0 bg-gray-900/75 dark:bg-gray-900/90 backdrop-blur-sm"
+            @click="showSubmitModal = false"></div>
+
+          <!-- Modal Container -->
+          <div
+            class="relative w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl shadow-2xl transform transition-all">
+            <div class="p-8">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                  <UIcon name="i-heroicons-paper-airplane" class="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                  Submit to Teacher
+                </h3>
+              </div>
+              <p class="text-gray-600 dark:text-gray-300 mb-6">
+                Are you sure you want to submit this project to your teacher for
+                review? Your project will be sent to all teachers for
+                evaluation. You won't be able to edit it until the review is
+                complete.
+              </p>
+              <div class="flex flex-col sm:flex-row gap-3 justify-end">
+                <ButtonsPresetButton preset="cancel" size="sm" @click="showSubmitModal = false" />
+                <ButtonsPresetButton preset="submit" label="Submit Project" size="sm" :loading="isSubmitting"
+                  @click="confirmSubmit" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <!-- Delete Confirmation Modal -->
+    <DeleteConfirmationModal v-model="showDeleteModal" :project-title="project?.title || 'this project'"
+      :is-deleting="isDeleting" @confirm="confirmDelete" />
+
+    <!-- Authentication Modal -->
+    <AuthModal v-model="showAuthModal" />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from "vue";
+import { useProjectStore } from "~/stores/projects";
+import { useAuthStore } from "~/stores/auth";
+import type { TimelineItem } from "@nuxt/ui";
+
+const route = useRoute();
+const projectStore = useProjectStore();
+const authStore = useAuthStore();
+const projectId = route.params.id as string;
+const userFullName = computed(() => {
+  const user = authStore.user;
+  if (!user) return "";
+  if (user.name) return user.name.toLowerCase();
+  return `${user.firstName || ""} ${user.lastName || ""}`.trim().toLowerCase();
+});
+
+// Student-specific reactive variables
+const project = ref(null);
+const isLoading = ref(true);
+const showSubmitModal = ref(false);
+const isSubmitting = ref(false);
+const showDeleteModal = ref(false);
+const isDeleting = ref(false);
+
+// Load user's liked projects and project data when component mounts
+onMounted(async () => {
+  try {
+    // ensure auth restored before fetching ownership-dependent data
+    if (!authStore.isAuthenticated) {
+      await authStore.restoreAuth();
+    }
+
+    // Load liked projects first
+    await projectStore.loadUserLikedProjects();
+    // Ensure user-owned projects are loaded for ownership check
+    await projectStore.fetchUserProjects();
+
+    let projectData = await projectStore.getProjectById(projectId);
+
+    // If project still not found after fetch, something is wrong
+    if (!projectData) {
+      console.error("Project not found after fetch:", projectId);
+
+      throw createError({
+        statusCode: 404,
+        statusMessage: "Project not found",
+      });
+    }
+
+    project.value = projectData;
+
+    // // Check ownership after project is loaded
+    // if (!isOwner.value) {
+    //   console.log("User is not owner, redirecting to public view");
+    //   await navigateTo(`/projects/${projectId}`);
+    //   return;
+    // }
+
+    console.log("✅ User is owner, displaying project");
+  } catch (error) {
+    console.error("❌ Error loading project:", error);
+    // Don't throw here, just show error state
+  } finally {
+    isLoading.value = false;
+  }
+});
+
+// Check if user owns this project
+const isOwner = computed(() => {
+  if (!project.value || !authStore.user) return false;
+
+  const currentUserId = String(authStore.user.id ?? "");
+  const authorId = String(project.value.author?.id ?? "");
+
+  // owner is strictly the author
+  return authorId === currentUserId;
+});
+
+// Image carousel
+const currentImageIndex = ref(0);
+
+// const nextImage = () => {
+//   if (project.value?.images) {
+//     currentImageIndex.value =
+//       (currentImageIndex.value + 1) % project.value.images.length;
+//   }
+// };
+
+// const previousImage = () => {
+//   if (project.value?.images) {
+//     currentImageIndex.value =
+//       currentImageIndex.value === 0
+//         ? project.value.images.length - 1
+//         : currentImageIndex.value - 1;
+//   }
+// };
+
+// Like functionality - using store with authentication
+const showAuthModal = ref(false);
+
+// Student-specific computed properties
+const canSubmit = computed(() => {
+  if (!isOwner.value || !project.value) return false;
+
+  // Show submit button only when submission status is draft or rejected
+  const status = project.value.submissionStatus?.toLowerCase?.();
+  return status === "draft" || status === "rejected";
+});
+
+// Get submission status mqessage
+const getSubmissionStatusMessage = computed(() => {
+  if (!project.value) return "";
+
+  const visibility = project.value.visibility;
+
+  if (visibility === "reviewing") {
+    return "This project is currently under review by teachers. Please wait for their feedback.";
+  } else if (visibility === "accepted") {
+    return "This project has been accepted! You can view it in your submissions page.";
+  } else if (visibility === "rejected") {
+    return "This project was rejected. You can edit and resubmit it after making improvements.";
+  }
+
+  return "";
+});
+
+// Student-specific methods
+const submitProject = () => {
+  if (!project.value) return;
+
+  const visibility = project.value.visibility;
+  const toast = useToast();
+
+  // Check if already submitted
+  if (visibility === "reviewing") {
+    toast.add({
+      title: "Already Submitted",
+      description: "This project is currently under review by teachers.",
+      color: "warning",
+    });
+    return;
+  }
+
+  if (visibility === "accepted") {
+    toast.add({
+      title: "Already Accepted",
+      description: "This project has been accepted and cannot be resubmitted.",
+      color: "info",
+    });
+    return;
+  }
+
+  // Allow submission for draft, private, rejected, or no visibility
+  if (canSubmit.value) {
+    showSubmitModal.value = true;
+  } else {
+    toast.add({
+      title: "Cannot Submit",
+      description: "This project cannot be submitted at this time.",
+      color: "error",
+    });
+  }
+};
+
+const editProject = () => {
+  console.log("Edit button clicked!");
+  console.log("Project ID:", project.value?.id);
+  navigateTo(`/projects/create?edit=${project.value.id}`);
+};
+
+// Close delete modal and reset state
+const closeDeleteModal = () => {
+  showDeleteModal.value = false;
+};
+
+const confirmDelete = async () => {
+  console.log("Confirming delete for project:", project.value?.id);
+
+  try {
+    isDeleting.value = true;
+
+    const result = await projectStore.deleteProject(project.value.id);
+
+    if (result) {
+      const toast = useToast();
+      toast.add({
+        title: "Project Deleted",
+        description: "Your project has been successfully deleted.",
+        color: "success",
+      });
+
+      closeDeleteModal();
+      await navigateTo("/student/my-projects");
+    } else {
+      throw new Error("Delete operation returned false");
+    }
+  } catch (error) {
+    console.error("Error deleting project:", error);
+    const toast = useToast();
+    toast.add({
+      title: "Delete Failed",
+      description: "Failed to delete project. Please try again.",
+      color: "error",
+    });
+  } finally {
+    isDeleting.value = false;
+  }
+};
+
+const confirmSubmit = async () => {
+  if (!project.value) return;
+
+  const toast = useToast();
+
+  try {
+    isSubmitting.value = true;
+
+    // Double-check visibility status before submission
+    const visibility = project.value.visibility;
+
+    if (visibility === "reviewing") {
+      toast.add({
+        title: "Already Under Review",
+        description: "This project is currently being reviewed by teachers.",
+        color: "warning",
+      });
+      showSubmitModal.value = false;
+      return;
+    }
+
+    if (visibility === "accepted") {
+      toast.add({
+        title: "Already Accepted",
+        description: "This project has already been accepted.",
+        color: "info",
+      });
+      showSubmitModal.value = false;
+      return;
+    }
+
+    // Submit project for review
+    const success = await projectStore.submitProjectForReview(project.value.id);
+
+    if (success) {
+      toast.add({
+        title: "Project Submitted!",
+        description: "Your project has been submitted to teachers for review.",
+        color: "success",
+      });
+
+      showSubmitModal.value = false;
+
+      // Update local project visibility
+      project.value.visibility = "reviewing";
+
+      // Optionally navigate to submissions page
+      // await navigateTo("/student/submissions");
+    } else {
+      throw new Error("Submission failed");
+    }
+  } catch (error) {
+    console.error("Error submitting project:", error);
+    toast.add({
+      title: "Submission Failed",
+      description: "Failed to submit project. Please try again.",
+      color: "error",
+    });
+  } finally {
+    isSubmitting.value = false;
+  }
+};
+
+const shareProject = () => {
+  const url = window.location.href;
+
+  if (navigator.share) {
+    navigator.share({
+      title: project.value.title,
+      text: project.value.description,
+      url: url,
+    });
+  } else {
+    navigator.clipboard.writeText(url);
+    const toast = useToast();
+    toast.add({
+      title: "Link copied!",
+      description: "Project link has been copied to clipboard",
+      color: "success",
+    });
+  }
+};
+
+const toggleVisibility = async () => {
+  if (!authStore.isTeacher) {
+    const toast = useToast();
+    toast.add({
+      title: "Permission Denied",
+      description: "Only teachers can change project visibility.",
+      color: "error",
+    });
+    return;
+  }
+
+  try {
+    const newVisibility =
+      project.value.visibility === "private" ? "public" : "private";
+    await projectStore.updateProjectVisibility(project.value.id, newVisibility);
+    project.value.visibility = newVisibility;
+
+    const toast = useToast();
+    toast.add({
+      title: "Visibility Updated",
+      description: `Project is now ${newVisibility}.`,
+      color: "success",
+    });
+  } catch (error) {
+    console.error("Error updating visibility:", error);
+    const toast = useToast();
+    toast.add({
+      title: "Update Failed",
+      description: "Failed to update project visibility.",
+      color: "error",
+    });
+  }
+};
+
+// Watch for auth changes and reload liked projects
+watch(
+  () => authStore.isAuthenticated,
+  async (isAuth) => {
+    if (isAuth) {
+      await projectStore.loadUserLikedProjects();
+    } else {
+      projectStore.clearUserLikedProjects();
+    }
+  },
+);
+
+const isLiked = computed(() => {
+  if (!project.value) return false;
+  return projectStore.isProjectLiked(project.value.id);
+});
+
+const toggleLike = async () => {
+  if (!project.value) return;
+
+  if (!authStore.isAuthenticated) {
+    // Show authentication modal
+    showAuthModal.value = true;
+    return;
+  }
+
+  await projectStore.likeProject(project.value.id);
+  await projectStore.loadUserLikedProjects();
+};
+
+// Timeline items computed property
+const timelineItems = computed<TimelineItem[]>(() => {
+  if (!project.value?.features && !project.value?.feature) return [];
+
+  const features = project.value.features || project.value.feature || [];
+
+  return features.map(
+    (feature: any): TimelineItem => ({
+      date: feature.date || "No date",
+      title: feature.title,
+      description: feature.description,
+      icon: feature.icon || "i-lucide-star",
+    }),
+  );
+});
+
+// Get default timeline value (latest completed item or middle item)
+const getDefaultTimelineValue = computed(() => {
+  if (!timelineItems.value.length) return 0;
+
+  // Find the middle item for better visual presentation
+  return Math.floor(timelineItems.value.length / 2);
+});
+
+useHead({
+  title: `${project.value?.title || "Project"} - Student Project Details`,
+  meta: [
+    {
+      name: "description",
+      content: project.value?.description || "Student project details",
+    },
+  ],
+});
+</script>
+
+<style scoped>
+/* Modal transition animations */
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-active .relative,
+.modal-leave-active .relative {
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.modal-enter-from .relative,
+.modal-leave-to .relative {
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInUpDelayed {
+
+  0%,
+  20% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.6s ease-out forwards;
+}
+
+.animate-fade-in-up-delayed {
+  animation: fadeInUpDelayed 1.2s ease-out forwards;
+}
+
+/* Timeline specific animations */
+:deep(.timeline-item) {
+  transition: all 0.3s ease-in-out;
+}
+
+:deep(.timeline-item:hover) {
+  transform: translateX(5px);
+}
+
+/* Custom timeline styling with better animations */
+:deep(.timeline) {
+  position: relative;
+}
+
+:deep(.timeline::before) {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom,
+      rgb(147, 51, 234),
+      rgb(59, 130, 246),
+      rgb(34, 197, 94));
+  border-radius: 2px;
+  animation: lineGrow 2s ease-in-out;
+}
+
+@keyframes lineGrow {
+  from {
+    height: 0;
+  }
+
+  to {
+    height: 100%;
+  }
+}
+
+/* Staggered animation for timeline items */
+:deep(.timeline-item:nth-child(1)) {
+  animation-delay: 0.2s;
+}
+
+:deep(.timeline-item:nth-child(2)) {
+  animation-delay: 0.4s;
+}
+
+:deep(.timeline-item:nth-child(3)) {
+  animation-delay: 0.6s;
+}
+
+:deep(.timeline-item:nth-child(4)) {
+  animation-delay: 0.8s;
+}
+</style>

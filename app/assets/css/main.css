@@ -2,12 +2,11 @@
 @import "@nuxt/ui";
 
 @theme {
-  --font-sans: 'Public Sans', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: "Poppins", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 }
 
 @theme {
-
   /* Override default nuxt styling */
 
   /* Define new custom color */
@@ -16,7 +15,7 @@
   --color-brand-200: #676e82;
   --color-brand-300: #515971;
   --color-brand-400: #3c455f;
-  --color-brand-500: #26304d; 
+  --color-brand-500: #26304d;
   --color-brand-600: #222b45;
   --color-brand-700: #1e263e;
   --color-brand-800: #1b2236;
@@ -24,23 +23,42 @@
 }
 
 :root {
-  /* --ui-primary: var(--color-brand-500); */
+  /* Light mode colors */
+  --ui-primary: var(--ui-color-primary-500);
   --ui-secondary: var(--ui-color-secondary-500);
   --ui-success: var(--ui-color-success-500);
   --ui-info: var(--ui-color-info-500);
   --ui-warning: var(--ui-color-warning-500);
   --ui-error: var(--ui-color-error-500);
 
+  /* Light mode text colors */
   --ui-text-dimmed: var(--ui-color-neutral-400);
   --ui-text-muted: var(--ui-color-neutral-500);
   --ui-text-toned: var(--ui-color-neutral-600);
-  --ui-text: var(--ui-color-brand-600);
-  --ui-text-highlighted: var(--ui-color-brand-850);
-  --ui-text-inverted: var(--ui-color-brand-600);
-
-  /* --ui-bg: var(--color-brand-500); */
+  --ui-text: var(--ui-color-neutral-900);
+  --ui-text-highlighted: var(--ui-color-brand-700);
+  
+  /* Light mode backgrounds */
+  --ui-bg: white;
+  --ui-bg-elevated: var(--ui-color-neutral-50);
+  --ui-bg-muted: var(--ui-color-neutral-100);
+  
+  /* Light mode borders */
+  --ui-border: var(--ui-color-neutral-200);
+  --ui-border-muted: var(--ui-color-neutral-100);
 }
 
 .dark {
   --ui-primary: var(--ui-color-primary-200);
+}
+
+.unhighlightable-image {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Safari */
+  -khtml-user-select: none;    /* Konqueror HTML */
+  -moz-user-select: none;      /* Old versions of Firefox */
+  -ms-user-select: none;       /* Internet Explorer/Edge */
+  user-select: none;           /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+  -webkit-user-drag: none;     /* Prevent dragging in WebKit browsers */
+  -moz-user-drag: none;        /* Prevent dragging in Firefox */
 }

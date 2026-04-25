@@ -1,178 +1,55 @@
 <template>
   <div class="relative">
-    <!-- Search Input Trigger -->
-    <div class="relative group">
-      <UInput
-        v-model="localQuery"
-        :placeholder="placeholder"
-        :icon="icon"
-        :trailing-icon="clearIcon"
-        size="md"
-        color="blue"
-        :ui="inputUI"
-        @focus="isOpen = true"
-        @update:model-value="$emit('update:model-value', $event)"
-        @keyup.enter="handleSearch"
-        @click:trailing="clearSearch"
-      />
-      <!-- Keyboard Shortcut Hint -->
-      <div
-        class="absolute right-3 top-1/2 -translate-y-1/2 hidden group-focus-within:flex items-center gap-1 text-xs text-gray-500 pointer-events-none"
-      >
-        <kbd
-          class="px-2 py-1 rounded bg-gray-200 text-gray-700 text-xs font-semibold"
-          >Enter</kbd
-        >
+    <!-- Search Icon Button -->
+    <Transition enter-active-class="transition-all duration-400 ease-out" enter-from-class="opacity-0 scale-90"
+      enter-to-class="opacity-100 scale-100" leave-active-class="transition-all duration-300 ease-in"
+      leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-90">
+      <div>
+        <UButton v-if="!isOpen" icon="i-heroicons-magnifying-glass-20-solid" color="gray" variant="ghost" size="xl"
+          :ui="{ rounded: 'rounded-lg' }" class="text-neutral-700 dark:text-neutral-200" @click="toggleSearch" />
+
+        <UButton v-else icon="i-heroicons-x-mark-20-solid" color="gray" variant="ghost" size="xl"
+          :ui="{ rounded: 'rounded-lg' }" class="text-neutral-700 dark:text-neutral-200" @click="closeSearch" />
       </div>
-    </div>
+    </Transition>
 
-    <!-- Search Modal/Popup -->
-    <Transition
-      enter-active-class="transition-all duration-300 ease-out"
-      leave-active-class="transition-all duration-200 ease-in"
-      enter-from-class="opacity-0 scale-95"
-      enter-to-class="opacity-100 scale-100"
-      leave-from-class="opacity-100 scale-100"
-      leave-to-class="opacity-0 scale-95"
-    >
-      <div v-if="isOpen" class="fixed inset-0 z-50 overflow-y-auto">
-        <!-- Backdrop -->
+    <!-- Centered Search Popup -->
+    <Transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 scale-95"
+      enter-to-class="opacity-100 scale-100" leave-active-class="transition ease-in duration-150"
+      leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
+      <div v-if="isOpen" class="fixed inset-0 z-[100] flex items-start justify-center px-4 pt-20 sm:pt-24">
+        <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" @click="closeSearch"></div>
+
         <div
-          class="fixed inset-0 bg-black/50 backdrop-blur-sm"
-          @click="closeSearch"
-        ></div>
+          class="relative mx-auto w-full max-w-2xl max-h-[80vh] bg-white dark:bg-neutral-900 rounded-3xl shadow-[0_24px_80px_rgba(0,0,0,0.35)] ring-1 ring-gray-200/80 dark:ring-neutral-700/80 border border-gray-200 dark:border-neutral-800 overflow-hidden">
+          <!-- Search Input -->
+          <div class="p-5 sm:p-6 border-b border-gray-200 dark:border-neutral-800 flex flex-col items-center">
+            <UInput v-model="localQuery" :placeholder="placeholder" icon="i-heroicons-magnifying-glass-20-solid"
+              size="lg" color="neutral" class="w-full max-w-2xl"
+              :ui="{ base: '!rounded-3xl !min-h-[52px]' }" autofocus @keyup.enter="handleSearch" @keyup.esc="closeSearch" />
+            <p class="mt-2 text-xs text-gray-500 dark:text-neutral-400">
+              Press
+              <kbd class="px-1 py-0.5 border rounded-lg text-xs bg-gray-100 dark:bg-neutral-800">Esc</kbd>
+              to close
+            </p>
+          </div>
 
-        <!-- Modal Content -->
-        <div class="flex items-start justify-center min-h-screen pt-20 px-4">
-          <div
-            class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl relative"
-          >
-            <!-- Header -->
-            <div
-              class="sticky top-0 bg-gradient-to-b from-white to-gray-50 border-b border-gray-200 p-6"
-            >
-              <div class="flex items-center gap-3 mb-4">
-                <UIcon
-                  name="i-heroicons-magnifying-glass-20-solid"
-                  class="w-6 h-6 text-blue-600"
-                />
-                <h2 class="text-2xl font-bold text-gray-900">
-                  Search Projects
-                </h2>
-                <UButton
-                  icon="i-heroicons-x-mark-20-solid"
-                  color="gray"
-                  variant="ghost"
-                  size="sm"
-                  class="absolute top-4 right-4"
-                  @click="closeSearch"
-                />
-              </div>
-              <div class="relative">
-                <UInput
-                  v-model="localQuery"
-                  placeholder="Search projects by title, category, author..."
-                  icon="i-heroicons-magnifying-glass-20-solid"
-                  size="lg"
-                  color="blue"
-                  :ui="{ rounded: 'rounded-xl' }"
-                  @keyup.enter="handleSearch"
-                  @keyup.esc="closeSearch"
-                  autofocus
-                />
-              </div>
-            </div>
-
-            <!-- Search Results/Suggestions -->
-            <div class="max-h-96 overflow-y-auto p-6">
-              <div v-if="!localQuery.trim()" class="text-center py-12">
-                <UIcon
-                  name="i-heroicons-spark-les-20-solid"
-                  class="w-12 h-12 text-gray-300 mx-auto mb-4"
-                />
-                <p class="text-gray-500 text-lg font-medium">
-                  Enter keywords to search
+          <!-- Search Results -->
+          <div v-if="searchResults.length > 0" class="max-h-[calc(80vh-120px)] overflow-y-auto">
+            <div v-for="result in searchResults" :key="`${result.type}-${result.value}`"
+              class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-neutral-800 cursor-pointer transition-colors border-b border-gray-100 dark:border-neutral-800 last:border-0"
+              @click="selectResult(result)">
+              <UIcon :name="result.icon" class="text-gray-400 dark:text-neutral-500 flex-shrink-0" size="20" />
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-900 dark:text-neutral-100 truncate">
+                  {{ result.label }}
                 </p>
-                <p class="text-gray-400 text-sm mt-2">
-                  Search across all projects in the GIC portal
+                <p class="text-xs text-gray-500 dark:text-neutral-400 truncate">
+                  {{ result.subtitle }}
                 </p>
               </div>
-
-              <div v-else-if="searchResults.length > 0" class="space-y-4">
-                <p class="text-sm font-semibold text-gray-600 mb-4">
-                  Found {{ searchResults.length }} result(s)
-                </p>
-                <div
-                  v-for="result in searchResults"
-                  :key="result.id"
-                  class="p-4 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-all cursor-pointer group"
-                  @click="selectResult(result)"
-                >
-                  <div class="flex items-start gap-3">
-                    <div class="text-2xl mt-1">{{ result.emoji }}</div>
-                    <div class="flex-1">
-                      <h3
-                        class="font-semibold text-gray-900 group-hover:text-blue-600"
-                      >
-                        {{ result.title }}
-                      </h3>
-                      <p class="text-sm text-gray-600 mt-1">
-                        {{ result.description }}
-                      </p>
-                      <div class="flex gap-2 mt-3">
-                        <UBadge color="primary" variant="soft" size="sm">
-                          {{ result.category }}
-                        </UBadge>
-                        <UBadge color="info" variant="soft" size="sm">
-                          {{ result.year }}
-                        </UBadge>
-                        <UBadge color="success" variant="soft" size="sm">
-                          By {{ result.author }}
-                        </UBadge>
-                      </div>
-                    </div>
-                    <UIcon
-                      name="i-heroicons-arrow-right-20-solid"
-                      class="w-5 h-5 text-gray-400 group-hover:text-blue-600 mt-1"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div v-else class="text-center py-12">
-                <UIcon
-                  name="i-heroicons-magnifying-glass-20-solid"
-                  class="w-12 h-12 text-gray-300 mx-auto mb-4"
-                />
-                <p class="text-gray-500 text-lg font-medium">
-                  No projects found
-                </p>
-                <p class="text-gray-400 text-sm mt-2">
-                  Try adjusting your search keywords
-                </p>
-              </div>
-            </div>
-
-            <!-- Footer -->
-            <div
-              class="sticky bottom-0 bg-gradient-to-t from-white to-gray-50 border-t border-gray-200 p-4 flex justify-between items-center"
-            >
-              <p class="text-xs text-gray-500">
-                <kbd
-                  class="px-2 py-1 rounded bg-gray-200 text-gray-700 text-xs font-semibold"
-                  >ESC</kbd
-                >
-                to close
-              </p>
-              <UButton
-                color="primary"
-                icon="i-heroicons-arrow-right-20-solid"
-                trailing
-                @click="handleSearch"
-                :disabled="!localQuery.trim()"
-              >
-                View All Results
-              </UButton>
+              <UBadge v-if="result.count" :label="result.count.toString()" color="gray" variant="subtle" />
+              <UBadge v-else-if="result.category" :label="result.category" color="primary" variant="subtle" />
             </div>
           </div>
         </div>
@@ -182,148 +59,158 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
+import { useProjectStore } from "~/stores/projects";
+import { useStudentStore } from "~/stores/students";
 
 const props = defineProps({
-  modelValue: {
+  context: {
     type: String,
-    default: "",
-  },
-  placeholder: {
-    type: String,
-    default: "Search projects...",
-  },
-  icon: {
-    type: String,
-    default: "i-heroicons-magnifying-glass",
-  },
-  projects: {
-    type: Array,
-    default: () => [],
+    default: "projects", // 'projects' or 'students'
+    validator: (value) => ["projects", "students"].includes(value),
   },
 });
 
-const emit = defineEmits(["update:model-value", "search", "clear"]);
+const emit = defineEmits(["search", "clear"]);
 
-const localQuery = ref(props.modelValue);
+const SEARCH_DEBOUNCE_MS = 300;
+
+const localQuery = ref("");
+const debouncedQuery = ref("");
 const isOpen = ref(false);
+const searchResults = ref([]);
+const projectStore = useProjectStore();
+const studentStore = useStudentStore();
+const route = useRoute();
+let activeSearchRequest = 0;
 
-watch(
-  () => props.modelValue,
-  (newVal) => {
-    localQuery.value = newVal;
+const activeContext = computed(() => {
+  if (route.path.startsWith("/students")) return "students";
+  if (route.path.startsWith("/projects")) return "projects";
+  return props.context;
+});
+
+// Debounce search input and fetch results
+let debounceTimer = null;
+watch(localQuery, (newValue) => {
+  if (debounceTimer) clearTimeout(debounceTimer);
+
+  // Clear results if query is empty
+  if (!newValue.trim()) {
+    searchResults.value = [];
+    return;
   }
-);
 
-const clearIcon = computed(() => {
-  return localQuery.value ? "i-heroicons-x-mark" : "";
+  debounceTimer = setTimeout(async () => {
+    debouncedQuery.value = newValue;
+    const requestId = ++activeSearchRequest;
+
+    // Fetch search results based on context
+    try {
+      if (activeContext.value === "students") {
+        const results = await studentStore.searchStudentsWithResults(
+          debouncedQuery.value,
+        );
+        if (requestId === activeSearchRequest) {
+          searchResults.value = results;
+        }
+      } else {
+        const results = await projectStore.searchProjects(
+          debouncedQuery.value,
+        );
+        if (requestId === activeSearchRequest) {
+          searchResults.value = results;
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+      if (requestId === activeSearchRequest) {
+        searchResults.value = [];
+      }
+    }
+  }, SEARCH_DEBOUNCE_MS);
 });
 
-// Mock projects data - in real app, this would come from props
-const allProjects = [
-  {
-    id: 1,
-    title: "AI Chat Assistant",
-    description: "An intelligent chatbot powered by GPT-3",
-    category: "AI/ML",
-    year: "2024",
-    author: "Sarah Chen",
-    emoji: "🤖",
-  },
-  {
-    id: 2,
-    title: "Mobile Fitness App",
-    description: "Track workouts and health metrics",
-    category: "Mobile",
-    year: "2024",
-    author: "Alex Rodriguez",
-    emoji: "💪",
-  },
-  {
-    id: 3,
-    title: "E-Commerce Platform",
-    description: "Full-stack online store with payment",
-    category: "Web",
-    year: "2024",
-    author: "Priya Patel",
-    emoji: "🛍️",
-  },
-  {
-    id: 4,
-    title: "Climate Monitoring IoT",
-    description: "Environmental monitoring system",
-    category: "Sustainability",
-    year: "2023",
-    author: "Jordan Kim",
-    emoji: "🌍",
-  },
-  {
-    id: 5,
-    title: "Machine Learning Pipeline",
-    description: "Automated data processing framework",
-    category: "AI/ML",
-    year: "2023",
-    author: "Emma Watson",
-    emoji: "🧠",
-  },
-];
-
-const searchResults = computed(() => {
-  if (!localQuery.value.trim()) return [];
-
-  const query = localQuery.value.toLowerCase();
-  return allProjects.filter(
-    (project) =>
-      project.title.toLowerCase().includes(query) ||
-      project.description.toLowerCase().includes(query) ||
-      project.category.toLowerCase().includes(query) ||
-      project.author.toLowerCase().includes(query)
-  );
-});
-
-const inputUI = {
-  base: "relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus-within:z-10",
-  rounded: "rounded-lg",
-  placeholder: "placeholder-gray-400",
-  size: {
-    md: "px-3 py-2",
-  },
-  icon: {
-    base: "flex items-center pointer-events-none",
-    leading: {
-      wrapper: "absolute inset-y-0 left-0 pl-3 flex items-center",
-      pointer: "pointer-events-auto",
-    },
-    trailing: {
-      wrapper: "absolute inset-y-0 right-0 pr-3 flex items-center",
-      pointer: "pointer-events-auto cursor-pointer hover:text-blue-600",
-    },
-  },
+// Handle scroll to close search
+const handleScroll = () => {
+  if (isOpen.value) {
+    closeSearch();
+  }
 };
 
-const clearSearch = () => {
-  localQuery.value = "";
-  emit("update:model-value", "");
-  emit("clear");
+onMounted(() => {
+  // Close search on route change
+  useRouter().afterEach(() => {
+    closeSearch();
+    searchResults.value = [];
+  });
+
+  // Add scroll listener
+  window.addEventListener("scroll", handleScroll, { passive: true });
+});
+
+onUnmounted(() => {
+  if (debounceTimer) {
+    clearTimeout(debounceTimer);
+  }
+  // Remove scroll listener
+  window.removeEventListener("scroll", handleScroll);
+});
+
+// Dynamic placeholder based on context
+const placeholder = computed(() => {
+  return activeContext.value === "students"
+    ? "Search students, programs, skills..."
+    : "Search projects...";
+});
+
+const toggleSearch = () => {
+  isOpen.value = !isOpen.value;
+  if (!isOpen.value) {
+    localQuery.value = "";
+  }
 };
 
 const closeSearch = () => {
+  activeSearchRequest++;
   isOpen.value = false;
-  clearSearch();
+  localQuery.value = "";
+  emit("clear");
 };
 
 const handleSearch = () => {
   if (localQuery.value.trim()) {
     emit("search", localQuery.value);
-    // Navigate to projects page with search query
-    navigateTo(`/projects?search=${encodeURIComponent(localQuery.value)}`);
+
+    if (activeContext.value === "students") {
+      navigateTo(`/students?search=${encodeURIComponent(localQuery.value)}`);
+    } else {
+      navigateTo(`/projects?search=${encodeURIComponent(localQuery.value)}`);
+    }
     closeSearch();
   }
 };
 
-const selectResult = (project) => {
-  // Navigate to projects page and filter by selected project
-  navigateTo(`/projects?search=${encodeURIComponent(project.title)}`);
+const selectResult = (result) => {
+  if (activeContext.value === "students") {
+    if (result.studentId) {
+      navigateTo(`/students/${result.studentId}`);
+    } else if (result.type === "category") {
+      navigateTo(`/students?search=${encodeURIComponent(result.value)}`);
+    } else {
+      navigateTo(`/students?search=${encodeURIComponent(result.value)}`);
+    }
+  } else {
+    if (result.type === "category") {
+      navigateTo(`/projects?search=${encodeURIComponent(result.value)}`);
+    } else if (
+      (result.type === "name" || result.type === "description") &&
+      result.projectId
+    ) {
+      // Navigate directly to project details page
+      navigateTo(`/projects/${result.projectId}`);
+    }
+  }
   closeSearch();
 };
 </script>

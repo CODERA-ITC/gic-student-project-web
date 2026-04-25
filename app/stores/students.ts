@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
-import type { ComputedRef } from "vue";
+
+import { studentService, type APIStudent } from "~/services/StudentService";
 
 // Types
 export interface StudentSocial {
@@ -20,11 +21,12 @@ export interface Student {
   projects: number[];
   achievements: string[];
   social: StudentSocial;
-  location: string;
-  joinedDate: string;
+  joinedYear: string;
   graduationYear: number;
-  gpa: number;
+  gen: number;
 }
+
+export type { APIStudent, PaginatedResponse } from "~/services/StudentService";
 
 export interface StudentFilters {
   program: string;
@@ -35,262 +37,84 @@ export interface StudentFilters {
 
 export interface StudentStats {
   total: number;
-  byProgram: Record<string, Student[]>;
-  averageGPA: string;
+  byProgram: Record<string, APIStudent[]>;
   graduating2025: number;
   graduating2026: number;
 }
 
+export interface PublicStudentCard {
+  id: string;
+  name: string;
+  program: string;
+  year: number | string;
+  avatar: string;
+  bio: string;
+  skills: string[];
+  projectCount: number;
+  gpa: number;
+  achievements: any[];
+  graduationYear: number;
+  gen: number;
+  social: Record<string, string>;
+}
+
 export interface StudentState {
-  students: Student[];
-  programs: string[];
-  years: string[];
   filters: StudentFilters;
+  // API-based state
+  apiStudents: APIStudent[];
+  loading: boolean;
+  currentPage: number;
+  limit: number;
+  total: number;
+  lastPage: number;
+  selectedGeneration: string | number;
+  availableGenerations: number[];
+  searchQuery: string;
+  publicSelectedGeneration: number;
+  publicGenerations: number[];
 }
 
 export const useStudentStore = defineStore("students", {
   state: (): StudentState => ({
-    students: [
-      {
-        id: 1,
-        name: "Sarah Chen",
-        email: "sarah.chen@gic.edu",
-        program: "Computer Science",
-        year: "4th Year",
-        avatar:
-          "https://images.unsplash.com/photo-1494790108755-2616b612b1e5?w=200&h=200&fit=crop&crop=face",
-        bio: "Passionate about AI and machine learning applications in education. Currently working on my thesis about adaptive learning systems.",
-        skills: [
-          "Python",
-          "TensorFlow",
-          "React",
-          "MongoDB",
-          "Docker",
-          "Machine Learning",
-          "Data Science",
-        ],
-        projects: [1, 4],
-        achievements: [
-          "Dean's List 2023-2024",
-          "Best AI Project Award 2023",
-          "Google Summer of Code Participant 2023",
-        ],
-        social: {
-          github: "https://github.com/sarahchen",
-          linkedin: "https://linkedin.com/in/sarahchen",
-          portfolio: "https://sarahchen.dev",
-        },
-        location: "Singapore",
-        joinedDate: "2021-08-15",
-        graduationYear: 2025,
-        gpa: 3.92,
-      },
-      {
-        id: 2,
-        name: "Marcus Johnson",
-        email: "marcus.johnson@gic.edu",
-        program: "Software Engineering",
-        year: "3rd Year",
-        avatar:
-          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
-        bio: "Mobile development enthusiast with a focus on augmented reality and cross-platform applications. Love creating intuitive user experiences.",
-        skills: [
-          "Unity",
-          "ARCore",
-          "C#",
-          "Firebase",
-          "Kotlin",
-          "Swift",
-          "React Native",
-        ],
-        projects: [2],
-        achievements: [
-          "Best Mobile App Award 2024",
-          "Hackathon Winner 2023",
-          "Google Developer Student Club Lead",
-        ],
-        social: {
-          github: "https://github.com/mjohnson",
-          linkedin: "https://linkedin.com/in/marcusjohnson",
-          portfolio: "https://marcusj.dev",
-        },
-        location: "Malaysia",
-        joinedDate: "2022-08-20",
-        graduationYear: 2026,
-        gpa: 3.78,
-      },
-      {
-        id: 3,
-        name: "Emily Rodriguez",
-        email: "emily.rodriguez@gic.edu",
-        program: "Environmental Science",
-        year: "4th Year",
-        avatar:
-          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face",
-        bio: "Environmental data scientist working on sustainability solutions. Combining technology with environmental research for positive impact.",
-        skills: [
-          "Vue.js",
-          "Node.js",
-          "PostgreSQL",
-          "Chart.js",
-          "IoT",
-          "Data Analysis",
-          "GIS",
-        ],
-        projects: [3],
-        achievements: [
-          "Environmental Innovation Award 2024",
-          "Sustainability Research Grant Recipient",
-          "Published Research Paper on Campus Sustainability",
-        ],
-        social: {
-          github: "https://github.com/erodriguez",
-          linkedin: "https://linkedin.com/in/emilyrodriguez",
-          portfolio: "https://emilyrodriguez.eco",
-        },
-        location: "Philippines",
-        joinedDate: "2021-08-10",
-        graduationYear: 2025,
-        gpa: 3.89,
-      },
-      {
-        id: 4,
-        name: "David Kim",
-        email: "david.kim@gic.edu",
-        program: "Information Systems",
-        year: "3rd Year",
-        avatar:
-          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face",
-        bio: "Full-stack developer with expertise in enterprise systems and database design. Interested in scalable architecture and cloud technologies.",
-        skills: [
-          "Angular",
-          "Spring Boot",
-          "MySQL",
-          "ElasticSearch",
-          "Docker",
-          "AWS",
-          "Microservices",
-        ],
-        projects: [4],
-        achievements: [
-          "Outstanding Academic Performance 2023",
-          "AWS Certified Solutions Architect",
-          "Internship at Tech Innovation Lab",
-        ],
-        social: {
-          github: "https://github.com/dkim",
-          linkedin: "https://linkedin.com/in/davidkim",
-          portfolio: "https://davidkim.tech",
-        },
-        location: "South Korea",
-        joinedDate: "2022-08-15",
-        graduationYear: 2026,
-        gpa: 3.85,
-      },
-      {
-        id: 5,
-        name: "Aisha Patel",
-        email: "aisha.patel@gic.edu",
-        program: "Health Informatics",
-        year: "4th Year",
-        avatar:
-          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face",
-        bio: "Health technology advocate combining healthcare knowledge with software development. Passionate about improving healthcare accessibility.",
-        skills: [
-          "React Native",
-          "Express.js",
-          "MongoDB",
-          "Socket.io",
-          "Chart.js",
-          "FHIR",
-          "Healthcare APIs",
-        ],
-        projects: [5],
-        achievements: [
-          "Health Innovation Award 2024",
-          "Research Assistant in Digital Health Lab",
-          "Presented at International Health Informatics Conference",
-        ],
-        social: {
-          github: "https://github.com/apatel",
-          linkedin: "https://linkedin.com/in/aishapatel",
-          portfolio: "https://aishapatel.health",
-        },
-        location: "India",
-        joinedDate: "2021-08-12",
-        graduationYear: 2025,
-        gpa: 3.94,
-      },
-      {
-        id: 6,
-        name: "Alex Thompson",
-        email: "alex.thompson@gic.edu",
-        program: "Cybersecurity",
-        year: "4th Year",
-        avatar:
-          "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face",
-        bio: "Blockchain and cybersecurity specialist. Focused on developing secure, decentralized systems and protecting digital assets.",
-        skills: [
-          "Solidity",
-          "Web3.js",
-          "React",
-          "Ethereum",
-          "IPFS",
-          "Penetration Testing",
-          "Cryptography",
-        ],
-        projects: [6],
-        achievements: [
-          "Cybersecurity Excellence Award 2023",
-          "Certified Ethical Hacker (CEH)",
-          "Blockchain Hackathon Winner 2023",
-        ],
-        social: {
-          github: "https://github.com/athompson",
-          linkedin: "https://linkedin.com/in/alexthompson",
-          portfolio: "https://alexthompson.security",
-        },
-        location: "Canada",
-        joinedDate: "2021-08-18",
-        graduationYear: 2025,
-        gpa: 3.87,
-      },
-    ],
-    programs: [
-      "All",
-      "Computer Science",
-      "Software Engineering",
-      "Environmental Science",
-      "Information Systems",
-      "Health Informatics",
-      "Cybersecurity",
-      "Data Science",
-      "Digital Innovation",
-    ],
-    years: ["All", "1st Year", "2nd Year", "3rd Year", "4th Year"],
     filters: {
       program: "All",
       year: "All",
       search: "",
       sortBy: "name",
     },
+    // API-based state
+    apiStudents: [],
+    loading: false,
+    currentPage: 1,
+    limit: 10,
+    total: 0,
+    lastPage: 1,
+    selectedGeneration: "all",
+    availableGenerations: [25, 26, 27, 28, 29, 30],
+    searchQuery: "",
+    publicSelectedGeneration: 25,
+    publicGenerations: [27, 26, 25, 24, 23, 22, 21, 20],
   }),
 
   getters: {
-    filteredStudents(): Student[] {
-      let filtered = [...this.students];
+    filteredStudents(): APIStudent[] {
+      let filtered = [...this.apiStudents];
 
       // Apply program filter
       if (this.filters.program !== "All") {
         filtered = filtered.filter(
-          (student) => student.program === this.filters.program
+          (student) =>
+            (student.department?.name || "").toLowerCase() ===
+            this.filters.program.toLowerCase(),
         );
       }
 
       // Apply year filter
       if (this.filters.year !== "All") {
         filtered = filtered.filter(
-          (student) => student.year === this.filters.year
+          (student) =>
+            String(student.year || student.joinedYear || "") ===
+            this.filters.year,
         );
       }
 
@@ -299,66 +123,102 @@ export const useStudentStore = defineStore("students", {
         const searchTerm = this.filters.search.toLowerCase();
         filtered = filtered.filter(
           (student) =>
-            student.name.toLowerCase().includes(searchTerm) ||
-            student.program.toLowerCase().includes(searchTerm) ||
-            student.bio.toLowerCase().includes(searchTerm) ||
-            student.skills.some((skill) =>
-              skill.toLowerCase().includes(searchTerm)
-            )
+            `${student.firstName || ""} ${student.lastName || ""}`
+              .toLowerCase()
+              .includes(searchTerm) ||
+            (student.department?.name || "").toLowerCase().includes(searchTerm) ||
+            (student.bio || "").toLowerCase().includes(searchTerm) ||
+            (Array.isArray(student.skill) ? student.skill : []).some((skill) =>
+              skill.toLowerCase().includes(searchTerm),
+            ),
         );
       }
 
       // Apply sorting
       switch (this.filters.sortBy) {
         case "name":
-          filtered.sort((a, b) => a.name.localeCompare(b.name));
+          filtered.sort((a, b) =>
+            `${a.firstName || ""} ${a.lastName || ""}`
+              .trim()
+              .localeCompare(`${b.firstName || ""} ${b.lastName || ""}`.trim()),
+          );
           break;
         case "program":
-          filtered.sort((a, b) => a.program.localeCompare(b.program));
+          filtered.sort((a, b) =>
+            (a.department?.name || "").localeCompare(b.department?.name || ""),
+          );
           break;
         case "year":
-          filtered.sort((a, b) => b.graduationYear - a.graduationYear);
-          break;
-        case "gpa":
-          filtered.sort((a, b) => b.gpa - a.gpa);
+          filtered.sort((a, b) => Number(b.year || 0) - Number(a.year || 0));
           break;
         case "projects":
-          filtered.sort((a, b) => b.projects.length - a.projects.length);
+          filtered.sort(
+            (a, b) =>
+              (Array.isArray(b.projects) ? b.projects.length : 0) -
+              (Array.isArray(a.projects) ? a.projects.length : 0),
+          );
           break;
       }
 
       return filtered;
     },
 
-    studentsByProgram(): Record<string, Student[]> {
-      const programMap: Record<string, Student[]> = {};
-      this.students.forEach((student) => {
-        if (!programMap[student.program]) {
-          programMap[student.program] = [];
+    studentsByProgram(): Record<string, APIStudent[]> {
+      const programMap: Record<string, APIStudent[]> = {};
+      this.apiStudents.forEach((student) => {
+        const program = student.department?.name || "Unknown";
+        if (!programMap[program]) {
+          programMap[program] = [];
         }
-        programMap[student.program].push(student);
+        programMap[program].push(student);
       });
       return programMap;
     },
 
     studentStats(): StudentStats {
       return {
-        total: this.students.length,
+        total: this.apiStudents.length,
         byProgram: this.studentsByProgram,
-        averageGPA: (
-          this.students.reduce((sum, s) => sum + s.gpa, 0) /
-          this.students.length
-        ).toFixed(2),
-        graduating2025: this.students.filter((s) => s.graduationYear === 2025)
+        graduating2025: this.apiStudents.filter((s) => Number(s.year) === 2025)
           .length,
-        graduating2026: this.students.filter((s) => s.graduationYear === 2026)
+        graduating2026: this.apiStudents.filter((s) => Number(s.year) === 2026)
           .length,
       };
     },
 
-    topPerformers(): Student[] {
-      return [...this.students].sort((a, b) => b.gpa - a.gpa).slice(0, 5);
+    publicMappedStudents(): PublicStudentCard[] {
+      return (this.apiStudents || []).map((student: APIStudent) => {
+        const firstName = (student.firstName || "").toString();
+        const lastName = (student.lastName || "").toString();
+        const fullName =
+          (firstName + " " + lastName).trim() || student.email || "Student";
+        return {
+          id: student.id,
+          name: fullName,
+          program: "GIC",
+
+          year: student.year || "",
+          avatar: student.avatar || "",
+          bio: student.bio || "",
+          skills: Array.isArray(student.skill) ? student.skill : [],
+          projectCount: 0,
+          gpa: 0,
+          achievements: [],
+          graduationYear: 0,
+          gen:
+            typeof student.generation === "number"
+              ? student.generation
+              : Number(
+                  student.generation || this.publicSelectedGeneration || 25,
+                ),
+          social: {},
+        };
+      });
     },
+
+    // topPerformers(): Student[] {
+    //   return [...this.students].sort((a, b) => b.gpa - a.gpa).slice(0, 5);
+    // },
   },
 
   actions: {
@@ -375,26 +235,329 @@ export const useStudentStore = defineStore("students", {
       };
     },
 
-    getStudent(id: number | string): Student | undefined {
-      return this.students.find(
-        (student) => student.id === Number.parseInt(id.toString())
+    getStudent(id: number | string): APIStudent | undefined {
+      return this.apiStudents.find(
+        (student) => String(student.id) === String(id),
       );
     },
 
-    getStudentsByProgram(program: string): Student[] {
-      return this.students.filter((student) => student.program === program);
-    },
-
-    searchStudents(query: string): Student[] {
-      const searchTerm = query.toLowerCase();
-      return this.students.filter(
+    getStudentsByProgram(program: string): APIStudent[] {
+      return this.apiStudents.filter(
         (student) =>
-          student.name.toLowerCase().includes(searchTerm) ||
-          student.program.toLowerCase().includes(searchTerm) ||
-          student.skills.some((skill) =>
-            skill.toLowerCase().includes(searchTerm)
-          )
+          (student.department?.name || "").toLowerCase() ===
+          program.toLowerCase(),
       );
+    },
+
+    searchStudents(query: string): APIStudent[] {
+      const searchTerm = query.toLowerCase();
+      return this.apiStudents.filter(
+        (student) =>
+          `${student.firstName || ""} ${student.lastName || ""}`
+            .toLowerCase()
+            .includes(searchTerm) ||
+          (student.department?.name || "").toLowerCase().includes(searchTerm) ||
+          (Array.isArray(student.skill) ? student.skill : []).some((skill) =>
+            skill.toLowerCase().includes(searchTerm),
+          ),
+      );
+    },
+
+    // API-backed search with structured results for search dropdown
+    async searchStudentsWithResults(query: string) {
+      if (!query.trim()) return [];
+
+      const searchTerm = query.toLowerCase();
+      const results: Array<{
+        type: "category" | "title" | "description";
+        icon: string;
+        value: string;
+        label: string;
+        subtitle: string;
+        count?: number;
+        category?: string;
+        studentId?: string;
+      }> = [];
+      const addedItems = new Set<string>();
+
+      try {
+        const response = await studentService.fetchStudents({
+          page: 1,
+          limit: 8,
+          role: "STUDENT",
+          search: query.trim(),
+        });
+
+        const apiStudents = Array.isArray(response?.data) ? response.data : [];
+        const departmentCounts = new Map<string, number>();
+
+        apiStudents.forEach((student) => {
+          const departmentName = (student.department?.name || "").trim();
+          if (departmentName) {
+            departmentCounts.set(
+              departmentName,
+              (departmentCounts.get(departmentName) || 0) + 1,
+            );
+          }
+        });
+
+        // Category-like suggestions from API data (department names)
+        departmentCounts.forEach((count, departmentName) => {
+          if (
+            departmentName.toLowerCase().includes(searchTerm) &&
+            !addedItems.has(`dept-${departmentName}`) &&
+            results.length < 10
+          ) {
+            addedItems.add(`dept-${departmentName}`);
+            results.push({
+              type: "category",
+              icon: "i-heroicons-academic-cap-20-solid",
+              value: departmentName,
+              label: departmentName,
+              subtitle: "Department",
+              count,
+            });
+          }
+        });
+
+        apiStudents.forEach((student) => {
+          if (results.length >= 10) return;
+
+          const fullName =
+            `${student.firstName || ""} ${student.lastName || ""}`
+              .trim()
+              .replace(/\s+/g, " ");
+          const label = fullName || student.email || "Student";
+          const skills = Array.isArray(student.skill) ? student.skill : [];
+          const subtitle = skills.length
+            ? `Skills: ${skills.slice(0, 3).join(", ")}`
+            : student.department?.name || "Student";
+          const key = `student-${student.id || label}`;
+
+          if (!addedItems.has(key)) {
+            addedItems.add(key);
+            results.push({
+              type: "title",
+              icon: "i-heroicons-user-20-solid",
+              value: label,
+              label,
+              subtitle,
+              category: student.department?.name || "",
+              studentId: String(student.id || ""),
+            });
+          }
+        });
+
+        return results.slice(0, 8);
+      } catch (error) {
+        console.error("Error searching students from backend:", error);
+        return [];
+      }
+    },
+
+    // API-based actions
+    async loadStudents(token: string) {
+      this.loading = true;
+      try {
+        const params: any = {
+          page: this.currentPage,
+          limit: this.limit,
+          role: "STUDENT", // Only fetch students
+        };
+
+        // Add generation filter if selected
+        if (this.selectedGeneration !== "all") {
+          params.generation = this.selectedGeneration;
+        }
+
+        // Add search query if present
+        if (this.searchQuery && this.searchQuery.trim()) {
+          params.search = this.searchQuery.trim();
+        }
+
+        const response = await studentService.fetchStudents(params, token);
+
+        if (Array.isArray(response.data)) {
+          this.apiStudents = response.data;
+          this.total = response.total;
+          this.lastPage = response.lastPage;
+          this.currentPage = response.page;
+        }
+      } catch (error) {
+        console.error("Error loading students:", error);
+        this.apiStudents = [];
+        this.total = 0;
+        this.lastPage = 1;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async loadInternalStudents(token: string) {
+      this.loading = true;
+      try {
+        const params: any = {
+          page: this.currentPage,
+          limit: this.limit,
+        };
+
+        if (this.searchQuery && this.searchQuery.trim()) {
+          params.search = this.searchQuery.trim();
+        }
+
+        const response = await studentService.fetchInternalStudents(
+          params,
+          token,
+        );
+
+        if (Array.isArray(response.data)) {
+          this.apiStudents = response.data;
+          this.total = response.total;
+          this.lastPage = response.lastPage;
+          this.currentPage = response.page;
+        }
+      } catch (error) {
+        console.error("Error loading internal students:", error);
+        this.apiStudents = [];
+        this.total = 0;
+        this.lastPage = 1;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async changePage(page: number, token: string) {
+      this.currentPage = page;
+      await this.loadStudents(token);
+    },
+
+    setGeneration(generation: string | number) {
+      this.selectedGeneration = generation;
+      this.currentPage = 1; // Reset to first page when filter changes
+    },
+
+    setSearchQuery(query: string) {
+      this.searchQuery = query;
+      this.currentPage = 1; // Reset to first page when search changes
+    },
+
+    async createStudent(studentData: any, token: string) {
+      try {
+        return await studentService.createStudent(studentData, token);
+      } catch (error: any) {
+        console.error("Error creating student:", error);
+        throw new Error(error.data?.message || "Failed to create student");
+      }
+    },
+
+    async updateStudent(studentId: string, studentData: any, token: string) {
+      try {
+        const updated = await studentService.updateStudent(
+          studentId,
+          studentData,
+          token,
+        );
+
+        // Refresh local state
+        const idx = this.apiStudents.findIndex((s) => s.id === studentId);
+        if (idx !== -1) {
+          this.apiStudents[idx] =
+            updated ||
+            studentService.mapStudent(
+              { ...this.apiStudents[idx], ...studentData },
+              { id: studentId },
+            );
+        }
+      } catch (error: any) {
+        console.error("Error updating student:", error);
+        throw new Error(error.data?.message || "Failed to update student");
+      }
+    },
+
+    async deleteStudent(studentId: string, token: string) {
+      try {
+        await studentService.deleteStudent(studentId, token);
+
+        // Remove from local state
+        this.apiStudents = this.apiStudents.filter(
+          (student) => student.id !== studentId,
+        );
+        this.total = Math.max(0, this.total - 1);
+
+        // Recalculate last page
+        this.lastPage = Math.ceil(this.total / this.limit);
+
+        // If current page is now beyond last page, go back one page
+        if (this.currentPage > this.lastPage && this.lastPage > 0) {
+          this.currentPage = this.lastPage;
+        }
+      } catch (error) {
+        console.error("Error deleting student:", error);
+        throw error;
+      }
+    },
+
+    async uploadStudentsCSV(file: File) {
+      try {
+        return await studentService.uploadStudentsCSV(file);
+      } catch (error: any) {
+        console.error("Error uploading CSV:", error);
+        throw new Error(error.data?.message || "Failed to upload CSV file");
+      }
+    },
+
+    async fetchPublicStudentById(
+      studentId: string,
+    ): Promise<APIStudent | null> {
+      this.loading = true;
+      try {
+        const mapped = await studentService.fetchPublicStudentById(studentId);
+        if (!mapped) return null;
+
+        const idx = this.apiStudents.findIndex((s) => s.id === mapped.id);
+        if (idx >= 0) this.apiStudents[idx] = mapped;
+        else this.apiStudents.unshift(mapped);
+
+        return mapped;
+      } catch (error) {
+        console.error("Error fetching public student by id:", error);
+        return null;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    async loadPublicStudentsByGeneration(
+      generation = 25,
+      page = 1,
+      limit = 10,
+      ascending = false,
+    ) {
+      this.loading = true;
+      try {
+        const response = await studentService.fetchPublicStudentsByGeneration(
+          generation,
+          page,
+          limit,
+          ascending,
+        );
+
+        this.apiStudents = response.data;
+
+        this.publicSelectedGeneration = generation;
+        this.currentPage = response.page;
+        this.limit = response.limit;
+        this.total = response.total;
+        this.lastPage = response.lastPage;
+      } catch (error) {
+        console.error("Error loading public students by generation:", error);
+        this.apiStudents = [];
+        this.total = 0;
+        this.currentPage = 1;
+        this.lastPage = 1;
+      } finally {
+        this.loading = false;
+      }
     },
   },
 });

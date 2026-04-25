@@ -5,7 +5,7 @@
     <UContainer class="max-w-6xl">
       <!-- Header -->
       <div class="text-center mb-12">
-        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">
+        <h1 class="text-4xl md:text-5xl font-semibold text-white mb-4">
           Academic Semesters
         </h1>
         <p class="text-xl text-gray-400 max-w-2xl mx-auto">
@@ -29,7 +29,7 @@
             <div class="text-5xl mb-4">{{ semester.icon }}</div>
 
             <!-- Semester Info -->
-            <h3 class="text-2xl font-bold text-white mb-2">
+            <h3 class="text-2xl font-semibold text-white mb-2">
               {{ semester.title }}
             </h3>
             <p class="text-gray-400 mb-4">{{ semester.period }}</p>
@@ -39,19 +39,19 @@
               class="grid grid-cols-3 gap-4 mb-6 py-4 border-y border-white/10"
             >
               <div class="text-center">
-                <div class="text-2xl font-bold text-blue-400">
+                <div class="text-2xl font-semibold text-blue-400">
                   {{ semester.projects }}
                 </div>
                 <div class="text-xs text-gray-400">Projects</div>
               </div>
               <div class="text-center">
-                <div class="text-2xl font-bold text-blue-400">
+                <div class="text-2xl font-semibold text-blue-400">
                   {{ semester.students }}
                 </div>
                 <div class="text-xs text-gray-400">Students</div>
               </div>
               <div class="text-center">
-                <div class="text-2xl font-bold text-blue-400">
+                <div class="text-2xl font-semibold text-blue-400">
                   {{ semester.year }}
                 </div>
                 <div class="text-xs text-gray-400">Year</div>
@@ -80,7 +80,9 @@
       <div
         class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-8 max-w-3xl mx-auto"
       >
-        <h2 class="text-2xl font-bold text-white mb-4">About Our Semesters</h2>
+        <h2 class="text-2xl font-semibold text-white mb-4">
+          About Our Semesters
+        </h2>
         <p class="text-gray-300 leading-relaxed mb-4">
           GIC (Global Innovation Challenge) is structured in academic semesters,
           with each semester showcasing the best projects and innovations from

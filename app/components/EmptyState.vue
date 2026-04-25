@@ -16,7 +16,7 @@
     </div>
 
     <!-- Title -->
-    <h3 class="text-xl font-bold text-white mb-2">{{ title }}</h3>
+    <h3 class="text-xl font-semibold text-white mb-2">{{ title }}</h3>
 
     <!-- Description -->
     <p class="text-gray-400 text-center max-w-md mb-6">{{ description }}</p>

@@ -3,6 +3,12 @@
  * Provides consistent button styling patterns across the application
  */
 
+import { icons } from "lucide-vue-next";
+
+
+
+
+
 /**
  * Button variant type
  */
@@ -18,6 +24,7 @@ export type ButtonColor =
   | "danger"
   | "warning"
   | "info"
+  | "blue"
   | "gradient-primary"
   | "gradient-success"
   | "gradient-danger";
@@ -32,14 +39,17 @@ export type ButtonSize = "xs" | "sm" | "md" | "lg" | "xl";
  */
 export interface ButtonConfig {
   label: string;
+  labelKey?: string;
   icon?: string;
   color: ButtonColor;
   variant: ButtonVariant;
   size: ButtonSize;
+  textSize?: ButtonSize;
   to?: string;
   onClick?: () => void;
   disabled?: boolean;
   loading?: boolean;
+  fullWidth?: boolean;
 }
 
 /**
@@ -47,102 +57,136 @@ export interface ButtonConfig {
  */
 export const BUTTON_COLORS = {
   primary: {
-    solid: "bg-blue-600 hover:bg-blue-700 hover:cursor-pointer text-white",
+    solid:
+      "bg-blue-900 hover:bg-blue-800 hover:cursor-pointer dark:bg-blue-700 text-white dark:text-white",
     outline:
-      "border-2 border-blue-600 text-blue-600 hover:bg-blue-50 hover:cursor-pointer",
-    ghost: "text-blue-600 hover:bg-blue-100 hover:cursor-pointer",
+      "border-2 border-blue-900 text-blue-900 dark:border-blue-400 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:cursor-pointer",
+    ghost:
+      "text-blue-900 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/20 hover:cursor-pointer",
     gradient:
-      "bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:shadow-lg hover:shadow-blue-500/50 hover:cursor-pointer",
+      "bg-gradient-to-r from-blue-600 to-cyan-600 text-white dark:text-white hover:shadow-lg hover:shadow-blue-500/50 hover:cursor-pointer",
   },
   secondary: {
-    solid: "bg-indigo-600 hover:bg-indigo-700 hover:cursor-pointer text-white",
+    solid:
+      "bg-indigo-900 hover:bg-indigo-700 dark:bg-indigo-700 dark:hover:bg-indigo-600 hover:cursor-pointer text-white dark:text-white",
     outline:
-      "border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50 hover:cursor-pointer",
-    ghost: "text-indigo-600 hover:bg-indigo-100 hover:cursor-pointer",
+      "border-2 border-indigo-900 text-indigo-900 dark:border-indigo-400 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:cursor-pointer",
+    ghost:
+      "text-indigo-900 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/20 hover:cursor-pointer",
     gradient:
-      "bg-gradient-to-r from-indigo-600 to-blue-600 text-white hover:shadow-lg hover:shadow-indigo-500/50 hover:cursor-pointer",
+      "bg-gradient-to-r from-indigo-600 to-blue-600 text-white dark:text-white hover:shadow-lg hover:shadow-indigo-500/50 hover:cursor-pointer",
   },
   success: {
     solid:
-      "bg-emerald-600 hover:bg-emerald-700 hover:cursor-pointer text-white",
+      "bg-gray-600/90 hover:bg-gray-700 dark:bg-gray-600 dark:hover:bg-gray-500 hover:cursor-pointer text-white dark:text-white",
     outline:
-      "border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-50 hover:cursor-pointer",
-    ghost: "text-emerald-600 hover:bg-emerald-100 hover:cursor-pointer",
+      "border-2 border-gray-600 text-gray-600 dark:border-gray-400 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/20 hover:cursor-pointer",
+    ghost:
+      "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700/20 hover:cursor-pointer",
     gradient:
-      "bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:shadow-lg hover:shadow-emerald-500/50 hover:cursor-pointer",
+      "bg-gradient-to-r from-gray-600 to-gray-600 text-white dark:text-white hover:shadow-lg hover:shadow-gray-500/50 hover:cursor-pointer",
   },
   danger: {
-    solid: "bg-red-600 hover:bg-red-700 hover:cursor-pointer text-white",
+    solid:
+      "bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500 hover:cursor-pointer text-white dark:text-white",
     outline:
-      "border-2 border-red-600 text-red-600 hover:bg-red-50 hover:cursor-pointer",
-    ghost: "text-red-600 hover:bg-red-100 hover:cursor-pointer",
+      "border-2 border-red-600 text-red-600 dark:border-red-400 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:cursor-pointer",
+    ghost:
+      "text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/20 hover:cursor-pointer",
     gradient:
-      "bg-gradient-to-r from-red-600 to-orange-600 text-white hover:shadow-lg hover:shadow-red-500/50 hover:cursor-pointer",
+      "bg-gradient-to-r from-red-600 to-orange-600 text-white dark:text-white hover:shadow-lg hover:shadow-red-500/50 hover:cursor-pointer",
   },
   warning: {
-    solid: "bg-amber-600 hover:bg-amber-700 hover:cursor-pointer text-white",
+    solid:
+      "bg-amber-600 hover:bg-amber-700 dark:bg-amber-600 dark:hover:bg-amber-500 hover:cursor-pointer text-white dark:text-white",
     outline:
-      "border-2 border-amber-600 text-amber-600 hover:bg-amber-50 hover:cursor-pointer",
-    ghost: "text-amber-600 hover:bg-amber-100 hover:cursor-pointer",
+      "border-2 border-amber-600 text-amber-600 dark:border-amber-400 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:cursor-pointer",
+    ghost:
+      "text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/20 hover:cursor-pointer",
     gradient:
-      "bg-gradient-to-r from-amber-600 to-orange-600 text-white hover:shadow-lg hover:shadow-amber-500/50 hover:cursor-pointer",
+      "bg-gradient-to-r from-amber-600 to-orange-600 text-white dark:text-white hover:shadow-lg hover:shadow-amber-500/50 hover:cursor-pointer",
   },
   info: {
-    solid: "bg-cyan-600 hover:bg-cyan-700 hover:cursor-pointer text-white",
+    solid:
+      "bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-500 hover:cursor-pointer text-white dark:text-white",
     outline:
-      "border-2 border-cyan-600 text-cyan-600 hover:bg-cyan-50 hover:cursor-pointer",
-    ghost: "text-cyan-600 hover:bg-cyan-100 hover:cursor-pointer",
+      "border-2 border-cyan-600 text-cyan-600 dark:border-cyan-400 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 hover:cursor-pointer",
+    ghost:
+      "text-cyan-600 dark:text-cyan-400 hover:bg-cyan-100 dark:hover:bg-cyan-900/20 hover:cursor-pointer",
     gradient:
-      "bg-gradient-to-r from-cyan-600 to-blue-600 text-white hover:shadow-lg hover:shadow-cyan-500/50 hover:cursor-pointer",
+      "bg-gradient-to-r from-cyan-600 to-blue-600 text-white dark:text-white hover:shadow-lg hover:shadow-cyan-500/50 hover:cursor-pointer",
+  },
+  blue: {
+    solid:
+      "bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 hover:cursor-pointer text-white dark:text-white",
+    outline:
+      "border-2 border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:cursor-pointer",
+    ghost:
+      "text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/20 hover:cursor-pointer",
+    gradient:
+      "bg-gradient-to-r from-blue-600 to-cyan-600 text-white dark:text-white hover:shadow-lg hover:shadow-blue-500/50 dark:hover:shadow-blue-400/30 hover:cursor-pointer",
   },
   "gradient-primary": {
     solid:
-      "bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 text-white hover:shadow-lg hover:shadow-blue-500/50 hover:cursor-pointer",
+      "bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 dark:from-blue-700 dark:via-blue-600 dark:to-cyan-600 text-white dark:text-white hover:shadow-lg hover:shadow-blue-500/50 dark:hover:shadow-blue-400/30 hover:cursor-pointer",
     outline:
-      "border-2 border-transparent bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 text-white hover:shadow-lg hover:cursor-pointer",
+      "border-2 border-transparent bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 dark:from-blue-700 dark:via-blue-600 dark:to-cyan-600 text-white dark:text-white hover:shadow-lg dark:hover:shadow-blue-400/30 hover:cursor-pointer",
     ghost:
-      "bg-gradient-to-r from-blue-600/20 to-cyan-600/20 text-blue-400 hover:shadow-lg hover:cursor-pointer",
+      "bg-gradient-to-r from-blue-600/20 to-cyan-600/20 dark:from-blue-500/30 dark:to-cyan-500/30 text-blue-600 dark:text-blue-400 hover:shadow-lg hover:cursor-pointer",
     gradient:
-      "bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:shadow-xl hover:shadow-blue-500/60 hover:cursor-pointer",
+      "bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-700 dark:to-cyan-700 text-white dark:text-white hover:shadow-xl hover:shadow-blue-500/60 dark:hover:shadow-blue-400/40 hover:cursor-pointer",
   },
   "gradient-success": {
     solid:
-      "bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 text-white hover:shadow-lg hover:shadow-emerald-500/50 hover:cursor-pointer",
+      "bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 dark:from-emerald-700 dark:via-teal-600 dark:to-cyan-600 text-white dark:text-white hover:shadow-lg hover:shadow-emerald-500/50 dark:hover:shadow-emerald-400/30 hover:cursor-pointer",
     outline:
-      "border-2 border-transparent bg-gradient-to-r from-emerald-600 to-teal-500 text-white hover:shadow-lg hover:cursor-pointer",
+      "border-2 border-transparent bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-700 dark:to-teal-600 text-white dark:text-white hover:shadow-lg dark:hover:shadow-emerald-400/30 hover:cursor-pointer",
     ghost:
-      "bg-gradient-to-r from-emerald-600/20 to-teal-600/20 text-emerald-400 hover:shadow-lg hover:cursor-pointer",
+      "bg-gradient-to-r from-emerald-600/20 to-teal-600/20 dark:from-emerald-500/30 dark:to-teal-500/30 text-emerald-600 dark:text-emerald-400 hover:shadow-lg hover:cursor-pointer",
     gradient:
-      "bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:shadow-xl hover:shadow-emerald-500/60 hover:cursor-pointer",
+      "bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-700 dark:to-teal-700 text-white dark:text-white hover:shadow-xl hover:shadow-emerald-500/60 dark:hover:shadow-emerald-400/40 hover:cursor-pointer",
   },
   "gradient-danger": {
     solid:
-      "bg-gradient-to-r from-red-600 via-orange-500 to-amber-500 text-white hover:shadow-lg hover:shadow-red-500/50 hover:cursor-pointer",
+      "bg-gradient-to-r from-red-600 via-orange-500 to-amber-500 dark:from-red-700 dark:via-orange-600 dark:to-amber-600 text-white dark:text-white hover:shadow-lg hover:shadow-red-500/50 dark:hover:shadow-red-400/30 hover:cursor-pointer",
     outline:
-      "border-2 border-transparent bg-gradient-to-r from-red-600 to-orange-500 text-white hover:shadow-lg hover:cursor-pointer",
+      "border-2 border-transparent bg-gradient-to-r from-red-600 to-orange-500 dark:from-red-700 dark:to-orange-600 text-white dark:text-white hover:shadow-lg dark:hover:shadow-red-400/30 hover:cursor-pointer",
     ghost:
-      "bg-gradient-to-r from-red-600/20 to-orange-600/20 text-red-400 hover:shadow-lg hover:cursor-pointer",
+      "bg-gradient-to-r from-red-600/20 to-orange-600/20 dark:from-red-500/30 dark:to-orange-500/30 text-red-600 dark:text-red-400 hover:shadow-lg hover:cursor-pointer",
     gradient:
-      "bg-gradient-to-r from-red-600 to-orange-600 text-white hover:shadow-xl hover:shadow-red-500/60 hover:cursor-pointer",
+      "bg-gradient-to-r from-red-600 to-orange-600 dark:from-red-700 dark:to-orange-700 text-white dark:text-white hover:shadow-xl hover:shadow-red-500/60 dark:hover:shadow-red-400/40 hover:cursor-pointer",
   },
 };
 
 /**
  * Size configuration
+ * Enhanced for mobile touch targets (minimum 44x44px for accessibility)
  */
 export const BUTTON_SIZES = {
-  xs: "px-2 py-1 text-xs",
-  sm: "px-3 py-1.5 text-sm",
-  md: "px-4 py-2 text-base",
-  lg: "px-6 py-3 text-lg",
-  xl: "px-8 py-4 text-xl",
+  xs: "px-3.5 py-2 text-xs min-h-[36px]",
+  sm: "px-5 py-3 text-sm min-h-[44px]",
+  md: "px-6 py-3.5 text-base min-h-[50px]",
+  lg: "px-8 py-4 text-lg min-h-[56px]",
+  xl: "px-10 py-5 text-xl min-h-[64px]",
+};
+
+/**
+ * Text size overrides for cases where visual size and font size should differ.
+ */
+export const BUTTON_TEXT_SIZES: Record<ButtonSize, string> = {
+  xs: "text-xs",
+  sm: "text-sm",
+  md: "text-base",
+  lg: "text-lg",
+  xl: "text-xl",
 };
 
 /**
  * Base button styles (always applied)
+ * Enhanced for mobile accessibility with proper touch targets
  */
 export const BUTTON_BASE =
-  "inline-flex items-center justify-center gap-2 font-semibold rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2";
+  "inline-flex items-center font-medium justify-center gap-3 !rounded-3xl transition-all duration-300 focus:outline-none touch-manipulation select-none active:scale-95";
 
 /**
  * Get button classes based on configuration
@@ -150,13 +194,17 @@ export const BUTTON_BASE =
 export function getButtonClasses(
   color: ButtonColor,
   variant: ButtonVariant = "solid",
-  size: ButtonSize = "md"
+  size: ButtonSize = "sm", //default size of buttons
+  fullWidth: boolean = false,
+  textSize?: ButtonSize
 ): string {
   const colorClasses =
     BUTTON_COLORS[color]?.[variant] || BUTTON_COLORS.primary.solid;
   const sizeClasses = BUTTON_SIZES[size];
+  const widthClasses = fullWidth ? "w-full" : "";
+  const textSizeClasses = textSize ? BUTTON_TEXT_SIZES[textSize] : "";
 
-  return `${BUTTON_BASE} ${colorClasses} ${sizeClasses}`;
+  return `${BUTTON_BASE} ${colorClasses} ${sizeClasses} ${textSizeClasses} ${widthClasses}`;
 }
 
 /**
@@ -166,6 +214,15 @@ export const BUTTON_PRESETS = {
   // Primary Action Buttons
   exploreProjects: {
     label: "Explore Projects",
+    labelKey: "buttons.exploreProjects",
+    icon: "i-heroicons-rocket-launch",
+    color: "primary" as ButtonColor,
+    variant: "solid" as ButtonVariant,
+    size: "lg" as ButtonSize,
+  },
+  exploreHighlightedProjects: {
+    label: "Highlighted Projects",
+    labelKey: "buttons.exploreHighlightedProjects",
     icon: "i-heroicons-rocket-launch",
     color: "primary" as ButtonColor,
     variant: "solid" as ButtonVariant,
@@ -173,6 +230,7 @@ export const BUTTON_PRESETS = {
   },
   createProject: {
     label: "Create Project",
+    labelKey: "buttons.createProject",
     icon: "i-heroicons-plus",
     color: "primary",
     variant: "solid",
@@ -180,22 +238,31 @@ export const BUTTON_PRESETS = {
   },
   learnMore: {
     label: "Learn More",
+    labelKey: "buttons.learnMore",
     icon: "i-heroicons-arrow-top-right-on-square",
     color: "primary",
     variant: "outline",
     size: "lg",
   },
 
+  ReturntoHome: {
+    label: "Return to Home",
+    icon:"i-heroicons-home"
+
+
+  },
   // Secondary Action Buttons
-  viewBySemester: {
-    label: "View by Semester",
-    icon: "i-heroicons-calendar",
+  meetStudent: {
+    label: "Meet Our Student",
+    labelKey: "buttons.meetStudent",
+    icon: "i-heroicons-user-group",
     color: "success",
     variant: "solid",
     size: "lg",
   },
   viewDashboard: {
     label: "View Dashboard",
+    labelKey: "buttons.viewDashboard",
     icon: "i-heroicons-chart-bar",
     color: "secondary",
     variant: "solid",
@@ -205,6 +272,7 @@ export const BUTTON_PRESETS = {
   // Tertiary Action Buttons
   viewCalendar: {
     label: "View Calendar",
+    labelKey: "buttons.viewCalendar",
     icon: "i-heroicons-calendar",
     color: "info",
     variant: "outline",
@@ -212,15 +280,24 @@ export const BUTTON_PRESETS = {
   },
   submitProject: {
     label: "Submit Your Project",
-    icon: "i-heroicons-rocket-launch",
+    labelKey: "buttons.submitProject",
+    icon: "i-heroicons-clipboard-document-check",
+    color: "primary",
+    variant: "outline",
+    size: "lg",
+  },
+  viewProfileStudent: {
+    label: "View Profile",
+    labelKey: "buttons.viewProfileStudent",
     color: "primary",
     variant: "solid",
     size: "lg",
+    fullWidth: true,
   },
-
   // Admin/Teacher Buttons
   manageStudents: {
     label: "Manage Students",
+    labelKey: "buttons.manageStudents",
     icon: "i-heroicons-user-group",
     color: "primary",
     variant: "solid",
@@ -228,6 +305,7 @@ export const BUTTON_PRESETS = {
   },
   reviewProjects: {
     label: "Review Projects",
+    labelKey: "buttons.reviewProjects",
     icon: "i-heroicons-document-check",
     color: "success",
     variant: "solid",
@@ -235,15 +313,25 @@ export const BUTTON_PRESETS = {
   },
   viewAnalytics: {
     label: "View Analytics",
+    labelKey: "buttons.viewAnalytics",
     icon: "i-heroicons-chart-bar",
     color: "primary",
     variant: "solid",
     size: "lg",
   },
+  viewAll: {
+    label: "View All",
+    labelKey: "buttons.viewAll",
+    icon: "i-heroicons-arrow-right-20-solid",
+    color: "primary",
+    variant: "outline",
+    size: "sm",
+  },
 
   // Common Buttons
   save: {
     label: "Save",
+    labelKey: "buttons.save",
     icon: "i-heroicons-check",
     color: "success",
     variant: "solid",
@@ -251,13 +339,22 @@ export const BUTTON_PRESETS = {
   },
   cancel: {
     label: "Cancel",
+    labelKey: "buttons.cancel",
     icon: "i-heroicons-x-mark",
     color: "danger",
     variant: "ghost",
     size: "md",
   },
+  secondary: {
+    label: "Secondary",
+    labelKey: "buttons.secondary",
+    color: "secondary",
+    variant: "outline",
+    size: "md",
+  },
   delete: {
     label: "Delete",
+    labelKey: "buttons.delete",
     icon: "i-heroicons-trash",
     color: "danger",
     variant: "outline",
@@ -265,6 +362,7 @@ export const BUTTON_PRESETS = {
   },
   edit: {
     label: "Edit",
+    labelKey: "buttons.edit",
     icon: "i-heroicons-pencil",
     color: "info",
     variant: "outline",
@@ -272,6 +370,7 @@ export const BUTTON_PRESETS = {
   },
   back: {
     label: "Back",
+    labelKey: "buttons.back",
     icon: "i-heroicons-arrow-left",
     color: "secondary",
     variant: "ghost",
@@ -279,13 +378,15 @@ export const BUTTON_PRESETS = {
   },
   signin: {
     label: "Sign In",
+    labelKey: "buttons.signin",
     icon: "i-heroicons-arrow-right-on-rectangle-20-solid",
-    color: "success",
+    color: "primary",
     variant: "solid",
     size: "md",
   },
   signup: {
     label: "Sign Up",
+    labelKey: "buttons.signup",
     icon: "i-heroicons-user-plus-20-solid",
     color: "primary",
     variant: "solid",
@@ -293,6 +394,15 @@ export const BUTTON_PRESETS = {
   },
   submit: {
     label: "Submit",
+    labelKey: "buttons.submit",
+    icon: "i-heroicons-check",
+    color: "primary",
+    variant: "solid",
+    size: "md",
+  },
+  confirm: {
+    label: "Confirm",
+    labelKey: "buttons.confirm",
     icon: "i-heroicons-check",
     color: "primary",
     variant: "solid",
@@ -300,6 +410,7 @@ export const BUTTON_PRESETS = {
   },
   close: {
     label: "Close",
+    labelKey: "buttons.close",
     icon: "i-heroicons-x-mark",
     color: "secondary",
     variant: "ghost",
@@ -307,6 +418,7 @@ export const BUTTON_PRESETS = {
   },
   search: {
     label: "Search",
+    labelKey: "buttons.search",
     icon: "i-heroicons-magnifying-glass",
     color: "primary",
     variant: "solid",
@@ -314,6 +426,7 @@ export const BUTTON_PRESETS = {
   },
   filter: {
     label: "Filter",
+    labelKey: "buttons.filter",
     icon: "i-heroicons-funnel",
     color: "secondary",
     variant: "outline",
@@ -321,10 +434,53 @@ export const BUTTON_PRESETS = {
   },
   reset: {
     label: "Reset",
+    labelKey: "buttons.reset",
     icon: "i-heroicons-arrow-path",
-    color: "secondary",
+    color: "warning",
     variant: "ghost",
     size: "md",
+  },
+  viewDetails: {
+    label: "View Details",
+    labelKey: "buttons.viewDetails",
+    icon: null,
+    color: "primary",
+    variant: "solid",
+    text: "text-white",
+    size: "md",
+  },
+  clearFilters: {
+    label: "Clear Filters",
+    labelKey: "buttons.clearFilters",
+    icon: "i-heroicons-trash",
+    color: "danger",
+    variant: "solid",
+    size: "md",
+  },
+  // Filter buttons for teacher dashboard
+  // activeProjects: {
+  //   label: "Active Projects",
+  //   icon: null,
+  //   color: "blue",
+  //   variant: "ghost",
+  //   size: "md",
+  // },
+
+  activeProjects: {
+    label: "Active Project",
+    labelKey: "buttons.activeProjects",
+    icon: "",
+    color: "primary",
+    variant: "solid",
+    size: "sm",
+  },
+  pendingReviews: {
+    label: "Pending Reviews",
+    labelKey: "buttons.pendingReviews",
+    icon: null,
+    color: "blue",
+    variant: "solid",
+    size: "sm",
   },
 };
 

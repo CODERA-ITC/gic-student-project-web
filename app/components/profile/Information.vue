@@ -1,0 +1,607 @@
+<template>
+  <div class="p-6 space-y-6">
+    <div>
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-1">
+        Profile Information
+      </h2>
+      <p class="text-sm text-gray-600 dark:text-slate-400">
+        Update your personal information and profile picture
+      </p>
+    </div>
+
+    <!-- Avatar Upload -->
+    <div class="flex items-center gap-6">
+      <div v-if="formData.avatar"
+        class="w-24 h-24 rounded-full overflow-hidden border-4 border-gray-200 dark:border-slate-700">
+        <img :src="formData.avatar" :alt="formData.name" class="w-full h-full object-cover" />
+      </div>
+      <div v-else
+        class="w-24 h-24 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center border-4 border-gray-200 dark:border-slate-700">
+        <span class="text-2xl font-semibold text-white">{{
+          getInitials(formData.name)
+          }}</span>
+      </div>
+      <div>
+        <input ref="fileInput" type="file" accept="image/jpeg,image/png,image/gif" class="hidden"
+          @change="handleFileChange" />
+        <ButtonsPresetButton preset="secondary" label="Change Avatar" icon="i-heroicons-camera" size="sm"
+          @click="triggerFileInput" />
+        <p class="text-xs text-gray-500 dark:text-slate-400 mt-2">
+          JPG, PNG or GIF. Max size 5MB.
+        </p>
+      </div>
+    </div>
+
+    <!-- Form Fields -->
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+          Full Name
+        </label>
+        <UInput v-model="formData.name" placeholder="Enter your full name" size="sm" :ui="fieldUi" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+          Email Address
+        </label>
+        <UInput v-model="formData.email" type="email" placeholder="your.email@example.com" size="sm" :ui="fieldUi"
+          disabled />
+        <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">
+          Email cannot be changed. Contact admin for assistance.
+        </p>
+      </div>
+
+      <!-- Student-specific fields -->
+      <!-- <div v-if="userRole === 'STUDENT'">
+        <label
+          class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2"
+        >
+          Student ID
+        </label>
+        <UInput
+          v-model="formData.studentId"
+          placeholder="Enter student ID"
+          size="sm"
+        />
+      </div> -->
+
+      <!-- Teacher-specific fields -->
+      <div v-if="userRole === 'TEACHER'">
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+          Teacher ID
+        </label>
+        <UInput v-model="formData.teacherId" placeholder="Enter teacher ID" size="sm" :ui="fieldUi"
+          :disabled="true" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+          {{ userRole === "TEACHER" ? "Department" : "Program" }}
+        </label>
+        <UInput v-model="formData.program" :placeholder="userRole === 'TEACHER'
+            ? 'e.g., Computer Science Department'
+            : 'e.g., Computer Science'
+          " size="sm" :ui="fieldUi" />
+      </div>
+
+      <!-- Student Year Level -->
+      <div v-if="userRole === 'STUDENT'">
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+          Year Level
+        </label>
+        <USelectMenu v-model="formData.year" :items="yearOptions" size="sm" :ui="fieldUi" />
+      </div>
+
+      <!-- Teacher Position -->
+      <div v-if="userRole === 'TEACHER'">
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+          Position
+        </label>
+        <USelectMenu v-model="formData.position" :items="positionOptions" size="sm" :ui="fieldUi" />
+      </div>
+
+      <!-- Teacher Years of Experience -->
+      <div v-if="userRole === 'TEACHER'">
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+          Years of Experience
+        </label>
+        <UInput v-model="formData.yearsOfExperience" type="number" placeholder="e.g., 5" size="sm" :ui="fieldUi" />
+      </div>
+
+      <!-- Teacher Courses -->
+      <div v-if="userRole === 'TEACHER'">
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+          Courses You Teach
+        </label>
+        <p class="text-xs text-gray-500 dark:text-slate-400 mb-2">
+          Add courses one by one. Press Enter or click Add to include each
+          course.
+        </p>
+        <div class="flex gap-2 mb-3">
+          <UInput v-model="newCourse" placeholder="e.g., Web Development, Database Systems..." size="sm"
+            :ui="fieldUi" class="flex-1" @keyup.enter="addCourse" />
+          <ButtonsPresetButton preset="secondary" label="Add" icon="i-heroicons-plus" size="sm" @click="addCourse"
+            :disabled="!newCourse.trim()" />
+        </div>
+        <div v-if="formData.courses.length > 0" class="flex gap-2 flex-wrap">
+          <div v-for="(course, index) in formData.courses" :key="index"
+            class="px-3 py-1.5 rounded-full bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-sm font-medium border border-purple-200 dark:border-purple-700 flex items-center gap-2">
+            {{
+              course.name
+            }}
+            <button @click="removeCourse(index)"
+              class="hover:bg-purple-200 dark:hover:bg-purple-800 rounded-full p-0.5 transition-colors">
+              <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+        <p v-else class="text-sm text-gray-500 dark:text-slate-400 italic">
+          No courses added yet.
+        </p>
+      </div>
+
+      <!-- Bio/About (both roles) -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+          Bio
+        </label>
+        <UTextarea v-model="formData.bio" :placeholder="userRole === 'TEACHER'
+            ? 'Tell students about your expertise and teaching philosophy...'
+            : 'Tell others about yourself...'
+          " :rows="5" :cols="100" size="xl" :ui="textareaUi" />
+      </div>
+
+      <!-- Skills & Expertise -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+          Skills & Expertise
+        </label>
+        <p class="text-xs text-gray-500 dark:text-slate-400 mb-2">
+          Add skills one by one. Press Enter or click Add to include each skill.
+        </p>
+        <div class="flex gap-2 mb-3">
+          <UInput v-model="newSkill" placeholder="e.g., JavaScript, Python, React..." size="sm" :ui="fieldUi"
+            class="flex-1" @keyup.enter="addSkill" />
+          <ButtonsPresetButton preset="secondary" label="Add" icon="i-heroicons-plus" size="sm" @click="addSkill"
+            :disabled="!newSkill.trim()" />
+        </div>
+        <div v-if="formData.skills.length > 0" class="flex gap-2 flex-wrap">
+          <div v-for="(skill, index) in formData.skills" :key="index"
+            class="px-3 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium border border-blue-200 dark:border-blue-700 flex items-center gap-2">
+            {{ skill }}
+            <button @click="removeSkill(index)"
+              class="hover:bg-blue-200 dark:hover:bg-blue-800 rounded-full p-0.5 transition-colors">
+              <UIcon name="i-heroicons-x-mark" class="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+        <p v-else class="text-sm text-gray-500 dark:text-slate-400 italic">
+          No skills added yet.
+        </p>
+      </div>
+
+      <!-- Social Links -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+          Social Links
+        </label>
+        <p class="text-xs text-gray-500 dark:text-slate-400 mb-3">
+          Add links to your professional profiles and portfolio
+        </p>
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <UIcon name="i-simple-icons-github" class="w-5 h-5 text-gray-700 dark:text-gray-300" />
+            <UInput v-model="formData.socialLinks.github" placeholder="https://github.com/username" size="sm"
+              :ui="fieldUi" class="flex-1" />
+          </div>
+          <div class="flex items-center gap-2">
+            <UIcon name="i-simple-icons-linkedin" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <UInput v-model="formData.socialLinks.linkedin" placeholder="https://linkedin.com/in/username" size="sm"
+              :ui="fieldUi" class="flex-1" />
+          </div>
+          <div class="flex items-center gap-2">
+            <UIcon name="i-simple-icons-twitter" class="w-5 h-5 text-sky-500 dark:text-sky-400" />
+            <UInput v-model="formData.socialLinks.twitter" placeholder="https://twitter.com/username" size="sm"
+              :ui="fieldUi" class="flex-1" />
+          </div>
+          <div class="flex items-center gap-2">
+            <UIcon name="i-heroicons-globe-alt" class="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            <UInput v-model="formData.socialLinks.portfolio" placeholder="https://yourportfolio.com" size="sm"
+              :ui="fieldUi" class="flex-1" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Phone & GPA (Student) -->
+      <div v-if="userRole === 'STUDENT'" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+            Phone Number
+          </label>
+          <UInput v-model="formData.phone" placeholder="+855 12 345 678" size="sm" :ui="fieldUi" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+            Student ID
+          </label>
+          <UInput v-model="formData.studentId" type="text" :disabled="true" placeholder="123456" size="sm"
+            :ui="fieldUi" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+            Gen
+          </label>
+          <UInput v-model="formData.gen" type="text" :disabled="true" placeholder="25" size="sm" :ui="fieldUi"
+            class="font-semibold" />
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4">
+      <ButtonsPresetButton preset="save" label="Save Changes" @click="handleSave" />
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted, watch } from "vue";
+import {
+  useAuthStore,
+  type AdminUser,
+  type StudentUser,
+  type TeacherUser,
+} from "~/stores/auth";
+import { Role } from "~/types/roles";
+import type { UpdateProfilePayload } from "~/types/user-profile";
+
+const authStore = useAuthStore();
+const userRole = computed(() => authStore.userRole);
+const toast = useToast();
+
+interface Props {
+  initialData?: StudentUser | TeacherUser | AdminUser;
+}
+
+const props = defineProps<Props>();
+const emit = defineEmits<{
+  (e: "save", payload: UpdateProfilePayload): void;
+  (e: "cancel"): void;
+}>();
+
+const isSaving = ref(false);
+const fileInput = ref<HTMLInputElement | null>(null);
+const newSkill = ref("");
+const newCourse = ref("");
+const fieldUi = { base: "!w-full !rounded-3xl !min-h-[44px] !min-w-[200px]" };
+const textareaUi = { base: "!w-full !rounded-3xl" };
+
+const formData = ref({
+  name: authStore.currentUser?.name || "",
+  email: authStore.currentUser?.email || "",
+  studentId: "",
+  teacherId: "",
+  adminId: "",
+  program: "",
+  year: { label: "3rd Year", value: "3" },
+  position: { label: "Associate Professor", value: "associate" },
+  bio: "",
+  avatar: authStore.currentUser?.avatar || undefined,
+  skills: [] as string[],
+  courses: [],
+  yearsOfExperience: 0,
+  socialLinks: {
+    github: "",
+    linkedin: "",
+    twitter: "",
+    portfolio: "",
+  },
+  phone: "",
+  gen: "",
+});
+
+// Store the initial state for change detection
+const initialFormData = ref<any>(null);
+
+const hydrateFormData = (sourceData?: StudentUser | TeacherUser | AdminUser) => {
+  if (!sourceData) return;
+
+  // Load common fields
+  formData.value.name = sourceData.name || "";
+  formData.value.email = sourceData.email || "";
+  formData.value.avatar = sourceData.avatar || undefined;
+  formData.value.bio = sourceData.bio || "";
+  formData.value.skills = [...(sourceData.skills || [])];
+  formData.value.socialLinks = {
+    ...formData.value.socialLinks,
+    ...(sourceData.socialLinks || {}),
+  };
+  formData.value.phone = sourceData.phone || "";
+
+  // Load role-specific fields
+  if (sourceData.role === Role.student) {
+    const studentData = sourceData as StudentUser;
+    formData.value.program = studentData.program || "";
+    formData.value.studentId = studentData.studentId || "";
+    formData.value.gen = studentData.gen || "";
+
+    if (studentData.year) {
+      const yearMatch = yearOptions.find((opt) => opt.label === studentData.year);
+      if (yearMatch) {
+        formData.value.year = yearMatch;
+      }
+    }
+  } else if (sourceData.role === Role.teacher) {
+    const teacherData = sourceData as TeacherUser;
+    formData.value.program = teacherData.department || "";
+    formData.value.teacherId = teacherData.teacherId || "";
+    formData.value.courses = [...(teacherData.courses || [])];
+    formData.value.yearsOfExperience = teacherData.yearsOfExperience || 0;
+
+    if (teacherData.position) {
+      const positionMatch = positionOptions.find(
+        (opt) => opt.label === teacherData.position,
+      );
+      if (positionMatch) {
+        formData.value.position = positionMatch;
+      }
+    }
+  } else if (sourceData.role === Role.admin) {
+    const adminData = sourceData as AdminUser;
+    formData.value.adminId = adminData.adminId || "";
+  }
+
+  initialFormData.value = JSON.parse(
+    JSON.stringify({
+      ...formData.value,
+      year: formData.value.year.label,
+      position: formData.value.position.label,
+    }),
+  );
+};
+
+// Load initial profile source and keep form synchronized when parent data updates.
+onMounted(async () => {
+  if (!props.initialData && !authStore.currentUser) {
+    await authStore.fetchCurrentUser();
+  }
+  hydrateFormData(
+    (props.initialData as StudentUser | TeacherUser | AdminUser | undefined) ||
+      (authStore.currentUser as StudentUser | TeacherUser | AdminUser | undefined),
+  );
+});
+
+watch(
+  () => props.initialData,
+  (newData) => {
+    if (!newData) return;
+    hydrateFormData(newData as StudentUser | TeacherUser | AdminUser);
+  },
+  { deep: true },
+);
+
+const yearOptions = [
+  { label: "1st Year", value: "1" },
+  { label: "2nd Year", value: "2" },
+  { label: "3rd Year", value: "3" },
+  { label: "4th Year", value: "4" },
+  { label: "5th Year", value: "5" },
+];
+
+const positionOptions = [
+  { label: "Professor", value: "professor" },
+  { label: "Associate Professor", value: "associate" },
+  { label: "Assistant Professor", value: "assistant" },
+  { label: "Lecturer", value: "lecturer" },
+  { label: "Teaching Assistant", value: "ta" },
+];
+
+const getInitials = (name: string): string => {
+  if (!name) return "U";
+  const parts = name.trim().split(" ");
+  if (parts.length === 1) {
+    return parts[0].substring(0, 2).toUpperCase();
+  }
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+};
+
+const triggerFileInput = () => {
+  fileInput.value?.click();
+};
+
+const handleFileChange = async (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
+
+  if (!file) return;
+
+  // Validate file type
+  const validTypes = ["image/jpeg", "image/png", "image/gif"];
+  if (!validTypes.includes(file.type)) {
+    toast.add({
+      title: "Invalid File Type",
+      description: "Please upload a valid image file (JPG, PNG, or GIF)",
+      icon: "i-heroicons-exclamation-triangle",
+      color: "warning",
+    });
+    return;
+  }
+
+  // Validate file size (5MB)
+  const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+  if (file.size > maxSize) {
+    toast.add({
+      title: "File Too Large",
+      description: "File size must be less than 5MB",
+      icon: "i-heroicons-exclamation-triangle",
+      color: "warning",
+    });
+    return;
+  }
+
+  // Show loading state
+  const loadingToast = toast.add({
+    title: "Uploading...",
+    description: "Please wait while we upload your avatar",
+    icon: "i-heroicons-arrow-path",
+  });
+
+  try {
+    // Upload to server via auth store
+    const response = await authStore.uploadAvatar(file);
+
+    // Refetch user data to ensure store is fully in sync with server
+    await authStore.fetchCurrentUser();
+
+    // Update avatar preview with uploaded URL
+    if (response && response.avatar) {
+      formData.value.avatar = response.avatar;
+
+      toast.add({
+        title: "Success",
+        description: "Avatar uploaded successfully!",
+        icon: "i-heroicons-check-circle",
+        color: "success",
+      });
+    } else {
+      // Fallback: Create local preview if server doesn't return URL immediately
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        formData.value.avatar = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+
+      toast.add({
+        title: "Avatar Updated",
+        description: "Your avatar preview has been updated",
+        icon: "i-heroicons-check-circle",
+        color: "success",
+      });
+    }
+  } catch (error) {
+    console.error("Failed to upload avatar:", error);
+    toast.add({
+      title: "Upload Failed",
+      description: "Failed to upload avatar. Please try again.",
+      icon: "i-heroicons-x-circle",
+      color: "error",
+    });
+  } finally {
+    // Clear file input
+    if (target) target.value = "";
+  }
+};
+
+const handleAvatarChange = () => {
+  console.log("Avatar change clicked");
+  // TODO: Implement avatar upload
+};
+
+const addSkill = () => {
+  const skill = newSkill.value.trim();
+  if (skill && !formData.value.skills.includes(skill)) {
+    formData.value.skills.push(skill);
+    newSkill.value = "";
+  }
+};
+
+const removeSkill = (index: number) => {
+  formData.value.skills.splice(index, 1);
+};
+
+const addCourse = () => {
+  const course = newCourse.value.trim();
+  if (course && !formData.value.courses.includes(course)) {
+    formData.value.courses.push(course);
+    newCourse.value = "";
+  }
+};
+
+const removeCourse = (index: number) => {
+  formData.value.courses.splice(index, 1);
+};
+
+// Check if data has changed
+const hasChanges = (): boolean => {
+  if (!initialFormData.value) return false;
+
+  const currentData = {
+    ...formData.value,
+    year: formData.value.year.label || formData.value.year,
+    position: formData.value.position.label || formData.value.position,
+  };
+
+  const current = JSON.stringify(currentData);
+  const initial = JSON.stringify(initialFormData.value);
+
+  return current !== initial;
+};
+
+const handleSave = async () => {
+  // Check if anything changed
+  if (!hasChanges()) {
+    toast.add({
+      title: "No Changes",
+      description: "No changes detected to update.",
+      icon: "i-heroicons-information-circle",
+      color: "warning",
+      class:
+        "bg-amber-50 text-amber-900 border border-amber-100 dark:bg-slate-800 dark:text-amber-100 dark:border-slate-700",
+    });
+    return;
+  }
+
+  isSaving.value = true;
+  try {
+
+    const socialLinksArray = Object.entries(formData.value.socialLinks)
+      .filter(([, url]) => !!url)
+      .map(([name, url]) => ({ name, url }));
+
+    // Prepare typed payload to emit
+    const dataToSave: UpdateProfilePayload = {
+      name: formData.value.name,
+      bio: formData.value.bio,
+      phone: formData.value.phone,
+      avatar: formData.value.avatar,
+      skills: formData.value.skills,
+      socialLinks: socialLinksArray,
+      // student fields
+      program: formData.value.program,
+      year: formData.value.year.label || (formData.value.year as any),
+      gen: formData.value.gen,
+      // teacher fields
+      department: formData.value.program,
+      position: formData.value.position.label || (formData.value.position as any),
+      courses: formData.value.courses,
+      yearsOfExperience: formData.value.yearsOfExperience,
+      // admin field
+    };
+
+    emit("save", dataToSave);
+
+    // Update initial data after successful save
+    initialFormData.value = JSON.parse(JSON.stringify(dataToSave));
+
+    toast.add({
+      title: "Success",
+      description: "Profile updated successfully!",
+      icon: "i-heroicons-check-circle",
+      class:
+        "bg-green-50 text-green-900 border border-green-100 dark:bg-green-900/30 dark:text-green-100 dark:border-green-800",
+    });
+  } catch (error) {
+    toast.add({
+      title: "Error",
+      description: "Failed to update profile. Please try again.",
+      icon: "i-heroicons-x-circle",
+      color: "error",
+      class:
+        "bg-red-50 text-red-900 border border-red-100 dark:bg-red-900/30 dark:text-red-100 dark:border-red-800",
+    });
+  } finally {
+    isSaving.value = false;
+  }
+};
+</script>

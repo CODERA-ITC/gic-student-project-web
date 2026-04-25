@@ -3,13 +3,29 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   // srcDir: "app",
   devtools: { enabled: true },
+  devServer: {
+    https: {
+      key: "./localhost.key",
+      cert: "./localhost.crt",
+    },
+  },
   modules: [
     "@nuxt/ui",
     "@nuxt/image",
     "@pinia/nuxt",
     "@vueuse/nuxt",
     "@nuxt/eslint",
+    "@nuxtjs/i18n",
   ],
+  i18n: {
+    defaultLocale: "en",
+    strategy: "no_prefix",
+    langDir: "locales/",
+    locales: [
+      { code: "en", name: "English", file: "en.json" },
+      { code: "kh", name: "Khmer", file: "kh.json" },
+    ],
+  },
   css: ["~/assets/css/main.css"],
 
   // Add Google Fonts
@@ -27,21 +43,21 @@ export default defineNuxtConfig({
         },
         {
           rel: "stylesheet",
-          href: "https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap",
+          href: "https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap",
         },
       ],
     },
   },
   // Vite configuration
-  vite: {
-    server: {
-      hmr: {
-        protocol: "ws",
-        host: "localhost",
-        port: 24679,
-      },
-    },
-  },
+  // vite: {
+  //   server: {
+  //     hmr: {
+  //       protocol: "ws",
+  //       host: "0.0.0.0",
+  //       port: 24678,
+  //     },
+  //   },
+  // },
 
   // Enable TypeScript checking in dev
   typescript: {
@@ -56,7 +72,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase: "http://localhost:3017", // Backend API base URL
+      apiBase: "", // Backend API URL (client-side)
     },
   },
 
@@ -67,16 +83,12 @@ export default defineNuxtConfig({
   },
 
   // Component auto-discovery
-  // components: [
-  //   {
-  //     path: "~/components",
-  //     pathPrefix: false,
-  //   },
-  //   {
-  //     path: "~/app/components",
-  //     // pathPrefix: false,
-  //   },
-  // ],
+  components: true,
+
+  // Image module configuration
+  image: {
+    // Add any image configuration if needed
+  },
 
   ui: {},
 });

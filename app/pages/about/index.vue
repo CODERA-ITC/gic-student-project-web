@@ -1,116 +1,106 @@
 <template>
-  <div class="min-h-screen bg-slate-900">
+  <div class="min-h-screen bg-white dark:bg-slate-900">
     <!-- Hero Section -->
-    <div class="py-20 bg-blue-600 border-b border-blue-700/30">
+    <div class="hero-nodes py-20 border-b border-blue-800/30 dark:border-slate-700">
       <UContainer>
         <div class="text-center space-y-4 max-w-3xl mx-auto">
-          <h1 class="text-5xl lg:text-6xl font-black text-white leading-tight">
-            About GIC Student Portal
+          <h1 class="text-4xl lg:text-6xl font-semibold tracking-tight leading-tight text-blue-900 dark:text-white">
+            {{ t("aboutPage.heroTitle") }}
           </h1>
-          <p class="text-xl text-gray-300">
-            Celebrating innovation, creativity, and collaboration in the GIC
-            program
+          <p class="text-xl text-blue-900/80 dark:text-gray-300">
+            {{ t("aboutPage.heroSubtitle") }}
           </p>
         </div>
       </UContainer>
     </div>
 
     <!-- Main Content -->
-    <UContainer class="py-16 space-y-16">
+    <UContainer class="py-16 space-y-20">
       <!-- Mission Section -->
       <div class="grid lg:grid-cols-2 gap-12 items-center">
         <div class="space-y-6">
-          <div class="space-y-2">
-            <UBadge color="primary" variant="soft">Our Mission</UBadge>
-            <h2 class="text-4xl font-black text-white">
-              Empowering Student Innovators
+          <div class="space-y-3">
+            <h2 class="text-4xl font-semibold text-gray-900 dark:text-white">
+              {{ t("aboutPage.missionTitle") }}
             </h2>
+            <div class="h-1 w-20 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full"></div>
           </div>
-          <p class="text-lg text-gray-300 leading-relaxed">
-            The GIC Student Portal is designed to showcase the incredible work
+          <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+            The GIC Showcase is designed to showcase the incredible work
             of students in the Global Innovation Challenge program. We believe
             in celebrating creativity, fostering collaboration, and connecting
             talented students with opportunities.
           </p>
-          <p class="text-lg text-gray-300 leading-relaxed">
+          <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
             Our platform enables students to share their innovations, build
             professional portfolios, and get recognized by peers and industry
             professionals.
           </p>
-          <div class="flex gap-4 pt-4">
-            <UButton color="primary" size="lg" icon="i-heroicons-rocket-launch">
-              Get Started
-            </UButton>
-            <UButton
-              variant="outline"
-              color="primary"
-              size="lg"
-              icon="i-heroicons-arrow-top-right-on-square"
-              trailing
-            >
-              Learn More
-            </UButton>
+          <div class="flex flex-col sm:flex-row gap-4 pt-4">
+            <ButtonsPresetButton preset="exploreProjects" to="/projects" size="md" />
+            <ButtonsPresetButton preset="meetStudent" to="/students" size="md" />
           </div>
         </div>
 
-        <div class="relative h-96 rounded-2xl overflow-hidden">
-          <div
-            class="absolute inset-0 bg-gradient-to-br from-blue-600 to-purple-700 opacity-20"
-          ></div>
-          <div class="absolute inset-0 flex items-center justify-center">
-            <UIcon
-              name="i-heroicons-light-bulb"
-              class="w-32 h-32 text-blue-400 opacity-30"
-            />
-          </div>
+        <div
+          class="flex items-center justify-center bg-white dark:bg-slate-800 rounded-2xl p-8 border border-gray-200 dark:border-slate-700">
+          <img src="/images/gic-logo-small.png" alt="GIC Logo" class="w-full max-w-md object-contain" />
         </div>
       </div>
 
       <!-- Core Values -->
-      <div class="space-y-8">
-        <div class="text-center space-y-4 max-w-2xl mx-auto mb-12">
-          <UBadge color="primary" variant="soft">Core Values</UBadge>
-          <h2 class="text-4xl font-black text-white">What We Believe In</h2>
+      <div class="space-y-12">
+        <div class="text-center space-y-3">
+          <h2 class="text-4xl font-semibold text-gray-900 dark:text-white">
+            {{ t("aboutPage.valuesTitle") }}
+          </h2>
+          <div class="h-1 w-20 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full mx-auto"></div>
+          <p class="text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
+            {{ t("aboutPage.valuesSubtitle") }}
+          </p>
         </div>
 
-        <div class="grid md:grid-cols-3 gap-6">
-          <div
-            v-for="value in coreValues"
-            :key="value.title"
-            class="bg-slate-800/50 backdrop-blur border border-slate-700 rounded-xl p-8 hover:border-blue-500/50 transition-all duration-300 group"
-          >
+        <div class="grid md:grid-cols-3 gap-8">
+          <div v-for="value in coreValues" :key="value.title"
+            class="bg-white dark:bg-slate-800/50 backdrop-blur border border-gray-200 dark:border-slate-700 rounded-xl p-8 hover:border-blue-500/50 hover:shadow-lg transition-all duration-300 group">
             <div
-              class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
-            >
+              class="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
               <UIcon :name="value.icon" class="w-8 h-8 text-white" />
             </div>
-            <h3 class="text-xl font-bold text-white mb-3">{{ value.title }}</h3>
-            <p class="text-gray-300 leading-relaxed">{{ value.description }}</p>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">
+              {{ value.title }}
+            </h3>
+            <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+              {{ value.description }}
+            </p>
           </div>
         </div>
       </div>
 
       <!-- Features -->
-      <div class="space-y-8">
-        <div class="text-center space-y-4 max-w-2xl mx-auto mb-12">
-          <UBadge color="primary" variant="soft">Features</UBadge>
-          <h2 class="text-4xl font-black text-white">Built for Students</h2>
+      <div class="space-y-12">
+        <div class="text-center space-y-3">
+          <h2 class="text-4xl font-semibold text-gray-900 dark:text-white">
+            {{ t("aboutPage.featuresTitle") }}
+          </h2>
+          <div class="h-1 w-20 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full mx-auto"></div>
+          <p class="text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
+            {{ t("aboutPage.featuresSubtitle") }}
+          </p>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-6">
-          <div
-            v-for="feature in features"
-            :key="feature.title"
-            class="flex gap-4 p-6 bg-slate-800/30 border border-slate-700 rounded-xl hover:border-blue-500/50 transition-all duration-300"
-          >
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div v-for="feature in features" :key="feature.title"
+            class="flex gap-4 p-6 bg-white dark:bg-slate-800/30 border border-gray-200 dark:border-slate-700 rounded-xl hover:border-blue-500/50 hover:shadow-md transition-all duration-300">
             <div
-              class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center flex-shrink-0"
-            >
+              class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center flex-shrink-0">
               <UIcon :name="feature.icon" class="w-6 h-6 text-white" />
             </div>
             <div>
-              <h3 class="font-bold text-white mb-1">{{ feature.title }}</h3>
-              <p class="text-gray-400 text-sm leading-relaxed">
+              <h3 class="font-semibold text-gray-900 dark:text-white mb-1">
+                {{ feature.title }}
+              </h3>
+              <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
                 {{ feature.description }}
               </p>
             </div>
@@ -118,95 +108,112 @@
         </div>
       </div>
 
-      <!-- Team Section -->
-      <div class="space-y-8">
-        <div class="text-center space-y-4 max-w-2xl mx-auto mb-12">
-          <UBadge color="primary" variant="soft">Team</UBadge>
-          <h2 class="text-4xl font-black text-white">
-            Meet the People Behind It
+      <!-- Statistics -->
+      <!-- <div
+        class="bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border border-gray-200 dark:border-slate-700 rounded-2xl p-12">
+        <div class="text-center mb-8">
+          <h2 class="text-3xl font-semibold text-gray-900 dark:text-white mb-2">
+            {{ t("aboutPage.impactTitle") }}
           </h2>
+          <p class="text-gray-700 dark:text-gray-300">
+            {{ t("aboutPage.impactSubtitle") }}
+          </p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div v-for="stat in statistics" :key="stat.label" class="text-center">
+            <p class="text-4xl lg:text-5xl font-semibold text-blue-600 dark:text-blue-400 mb-2">
+              {{ stat.value }}
+            </p>
+            <p class="text-gray-700 dark:text-gray-300 font-medium">
+              {{ t(stat.label) }}
+            </p>
+          </div>
+        </div>
+      </div> -->
+
+      <!-- Team Section -->
+      <!-- <div class="space-y-12">
+        <div class="text-center space-y-3">
+          <h2 class="text-4xl font-semibold text-gray-900 dark:text-white">
+            {{ t("aboutPage.teamTitle") }}
+          </h2>
+          <div
+            class="h-1 w-20 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full mx-auto"
+          ></div>
+          <p class="text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
+            {{ t("aboutPage.teamSubtitle") }}
+          </p>
         </div>
 
-        <div class="grid md:grid-cols-4 gap-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div
             v-for="member in teamMembers"
             :key="member.name"
             class="text-center group"
           >
             <div
-              class="w-32 h-32 rounded-full bg-gradient-to-br mx-auto mb-4 flex items-center justify-center text-white text-3xl font-bold group-hover:scale-110 transition-transform shadow-lg"
+              class="w-28 h-28 md:w-32 md:h-32 rounded-full bg-gradient-to-br mx-auto mb-4 flex items-center justify-center text-white text-2xl md:text-3xl font-semibold group-hover:scale-110 transition-transform shadow-lg"
               :class="member.gradient"
             >
               {{ member.initials }}
             </div>
             <h3
-              class="text-lg font-bold text-white group-hover:text-blue-400 transition-colors"
+              class="text-base md:text-lg font-semibold text-gray-900 dark:text-white group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors"
             >
               {{ member.name }}
             </h3>
-            <p class="text-sm text-gray-400">{{ member.role }}</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Statistics -->
-      <div
-        class="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-800/30 rounded-2xl p-12"
-      >
-        <div class="grid md:grid-cols-4 gap-8">
-          <div v-for="stat in statistics" :key="stat.label" class="text-center">
-            <p class="text-4xl lg:text-5xl font-black text-blue-400 mb-2">
-              {{ stat.value }}
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              {{ member.role }}
             </p>
-            <p class="text-gray-300 font-semibold">{{ stat.label }}</p>
           </div>
         </div>
-      </div>
-
-      <!-- CTA Section -->
-      <div class="text-center space-y-6 py-12">
-        <h2 class="text-4xl font-black text-white">Ready to Join?</h2>
-        <p class="text-xl text-gray-300 max-w-2xl mx-auto">
-          Showcase your projects, connect with other students, and build your
-          professional portfolio today.
-        </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-          <UButton color="primary" size="xl" icon="i-heroicons-rocket-launch">
-            Get Started
-          </UButton>
-          <UButton
-            variant="outline"
-            color="primary"
-            size="xl"
-            icon="i-heroicons-envelope"
-            trailing
-          >
-            Contact Us
-          </UButton>
-        </div>
-      </div>
+      </div> -->
     </UContainer>
+
+    <!-- CTA Section -->
+    <!-- <div
+      class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-100 dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700">
+      <UContainer>
+        <div class="text-center text-gray-900 dark:text-white space-y-8 max-w-2xl mx-auto">
+          <h2 class="text-4xl lg:text-5xl font-semibold">
+            {{ t("aboutPage.ctaTitle") }}
+          </h2>
+          <p class="text-xl text-gray-700 dark:text-white dark:opacity-90 leading-relaxed">
+            {{ t("aboutPage.ctaSubtitle") }}
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+            <ButtonsPresetButton preset="createProject" to="/projects/create" size="sm" />
+            <ButtonsPresetButton preset="exploreProjects" to="/projects" size="sm" />
+          </div>
+        </div>
+      </UContainer>
+      <ScrollToTop />
+    </div> -->
+    <CTASection />
+
   </div>
 </template>
 
 <script setup>
+const { t } = useI18n();
+
 const coreValues = [
   {
     title: "Innovation",
     description:
-      "We celebrate and showcase cutting-edge projects and creative solutions.",
+      "We celebrate and showcase cutting-edge projects and creative solutions that push boundaries.",
     icon: "i-heroicons-light-bulb",
   },
   {
     title: "Community",
     description:
-      "We foster collaboration and connection among talented students.",
+      "We foster collaboration and connection among talented students across semesters.",
     icon: "i-heroicons-users",
   },
   {
     title: "Growth",
     description:
-      "We help students build portfolios and gain recognition for their work.",
+      "We help students build portfolios and gain recognition for their exceptional work.",
     icon: "i-heroicons-chart-bar",
   },
 ];
@@ -277,20 +284,19 @@ const teamMembers = [
 ];
 
 const statistics = [
-  { value: "500+", label: "Projects" },
-  { value: "200+", label: "Students" },
-  { value: "8", label: "Semesters" },
-  { value: "4.8/5", label: "Rating" },
+  { value: "500+", label: "stats.projects" },
+  { value: "200+", label: "stats.students" },
+  { value: "8", label: "stats.semesters" },
+  { value: "4.8/5", label: "aboutPage.rating" },
 ];
 
-useHead({
-  title: "About - GIC Student Portal",
+useHead(() => ({
+  title: `${t("aboutPage.heroTitle")} - GIC Showcase`,
   meta: [
     {
       name: "description",
-      content:
-        "Learn about GIC Student Portal and our mission to celebrate student innovation",
+      content: t("aboutPage.heroSubtitle"),
     },
   ],
-});
+}));
 </script>

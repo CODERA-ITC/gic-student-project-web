@@ -4,22 +4,31 @@
  */
 
 import { defineStore } from "pinia";
+import { Role } from "~/types/roles";
+import {
+  authService,
+  type AdminUser,
+  type StudentUser,
+  type TeacherUser,
+  type User,
+} from "~/services/AuthService";
+import type { UpdateProfilePayload } from "~/types/user-profile";
 
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: "student" | "teacher";
-  avatar?: string;
-  program?: string;
-  year?: string;
-}
-
+// Re-export user types for components that import from the store
+export type {
+  AdminUser,
+  StudentUser,
+  TeacherUser,
+  User,
+} from "~/services/AuthService";
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isRefreshing: boolean;
+  refreshPromise: Promise<boolean> | null;
   error: string | null;
+  needsSecurityQuestions: boolean;
 }
 
 export const useAuthStore = defineStore("auth", {
@@ -27,87 +36,33 @@ export const useAuthStore = defineStore("auth", {
     user: null,
     isAuthenticated: false,
     isLoading: false,
+    isRefreshing: false,
+    refreshPromise: null,
     error: null,
+    needsSecurityQuestions: false,
   }),
 
   getters: {
-    isStudent: (state) => state.user?.role === "student",
-    isTeacher: (state) => state.user?.role === "teacher",
-    isAdmin: (state) => state.user?.role === "teacher",
+    isStudent: (state): state is { user: StudentUser } & AuthState =>
+      state.user?.role === "STUDENT",
+    isTeacher: (state): state is { user: TeacherUser } & AuthState =>
+      state.user?.role === "TEACHER",
+    isAdmin: (state) => state.user?.role === "ADMIN",
     currentUser: (state) => state.user,
     userRole: (state) => state.user?.role || null,
+    token: () => authService.getAccessToken(),
+
+    // Type-safe getters for role-specific data
+    studentProfile: (state): StudentUser | null =>
+      state.user?.role === Role.student ? (state.user as StudentUser) : null,
+    teacherProfile: (state): TeacherUser | null =>
+      state.user?.role === Role.teacher ? (state.user as TeacherUser) : null,
+
+    adminProfile: (state): AdminUser | null =>
+      state.user?.role === Role.admin ? (state.user as AdminUser) : null,
   },
 
   actions: {
-    /**
-     * Mock users for testing
-     */
-    getMockUser(email: string): User {
-      const mockUsers: Record<string, User> = {
-        "student@gic.edu": {
-          id: "STU001",
-          name: "Sarah Johnson",
-          email: "student@gic.edu",
-          role: "student",
-          avatar:
-            "https://images.unsplash.com/photo-1494790108755-2616b612b1e5?w=100&h=100&fit=crop&crop=face",
-          program: "Computer Science",
-          year: "3rd Year",
-        },
-        "student2@gic.edu": {
-          id: "STU002",
-          name: "Michael Chen",
-          email: "student2@gic.edu",
-          role: "student",
-          avatar:
-            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
-          program: "Information Technology",
-          year: "2nd Year",
-        },
-        "teacher@gic.edu": {
-          id: "TCH001",
-          name: "Dr. Emily Watson",
-          email: "teacher@gic.edu",
-          role: "teacher",
-          avatar:
-            "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
-          program: "Computer Science",
-          year: "Professor",
-        },
-        "teacher2@gic.edu": {
-          id: "TCH002",
-          name: "Prof. David Kumar",
-          email: "teacher2@gic.edu",
-          role: "teacher",
-          avatar:
-            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face",
-          program: "Information Technology",
-          year: "Associate Professor",
-        },
-      };
-
-      // If email exists in mock users, return that user
-      if (mockUsers[email]) {
-        return mockUsers[email];
-      }
-
-      // Otherwise, determine role from email and create a generic user
-      const role: "student" | "teacher" = email.includes("teacher")
-        ? "teacher"
-        : "student";
-
-      return {
-        id: role === "student" ? "STU999" : "TCH999",
-        name: role === "student" ? "Student User" : "Teacher User",
-        email,
-        role,
-        avatar:
-          "https://images.unsplash.com/photo-1494790108755-2616b612b1e5?w=100&h=100&fit=crop&crop=face",
-        program: role === "student" ? "Computer Science" : "Engineering",
-        year: role === "student" ? "1st Year" : "Senior Lecturer",
-      };
-    },
-
     /**
      * Login user with email and password
      */
@@ -116,27 +71,71 @@ export const useAuthStore = defineStore("auth", {
       this.error = null;
 
       try {
-        // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 1200));
+        const { user, needsSecurityQuestions } = await authService.login(
+          email,
+          password,
+        );
 
-        // Validate credentials (mock)
-        if (!email || !password) {
-          throw new Error("Email and password are required");
-        }
-
-        if (password.length < 6) {
-          throw new Error("Invalid credentials");
-        }
-
-        // Get mock user or create generic one
-        this.user = this.getMockUser(email);
+        this.user = user;
+        this.needsSecurityQuestions = needsSecurityQuestions;
         this.isAuthenticated = true;
       } catch (error) {
-        this.error = error instanceof Error ? error.message : "Login failed";
+        // Reset auth state on error
+        this.user = null;
         this.isAuthenticated = false;
+        this.error = error instanceof Error ? error.message : "Login failed";
+
         throw error;
       } finally {
         this.isLoading = false;
+      }
+    },
+
+    /**
+     * Decode JWT token (basic decode without verification)
+     * In production, token validation should be done server-side
+     */
+    decodeJWT(token: string): any {
+      return authService.decodeJWT(token);
+    },
+
+    /**
+     * Validate token structure and expiration
+     */
+    isTokenValid(): boolean {
+      const token = this.getToken();
+
+      if (!token) {
+        console.warn("⚠️ No token found");
+        return false;
+      }
+
+      // Check token format (should have 3 parts)
+      if (token.split(".").length !== 3) {
+        console.warn("⚠️ Invalid token format");
+        return false;
+      }
+
+      // Check if expired
+      if (this.isTokenExpired()) {
+        console.warn("⚠️ Token is expired");
+        return false;
+      }
+
+      console.log("✅ Token is valid");
+      return true;
+    },
+
+    /**
+     * Fetch current user details from API by using ID from token
+     */
+
+    async fetchCurrentUser(): Promise<void> {
+      try {
+        this.user = await authService.fetchCurrentUser();
+      } catch (error) {
+        console.error("Failed to fetch current user:", error);
+        throw error;
       }
     },
 
@@ -148,48 +147,78 @@ export const useAuthStore = defineStore("auth", {
       email: string,
       password: string,
       confirmPassword: string,
-      role: "student" | "teacher"
+      role: Role,
     ): Promise<void> {
       this.isLoading = true;
       this.error = null;
 
       try {
-        // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-
-        // Validate inputs
-        if (!fullName || !email || !password || !confirmPassword) {
-          throw new Error("All fields are required");
-        }
-
-        if (password !== confirmPassword) {
-          throw new Error("Passwords do not match");
-        }
-
-        if (password.length < 6) {
-          throw new Error("Password must be at least 6 characters");
-        }
-
-        if (!email.includes("@")) {
-          throw new Error("Invalid email format");
-        }
-
-        // Create new user
-        this.user = {
-          id: role === "student" ? `STU${Date.now()}` : `TCH${Date.now()}`,
-          name: fullName,
+        const { user, needsSecurityQuestions } = await authService.register(
+          fullName,
           email,
+          password,
+          confirmPassword,
           role,
-          avatar:
-            "https://images.unsplash.com/photo-1494790108755-2616b612b1e5?w=100&h=100&fit=crop&crop=face",
-          program: role === "student" ? "Computer Science" : "Engineering",
-          year: role === "student" ? "1st Year" : "Lecturer",
-        };
+        );
 
+        this.user = user;
+        this.needsSecurityQuestions = needsSecurityQuestions;
         this.isAuthenticated = true;
       } catch (error) {
+        this.user = null;
+        this.isAuthenticated = false;
         this.error =
           error instanceof Error ? error.message : "Registration failed";
+
+        throw error;
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    // Allow search users
+
+    async searchUsers(query: string): Promise<User[]> {
+      try {
+        return (await authService.searchUsers(query)).filter(
+          (userData: User) =>
+            userData.id !== this.user?.id &&
+            userData.role !== Role.admin &&
+            userData.role !== Role.teacher,
+        );
+      } catch (error) {
+        console.error("Failed to search users:", error);
+        throw error;
+      }
+    },
+
+    /**
+     * Handle OAuth callback (Google/GitHub)
+     * This should be called from your OAuth callback page
+     */
+
+    async handleOAuthCallback(
+      token: string,
+      refreshToken?: string,
+    ): Promise<void> {
+      this.isLoading = true;
+      this.error = null;
+
+      try {
+        const { user, needsSecurityQuestions } =
+          await authService.handleOAuthCallback(token, refreshToken);
+
+        this.user = user;
+        this.needsSecurityQuestions = needsSecurityQuestions;
+        this.isAuthenticated = true;
+      } catch (error) {
+        this.user = null;
+        this.isAuthenticated = false;
+        this.error =
+          error instanceof Error ? error.message : "OAuth login failed";
+
+        authService.logout();
+
         throw error;
       } finally {
         this.isLoading = false;
@@ -197,19 +226,122 @@ export const useAuthStore = defineStore("auth", {
     },
 
     /**
+     * Restore authentication from stored token
+     * Should be called on app initialization
+     */
+    async restoreAuth(): Promise<boolean> {
+      this.isLoading = true;
+
+      try {
+        const result = await authService.restoreAuth();
+
+        this.user = result.user;
+        this.isAuthenticated = result.authenticated;
+        return result.authenticated;
+      } catch (error) {
+        // Network or temporary errors - keep tokens, just set loading to false
+        // User can try again on next navigation or refresh
+        console.error(
+          "Failed to restore auth (keeping tokens for retry):",
+          error,
+        );
+
+        // Keep user authenticated if we already have their data
+        if (this.user) {
+          this.isAuthenticated = true;
+          return true;
+        }
+
+        // If we don't have user data yet, mark as not authenticated
+        // but DON'T clear tokens - they might work on next try
+        this.isAuthenticated = false;
+        return false;
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    /**
+     * Refresh access token using refresh token
+     */
+    async refreshAccessToken(): Promise<boolean> {
+      if (this.refreshPromise) {
+        return this.refreshPromise;
+      }
+
+      this.isRefreshing = true;
+
+      this.refreshPromise = (async () => {
+        try {
+          const refreshed = await authService.refreshAccessToken();
+          if (refreshed) {
+            try {
+              await this.fetchCurrentUser();
+              this.isAuthenticated = true;
+              this.error = null;
+            } catch (userError) {
+              console.error(
+                "❌ Failed to fetch user after token refresh:",
+                userError,
+              );
+              this.isAuthenticated = true;
+              this.error = null;
+            }
+          }
+          return refreshed;
+        } catch (error) {
+          console.error("❌ Failed to refresh token:", error);
+          return false;
+        } finally {
+          this.isRefreshing = false;
+          this.refreshPromise = null;
+        }
+      })();
+
+      return this.refreshPromise;
+    },
+
+    /**
+     * Check if token is expired or about to expire
+     */
+    isTokenExpired(): boolean {
+      return authService.isTokenExpired(this.getToken());
+    },
+
+    /**
+     * Make authenticated API request with auto-refresh
+     */
+    async makeAuthRequest(
+      url: string,
+      options: RequestInit = {},
+    ): Promise<any> {
+      return authService.makeAuthRequest(url, options, () => this.logout());
+    },
+
+    /**
      * Logout user
      */
     logout(): void {
+      authService.logout(this.user?.id);
+
       this.user = null;
       this.isAuthenticated = false;
       this.error = null;
+      // this.needsSecurityQuestions = false;
     },
 
     /**
      * Check if user has specific role
      */
-    hasRole(role: "student" | "teacher"): boolean {
+    hasRole(role: Role.student | Role.teacher | Role.admin): boolean {
       return this.user?.role === role;
+    },
+
+    /**
+     * Get authentication token
+     */
+    getToken(): string | null {
+      return authService.getAccessToken();
     },
 
     /**
@@ -224,6 +356,124 @@ export const useAuthStore = defineStore("auth", {
      */
     clearError(): void {
       this.error = null;
+    },
+
+    /**
+     * Update user profile
+     */
+    updateUser(updates: Partial<User>): void {
+      if (this.user) {
+        this.user = { ...this.user, ...updates } as User;
+      }
+    },
+
+    async updateUserProfile(updates: UpdateProfilePayload): Promise<User> {
+      try {
+        const updatedUser = await authService.updateUserProfile(updates);
+        if (updatedUser) {
+          this.user = updatedUser;
+          return updatedUser;
+        }
+        throw new Error("No user returned from update");
+      } catch (error) {
+        console.log("Error during update profile!", error);
+        throw error;
+      }
+    },
+
+    /**
+     * Upload user avatar
+     */
+    async uploadAvatar(file: File): Promise<{ avatar: string }> {
+      this.isLoading = true;
+      this.error = null;
+
+      try {
+        const token = this.getToken();
+        if (!token) {
+          throw new Error("Not authenticated");
+        }
+
+        const formData = new FormData();
+        formData.append("files", file); // must match FileInterceptor('files')
+
+        const response = await $fetch("/api/users/avatar", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            // DO NOT set Content-Type manually - browser sets it correctly
+          },
+          body: formData,
+        });
+
+        // Update user avatar in store
+        if (response && response.avatar && this.user) {
+          this.user.avatar = response.avatar;
+        }
+
+        return response;
+      } catch (error) {
+        console.error("Avatar upload error:", error);
+        this.error =
+          error instanceof Error ? error.message : "Failed to upload avatar";
+        throw error;
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    /**
+     * Submit security question answers for new OAuth users
+     */
+    async submitSecurityQuestions(
+      answers: Array<{ questionId: string; answer: string }>,
+    ): Promise<void> {
+      this.isLoading = true;
+      this.error = null;
+
+      try {
+        const token = this.getToken();
+        if (!token) {
+          throw new Error("Not authenticated");
+        }
+
+        console.log("🔵 Submitting security questions...");
+
+        const { submitSecurityAnswers } = useSecurityQuestions();
+        const result = await submitSecurityAnswers(answers, token);
+
+        console.log("✅ Security questions saved successfully:", result);
+
+        // Mark that security questions are now set
+        this.needsSecurityQuestions = false;
+      } catch (error) {
+        this.error =
+          error instanceof Error
+            ? error.message
+            : "Failed to save security questions";
+        throw error;
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    /**
+     * Change password using security answers
+     */
+    async changePassword(payload: {
+      answers: Array<{ questionId: string; answer: string }>;
+      newPassword: string;
+    }): Promise<any> {
+      try {
+        const response = await authService.changePassword(payload);
+        // Mark that security questions are answered
+        this.updateUser({ hasAnwers: true } as any);
+        this.needsSecurityQuestions = false;
+        return response;
+      } catch (error) {
+        console.error("Failed to change password:", error);
+        throw error;
+      }
     },
   },
 });

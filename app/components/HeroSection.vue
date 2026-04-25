@@ -1,72 +1,66 @@
 <template>
-  <section
-    class="relative overflow-hidden pt-20 pb-32 lg:pb-40 px-4 sm:px-6 lg:px-8 bg-slate-900"
-  >
+  <section class="relative overflow-hidden lg:pb-40 px-4 sm:px-6 lg:px-8 bg-white dark:bg-neutral-900">
     <!-- Animated background elements -->
     <div class="absolute inset-0 -z-10 overflow-hidden">
       <div
-        class="absolute -top-40 -right-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob"
-      />
+        class="absolute -top-40 -right-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob" />
       <div
-        class="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob animation-delay-2000"
-      />
+        class="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob animation-delay-2000" />
       <div
-        class="absolute top-1/2 left-1/2 w-80 h-80 bg-blue-700 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob animation-delay-4000"
-      />
+        class="absolute top-1/2 left-1/2 w-80 h-80 bg-blue-700 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-blob animation-delay-4000" />
     </div>
 
     <UContainer class="relative z-10">
-      <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <div class="grid lg:grid-cols-2 gap-40 items-center">
         <!-- Content -->
-        <div class="space-y-8">
+        <div class="space-y-8 pt-8">
           <div class="space-y-4">
-            <div
-              class="inline-flex items-center px-4 py-2 rounded-full bg-blue-950 border border-blue-800"
-            >
-              <UIcon
-                name="i-heroicons-star"
-                class="w-4 h-4 text-blue-400 mr-2"
-              />
-              <span class="text-sm font-semibold text-blue-400"
-                >Discover Exceptional Student Work</span
-              >
-            </div>
-            <h1 class="text-5xl lg:text-6xl font-bold text-white leading-tight">
-              Showcase Your Innovation
+            <h1 class="text-5xl lg:text-6xl font-semibold text-gray-900 dark:text-white leading-tight">
+              {{ t("hero.title") }}
             </h1>
-            <p class="text-xl text-gray-300 leading-relaxed max-w-lg">
-              Join thousands of talented students showcasing their amazing
-              projects. From AI innovations to mobile apps, discover the future
-              of technology created by GIC students.
+            <p class="text-xl text-gray-700 dark:text-gray-300 leading-relaxed max-w-lg typewriter">
+              {{ subtitle }}
             </p>
           </div>
 
           <!-- CTA Buttons -->
           <div class="flex flex-col sm:flex-row gap-4 pt-4">
-            <ButtonsPresetButton preset="exploreProjects" to="/projects" />
-            <ButtonsPresetButton preset="learnMore" to="/about" />
+            <ButtonsPresetButton preset="exploreHighlightedProjects" @click="scrollToProjects" size="sm" />
+            <ButtonsPresetButton preset="learnMore" to="/about" size="sm" />
           </div>
 
           <!-- Stats Preview -->
-          <div class="grid grid-cols-3 gap-4 pt-8 border-t border-slate-700">
+          <div ref="containerRef" class="grid grid-cols-3 gap-4 pt-8 border-t border-gray-300 dark:border-neutral-700">
             <div>
-              <div class="text-3xl font-bold text-blue-400">247+</div>
-              <p class="text-sm text-gray-400">Projects</p>
+              <div class="text-3xl font-semibold text-slate-700 dark:text-blue-400">
+                {{ projects }}+
+              </div>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                {{ t("stats.projects") }}
+              </p>
             </div>
             <div>
-              <div class="text-3xl font-bold text-blue-400">156+</div>
-              <p class="text-sm text-gray-400">Students</p>
+              <div class="text-3xl font-semibold text-slate-700 dark:text-blue-400">
+                {{ students }}+
+              </div>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                {{ t("stats.students") }}
+              </p>
             </div>
             <div>
-              <div class="text-3xl font-bold text-blue-400">8</div>
-              <p class="text-sm text-gray-400">Semesters</p>
+              <div class="text-3xl font-semibold text-slate-700 dark:text-blue-400">
+                {{ gens }}
+              </div>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                {{ t("stats.gens") }}
+              </p>
             </div>
           </div>
         </div>
 
         <!-- Visual Element -->
         <div class="relative hidden lg:block">
-          <AppHero />
+          <AppTechHub />
         </div>
       </div>
     </UContainer>
@@ -74,22 +68,121 @@
 </template>
 
 <script setup>
-import AppHero from "~/components/app/Hero.vue";
+import { tokenize } from "khmertokenizer";
+import { ref, onMounted, onBeforeUnmount, computed } from "vue";
+
+const { t } = useI18n();
+
+const subtitle = computed(() => t("hero.subtitle"));
+const typeWriterChars = computed(
+  () => tokenize(subtitle.value).length || subtitle.value.length,
+);
+const typeWriterSpeed = "4s";
+const projectStore = useProjectStore();
+
+// fetch stats data from API by using store
+const stats = [
+  { value: 247, suffix: "+" },
+  { value: 156, suffix: "+" },
+  { value: 27, suffix: "" },
+];
+
+let projects = ref(0);
+const students = ref(0);
+const gens = ref(0);
+const containerRef = ref(null);
+projects = computed(() => projectStore.totalProject);
+
+// Smooth scroll to projects section with header offset
+const scrollToProjects = () => {
+  const element = document.getElementById("highlighted-projects");
+  if (element) {
+    const headerOffset = 80; // Adjust this value based on your header height
+    const elementPosition = element.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth",
+    });
+  }
+};
+
+const animateCount = (setter, target, duration) => {
+  const start = 0;
+  const startTime = Date.now();
+
+  const animate = () => {
+    const now = Date.now();
+    const progress = Math.min((now - startTime) / duration, 1);
+    const current = Math.floor(progress * (target - start) + start);
+    setter.value = current;
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    }
+  };
+
+  requestAnimationFrame(animate);
+};
+
+const authStore = useAuthStore();
+onMounted(async () => {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          animateCount(projects, stats[0].value, 2000);
+          animateCount(students, stats[1].value, 2000);
+          animateCount(gens, stats[2].value, 2000);
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.5 },
+  );
+
+  if (containerRef.value) {
+    observer.observe(containerRef.value);
+  }
+
+  if (projectStore.projects.length == 0) {
+    await projectStore.fetchProjects();
+  }
+
+  onBeforeUnmount(() => observer.disconnect());
+});
 </script>
 
 <style scoped>
 /* Animations */
 @keyframes blob {
+
   0%,
   100% {
     transform: translate(0, 0) scale(1);
   }
+
   33% {
     transform: translate(30px, -50px) scale(1.1);
   }
+
   66% {
     transform: translate(-20px, 20px) scale(0.9);
   }
+}
+
+.count {
+  width: 1ch;
+  height: 1em;
+  overflow: hidden;
+  font-size: 40px;
+  font-weight: bold;
+  line-height: 1em;
+}
+
+.num {
+  transition: transform 2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .animate-blob {
@@ -106,8 +199,8 @@ import AppHero from "~/components/app/Hero.vue";
 
 /* Grid pattern background */
 .bg-grid-pattern {
-  background-image: linear-gradient(
-      0deg,
+  background-image:
+    linear-gradient(0deg,
       transparent 24%,
       rgba(255, 255, 255, 0.05) 25%,
       rgba(255, 255, 255, 0.05) 26%,
@@ -116,10 +209,8 @@ import AppHero from "~/components/app/Hero.vue";
       rgba(255, 255, 255, 0.05) 75%,
       rgba(255, 255, 255, 0.05) 76%,
       transparent 77%,
-      transparent
-    ),
-    linear-gradient(
-      90deg,
+      transparent),
+    linear-gradient(90deg,
       transparent 24%,
       rgba(255, 255, 255, 0.05) 25%,
       rgba(255, 255, 255, 0.05) 26%,
@@ -128,8 +219,57 @@ import AppHero from "~/components/app/Hero.vue";
       rgba(255, 255, 255, 0.05) 75%,
       rgba(255, 255, 255, 0.05) 76%,
       transparent 77%,
-      transparent
-    );
+      transparent);
   background-size: 50px 50px;
+}
+
+.typewriter {
+  position: relative;
+  width: max-content;
+}
+
+.typewriter::before,
+.typewriter::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.typewriter::before {
+  background: white;
+  animation: typing v-bind("typeWriterSpeed") steps(v-bind("typeWriterChars")) forwards;
+}
+
+.dark .typewriter::before {
+  background: rgb(23, 23, 23);
+  /* neutral-900 */
+}
+
+.typewriter::after {
+  width: 0.125em;
+  background: black;
+  animation:
+    typing v-bind("typeWriterSpeed") steps(v-bind("typeWriterChars")) forwards,
+    blink 1s steps(v-bind("typeWriterChars")) infinite;
+  margin-left: 2px;
+}
+
+.dark .typewriter::after {
+  background: white;
+}
+
+@keyframes blink {
+  to {
+    background: transparent;
+  }
+}
+
+@keyframes typing {
+  to {
+    left: 100%;
+  }
 }
 </style>
