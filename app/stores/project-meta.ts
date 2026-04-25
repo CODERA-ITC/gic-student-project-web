@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { authService } from "~/services/AuthService";
+import { projectsData } from "~/constants/projects";
 
 export type ProjectMetaResource = "categories" | "courses" | "tags";
 
@@ -81,6 +82,72 @@ const normalizePagination = (
   };
 };
 
+const toSlugId = (prefix: string, value: string) =>
+  `${prefix}-${value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-")}`;
+
+const fallbackItemsByResource = (
+  resource: ProjectMetaResource,
+): ProjectMetaItem[] => {
+  if (resource === "categories") {
+    return Array.from(
+      new Set(
+        projectsData
+          .map((project) => project.category)
+          .filter((category): category is string => Boolean(category)),
+      ),
+    ).map((name) => ({
+      id: toSlugId("category", name),
+      name,
+    }));
+  }
+
+  if (resource === "courses") {
+    return Array.from(
+      new Set(
+        projectsData
+          .map((project) => project.course)
+          .filter((course): course is string => Boolean(course)),
+      ),
+    ).map((name) => ({
+      id: toSlugId("course", name),
+      name,
+    }));
+  }
+
+  return Array.from(
+    new Set(projectsData.flatMap((project) => project.tags || [])),
+  ).map((name) => ({
+    id: toSlugId("tag", name),
+    name,
+  }));
+};
+
+const applyFallbackQuery = (
+  rows: ProjectMetaItem[],
+  params: FetchItemParams,
+): { rows: ProjectMetaItem[]; pagination: ProjectMetaPagination } => {
+  const page = params.page || 1;
+  const limit = params.limit || 10;
+  const search = (params.search || "").toLowerCase().trim();
+
+  const filtered = search
+    ? rows.filter((item) => item.name.toLowerCase().includes(search))
+    : rows;
+
+  const start = (page - 1) * limit;
+  const pagedRows = filtered.slice(start, start + limit);
+
+  return {
+    rows: pagedRows,
+    pagination: {
+      page,
+      limit,
+      total: filtered.length,
+      lastPage: Math.max(1, Math.ceil(filtered.length / limit)),
+    },
+  };
+};
+
 export const useProjectMetaStore = defineStore("project-meta", {
   state: () => ({
     itemsByResource: {
@@ -135,14 +202,11 @@ export const useProjectMetaStore = defineStore("project-meta", {
         return normalized;
       } catch (error) {
         console.error(`project-meta: fetch ${resource} failed`, error);
-        this.itemsByResource[resource] = [];
-        this.paginationByResource[resource] = {
-          page: 1,
-          limit: 10,
-          total: 0,
-          lastPage: 1,
-        };
-        return [];
+        const fallbackItems = fallbackItemsByResource(resource);
+        const fallback = applyFallbackQuery(fallbackItems, params);
+        this.itemsByResource[resource] = fallback.rows;
+        this.paginationByResource[resource] = fallback.pagination;
+        return fallback.rows;
       } finally {
         this.loadingByResource[resource] = false;
       }

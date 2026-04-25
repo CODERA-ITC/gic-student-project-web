@@ -16,13 +16,13 @@ import type {
 export const ProjectDefaultImages: ProjectImage[] = [
   {
     id: "1234",
-    originalUrl: `https://cdn.dribbble.com/userupload/17725359/file/original-ce1c9450a03ae68e328403e0740acf70.png?resize=1200x900&vertical=center`,
-    thumbnailUrl: `https://cdn.dribbble.com/userupload/17725359/file/original-ce1c9450a03ae68e328403e0740acf70.png?resize=1200x900&vertical=center`,
+    originalUrl: `https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&fit=crop`,
+    thumbnailUrl: `https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&fit=crop`,
   },
   {
     id: "1235",
-    originalUrl: `https://img.freepik.com/free-photo/elegant-cozy-office-lifestyle_23-2149636247.jpg?semt=ais_user_personalization&w=740&q=80`,
-    thumbnailUrl: `https://img.freepik.com/free-photo/elegant-cozy-office-lifestyle_23-2149636247.jpg?semt=ais_user_personalization&w=740&q=80`,
+    originalUrl: `https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&fit=crop`,
+    thumbnailUrl: `https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&fit=crop`,
   },
 ];
 

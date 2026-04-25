@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 
 import { studentService, type APIStudent } from "~/services/StudentService";
+import { studentsData } from "~/constants/students";
 
 // Types
 export interface StudentSocial {
@@ -73,6 +74,31 @@ export interface StudentState {
   publicSelectedGeneration: number;
   publicGenerations: number[];
 }
+
+const normalizeStudentGeneration = (student: APIStudent): number => {
+  if (typeof student.generation === "number") return student.generation;
+  const parsed = Number(student.gen || student.generation || 0);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
+const applyFallbackPagination = (
+  items: APIStudent[],
+  page: number,
+  limit: number,
+) => {
+  const safePage = Math.max(1, page || 1);
+  const safeLimit = Math.max(1, limit || 10);
+  const start = (safePage - 1) * safeLimit;
+  const paged = items.slice(start, start + safeLimit);
+
+  return {
+    data: paged,
+    total: items.length,
+    page: safePage,
+    limit: safeLimit,
+    lastPage: Math.max(1, Math.ceil(items.length / safeLimit)),
+  };
+};
 
 export const useStudentStore = defineStore("students", {
   state: (): StudentState => ({
@@ -358,23 +384,23 @@ export const useStudentStore = defineStore("students", {
     // API-based actions
     async loadStudents(token: string) {
       this.loading = true;
+      const params: any = {
+        page: this.currentPage,
+        limit: this.limit,
+        role: "STUDENT", // Only fetch students
+      };
+
+      // Add generation filter if selected
+      if (this.selectedGeneration !== "all") {
+        params.generation = this.selectedGeneration;
+      }
+
+      // Add search query if present
+      if (this.searchQuery && this.searchQuery.trim()) {
+        params.search = this.searchQuery.trim();
+      }
+
       try {
-        const params: any = {
-          page: this.currentPage,
-          limit: this.limit,
-          role: "STUDENT", // Only fetch students
-        };
-
-        // Add generation filter if selected
-        if (this.selectedGeneration !== "all") {
-          params.generation = this.selectedGeneration;
-        }
-
-        // Add search query if present
-        if (this.searchQuery && this.searchQuery.trim()) {
-          params.search = this.searchQuery.trim();
-        }
-
         const response = await studentService.fetchStudents(params, token);
 
         if (Array.isArray(response.data)) {
@@ -385,9 +411,40 @@ export const useStudentStore = defineStore("students", {
         }
       } catch (error) {
         console.error("Error loading students:", error);
-        this.apiStudents = [];
-        this.total = 0;
-        this.lastPage = 1;
+        // Fallback to static students when API fails
+        const generation =
+          this.selectedGeneration === "all"
+            ? null
+            : Number(this.selectedGeneration);
+        const search = (this.searchQuery || "").toLowerCase().trim();
+        const filtered = studentsData.filter((student) => {
+          const matchesGeneration =
+            generation === null ||
+            normalizeStudentGeneration(student) === generation;
+          if (!matchesGeneration) return false;
+
+          if (!search) return true;
+          const haystack = [
+            student.firstName,
+            student.lastName,
+            student.email,
+            ...(Array.isArray(student.skill) ? student.skill : []),
+          ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+          return haystack.includes(search);
+        });
+
+        const fallback = applyFallbackPagination(
+          filtered,
+          Number(params.page || 1),
+          Number(params.limit || 10),
+        );
+        this.apiStudents = fallback.data;
+        this.total = fallback.total;
+        this.lastPage = fallback.lastPage;
+        this.currentPage = fallback.page;
       } finally {
         this.loading = false;
       }
@@ -521,7 +578,17 @@ export const useStudentStore = defineStore("students", {
         return mapped;
       } catch (error) {
         console.error("Error fetching public student by id:", error);
-        return null;
+        const fallback =
+          studentsData.find((student) => String(student.id) === String(studentId)) ||
+          null;
+
+        if (fallback) {
+          const idx = this.apiStudents.findIndex((s) => s.id === fallback.id);
+          if (idx >= 0) this.apiStudents[idx] = fallback;
+          else this.apiStudents.unshift(fallback);
+        }
+
+        return fallback;
       } finally {
         this.loading = false;
       }
@@ -551,10 +618,17 @@ export const useStudentStore = defineStore("students", {
         this.lastPage = response.lastPage;
       } catch (error) {
         console.error("Error loading public students by generation:", error);
-        this.apiStudents = [];
-        this.total = 0;
-        this.currentPage = 1;
-        this.lastPage = 1;
+        const filtered = studentsData.filter(
+          (student) => normalizeStudentGeneration(student) === Number(generation),
+        );
+        const fallback = applyFallbackPagination(filtered, page, limit);
+
+        this.apiStudents = fallback.data;
+        this.publicSelectedGeneration = generation;
+        this.currentPage = fallback.page;
+        this.limit = fallback.limit;
+        this.total = fallback.total;
+        this.lastPage = fallback.lastPage;
       } finally {
         this.loading = false;
       }

@@ -20,11 +20,11 @@
       <div class="relative w-screen left-1/2 -translate-x-1/2 px-4 sm:px-6 lg:px-10">
         <div class="marquee-wrap overflow-hidden px-1 py-3">
           <div
-            class="marquee-track flex w-max"
+            class="marquee-track"
             :class="{ 'marquee-animated': shouldAnimate }"
             :style="{ '--marquee-duration': marqueeDuration }"
           >
-            <div class="marquee-group flex items-stretch gap-5">
+            <div class="marquee-group">
               <div
                 v-for="project in featuredProjects"
                 :key="`highlight-left-${project.id}`"
@@ -40,7 +40,7 @@
 
             <div
               v-if="shouldAnimate"
-              class="marquee-group flex items-stretch gap-5"
+              class="marquee-group"
               aria-hidden="true"
             >
               <div
@@ -135,7 +135,24 @@ const toggleLike = async (projectId: string | number) => {
 }
 
 .marquee-track {
+  display: flex;
+  align-items: stretch;
+  width: max-content;
   will-change: transform;
+  transform: translate3d(0, 0, 0);
+}
+
+.marquee-group {
+  display: flex;
+  align-items: stretch;
+  gap: 1.25rem;
+  flex-shrink: 0;
+  min-width: max-content;
+  padding-right: 1.25rem;
+}
+
+.project-card {
+  isolation: isolate;
 }
 
 .marquee-animated {
@@ -148,10 +165,10 @@ const toggleLike = async (projectId: string | number) => {
 
 @keyframes highlighted-marquee {
   from {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
   to {
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
   }
 }
 </style>
